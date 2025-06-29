@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial release of Silence Score app
-- Core silence detection functionality using noise_meter plugin
+- Core silence detection functionality using noise_meter plugin for real-time audio level monitoring
 - 60-second timer with visual progress ring
 - Point system with +1 point per successful silence session
 - Streak tracking (current and best streaks)
@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modular architecture with clear separation of concerns
 - Comprehensive constants file for easy i18n and A/B testing
 - Production-ready configuration for iOS and Android
+- Real-time audio level monitoring using noise_meter package
 
 ### Configuration
 - Default decibel threshold: 38 dB
@@ -46,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Flutter 3.x
 - hooks_riverpod: ^2.4.9
-- noise_meter: ^3.2.0
+- flutter_hooks: ^0.20.3
+- noise_meter: ^5.0.2
 - shared_preferences: ^2.2.2
 - confetti: ^0.7.0
 - permission_handler: ^11.0.1 
