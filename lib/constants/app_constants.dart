@@ -5,11 +5,14 @@ class AppConstants {
   
   // Silence detection settings
   static const double defaultDecibelThreshold = 38.0; // dB
-  static const int silenceDurationSeconds = 60; // 1 minute
-  static const int sampleIntervalMs = 200; // Sample every 200ms
+  static const int silenceDurationSeconds = 60; // 1 minute (default)
+  static const int sampleIntervalMs = 200; // Sample every 200ms (system constant)
   
-  // Scoring
-  static const int pointsPerSuccess = 1;
+  // Scoring (system constants)
+  static const int pointsPerMinute = 1; // 1 point per minute of successful session
+  
+  // Legacy constant (was user-configurable, now system constant)
+  static const int pointsPerSuccess = 1; // Deprecated - use pointsPerMinute instead
   
   // Storage keys
   static const String totalPointsKey = 'total_points';
@@ -19,7 +22,6 @@ class AppConstants {
   static const String decibelThresholdKey = 'decibel_threshold';
   
   // UI strings
-  static const String startButtonText = 'Start';
   static const String stopButtonText = 'Stop';
   static const String listeningText = 'Listening...';
   static const String successMessage = 'Silence achieved! +1 point';

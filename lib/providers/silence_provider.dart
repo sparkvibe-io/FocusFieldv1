@@ -5,25 +5,125 @@ import 'package:silence_score/services/silence_detector.dart';
 import 'package:silence_score/services/storage_service.dart';
 
 // Storage service provider
-final storageServiceProvider = Provider<StorageService>((ref) {
-  return StorageService();
+final storageServiceProvider = FutureProvider<StorageService>((ref) async {
+  final storageService = await StorageService.getInstance();
+  await storageService.initializeApp();
+  return storageService;
 });
+
+// App settings provider - loads all settings at once
+final appSettingsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+  final storageService = await ref.watch(storageServiceProvider.future);
+  return await storageService.loadAllSettings();
+});
+
+// Individual setting providers that depend on the app settings
+final decibelThresholdProvider = Provider<double>((ref) {
+  final settings = ref.watch(appSettingsProvider);
+  return settings.when(
+    data: (data) => data['decibelThreshold'] as double,
+    loading: () => AppConstants.defaultDecibelThreshold,
+    error: (_, __) => AppConstants.defaultDecibelThreshold,
+  );
+});
+
+final sessionDurationProvider = Provider<int>((ref) {
+  final settings = ref.watch(appSettingsProvider);
+  return settings.when(
+    data: (data) => data['sessionDuration'] as int,
+    loading: () => AppConstants.silenceDurationSeconds,
+    error: (_, __) => AppConstants.silenceDurationSeconds,
+  );
+});
+
+// Sample interval and points per success are now system constants
+// Use AppConstants.sampleIntervalMs and AppConstants.pointsPerMinute directly
+
+// Settings notifier for managing settings changes
+final settingsNotifierProvider = StateNotifierProvider<SettingsNotifier, AsyncValue<Map<String, dynamic>>>((ref) {
+  return SettingsNotifier(ref);
+});
+
+class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
+  final Ref _ref;
+
+  SettingsNotifier(this._ref) : super(const AsyncValue.loading()) {
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      final settings = await storageService.loadAllSettings();
+      if (mounted) {
+        state = AsyncValue.data(settings);
+      }
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
+
+  Future<void> updateSetting(String key, dynamic value) async {
+    if (!state.hasValue) return;
+    
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      final currentSettings = state.value!;
+      final updatedSettings = {...currentSettings, key: value};
+      
+      // Save individual setting
+      await storageService.saveAllSettings({key: value});
+      
+      // Update state
+      if (mounted) {
+        state = AsyncValue.data(updatedSettings);
+      }
+      
+      // Invalidate the app settings provider to refresh dependent providers
+      _ref.invalidate(appSettingsProvider);
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
+
+  Future<void> resetSettings() async {
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      await storageService.resetAllData();
+      await _loadSettings();
+      _ref.invalidate(appSettingsProvider);
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
+}
 
 // Silence detector provider
 final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
   final threshold = ref.watch(decibelThresholdProvider);
-  return SilenceDetector(threshold: threshold);
+  final duration = ref.watch(sessionDurationProvider);
+  return SilenceDetector(
+    threshold: threshold,
+    durationSeconds: duration,
+    sampleIntervalMs: AppConstants.sampleIntervalMs,
+  );
 });
 
-// Decibel threshold provider
-final decibelThresholdProvider = StateProvider<double>((ref) {
-  return AppConstants.defaultDecibelThreshold;
+// Silence data provider with async initialization
+final silenceDataProvider = FutureProvider<SilenceData>((ref) async {
+  final storageService = await ref.watch(storageServiceProvider.future);
+  return await storageService.loadSilenceData();
 });
 
-// Silence data provider
-final silenceDataProvider = StateNotifierProvider<SilenceDataNotifier, SilenceData>((ref) {
-  final storageService = ref.watch(storageServiceProvider);
-  return SilenceDataNotifier(storageService);
+// Silence data notifier provider
+final silenceDataNotifierProvider = StateNotifierProvider<SilenceDataNotifier, AsyncValue<SilenceData>>((ref) {
+  return SilenceDataNotifier(ref);
 });
 
 // Silence state provider
@@ -36,7 +136,7 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
   SilenceStateNotifier() : super(const SilenceState());
 
   void setListening(bool listening) {
-    state = state.copyWith(isListening: listening);
+    state = state.copyWith(isListening: listening, canStop: listening);
   }
 
   void setProgress(double progress) {
@@ -51,50 +151,117 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
     state = state.copyWith(error: error);
   }
 
+  void setCanStop(bool canStop) {
+    state = state.copyWith(canStop: canStop);
+  }
+
   void reset() {
     state = const SilenceState();
+  }
+
+  void stopSession() {
+    state = state.copyWith(
+      isListening: false,
+      canStop: false,
+      progress: 0.0,
+      success: null,
+      error: null,
+    );
   }
 }
 
 // Silence data notifier
-class SilenceDataNotifier extends StateNotifier<SilenceData> {
-  final StorageService _storageService;
+class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
+  final Ref _ref;
 
-  SilenceDataNotifier(this._storageService) : super(const SilenceData()) {
+  SilenceDataNotifier(this._ref) : super(const AsyncValue.loading()) {
     _loadData();
   }
 
   Future<void> _loadData() async {
-    final data = await _storageService.loadSilenceData();
-    state = data;
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      final data = await storageService.loadSilenceData();
+      if (mounted) {
+        state = AsyncValue.data(data);
+      }
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
+
+  Future<void> addSessionRecord(SessionRecord session) async {
+    if (!state.hasValue) return;
+    
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      final currentData = state.value!;
+      
+      // Update data with new session
+      final updatedData = await storageService.updateStreak(currentData);
+      final recentSessions = [...updatedData.recentSessions, session]
+          .take(10) // Keep only last 10 sessions
+          .toList();
+      
+      final newData = updatedData.copyWith(
+        totalPoints: updatedData.totalPoints + session.pointsEarned,
+        totalSessions: updatedData.totalSessions + 1,
+        recentSessions: recentSessions,
+      );
+      
+      // Save data
+      await storageService.saveSilenceData(newData);
+      await storageService.saveLastSessionDate(session.date);
+      
+      if (mounted) {
+        state = AsyncValue.data(newData);
+      }
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
   }
 
   Future<void> addPoint() async {
-    // Update streak first
-    final updatedData = await _storageService.updateStreak(state);
+    if (!state.hasValue) return;
     
-    // Add point and update best streak if needed
-    final newTotalPoints = updatedData.totalPoints + AppConstants.pointsPerSuccess;
-    final newBestStreak = newTotalPoints > updatedData.bestStreak 
-        ? newTotalPoints 
-        : updatedData.bestStreak;
-    
-    final newData = updatedData.copyWith(
-      totalPoints: newTotalPoints,
-      bestStreak: newBestStreak,
-    );
-    
-    await _storageService.saveSilenceData(newData);
-    state = newData;
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      
+      // Update streak first
+      final updatedData = await storageService.updateStreak(state.value!);
+      
+      // Add points using the new system constant
+      final newData = updatedData.copyWith(
+        totalPoints: updatedData.totalPoints + AppConstants.pointsPerMinute,
+      );
+      
+      // Save and update state
+      await storageService.saveSilenceData(newData);
+      if (mounted) {
+        state = AsyncValue.data(newData);
+      }
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
   }
 
   Future<void> resetData() async {
-    await _storageService.resetAllData();
-    state = const SilenceData();
-  }
-
-  Future<void> updateDecibelThreshold(double threshold) async {
-    await _storageService.saveDecibelThreshold(threshold);
+    try {
+      final storageService = await _ref.read(storageServiceProvider.future);
+      await storageService.resetAllData();
+      await _loadData();
+      _ref.invalidate(appSettingsProvider);
+    } catch (error, stackTrace) {
+      if (mounted) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
   }
 }
 
@@ -104,12 +271,14 @@ class SilenceState {
   final double progress;
   final bool? success;
   final String? error;
+  final bool canStop; // New field to track if session can be stopped
 
   const SilenceState({
     this.isListening = false,
     this.progress = 0.0,
     this.success,
     this.error,
+    this.canStop = false,
   });
 
   SilenceState copyWith({
@@ -117,12 +286,14 @@ class SilenceState {
     double? progress,
     bool? success,
     String? error,
+    bool? canStop,
   }) {
     return SilenceState(
       isListening: isListening ?? this.isListening,
       progress: progress ?? this.progress,
       success: success ?? this.success,
       error: error ?? this.error,
+      canStop: canStop ?? this.canStop,
     );
   }
 } 

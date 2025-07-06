@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Silence duration: 60 seconds
 - Sample interval: 200ms
 - Points per success: 1
-- Supported platforms: iOS 12.0+, Android API 21+
+- Supported platforms: iOS 13.0+, Android API 21+
 
 ### Dependencies
 - Flutter 3.x
