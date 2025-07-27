@@ -6,6 +6,11 @@ enum AppThemeMode {
   system,
   light,
   dark,
+  // Premium themes
+  oceanBlue,
+  forestGreen,
+  purpleNight,
+  goldLuxury,
 }
 
 extension AppThemeModeExtension on AppThemeMode {
@@ -17,6 +22,28 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Light';
       case AppThemeMode.dark:
         return 'Dark';
+      case AppThemeMode.oceanBlue:
+        return 'Ocean Blue';
+      case AppThemeMode.forestGreen:
+        return 'Forest Green';
+      case AppThemeMode.purpleNight:
+        return 'Purple Night';
+      case AppThemeMode.goldLuxury:
+        return 'Gold Luxury';
+    }
+  }
+
+  bool get isPremium {
+    switch (this) {
+      case AppThemeMode.system:
+      case AppThemeMode.light:
+      case AppThemeMode.dark:
+        return false;
+      case AppThemeMode.oceanBlue:
+      case AppThemeMode.forestGreen:
+      case AppThemeMode.purpleNight:
+      case AppThemeMode.goldLuxury:
+        return true;
     }
   }
 
@@ -25,8 +52,12 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.system:
         return ThemeMode.system;
       case AppThemeMode.light:
+      case AppThemeMode.oceanBlue:
+      case AppThemeMode.forestGreen:
+      case AppThemeMode.goldLuxury:
         return ThemeMode.light;
       case AppThemeMode.dark:
+      case AppThemeMode.purpleNight:
         return ThemeMode.dark;
     }
   }
@@ -39,6 +70,50 @@ extension AppThemeModeExtension on AppThemeMode {
         return Icons.brightness_high;
       case AppThemeMode.dark:
         return Icons.brightness_low;
+      case AppThemeMode.oceanBlue:
+        return Icons.water;
+      case AppThemeMode.forestGreen:
+        return Icons.forest;
+      case AppThemeMode.purpleNight:
+        return Icons.nightlight;
+      case AppThemeMode.goldLuxury:
+        return Icons.diamond;
+    }
+  }
+
+  Color get primaryColor {
+    switch (this) {
+      case AppThemeMode.system:
+      case AppThemeMode.light:
+      case AppThemeMode.dark:
+        return Colors.blue;
+      case AppThemeMode.oceanBlue:
+        return const Color(0xFF0288D1);
+      case AppThemeMode.forestGreen:
+        return const Color(0xFF2E7D32);
+      case AppThemeMode.purpleNight:
+        return const Color(0xFF673AB7);
+      case AppThemeMode.goldLuxury:
+        return const Color(0xFFFFB300);
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case AppThemeMode.system:
+        return 'Follows system theme';
+      case AppThemeMode.light:
+        return 'Light theme';
+      case AppThemeMode.dark:
+        return 'Dark theme';
+      case AppThemeMode.oceanBlue:
+        return 'Calm ocean blues';
+      case AppThemeMode.forestGreen:
+        return 'Natural forest greens';
+      case AppThemeMode.purpleNight:
+        return 'Mystical purple night';
+      case AppThemeMode.goldLuxury:
+        return 'Elegant gold accents';
     }
   }
 }
@@ -82,9 +157,24 @@ class ThemeNotifier extends StateNotifier<AppThemeMode> {
     }
   }
 
-  void cycleTheme() {
-    final currentIndex = state.index;
-    final nextIndex = (currentIndex + 1) % AppThemeMode.values.length;
-    setTheme(AppThemeMode.values[nextIndex]);
+  void cycleTheme({bool hasPremiumAccess = false}) {
+    // Define available themes based on premium access
+    final availableThemes = hasPremiumAccess 
+        ? AppThemeMode.values 
+        : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
+    
+    final currentIndex = availableThemes.indexOf(state);
+    final nextIndex = currentIndex >= 0 
+        ? (currentIndex + 1) % availableThemes.length
+        : 0;
+    
+    setTheme(availableThemes[nextIndex]);
+  }
+  
+  // Method to reset to free theme if user loses premium access
+  void resetToFreeThemeIfNeeded({required bool hasPremiumAccess}) {
+    if (!hasPremiumAccess && state.isPremium) {
+      setTheme(AppThemeMode.system);
+    }
   }
 }

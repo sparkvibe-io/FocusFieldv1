@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/providers/silence_provider.dart';
+import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/screens/home_page.dart';
 import 'package:silence_score/services/silence_detector.dart';
 

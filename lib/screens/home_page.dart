@@ -9,9 +9,15 @@ import 'package:silence_score/providers/silence_provider.dart';
 import 'package:silence_score/providers/theme_provider.dart';
 import 'package:silence_score/screens/settings_sheet.dart';
 import 'package:silence_score/widgets/progress_ring.dart';
-import 'package:silence_score/widgets/session_history_graph.dart';
-import 'package:silence_score/widgets/compact_points_display.dart';
+import 'package:silence_score/widgets/practice_overview_widget.dart';
 import 'package:silence_score/widgets/real_time_noise_chart.dart';
+import 'package:silence_score/widgets/advanced_analytics_widget.dart';
+import 'package:silence_score/widgets/feature_gate.dart';
+import 'package:silence_score/providers/subscription_provider.dart';
+import 'package:silence_score/providers/accessibility_provider.dart';
+import 'package:silence_score/providers/notification_provider.dart';
+import 'package:silence_score/services/accessibility_service.dart';
+import 'package:silence_score/services/notification_service.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -24,6 +30,34 @@ class HomePage extends HookConsumerWidget {
     final silenceDataNotifier = ref.read(silenceDataNotifierProvider.notifier);
     final decibelThreshold = ref.watch(decibelThresholdProvider);
     
+    // Accessibility
+    final accessibilityService = ref.watch(accessibilityServiceProvider);
+    final accessibilitySettings = ref.watch(accessibilitySettingsProvider);
+    
+    // Notifications
+    final notificationService = ref.watch(notificationServiceProvider);
+    final notificationSettings = ref.watch(notificationSettingsProvider);
+    
+    // Initialize services
+    useEffect(() {
+      accessibilityService.initialize();
+      accessibilityService.updateSettings(
+        vibration: accessibilitySettings['enableVibration'],
+        voiceOver: accessibilitySettings['enableVoiceOver'],
+        highContrast: accessibilitySettings['enableHighContrast'],
+        largeText: accessibilitySettings['enableLargeText'],
+      );
+      
+      notificationService.initialize();
+      notificationService.updateSettings(
+        notifications: notificationSettings['enableNotifications'],
+        dailyReminders: notificationSettings['enableDailyReminders'],
+        sessionComplete: notificationSettings['enableSessionComplete'],
+      );
+      
+      return null;
+    }, [accessibilitySettings, notificationSettings]);
+    
     // Confetti controller
     final confettiController = useMemoized(() => ConfettiController(duration: const Duration(seconds: 2)));
     
@@ -31,10 +65,15 @@ class HomePage extends HookConsumerWidget {
     useEffect(() {
       if (silenceState.success == true) {
         confettiController.play();
+        accessibilityService.vibrateOnEvent(AccessibilityEvent.sessionComplete);
+        accessibilityService.announceSessionComplete(true);
         // Reset success state after showing confetti
         Future.delayed(const Duration(seconds: 2), () {
           silenceStateNotifier.setSuccess(null);
         });
+      } else if (silenceState.success == false) {
+        accessibilityService.vibrateOnEvent(AccessibilityEvent.sessionFailed);
+        accessibilityService.announceSessionComplete(false);
       }
       return null;
     }, [silenceState.success]);
@@ -45,12 +84,16 @@ class HomePage extends HookConsumerWidget {
         actions: [
           IconButton(
             icon: Icon(_getThemeIcon(ref)),
-            onPressed: () => _toggleTheme(context, ref),
+            onPressed: () {
+              ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+              _toggleTheme(context, ref);
+            },
             tooltip: 'Toggle theme',
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
+              ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -106,95 +149,76 @@ class HomePage extends HookConsumerWidget {
   ) {
     return Stack(
       children: [
-        // Main content - Use SafeArea and proper constraints
         SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                // Session History Graph at top - with flexible height
-                Flexible(
-                  flex: 2,
-                  child: SessionHistoryGraph(
-                    sessions: silenceData.recentSessions,
-                    totalSessions: silenceData.totalSessions,
+                const SizedBox(height: 16),
+                // Combined Practice Overview
+                PracticeOverviewWidget(silenceData: silenceData),
+                const SizedBox(height: 12),
+
+                // Advanced Analytics (Premium, collapsible)
+                FeatureGate(
+                  featureId: 'advanced_analytics',
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: AdvancedAnalyticsWidget(silenceData: silenceData),
                   ),
                 ),
-                const SizedBox(height: 8),
-                
-                // Compact Points Display
-                CompactPointsDisplay(
-                  totalPoints: silenceData.totalPoints,
-                  currentStreak: silenceData.currentStreak,
-                  bestStreak: silenceData.bestStreak,
-                  totalSessions: silenceData.totalSessions,
-                ),
-                const SizedBox(height: 12),
-                
-                // Real-time noise chart (always visible) - with flexible height
-                Flexible(
-                  flex: 2,
+
+                // Controlled spacing instead of Spacer
+                const SizedBox(height: 32),
+
+                // Real-time noise chart
+                SizedBox(
+                  height: 120,
                   child: RealTimeNoiseChart(
                     threshold: decibelThreshold,
                     isListening: silenceState.isListening,
                   ),
                 ),
-                const SizedBox(height: 12),
-                
-                // Progress ring area - give it more space
-                Flexible(
-                  flex: 3, // Increased flex to make the ring area larger
-                  fit: FlexFit.tight, // Ensures it fills the space
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Define a fixed height for the status message area to ensure it's always visible.
-                      const messageAreaHeight = 40.0;
+                const SizedBox(height: 24),
 
-                      // Calculate the available space for the progress ring, reserving space for the message.
-                      final availableWidth = constraints.maxWidth;
-                      final availableHeight = constraints.maxHeight - messageAreaHeight;
-                      
-                      // Use the smaller dimension to ensure the ring stays circular and fits.
-                      final maxRingSize = math.min(availableWidth, availableHeight);
-                      
-                      // Use all of the calculated space for the ring.
-                      final progressRingSize = maxRingSize;
-                      
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Progress Ring centered in the calculated available space
-                          SizedBox(
-                            width: progressRingSize,
-                            height: progressRingSize,
-                            child: ProgressRing(
-                              progress: silenceState.progress,
-                              isListening: silenceState.isListening,
-                              sessionDurationSeconds: ref.read(sessionDurationProvider),
-                              size: progressRingSize,
-                              onTap: () => silenceState.isListening 
+                // Progress ring area - give it a prominent size
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final size = math.min(constraints.maxWidth * 0.55, 280.0).clamp(200.0, 280.0);
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: size,
+                          height: size,
+                          child: ProgressRing(
+                            progress: silenceState.progress,
+                            isListening: silenceState.isListening,
+                            sessionDurationSeconds: ref.read(sessionDurationProvider),
+                            size: size,
+                            onTap: () {
+                              ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+                              return silenceState.isListening
                                   ? _stopSilenceDetection(context, silenceStateNotifier, ref)
-                                  : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref),
-                            ),
+                                  : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref);
+                            },
                           ),
-                          
-                          // Reserved area for the status message
-                          SizedBox(
-                            height: messageAreaHeight,
-                            child: Center(
-                              child: _buildStatusMessage(context, silenceState),
-                            ),
+                        ),
+                        // Reserved area for the status message
+                        SizedBox(
+                          height: 40,
+                          child: Center(
+                            child: _buildStatusMessage(context, silenceState),
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
+                const SizedBox(height: 20), // Some padding at the bottom
               ],
             ),
           ),
         ),
-        
         // Confetti overlay
         Align(
           alignment: Alignment.topCenter,
@@ -212,7 +236,7 @@ class HomePage extends HookConsumerWidget {
     );
   }
 
-  Widget _buildStatusMessage(BuildContext context, silenceState) {
+  Widget _buildStatusMessage(BuildContext context, SilenceState silenceState) {
     final theme = Theme.of(context);
     
     if (silenceState.error != null) {
@@ -255,34 +279,20 @@ class HomePage extends HookConsumerWidget {
     return const SizedBox.shrink();
   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dateOnly = DateTime(date.year, date.month, date.day);
-    
-    if (dateOnly.isAtSameMomentAs(today)) {
-      return 'Today at ${_formatTime(date)}';
-    } else if (dateOnly.isAtSameMomentAs(yesterday)) {
-      return 'Yesterday at ${_formatTime(date)}';
-    } else {
-      return '${date.day}/${date.month}/${date.year} at ${_formatTime(date)}';
-    }
-  }
-
-  String _formatTime(DateTime date) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
   Future<void> _startSilenceDetection(
     BuildContext context,
-    silenceStateNotifier,
-    silenceDataNotifier,
+    SilenceStateNotifier silenceStateNotifier,
+    SilenceDataNotifier silenceDataNotifier,
     WidgetRef ref,
   ) async {
     final silenceDetector = ref.read(silenceDetectorProvider);
     final sessionDuration = ref.read(sessionDurationProvider);
+    final accessibilityService = ref.read(accessibilityServiceProvider);
+    final notificationService = ref.read(notificationServiceProvider);
     final startTime = DateTime.now();
+    
+    // Record session time for notifications
+    await notificationService.recordSessionTime(startTime);
     
     // Clear previous readings for new session
     silenceDetector.clearReadings();
@@ -293,13 +303,18 @@ class HomePage extends HookConsumerWidget {
     silenceStateNotifier.setError(null);
     silenceStateNotifier.setCanStop(true);
     
+    // Accessibility announcements (only before session)
+    accessibilityService.vibrateOnEvent(AccessibilityEvent.sessionStart);
+    accessibilityService.announceSessionStart((sessionDuration / 60).round());
+    
     await silenceDetector.startListening(
       onProgress: (progress) {
         silenceStateNotifier.setProgress(progress);
+        // No voice announcements during session to avoid breaking silence
       },
       onComplete: (success) async {
         // Only complete if the session wasn't manually stopped
-        if (silenceStateNotifier.state.canStop) {
+        if (ref.read(silenceStateProvider).canStop) {
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
           silenceStateNotifier.setSuccess(success);
@@ -324,11 +339,25 @@ class HomePage extends HookConsumerWidget {
           
           // Add session record to data
           await silenceDataNotifier.addSessionRecord(sessionRecord);
+          
+          // Show session completion notification if enabled
+          if (notificationService.enableSessionComplete) {
+            final message = notificationService.getCompletionMessage(success, durationInMinutes);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                duration: const Duration(seconds: 4),
+                behavior: SnackBarBehavior.floating,
+              ),
+              );
+            }
+          }
         }
       },
       onError: (error) {
         // Only handle error if the session wasn't manually stopped
-        if (silenceStateNotifier.state.canStop) {
+        if (ref.read(silenceStateProvider).canStop) {
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
           silenceStateNotifier.setError(error);
@@ -359,10 +388,11 @@ class HomePage extends HookConsumerWidget {
 
   void _stopSilenceDetection(
     BuildContext context,
-    silenceStateNotifier,
+    SilenceStateNotifier silenceStateNotifier,
     WidgetRef ref,
   ) {
     final silenceDetector = ref.read(silenceDetectorProvider);
+    final accessibilityService = ref.read(accessibilityServiceProvider);
     
     // Stop the detector
     silenceDetector.stopListening();
@@ -372,6 +402,9 @@ class HomePage extends HookConsumerWidget {
     
     // Clear readings so the next session starts fresh
     silenceDetector.clearReadings();
+    
+    // Accessibility feedback
+    accessibilityService.vibrateOnEvent(AccessibilityEvent.buttonPress);
   }
 
   void _showPermissionDialog(BuildContext context, WidgetRef ref) {
@@ -411,11 +444,19 @@ class HomePage extends HookConsumerWidget {
   void _toggleTheme(BuildContext context, WidgetRef ref) {
     final themeNotifier = ref.read(themeProvider.notifier);
     final currentTheme = ref.read(themeProvider);
+    final hasPremiumAccess = ref.read(premiumAccessProvider);
     
-    themeNotifier.cycleTheme();
+    themeNotifier.cycleTheme(hasPremiumAccess: hasPremiumAccess);
     
     // Show brief feedback to user
-    final nextTheme = AppThemeMode.values[(currentTheme.index + 1) % AppThemeMode.values.length];
+    final availableThemes = hasPremiumAccess 
+        ? AppThemeMode.values 
+        : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
+    final currentIndex = availableThemes.indexOf(currentTheme);
+    final nextIndex = currentIndex >= 0 
+        ? (currentIndex + 1) % availableThemes.length
+        : 0;
+    final nextTheme = availableThemes[nextIndex];
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Theme: ${nextTheme.displayName}'),

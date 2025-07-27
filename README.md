@@ -38,8 +38,9 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 ### Data & Privacy
 - **Local Storage**: All data stored securely on your device
 - **No Audio Recording**: Only measures decibel levels, no audio is stored
-- **Data Export**: Export session history and statistics
-- **Backup/Restore**: Safeguard your progress with backup functionality
+- **Data Export**: Export session history and statistics (Premium feature)
+- **Cloud Sync**: Cross-device synchronization (Premium Plus - Phase 2)
+- **Backup/Restore**: Safeguard your progress with backup functionality (Premium Plus - Phase 2)
 
 ## 📱 Screenshots
 
@@ -66,21 +67,70 @@ cd silence-score
 flutter pub get
 ```
 
-3. Run the app:
+3. **Configure Environment** (Important):
 ```bash
-flutter run
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env with your actual API keys
+# Get RevenueCat API key from: https://app.revenuecat.com/projects
+vim .env
 ```
+
+4. Run the app:
+```bash
+# Development build (with mock subscriptions)
+./scripts/build-dev.sh
+
+# Or run directly with Flutter
+flutter run --dart-define=REVENUECAT_API_KEY=your_key_here
+```
+
+### Environment Configuration
+
+The app uses environment variables for secure API key management:
+
+- **Development**: Uses `.env` file and mock subscriptions by default
+- **Production**: Requires actual API keys and disables mocks
+
+**Environment Variables:**
+- `REVENUECAT_API_KEY`: RevenueCat subscription management
+- `FIREBASE_API_KEY`: Firebase services (optional)
+- `IS_DEVELOPMENT`: Enable/disable development mode
+- `ENABLE_MOCK_SUBSCRIPTIONS`: Use mock payments for testing
 
 ### Building for Production
 
 #### Android
 ```bash
-flutter build apk --release
+# Using the secure build script (recommended)
+export REVENUECAT_API_KEY="your_actual_api_key"
+./scripts/build-prod.sh
+
+# Or manually with dart-define
+flutter build apk --release --dart-define=REVENUECAT_API_KEY=your_key
+flutter build appbundle --release --dart-define=REVENUECAT_API_KEY=your_key
 ```
 
 #### iOS
 ```bash
-flutter build ios --release
+# Set environment variables
+export REVENUECAT_API_KEY="your_actual_api_key"
+
+# Build for iOS
+flutter build ios --release \
+  --dart-define=REVENUECAT_API_KEY="$REVENUECAT_API_KEY" \
+  --dart-define=IS_DEVELOPMENT=false \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+```
+
+#### Development Builds
+```bash
+# Quick development build with environment file
+./scripts/build-dev.sh
+
+# Or run in debug mode
+flutter run
 ```
 
 ## 🔐 Permissions
@@ -267,7 +317,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📋 Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for detailed version history and updates.
+See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 
 ### Recent Major Updates (v0.1.0)
 - ✅ **Enhanced Progress Ring**: Always-visible interactive control with real-time countdown
@@ -286,7 +336,22 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history and updates.
 
 ## 🗺️ Roadmap
 
-### Planned Features
+### Phase 1 Features (Premium Tier - $1.99/month)
+- [x] Extended sessions (up to 60 minutes)
+- [x] Advanced analytics and trends
+- [x] Data export functionality (CSV/PDF)
+- [x] Premium themes and customization
+- [x] Priority support
+
+### Phase 2 Features (Premium Plus Tier - $3.99/month)
+- [ ] Cloud synchronization and backup
+- [ ] AI-powered insights and recommendations
+- [ ] Multi-environment profiles (Home, Office, Travel)
+- [ ] Social features and community challenges
+- [ ] Team collaboration features
+- [ ] Advanced customization options
+
+### Future Enhancements
 - [ ] Sound visualization with waveform display
 - [ ] Multiple challenge modes (endurance, precision, etc.)
 - [ ] Social sharing and leaderboards
@@ -294,7 +359,6 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history and updates.
 - [ ] Background noise calibration wizard
 - [ ] Integration with health apps (Apple Health, Google Fit)
 - [ ] Custom notification schedules
-- [ ] Offline mode with sync capabilities
 - [ ] Multi-language support
 - [ ] Advanced analytics dashboard
 
@@ -316,3 +380,91 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed version history and updates.
 ---
 
 **Silence Score** - Transform your environment into a sanctuary of focus and mindfulness. 🧘‍♀️✨ 
+
+## 💰 Monetization & Subscription System
+
+### Implementation Status: ✅ **READY FOR LAUNCH**
+
+SilenceScore features a complete subscription monetization system:
+
+#### ✅ **Fully Implemented Infrastructure**
+- **RevenueCat Integration**: Complete IAP system with purchase flows
+- **Three-Tier System**: Free, Premium ($1.99/month), Premium Plus ($3.99/month)
+- **Feature Gating**: Premium features properly restricted with upgrade prompts
+- **Professional Paywall**: Beautiful subscription purchase interface
+- **State Management**: Riverpod providers for subscription state
+- **Mock Mode**: Development testing without real payments
+
+#### ✅ **Current Configuration**
+- **Package ID**: `io.sparkvibe.silencescore` (iOS & Android)
+- **RevenueCat API Key**: Configured and verified ✅
+- **Development Mode**: Mock subscriptions enabled for testing
+- **Build Verification**: Android APK builds successfully with full monetization
+
+#### 📋 **Next Steps for Launch**
+1. **App Store Connect**: Configure subscription products (Premium & Premium Plus)
+2. **Google Play Console**: Configure subscription products
+3. **Production Switch**: Set `ENABLE_MOCK_SUBSCRIPTIONS=false` for live payments
+
+#### 💎 **Premium Features (Phase 1 - Ready)**
+- Extended sessions (60 minutes vs 5 minutes free)
+- Advanced analytics and trend visualization
+- Data export functionality (CSV/PDF)
+- Premium themes and customization
+- Priority support system
+
+#### 🚀 **Premium Plus Features (Phase 2 - Planned)**
+- Cloud synchronization and backup
+- AI-powered insights and recommendations
+- Multi-environment profiles
+- Social features and challenges
+- Team collaboration features
+
+### Revenue Strategy
+- **Target Markets**: US, Canada, UK, Australia
+- **Year 1 Goal**: 15,000 downloads, 8% Premium conversion ($28,656 ARR)
+- **Launch Timeline**: 6 weeks to live app stores
+- **Current Status**: Week 1 complete, ahead of schedule
+
+## 🔧 Project Status & Development Progress
+
+### ✅ **Completed Core Features**
+- **Silence Detection**: Advanced noise monitoring with `noise_meter` integration
+- **Real-Time UI**: Interactive progress ring, live noise charts, countdown timers
+- **Session Management**: Configurable durations, point scoring, streak tracking
+- **Analytics**: Session history, performance metrics, visual trends
+- **Settings System**: Tabbed interface with Basic/Advanced/About sections
+- **Theme System**: System/Light/Dark modes with quick switching
+- **Data Persistence**: Local storage with SharedPreferences
+- **Permissions**: Intelligent microphone access management
+
+### ✅ **Completed Monetization System**
+- **Subscription Service**: RevenueCat integration with purchase flows
+- **Feature Gating**: Premium access control with `FeatureGate` widgets
+- **Paywall UI**: Professional subscription interface with billing toggles
+- **State Management**: Riverpod providers for subscription state
+- **Product Configuration**: Premium ($1.99) and Premium Plus ($3.99) tiers
+- **Development Testing**: Mock subscription flows working
+
+### ✅ **Completed Technical Infrastructure**
+- **Package Updates**: Bundle ID changed to `io.sparkvibe.silencescore`
+- **Build System**: Production-ready with environment variable management
+- **API Integration**: RevenueCat, Firebase, notification services
+- **Code Quality**: Comprehensive linting, testing, documentation
+- **Platform Support**: iOS and Android builds verified
+
+### 📋 **Pending Platform Configuration**
+- **App Store Connect**: Subscription product configuration
+- **Google Play Console**: Subscription product configuration
+- **Store Assets**: App icons, screenshots, metadata preparation
+- **Legal Documents**: Privacy policy and terms of service finalization
+
+### 🎯 **Next Immediate Priorities**
+1. **Platform Setup** (This Week): Configure App Store and Play Console subscriptions
+2. **Visual Assets** (Next Week): Create app icons and store screenshots
+3. **Legal Documents** (Next Week): Finalize privacy policy and terms
+4. **Store Submission** (Week 3): Submit for app store review
+5. **Launch Marketing** (Week 4-6): Execute go-to-market strategy
+
+## Last Updated
+July 27, 2025 - Monetization infrastructure complete, ready for platform configuration 

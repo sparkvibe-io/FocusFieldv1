@@ -59,14 +59,15 @@ class RealTimeNoiseChart extends HookConsumerWidget {
           _addDataPoint(chartData, startTime, decibel);
         });
       } else {
-        // Ambient monitoring when not in session
-        ambientTimer = Timer.periodic(const Duration(milliseconds: 1000), (_) {
+        // Ambient monitoring when not in session - reduced frequency
+        ambientTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
           final decibel = silenceDetector.currentDecibel;
-          debugPrint('DEBUG: Chart - Ambient decibel: $decibel');
+          // Only print if decibel > 0 to reduce log spam
           if (decibel > 0) {
+            debugPrint('DEBUG: Chart - Ambient decibel: $decibel');
             currentDecibel.value = decibel;
             // Apply smoothing for ambient monitoring too
-            smoothedDecibel.value = smoothedDecibel.value * 0.8 + decibel * 0.2; // More aggressive smoothing for ambient
+            smoothedDecibel.value = smoothedDecibel.value * 0.8 + decibel * 0.2;
             _addDataPoint(chartData, startTime, decibel);
           }
         });
