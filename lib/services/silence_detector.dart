@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:silence_score/constants/app_constants.dart';
@@ -28,24 +29,24 @@ class SilenceDetector {
   /// Request microphone permission by actually trying to access the microphone
   Future<bool> requestPermission() async {
     try {
-      print('DEBUG: Requesting microphone permission...');
+      if (!kReleaseMode) print('DEBUG: Requesting microphone permission...');
       
       // First check current permission status
       final initialStatus = await Permission.microphone.status;
-      print('DEBUG: Initial permission status: $initialStatus');
+      if (!kReleaseMode) print('DEBUG: Initial permission status: $initialStatus');
       
       if (initialStatus == PermissionStatus.granted) {
-        print('DEBUG: Permission already granted');
+        if (!kReleaseMode) print('DEBUG: Permission already granted');
         return true;
       }
       
       if (initialStatus == PermissionStatus.permanentlyDenied) {
-        print('DEBUG: Permission permanently denied');
+        if (!kReleaseMode) print('DEBUG: Permission permanently denied');
         return false;
       }
       
       // On iOS, we need to actually try to access the microphone to trigger permission dialog
-      print('DEBUG: Attempting to access microphone to trigger permission dialog...');
+      if (!kReleaseMode) print('DEBUG: Attempting to access microphone to trigger permission dialog...');
       final tempNoiseMeter = NoiseMeter();
       StreamSubscription<NoiseReading>? tempSubscription;
       bool microphoneWorking = false;
@@ -55,11 +56,11 @@ class SilenceDetector {
         tempSubscription = tempNoiseMeter.noise.listen(
           (NoiseReading reading) {
             // We got a reading, which means permission was granted
-            print('DEBUG: Successfully accessed microphone, permission granted');
+            if (!kReleaseMode) print('DEBUG: Successfully accessed microphone, permission granted');
             microphoneWorking = true;
           },
           onError: (error) {
-            print('DEBUG: Error accessing microphone: $error');
+            if (!kReleaseMode) print('DEBUG: Error accessing microphone: $error');
           },
         );
         
@@ -69,37 +70,37 @@ class SilenceDetector {
         // Clean up the temporary subscription
         tempSubscription.cancel();
         
-        print('DEBUG: Microphone working: $microphoneWorking');
+        if (!kReleaseMode) print('DEBUG: Microphone working: $microphoneWorking');
         
         // If we got microphone readings, permission is granted regardless of what permission_handler says
         if (microphoneWorking) {
-          print('DEBUG: Microphone access successful, returning true');
+          if (!kReleaseMode) print('DEBUG: Microphone access successful, returning true');
           return true;
         }
         
         // Check final permission status as fallback
         final finalStatus = await Permission.microphone.status;
-        print('DEBUG: Final permission status: $finalStatus');
+        if (!kReleaseMode) print('DEBUG: Final permission status: $finalStatus');
         
         return finalStatus == PermissionStatus.granted;
         
       } catch (e) {
-        print('DEBUG: Exception during microphone access: $e');
+        if (!kReleaseMode) print('DEBUG: Exception during microphone access: $e');
         tempSubscription?.cancel();
         
         // If we got microphone readings before the exception, permission is still granted
         if (microphoneWorking) {
-          print('DEBUG: Microphone was working before exception, returning true');
+          if (!kReleaseMode) print('DEBUG: Microphone was working before exception, returning true');
           return true;
         }
         
         // Check if permission was granted despite the exception
         final finalStatus = await Permission.microphone.status;
-        print('DEBUG: Permission status after exception: $finalStatus');
+        if (!kReleaseMode) print('DEBUG: Permission status after exception: $finalStatus');
         return finalStatus == PermissionStatus.granted;
       }
     } catch (e) {
-      print('DEBUG: Error requesting permission: $e');
+      if (!kReleaseMode) print('DEBUG: Error requesting permission: $e');
       return false;
     }
   }
@@ -107,7 +108,7 @@ class SilenceDetector {
   /// Check if microphone permission is granted
   Future<bool> hasPermission() async {
     final status = await Permission.microphone.status;
-    print('DEBUG: Checking permission status: $status');
+    if (!kReleaseMode) print('DEBUG: Checking permission status: $status');
     return status == PermissionStatus.granted;
   }
 
@@ -116,7 +117,7 @@ class SilenceDetector {
     try {
       return await openAppSettings();
     } catch (e) {
-      print('DEBUG: Error opening app settings: $e');
+      if (!kReleaseMode) print('DEBUG: Error opening app settings: $e');
       return false;
     }
   }
@@ -124,7 +125,7 @@ class SilenceDetector {
   /// Get permission status for better error handling
   Future<PermissionStatus> getPermissionStatus() async {
     final status = await Permission.microphone.status;
-    print('DEBUG: Getting permission status: $status');
+    if (!kReleaseMode) print('DEBUG: Getting permission status: $status');
     return status;
   }
 
@@ -135,13 +136,13 @@ class SilenceDetector {
     required Function(String error) onError,
   }) async {
     try {
-      print('DEBUG: Starting silence detection...');
+      if (!kReleaseMode) print('DEBUG: Starting silence detection...');
       
       // First test if microphone already works
       bool microphoneWorks = await testMicrophoneAccess();
       
       if (!microphoneWorks) {
-        print('DEBUG: Microphone not working, requesting permission...');
+        if (!kReleaseMode) print('DEBUG: Microphone not working, requesting permission...');
         // Try to request permission
         final hasPermission = await requestPermission();
         
@@ -154,9 +155,9 @@ class SilenceDetector {
       }
       
       if (!microphoneWorks) {
-        print('DEBUG: Microphone still not working after permission request');
+        if (!kReleaseMode) print('DEBUG: Microphone still not working after permission request');
         final status = await Permission.microphone.status;
-        print('DEBUG: Final permission status: $status');
+        if (!kReleaseMode) print('DEBUG: Final permission status: $status');
         
         if (status == PermissionStatus.permanentlyDenied) {
           onError('Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.');
@@ -168,26 +169,26 @@ class SilenceDetector {
         return;
       }
 
-      print('DEBUG: Microphone access verified, initializing noise meter...');
+      if (!kReleaseMode) print('DEBUG: Microphone access verified, initializing noise meter...');
       // Initialize noise meter
       _noiseMeter = NoiseMeter();
       _readings.clear();
       _sessionStartTime = DateTime.now(); // Record the session start time
 
-      print('DEBUG: Starting noise meter...');
+      if (!kReleaseMode) print('DEBUG: Starting noise meter...');
       // Start listening using the correct API
       _subscription = _noiseMeter!.noise.listen(
         (NoiseReading reading) {
           _processReading(reading, onProgress, onComplete);
         },
         onError: (error) {
-          print('DEBUG: Noise meter error: $error');
+          if (!kReleaseMode) print('DEBUG: Noise meter error: $error');
           onError('Failed to access microphone: ${error.toString()}');
         },
       );
-      print('DEBUG: Noise meter started successfully');
+      if (!kReleaseMode) print('DEBUG: Noise meter started successfully');
     } catch (e) {
-      print('DEBUG: Exception in startListening: $e');
+      if (!kReleaseMode) print('DEBUG: Exception in startListening: $e');
       onError('Failed to start microphone: ${e.toString()}');
     }
   }
@@ -315,7 +316,7 @@ class SilenceDetector {
   /// Test if microphone actually works (more reliable than permission status on iOS)
   Future<bool> testMicrophoneAccess() async {
     try {
-      print('DEBUG: Testing microphone access...');
+      if (!kReleaseMode) print('DEBUG: Testing microphone access...');
       final testNoiseMeter = NoiseMeter();
       StreamSubscription<NoiseReading>? testSubscription;
       bool microphoneWorking = false;
@@ -323,11 +324,11 @@ class SilenceDetector {
       try {
         testSubscription = testNoiseMeter.noise.listen(
           (NoiseReading reading) {
-            print('DEBUG: Microphone test successful, got reading: ${reading.meanDecibel}');
+            if (!kReleaseMode) print('DEBUG: Microphone test successful, got reading: {reading.meanDecibel}');
             microphoneWorking = true;
           },
           onError: (error) {
-            print('DEBUG: Microphone test failed: $error');
+            if (!kReleaseMode) print('DEBUG: Microphone test failed: $error');
           },
         );
         
@@ -336,15 +337,15 @@ class SilenceDetector {
         
         testSubscription.cancel();
         
-        print('DEBUG: Microphone test result: $microphoneWorking');
+        if (!kReleaseMode) print('DEBUG: Microphone test result: $microphoneWorking');
         return microphoneWorking;
       } catch (e) {
-        print('DEBUG: Exception during microphone test: $e');
+        if (!kReleaseMode) print('DEBUG: Exception during microphone test: $e');
         testSubscription?.cancel();
         return false;
       }
     } catch (e) {
-      print('DEBUG: Error testing microphone: $e');
+      if (!kReleaseMode) print('DEBUG: Error testing microphone: $e');
       return false;
     }
   }

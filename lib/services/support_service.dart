@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
@@ -79,7 +80,7 @@ class SupportService {
         };
       }
     } catch (e) {
-      print('Error getting device info: $e');
+      if (!kReleaseMode) print('Error getting device info: $e');
     }
 
     return appInfo;
@@ -100,38 +101,38 @@ class SupportService {
     
     // Try approach 1: Full email with subject and body
     final Uri fullEmailUri = Uri.parse('mailto:$email?subject=$subject&body=$body');
-    print('Trying full email: subject="${ticket.subject}", body length=${body.length}');
+    if (!kReleaseMode) print('Trying full email: subject="${ticket.subject}", body length=${body.length}');
     
     try {
       await launchUrl(fullEmailUri, mode: LaunchMode.externalApplication);
-      print('Full email launch successful');
+      if (!kReleaseMode) print('Full email launch successful');
       return;
     } catch (e) {
-      print('Full email failed: $e');
+      if (!kReleaseMode) print('Full email failed: $e');
     }
     
     // Try approach 2: Just subject, no body
     final Uri subjectOnlyUri = Uri.parse('mailto:$email?subject=$subject');
-    print('Trying subject only');
+    if (!kReleaseMode) print('Trying subject only');
     
     try {
       await launchUrl(subjectOnlyUri, mode: LaunchMode.externalApplication);
-      print('Subject-only email launch successful');
+      if (!kReleaseMode) print('Subject-only email launch successful');
       return;
     } catch (e) {
-      print('Subject-only failed: $e');
+      if (!kReleaseMode) print('Subject-only failed: $e');
     }
     
     // Try approach 3: Basic mailto
     final Uri basicEmailUri = Uri.parse('mailto:$email');
-    print('Trying basic mailto');
+    if (!kReleaseMode) print('Trying basic mailto');
     
     try {
       await launchUrl(basicEmailUri, mode: LaunchMode.externalApplication);
-      print('Basic email launch successful');
+      if (!kReleaseMode) print('Basic email launch successful');
       return;
     } catch (e) {
-      print('Basic launch failed: $e');
+      if (!kReleaseMode) print('Basic launch failed: $e');
     }
     
     // If all fail, throw an exception

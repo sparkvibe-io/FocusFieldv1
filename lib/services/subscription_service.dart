@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -32,8 +33,8 @@ class SubscriptionService {
       if (AppConstants.enableMockSubscriptions) {
         _isInitialized = true;
         await _loadSavedTier();
-        print('📱 Subscription service initialized in MOCK MODE');
-        print('🔧 Environment: ${AppConstants.currentEnvironment}');
+        if (!kReleaseMode) print('📱 Subscription service initialized in MOCK MODE');
+        if (!kReleaseMode) print('🔧 Environment: ${AppConstants.currentEnvironment}');
         return;
       }
 
@@ -59,9 +60,9 @@ class SubscriptionService {
       await _refreshCustomerInfo();
 
       _isInitialized = true;
-      print('SubscriptionService: Initialized successfully');
+      if (!kReleaseMode) print('SubscriptionService: Initialized successfully');
     } catch (e) {
-      print('SubscriptionService: Failed to initialize: $e');
+      if (!kReleaseMode) print('SubscriptionService: Failed to initialize: $e');
       // Continue with free tier if initialization fails
       await _setCurrentTier(SubscriptionTier.free);
       _isInitialized = true;
@@ -75,7 +76,7 @@ class SubscriptionService {
       final tier = _getTierFromCustomerInfo(customerInfo);
       await _setCurrentTier(tier);
     } catch (e) {
-      print('SubscriptionService: Failed to refresh customer info: $e');
+      if (!kReleaseMode) print('SubscriptionService: Failed to refresh customer info: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -112,7 +113,7 @@ class SubscriptionService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.subscriptionTierKey, tier.toString());
       
-      print('SubscriptionService: Tier updated to ${tier.displayName}');
+      if (!kReleaseMode) print('SubscriptionService: Tier updated to ${tier.displayName}');
     }
   }
 

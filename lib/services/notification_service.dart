@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse notificationResponse) {
     // Handle notification tap
-    debugPrint('Notification tapped: ${notificationResponse.payload}');
+    if (!kReleaseMode) debugPrint('Notification tapped: ${notificationResponse.payload}');
   }
 
   void updateSettings({
