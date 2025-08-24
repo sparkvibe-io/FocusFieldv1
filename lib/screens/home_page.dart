@@ -9,17 +9,18 @@ import 'package:silence_score/providers/silence_provider.dart';
 import 'package:silence_score/providers/theme_provider.dart';
 import 'package:silence_score/screens/settings_sheet.dart';
 import 'package:silence_score/widgets/progress_ring.dart';
+import 'package:silence_score/constants/layout_constants.dart';
 import 'package:silence_score/widgets/practice_overview_widget.dart';
 import 'package:silence_score/widgets/real_time_noise_chart.dart';
 import 'package:silence_score/widgets/advanced_analytics_widget.dart';
 import 'package:silence_score/widgets/feature_gate.dart';
 import 'package:silence_score/widgets/error_boundary.dart';
 import 'package:silence_score/widgets/audio_safe_widget.dart';
+import 'package:silence_score/widgets/permission_dialogs.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/providers/accessibility_provider.dart';
 import 'package:silence_score/providers/notification_provider.dart';
 import 'package:silence_score/services/accessibility_service.dart';
-import 'package:silence_score/services/notification_service.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -154,111 +155,151 @@ class HomePage extends HookConsumerWidget {
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                // Combined Practice Overview
-                PracticeOverviewWidget(silenceData: silenceData),
-                const SizedBox(height: 12),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Calculate available height for content
+                final availableHeight = constraints.maxHeight;
+                final isSmallScreen = availableHeight < LayoutConstants.smallScreenHeightThreshold;
+                
+                final width = constraints.maxWidth;
+                final isLarge = width >= LayoutConstants.largeWidth;
 
-                // Advanced Analytics (Premium, collapsible)
-                FeatureGate(
-                  featureId: 'advanced_analytics',
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: AdvancedAnalyticsWidget(silenceData: silenceData),
-                  ),
-                ),
-
-                // Controlled spacing instead of Spacer
-                const SizedBox(height: 32),
-
-                // Real-time noise chart with audio crash protection
-                SizedBox(
-                  height: 120,
-                  child: AudioSafeWidget(
-                    debugContext: 'real_time_noise_chart',
-                    fallback: Container(
-                      height: 120,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                Widget buildRingSection() {
+                  return LayoutBuilder(
+                    builder: (context, ringConstraints) {
+                      final ringSize = LayoutConstants.computeProgressRingSize(
+                        ringConstraints.maxWidth,
+                        isSmallScreen: isSmallScreen,
+                        availableHeight: availableHeight,
+                      );
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.volume_off,
-                            size: 32,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          SizedBox(
+                            width: ringSize,
+                            height: ringSize,
+                            child: SafeWidget(
+                              context: 'progress_ring',
+                              fallback: Container(
+                                width: ringSize,
+                                height: ringSize,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Theme.of(context).colorScheme.surfaceContainer,
+                                ),
+                                child: const Center(child: Icon(Icons.refresh, size: 32)),
+                              ),
+                              child: ProgressRing(
+                                progress: silenceState.progress,
+                                isListening: silenceState.isListening,
+                                sessionDurationSeconds: ref.read(sessionDurationProvider),
+                                size: ringSize,
+                                onTap: () {
+                                  ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+                                  return silenceState.isListening
+                                      ? _stopSilenceDetection(context, silenceStateNotifier, ref)
+                                      : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref);
+                                },
+                              ),
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Audio chart recovering...',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
+                          SizedBox(
+                            height: isSmallScreen ? LayoutConstants.progressStatusHeightSmall : LayoutConstants.progressStatusHeightRegular,
+                            child: Center(child: _buildStatusMessage(context, silenceState)),
                           ),
                         ],
-                      ),
-                    ),
-                    child: RealTimeNoiseChart(
-                      threshold: decibelThreshold,
-                      isListening: silenceState.isListening,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
+                      );
+                    },
+                  );
+                }
 
-                // Progress ring area - give it a prominent size
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final size = math.min(constraints.maxWidth * 0.55, 280.0).clamp(200.0, 280.0);
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: size,
-                          height: size,
-                          child: SafeWidget(
-                            context: 'progress_ring',
-                            fallback: Container(
-                              width: size,
-                              height: size,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Theme.of(context).colorScheme.surfaceContainer,
-                              ),
-                              child: const Center(
-                                child: Icon(Icons.refresh, size: 32),
-                              ),
+                Widget buildInfoColumn() {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Combined Practice Overview
+                      PracticeOverviewWidget(silenceData: silenceData),
+                      const SizedBox(height: 12),
+                      FeatureGate(
+                        featureId: 'advanced_analytics',
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: AdvancedAnalyticsWidget(silenceData: silenceData),
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? LayoutConstants.spacingSmall : LayoutConstants.spacingRegular),
+                      SizedBox(
+                        height: isSmallScreen ? LayoutConstants.noiseChartSmallHeight : (isLarge ? 160 : LayoutConstants.noiseChartRegularHeight),
+                        child: AudioSafeWidget(
+                          debugContext: 'real_time_noise_chart',
+                          fallback: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surfaceContainer,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child: ProgressRing(
-                              progress: silenceState.progress,
-                              isListening: silenceState.isListening,
-                              sessionDurationSeconds: ref.read(sessionDurationProvider),
-                              size: size,
-                              onTap: () {
-                                ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
-                                return silenceState.isListening
-                                    ? _stopSilenceDetection(context, silenceStateNotifier, ref)
-                                    : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref);
-                              },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.volume_off,
+                                  size: isSmallScreen ? 24 : 32,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Audio chart recovering...',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        // Reserved area for the status message
-                        SizedBox(
-                          height: 40,
-                          child: Center(
-                            child: _buildStatusMessage(context, silenceState),
+                          child: RealTimeNoiseChart(
+                            threshold: decibelThreshold,
+                            isListening: silenceState.isListening,
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 20), // Some padding at the bottom
-              ],
+                      ),
+                      SizedBox(height: isSmallScreen ? LayoutConstants.spacingAfterChartSmall : LayoutConstants.spacingAfterChartRegular),
+                    ],
+                  );
+                }
+
+                final content = isLarge
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Column(
+                              children: [buildRingSection()],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            flex: 7,
+                            child: buildInfoColumn(),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 16),
+                          buildInfoColumn(),
+                          buildRingSection(),
+                          SizedBox(height: isSmallScreen ? LayoutConstants.bottomPaddingSmall : LayoutConstants.bottomPaddingRegular),
+                        ],
+                      );
+
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: availableHeight - 32),
+                    child: content,
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -422,7 +463,7 @@ class HomePage extends HookConsumerWidget {
           
           // Show dialog with option to open settings if permission is permanently denied
           if (error.contains('Settings > Privacy & Security')) {
-            _showPermissionDialog(context, ref);
+            PermissionDialogs.showMicrophoneSettings(context, ref);
           }
         }
       },
@@ -450,34 +491,7 @@ class HomePage extends HookConsumerWidget {
     accessibilityService.vibrateOnEvent(AccessibilityEvent.buttonPress);
   }
 
-  void _showPermissionDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Microphone Permission Required'),
-        content: const Text(
-          'Silence Score needs microphone access to measure sound levels. '
-          'Please enable microphone permission in your device settings.\n\n'
-          'Go to Settings > Privacy & Security > Microphone > Silence Score '
-          'and enable the permission.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final silenceDetector = ref.read(silenceDetectorProvider);
-              await silenceDetector.openSettings();
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Deprecated _showPermissionDialog removed (centralized in PermissionDialogs)
 
   IconData _getThemeIcon(WidgetRef ref) {
     final currentTheme = ref.watch(themeProvider);

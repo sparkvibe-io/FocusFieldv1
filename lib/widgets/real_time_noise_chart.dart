@@ -168,8 +168,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       };
     }, []);
 
-    return Container(
-      height: 150,
+  return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,

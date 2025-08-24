@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/providers/theme_provider.dart';
 import 'package:silence_score/providers/accessibility_provider.dart';
-import 'package:silence_score/screens/app_initializer.dart';
+import 'package:silence_score/screens/splash_screen.dart';
 import 'package:silence_score/theme/app_theme.dart';
 import 'package:silence_score/services/navigation_service.dart';
 
@@ -33,7 +33,8 @@ class SilenceScoreApp extends ConsumerWidget {
           ? AppTheme.getThemeForMode(AppThemeMode.purpleNight, enableHighContrast: enableHighContrast)
           : AppTheme.getThemeForMode(AppThemeMode.dark, enableHighContrast: enableHighContrast),
       themeMode: currentTheme.themeMode,
-      home: const AppInitializer(),
+  // Start with splash screen which transitions to AppInitializer
+  home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return MediaQuery(

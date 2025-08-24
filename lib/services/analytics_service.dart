@@ -327,8 +327,9 @@ class AdvancedAnalyticsService {
     for (final session in sessions) {
       final minutes = (session.duration / 60).round();
       String group;
-      if (minutes <= 2) group = '1-2 minutes';
-      else if (minutes <= 5) group = '3-5 minutes';
+      if (minutes <= 2) {
+        group = '1-2 minutes';
+      } else if (minutes <= 5) group = '3-5 minutes';
       else if (minutes <= 10) group = '6-10 minutes';
       else if (minutes <= 20) group = '11-20 minutes';
       else group = '20+ minutes';

@@ -386,17 +386,26 @@ class SilenceDetector {
         return;
       }
       
+      // Check if buffer is stable
+      if (!_audioExecutor.isBufferStable) {
+        onError('Audio system is recovering from recent issues. Please try again in a moment.');
+        return;
+      }
+      
       // Ensure clean state
       await _ensureCleanState();
       
       // Test microphone access first with timeout and circuit breaker protection
-      bool microphoneWorks = await testMicrophoneAccessSafe().timeout(
+      bool microphoneWorks = await _audioExecutor.execute(
+        () => testMicrophoneAccessSafe(),
+        'safe_microphone_test',
+      ).timeout(
         const Duration(seconds: 3),
         onTimeout: () {
           if (!kReleaseMode) print('DEBUG: Microphone test timed out');
           return false;
         },
-      );
+      ) ?? false;
       
       if (!microphoneWorks) {
         if (!kReleaseMode) print('DEBUG: Microphone not working, requesting permission for ambient monitoring...');
@@ -405,7 +414,10 @@ class SilenceDetector {
         
         if (hasPermission) {
           // Test again after permission request
-          microphoneWorks = await testMicrophoneAccessSafe();
+          microphoneWorks = await _audioExecutor.execute(
+            () => testMicrophoneAccessSafe(),
+            'safe_microphone_test',
+          ) ?? false;
         }
         
         if (!microphoneWorks) {
@@ -428,7 +440,7 @@ class SilenceDetector {
       _isAmbientMonitoring = true;
       _isListening = false;
       
-      // Start listening for ambient monitoring with error handling
+      // Start listening for ambient monitoring with enhanced error handling
       _subscription = _noiseMeter!.noise.listen(
         (NoiseReading reading) {
           if (!_isDisposed && _isAmbientMonitoring) {
@@ -443,13 +455,31 @@ class SilenceDetector {
               }
             } catch (e) {
               if (!kReleaseMode) print('DEBUG: Error processing ambient reading: $e');
+              _handleAudioError('Ambient reading processing error: $e');
             }
           }
         },
         onError: (error) {
           if (!_isDisposed && _isAmbientMonitoring) {
             if (!kReleaseMode) print('DEBUG: Ambient monitoring error: $error');
-            onError('Failed to access microphone: ${error.toString()}');
+            
+            // Check for specific audio buffer errors
+            final errorString = error.toString();
+            if (errorString.contains('releaseBuffer') || 
+                errorString.contains('mUnreleased') || 
+                errorString.contains('BufferSizeInFrames') ||
+                errorString.contains('AudioRecord') ||
+                errorString.contains('AudioTrack')) {
+              _handleAudioError('Audio buffer synchronization error: $errorString');
+            } else if (errorString.contains('nativeDispatchPlatformMessage') ||
+                       errorString.contains('EventChannel') ||
+                       errorString.contains('FlutterJNI') ||
+                       errorString.contains('DartMessenger') ||
+                       errorString.contains('Runtime aborting')) {
+              _handleAudioError('Flutter engine communication error: $errorString');
+            } else {
+              onError('Failed to access microphone: ${error.toString()}');
+            }
           }
         },
         cancelOnError: false,
@@ -459,6 +489,7 @@ class SilenceDetector {
     } catch (e) {
       if (!kReleaseMode) print('DEBUG: Exception in startAmbientMonitoring: $e');
       _isAmbientMonitoring = false;
+      _handleAudioError('Ambient monitoring startup error: $e');
       onError('Failed to start ambient monitoring: ${e.toString()}');
     }
   }
@@ -592,7 +623,7 @@ class SilenceDetector {
           }
           
           final testResult = await completer.future;
-          await testSubscription?.cancel();
+          await testSubscription.cancel();
           
           // Add small delay to allow native buffers to release
           await Future.delayed(const Duration(milliseconds: 150));
@@ -603,7 +634,7 @@ class SilenceDetector {
         } catch (e) {
           if (!kReleaseMode) print('DEBUG: Exception during safe microphone test: $e');
           await testSubscription?.cancel();
-          throw e; // Re-throw to let circuit breaker handle it
+          rethrow; // Re-throw to let circuit breaker handle it
         }
       },
       'safe_microphone_test',
@@ -637,6 +668,46 @@ class SilenceDetector {
       print('DEBUG: Audio error #$_audioErrorCount: $error');
     }
     
+    // Check for specific audio buffer errors and handle them appropriately
+    final errorString = error.toLowerCase();
+    if (errorString.contains('releasebuffer') || 
+        errorString.contains('munreleased') || 
+        errorString.contains('buffersizeinframes') ||
+        errorString.contains('audiorecord') ||
+        errorString.contains('audiotrack')) {
+      
+      if (!kReleaseMode) {
+        print('DEBUG: Detected audio buffer synchronization error - activating enhanced protection');
+      }
+      
+      // Use the enhanced audio executor to handle buffer errors
+      _audioExecutor.execute(
+        () async {
+          // This will trigger the buffer error detection in SafeAudioExecutor
+          throw Exception(error);
+        },
+        'buffer_error_detection',
+      );
+    } else if (errorString.contains('nativedispatchplatformmessage') ||
+               errorString.contains('eventchannel') ||
+               errorString.contains('flutterjni') ||
+               errorString.contains('dartmessenger') ||
+               errorString.contains('runtime aborting')) {
+      
+      if (!kReleaseMode) {
+        print('DEBUG: Detected Flutter engine communication error - activating enhanced protection');
+      }
+      
+      // Use the enhanced audio executor to handle Flutter engine errors
+      _audioExecutor.execute(
+        () async {
+          // This will trigger the Flutter engine error detection in SafeAudioExecutor
+          throw Exception(error);
+        },
+        'flutter_engine_error_detection',
+      );
+    }
+    
     // Enable crash protection if too many errors
     if (_audioErrorCount >= _maxAudioErrors) {
       _audioBufferCrashProtection = true;
@@ -657,8 +728,26 @@ class SilenceDetector {
   
   /// Check if we should skip audio access due to recent errors
   bool _shouldSkipAudioAccess() {
+    // Check legacy crash protection
     if (_audioBufferCrashProtection) return true;
     
+    // Check enhanced audio executor state
+    if (_audioExecutor.isBlocked || !_audioExecutor.isBufferStable || !_audioExecutor.isFlutterStable) {
+      if (!kReleaseMode) {
+        print('DEBUG: Audio access blocked by enhanced protection (blocked: ${_audioExecutor.isBlocked}, buffer stable: ${_audioExecutor.isBufferStable}, flutter stable: ${_audioExecutor.isFlutterStable})');
+      }
+      return true;
+    }
+    
+    // Check immediate protection
+    if (_audioExecutor.isImmediateProtectionActive) {
+      if (!kReleaseMode) {
+        print('DEBUG: Audio access blocked by immediate protection');
+      }
+      return true;
+    }
+    
+    // Check legacy error counting
     if (_lastAudioError != null && _audioErrorCount >= 2) {
       final timeSinceError = DateTime.now().difference(_lastAudioError!);
       return timeSinceError.inSeconds < 30; // Wait 30 seconds after 2 errors
@@ -690,7 +779,7 @@ class SilenceDetector {
       try {
         testSubscription = testNoiseMeter.noise.listen(
           (NoiseReading reading) {
-            if (!kReleaseMode) print('DEBUG: Microphone test successful, got reading: ${reading.meanDecibel}');
+            if (!kReleaseMode) print('DEBUG: Microphone test successful, got reading:  ${reading.meanDecibel}');
             microphoneWorking = true;
           },
           onError: (error) {

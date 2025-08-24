@@ -260,12 +260,7 @@ flutter analyze --no-fatal-infos
 - **One-Touch Control**: Single tap to start/stop sessions with immediate visual feedback
 - **Gesture Optimization**: Entire progress ring area is touch-responsive
 
-### Interactive Controls
-- **Primary Progress Ring**: Large, always-visible control serving as main session interface
-- **Countdown Timer**: Real-time MM:SS display showing remaining session time
-- **Visual Session State**: Clear start/stop indicators with dynamic sizing and spacing
-- **One-Touch Control**: Single tap to start/stop sessions with immediate visual feedback
-- **Gesture Optimization**: Entire progress ring area is touch-responsive
+_Section de-duplicated; previous duplicate removed._
 
 ### User Interface
 - **Tabbed Settings**: Organized interface with Basic, Advanced, and About sections

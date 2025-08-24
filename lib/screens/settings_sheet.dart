@@ -1472,7 +1472,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('No email app found. Please contact:'),
+                const Text('No email app found. Please contact:'),
                 SelectableText(
                   'silencescore@sparkvibe.io',
                   style: TextStyle(

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:csv/csv.dart';
-import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -210,7 +209,7 @@ class ExportService {
                           child: pw.Text(session.completed ? '✓ Complete' : '✗ Incomplete'),
                         ),
                       ],
-                    )).toList(),
+                    )),
                   ],
                 ),
               ] else ...[
@@ -251,11 +250,13 @@ class ExportService {
   /// Share exported file
   Future<void> shareFile(File file, String title) async {
     try {
-      await Share.shareXFiles(
-        [XFile(file.path)],
+  // ShareParams / SharePlus are available in share_plus ^11.x.
+  final params = ShareParams(
+        files: [XFile(file.path)],
         text: title,
         subject: 'SilenceScore Export',
       );
+  await SharePlus.instance.share(params);
     } catch (e) {
       throw Exception('Failed to share file: $e');
     }

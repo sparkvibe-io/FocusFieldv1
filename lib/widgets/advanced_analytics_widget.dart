@@ -90,14 +90,26 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 12),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          childAspectRatio: 2.5,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 8,
-          children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final w = constraints.maxWidth;
+            int count;
+            if (w >= 900) {
+              count = 4;
+            } else if (w >= 600) {
+              count = 3;
+            } else {
+              count = 2;
+            }
+            final aspect = w >= 900 ? 2.8 : (w >= 600 ? 2.6 : 2.4);
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: count,
+              childAspectRatio: aspect,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 8,
+              children: [
             _buildMetricCard(
               context,
               'Success Rate',
@@ -126,7 +138,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               Icons.schedule,
               Theme.of(context).colorScheme.tertiary,
             ),
-          ],
+              ],
+            );
+          },
         ),
       ],
     );
@@ -193,7 +207,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           ),
           child: LineChart(
             LineChartData(
-              gridData: FlGridData(show: false),
+              gridData: const FlGridData(show: false),
               titlesData: FlTitlesData(
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
@@ -236,7 +250,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   isCurved: true,
                   color: Theme.of(context).colorScheme.primary,
                   barWidth: 3,
-                  dotData: FlDotData(show: true),
+                  dotData: const FlDotData(show: true),
                   belowBarData: BarAreaData(
                     show: true,
                     color: Theme.of(context).colorScheme.primary.withOpacity(0.1),

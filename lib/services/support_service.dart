@@ -88,7 +88,7 @@ class SupportService {
 
   /// Open email client with pre-filled support information
   Future<void> openEmailSupport(SupportTicket ticket) async {
-    final String email = supportEmail;
+    const String email = supportEmail;
     
     final String priority = ticket.priority == SupportPriority.premiumPlus 
         ? '[PREMIUM PLUS]' 

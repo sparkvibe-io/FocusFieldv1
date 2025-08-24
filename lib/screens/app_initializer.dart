@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/providers/silence_provider.dart';
 import 'package:silence_score/screens/home_page.dart';
 import 'package:silence_score/widgets/error_boundary.dart';
+import 'package:silence_score/constants/permission_constants.dart';
+import 'package:silence_score/widgets/permission_dialogs.dart';
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -29,9 +31,9 @@ class AppInitializer extends ConsumerWidget {
               error: (error, stack) => _buildErrorScreen(context, 'Data loading failed: $error', ref),
               data: (silenceData) {
                 // All data loaded successfully, show main app with permission check
-                return SafeWidget(
+                return const SafeWidget(
                   context: 'app_initialization',
-                  child: _PermissionChecker(child: const HomePage()),
+                  child: _PermissionChecker(child: HomePage()),
                 );
               },
             );
@@ -262,7 +264,6 @@ class _PermissionChecker extends ConsumerStatefulWidget {
 }
 
 class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
-  bool _hasCheckedPermission = false;
   
   @override
   void initState() {
@@ -272,7 +273,7 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
   
   Future<void> _checkPermission() async {
     // Wait a bit for the UI to settle
-    await Future.delayed(const Duration(milliseconds: 1000));
+  await Future.delayed(const Duration(milliseconds: PermissionConstants.initialPermissionDelayMs));
     
     if (!mounted) return;
     
@@ -283,7 +284,7 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
       
       // Check if we already have permission with timeout
       final hasPermission = await silenceDetector.hasPermission().timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: PermissionConstants.permissionCheckTimeoutSec),
         onTimeout: () {
           if (!kReleaseMode) debugPrint('DEBUG: Permission check timed out');
           return false;
@@ -297,7 +298,7 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
         
         // Request permission proactively with timeout
         final permissionGranted = await silenceDetector.requestPermission().timeout(
-          const Duration(seconds: 10),
+          const Duration(seconds: PermissionConstants.permissionRequestTimeoutSec),
           onTimeout: () {
             if (!kReleaseMode) debugPrint('DEBUG: Permission request timed out');
             return false;
@@ -309,10 +310,8 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
         // If still no permission, show a dialog to guide the user
         if (!permissionGranted && mounted) {
           // Delay showing dialog to avoid overwhelming the user
-          await Future.delayed(const Duration(milliseconds: 500));
-          if (mounted) {
-            _showPermissionDialog(context);
-          }
+          await Future.delayed(const Duration(milliseconds: PermissionConstants.dialogPostRequestDelayMs));
+          if (mounted) await PermissionDialogs.showMicrophoneRationale(context, ref);
         }
       } else if (hasPermission) {
         if (!kReleaseMode) debugPrint('DEBUG: Permission already granted');
@@ -323,113 +322,13 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
       
       // Only show error dialog if it's a critical failure
       if (mounted && e.toString().contains('permanently')) {
-        _showPermissionDialog(context);
+        await PermissionDialogs.showMicrophoneRationale(context, ref);
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _hasCheckedPermission = true;
-        });
-      }
+      // No state flag needed post-refactor; keep hook for future extensions
     }
   }
   
-  void _showPermissionDialog(BuildContext context) {
-    // Prevent multiple dialogs
-    if (!mounted) return;
-    
-    showDialog(
-      context: context,
-      barrierDismissible: true, // Allow dismissal - don't force user
-      builder: (context) => AlertDialog(
-        title: const Text('Microphone Permission'),
-        content: const Text(
-          'Silence Score measures ambient sound levels to help you maintain quiet environments.\n\n'
-          'The app needs microphone access to detect silence, but does not record any audio.\n\n'
-          'You can grant permission now or later through the app settings.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Later'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _retryPermissionRequest();
-            },
-            child: const Text('Grant Permission'),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Future<void> _retryPermissionRequest() async {
-    if (!mounted) return;
-    
-    try {
-      final silenceDetector = ref.read(silenceDetectorProvider);
-      
-      final permissionGranted = await silenceDetector.requestPermission().timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          if (!kReleaseMode) debugPrint('DEBUG: Retry permission request timed out');
-          return false;
-        },
-      );
-      
-      if (!kReleaseMode) debugPrint('DEBUG: Retry permission request result: $permissionGranted');
-      
-      if (!permissionGranted && mounted) {
-        // Check permission status to provide appropriate feedback
-        final status = await silenceDetector.getPermissionStatus();
-        if (status.name.contains('permanently')) {
-          _showSettingsDialog(context);
-        }
-        // Otherwise, user can try again later - don't force it
-      }
-    } catch (e) {
-      if (!kReleaseMode) debugPrint('DEBUG: Retry permission request failed: $e');
-      // Don't show settings dialog for every error - only if truly needed
-    }
-  }
-  
-  void _showSettingsDialog(BuildContext context) {
-    if (!mounted) return;
-    
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: const Text('Settings Required'),
-        content: const Text(
-          'To enable silence detection, please manually grant microphone permission:\n\n'
-          '• iOS: Settings > Privacy & Security > Microphone > Silence Score\n'
-          '• Android: Settings > Apps > Silence Score > Permissions > Microphone\n\n'
-          'The app will work once permission is granted.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              try {
-                final silenceDetector = ref.read(silenceDetectorProvider);
-                await silenceDetector.openSettings();
-              } catch (e) {
-                if (!kReleaseMode) debugPrint('DEBUG: Error opening settings: $e');
-              }
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
-  }
   
   @override
   Widget build(BuildContext context) {

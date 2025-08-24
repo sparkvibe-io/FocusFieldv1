@@ -20,7 +20,7 @@ class PracticeOverviewWidget extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.2),
+          color: theme.colorScheme.primary.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -54,45 +54,60 @@ class PracticeOverviewWidget extends StatelessWidget {
   }
 
   Widget _buildCompactStatsAndChart(BuildContext context) {
-    return Row(
-      children: [
-        // Compact stats section - horizontal layout
-        Expanded(
-          flex: 3,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildCompactStat(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final isNarrow = width < 360;
+        final statsRow = Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Flexible(
+              child: _buildCompactStat(
                 context,
                 silenceData.totalPoints.toString(),
                 'Points',
                 Icons.stars,
                 Theme.of(context).colorScheme.primary,
               ),
-              _buildCompactStat(
+            ),
+            Flexible(
+              child: _buildCompactStat(
                 context,
                 silenceData.currentStreak.toString(),
                 'Streak',
                 Icons.local_fire_department,
                 Theme.of(context).colorScheme.secondary,
               ),
-              _buildCompactStat(
+            ),
+            Flexible(
+              child: _buildCompactStat(
                 context,
                 silenceData.totalSessions.toString(),
                 'Sessions',
                 Icons.play_circle,
                 Theme.of(context).colorScheme.tertiary,
               ),
+            ),
+          ],
+        );
+        if (isNarrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              statsRow,
+              const SizedBox(height: 12),
+              _build7DayChart(context),
             ],
-          ),
-        ),
-        const SizedBox(width: 16),
-        // 7-day activity chart
-        Expanded(
-          flex: 2,
-          child: _build7DayChart(context),
-        ),
-      ],
+          );
+        }
+        return Row(
+          children: [
+            Flexible(flex: 3, child: statsRow),
+            const SizedBox(width: 8),
+            Flexible(flex: 2, child: _build7DayChart(context)),
+          ],
+        );
+      },
     );
   }
 
@@ -100,25 +115,29 @@ class PracticeOverviewWidget extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: color),
-            const SizedBox(width: 4),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: color),
+              const SizedBox(width: 3),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontSize: 10,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ),
       ],
@@ -129,51 +148,57 @@ class PracticeOverviewWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final last7Days = _getLast7DaysActivity();
     
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Last 7 Days',
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 10,
-          ),
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 40,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: last7Days.map((dayData) {
-              final height = (dayData.points / _getMaxDayPoints()).clamp(0.1, 1.0) * 30;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    width: 8,
-                    height: height,
-                    decoration: BoxDecoration(
-                      color: dayData.points > 0 
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    dayData.dayLabel,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 8,
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+    // The chart previously caused a 1px vertical overflow on small layouts because
+    // the label + spacing + bar area exceeded the constrained height coming from
+    // its parent Row. We reduce the bar area height and allow horizontal scrolling
+    // to avoid right overflows on very narrow widths.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Target a compact total height <= 48 (label ~12, spacing 2, bars 32)
+        const double barAreaHeight = 32;
+        const double maxBarVisualHeight = 20; // within barAreaHeight
+        final maxPoints = _getMaxDayPoints();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Last 7 Days',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 10,
+              ),
+            ),
+            const SizedBox(height: 2),
+            SizedBox(
+              height: barAreaHeight,
+              // Allow horizontal scroll if width is too tight for all 7 bars + spacing
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    for (final dayData in last7Days) ...[
+                      _DayBar(
+                        label: dayData.dayLabel,
+                        points: dayData.points,
+                        maxPoints: maxPoints,
+                        maxBarHeight: maxBarVisualHeight,
+                        theme: theme,
+                      ),
+                      // Horizontal spacing between bars (except last)
+                      if (dayData != last7Days.last) const SizedBox(width: 6),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -226,4 +251,53 @@ class DayActivity {
     required this.points,
     required this.dayLabel,
   });
+}
+
+// Small reusable widget for an individual day bar to keep build method lean.
+class _DayBar extends StatelessWidget {
+  final String label;
+  final int points;
+  final int maxPoints;
+  final double maxBarHeight;
+  final ThemeData theme;
+
+  const _DayBar({
+    required this.label,
+    required this.points,
+    required this.maxPoints,
+    required this.maxBarHeight,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = maxPoints == 0 ? 0.0 : (points / maxPoints).clamp(0.0, 1.0);
+    final barHeight = (ratio * maxBarHeight).clamp(2, maxBarHeight);
+    final active = points > 0;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: barHeight.toDouble(),
+          decoration: BoxDecoration(
+            color: active
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(height: 2),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            style: theme.textTheme.labelSmall,
+          ),
+        ),
+      ],
+    );
+  }
 }

@@ -183,7 +183,7 @@ class SubscriptionService {
         }
       }
       print('SubscriptionService: Purchase failed: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -235,7 +235,7 @@ class SubscriptionService {
         }
       }
       print('SubscriptionService: Purchase failed: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -257,7 +257,7 @@ class SubscriptionService {
       return tier != SubscriptionTier.free;
     } catch (e) {
       print('SubscriptionService: Restore failed: $e');
-      throw e;
+      rethrow;
     }
   }
 
