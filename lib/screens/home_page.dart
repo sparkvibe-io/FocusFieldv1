@@ -13,6 +13,8 @@ import 'package:silence_score/widgets/practice_overview_widget.dart';
 import 'package:silence_score/widgets/real_time_noise_chart.dart';
 import 'package:silence_score/widgets/advanced_analytics_widget.dart';
 import 'package:silence_score/widgets/feature_gate.dart';
+import 'package:silence_score/widgets/error_boundary.dart';
+import 'package:silence_score/widgets/audio_safe_widget.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/providers/accessibility_provider.dart';
 import 'package:silence_score/providers/notification_provider.dart';
@@ -171,12 +173,39 @@ class HomePage extends HookConsumerWidget {
                 // Controlled spacing instead of Spacer
                 const SizedBox(height: 32),
 
-                // Real-time noise chart
+                // Real-time noise chart with audio crash protection
                 SizedBox(
                   height: 120,
-                  child: RealTimeNoiseChart(
-                    threshold: decibelThreshold,
-                    isListening: silenceState.isListening,
+                  child: AudioSafeWidget(
+                    debugContext: 'real_time_noise_chart',
+                    fallback: Container(
+                      height: 120,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.volume_off,
+                            size: 32,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Audio chart recovering...',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    child: RealTimeNoiseChart(
+                      threshold: decibelThreshold,
+                      isListening: silenceState.isListening,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -190,17 +219,31 @@ class HomePage extends HookConsumerWidget {
                         SizedBox(
                           width: size,
                           height: size,
-                          child: ProgressRing(
-                            progress: silenceState.progress,
-                            isListening: silenceState.isListening,
-                            sessionDurationSeconds: ref.read(sessionDurationProvider),
-                            size: size,
-                            onTap: () {
-                              ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
-                              return silenceState.isListening
-                                  ? _stopSilenceDetection(context, silenceStateNotifier, ref)
-                                  : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref);
-                            },
+                          child: SafeWidget(
+                            context: 'progress_ring',
+                            fallback: Container(
+                              width: size,
+                              height: size,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.surfaceContainer,
+                              ),
+                              child: const Center(
+                                child: Icon(Icons.refresh, size: 32),
+                              ),
+                            ),
+                            child: ProgressRing(
+                              progress: silenceState.progress,
+                              isListening: silenceState.isListening,
+                              sessionDurationSeconds: ref.read(sessionDurationProvider),
+                              size: size,
+                              onTap: () {
+                                ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+                                return silenceState.isListening
+                                    ? _stopSilenceDetection(context, silenceStateNotifier, ref)
+                                    : _startSilenceDetection(context, silenceStateNotifier, silenceDataNotifier, ref);
+                              },
+                            ),
                           ),
                         ),
                         // Reserved area for the status message

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -43,75 +44,128 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       return null;
     }, []);
 
-    // Subscribe to real-time decibel readings
+    // Subscribe to real-time decibel readings with proper error handling
     useEffect(() {
       StreamSubscription<double>? subscription;
       Timer? ambientTimer;
       Timer? fallbackTimer;
+      bool isDisposed = false;
+      
+      // Safe state update function
+      void safeUpdateDecibel(double decibel) {
+        if (isDisposed) return;
+        
+        // Validate decibel value before processing
+        if (decibel.isNaN || decibel.isInfinite || decibel < 0 || decibel > 150) {
+          if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid decibel value: $decibel, skipping');
+          return;
+        }
+        
+        // Clamp to reasonable range
+        final clampedDecibel = decibel.clamp(0.0, 120.0);
+        currentDecibel.value = clampedDecibel;
+        
+        // Apply smoothing with validation
+        final currentSmoothed = smoothedDecibel.value;
+        if (!currentSmoothed.isNaN && !currentSmoothed.isInfinite) {
+          smoothedDecibel.value = currentSmoothed * 0.7 + clampedDecibel * 0.3;
+        } else {
+          smoothedDecibel.value = clampedDecibel;
+        }
+        
+        _addDataPoint(chartData, startTime, clampedDecibel);
+      }
       
       if (isListening) {
-        // During session - listen to detector stream
-        subscription = silenceDetector.realtimeStream.listen((decibel) {
-          debugPrint('DEBUG: Chart - Session decibel: $decibel');
-          currentDecibel.value = decibel;
-          // Apply smoothing to reduce blinking (exponential moving average)
-          smoothedDecibel.value = smoothedDecibel.value * 0.7 + decibel * 0.3;
-          _addDataPoint(chartData, startTime, decibel);
-        });
+        // During session - listen to detector stream with error handling
+        subscription = silenceDetector.realtimeStream.listen(
+          (decibel) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Session decibel: $decibel');
+            safeUpdateDecibel(decibel);
+          },
+          onError: (error) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Stream error: $error');
+            // Don't crash on stream errors
+          },
+        );
       } else {
         // Ambient monitoring when not in session - reduced frequency
         ambientTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
-          final decibel = silenceDetector.currentDecibel;
-          // Only print if decibel > 0 to reduce log spam
-          if (decibel > 0) {
-            debugPrint('DEBUG: Chart - Ambient decibel: $decibel');
-            currentDecibel.value = decibel;
-            // Apply smoothing for ambient monitoring too
-            smoothedDecibel.value = smoothedDecibel.value * 0.8 + decibel * 0.2;
-            _addDataPoint(chartData, startTime, decibel);
+          if (isDisposed) return;
+          
+          try {
+            final decibel = silenceDetector.currentDecibel;
+            if (decibel > 0) {
+              if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient decibel: $decibel');
+              safeUpdateDecibel(decibel);
+            }
+          } catch (e) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient timer error: $e');
           }
         });
         
-        // Start ambient monitoring
-        silenceDetector.startAmbientMonitoring(
-          onError: (error) {
-            // Handle error silently for ambient monitoring
-            debugPrint('DEBUG: Chart - Ambient monitoring error: $error');
-          },
-        );
+        // Start ambient monitoring with proper error handling
+        try {
+          silenceDetector.startAmbientMonitoring(
+            onError: (error) {
+              if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient monitoring error: $error');
+            },
+          );
+        } catch (e) {
+          if (!kReleaseMode) debugPrint('DEBUG: Chart - Failed to start ambient monitoring: $e');
+        }
         
-        // Fallback timer to show some data even without permission
+        // Fallback timer with validation
         fallbackTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
-          if (!hasPermission.value && chartData.value.isEmpty) {
-            // Show placeholder data if no permission and no real data
+          if (isDisposed || hasPermission.value || chartData.value.isNotEmpty) return;
+          
+          try {
             final now = DateTime.now();
             final timeSinceStart = now.difference(startTime.value ?? now).inSeconds;
-            final placeholderDecibel = 35.0 + (math.sin(timeSinceStart * 0.1) * 5); // Simulated data
+            final placeholderDecibel = 35.0 + (math.sin(timeSinceStart * 0.1) * 5);
             
-            currentDecibel.value = placeholderDecibel;
-            smoothedDecibel.value = placeholderDecibel;
-            _addDataPoint(chartData, startTime, placeholderDecibel);
+            safeUpdateDecibel(placeholderDecibel);
+          } catch (e) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Fallback timer error: $e');
           }
         });
       }
       
       return () {
+        isDisposed = true;
         subscription?.cancel();
         ambientTimer?.cancel();
         fallbackTimer?.cancel();
+        
         if (!isListening) {
-          silenceDetector.stopAmbientMonitoring();
+          try {
+            silenceDetector.stopAmbientMonitoring();
+          } catch (e) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Error stopping ambient monitoring: $e');
+          }
         }
       };
     }, [isListening, hasPermission.value]);
 
-    // Clean up old data points periodically - less frequent
+    // Clean up old data points periodically with error handling
     useEffect(() {
-      final timer = Timer.periodic(const Duration(seconds: 5), (_) { // Reduced frequency from 2s to 5s
-        _cleanupOldData(chartData, startTime);
-      });
+      Timer? cleanupTimer;
       
-      return () => timer.cancel();
+      try {
+        cleanupTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+          try {
+            _cleanupOldData(chartData, startTime);
+          } catch (e) {
+            if (!kReleaseMode) debugPrint('DEBUG: Chart - Cleanup error: $e');
+          }
+        });
+      } catch (e) {
+        if (!kReleaseMode) debugPrint('DEBUG: Chart - Failed to create cleanup timer: $e');
+      }
+      
+      return () {
+        cleanupTimer?.cancel();
+      };
     }, []);
 
     return Container(
@@ -167,32 +221,44 @@ class RealTimeNoiseChart extends HookConsumerWidget {
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           hasPermission.value ? Icons.graphic_eq : Icons.mic_off,
-                          size: 32,
+                          size: 24, // Reduced from 32 to save space
                           color: hasPermission.value 
                               ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
                               : theme.colorScheme.error.withValues(alpha: 0.7),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          hasPermission.value 
-                              ? 'Initializing audio...'
-                              : 'Microphone permission required',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: hasPermission.value 
-                                ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)
-                                : theme.colorScheme.error.withValues(alpha: 0.8),
+                        const SizedBox(height: 4), // Reduced from 8 to save space
+                        Flexible(
+                          child: Text(
+                            hasPermission.value 
+                                ? 'Initializing audio...'
+                                : 'Microphone permission required',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: hasPermission.value 
+                                  ? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)
+                                  : theme.colorScheme.error.withValues(alpha: 0.8),
+                              fontSize: 11, // Slightly smaller text
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (!hasPermission.value) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            'Tap "Start" to grant permission',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                              fontSize: 10,
+                          const SizedBox(height: 2), // Reduced from 4 to save space
+                          Flexible(
+                            child: Text(
+                              'Tap "Start" to grant permission',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                fontSize: 9, // Reduced from 10 to save space
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -298,37 +364,130 @@ class RealTimeNoiseChart extends HookConsumerWidget {
     ValueNotifier<DateTime?> startTime,
     double decibel,
   ) {
-    if (startTime.value == null) return;
-    if (decibel.isNaN || decibel.isInfinite) return; // Prevent invalid data
-    final now = DateTime.now();
-    final totalTimeInSeconds = now.difference(startTime.value!).inMilliseconds / 1000.0;
-    if (totalTimeInSeconds.isNaN || totalTimeInSeconds.isInfinite || totalTimeInSeconds < 0) return;
-    // Clamp decibel to a reasonable range
-    final clampedDecibel = decibel.clamp(0.0, 120.0);
-    // Create new data point
-    final newPoint = FlSpot(totalTimeInSeconds, clampedDecibel);
-    var newData = [...chartData.value, newPoint];
-    // If we have more than 60 seconds of data, shift the time window
-    if (totalTimeInSeconds > 60) {
-      // Calculate the time offset to shift all points back
-      final timeOffset = totalTimeInSeconds - 60;
-      // Shift all points left by the offset and filter out negative/invalid values
-      newData = newData
-          .map((point) => FlSpot(point.x - timeOffset, point.y))
-          .where((point) => point.x >= 0 && !point.x.isNaN && !point.x.isInfinite && !point.y.isNaN && !point.y.isInfinite)
-          .toList();
-      // Update the start time to reflect the new window
-      startTime.value = startTime.value!.add(Duration(milliseconds: (timeOffset * 1000).round()));
+    try {
+      // Comprehensive validation
+      if (startTime.value == null) return;
+      if (decibel.isNaN || decibel.isInfinite || decibel < 0 || decibel > 150) {
+        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid decibel in _addDataPoint: $decibel');
+        return;
+      }
+      
+      final now = DateTime.now();
+      final timeDiff = now.difference(startTime.value!);
+      final totalTimeInSeconds = timeDiff.inMilliseconds / 1000.0;
+      
+      // Validate time calculation
+      if (totalTimeInSeconds.isNaN || totalTimeInSeconds.isInfinite || totalTimeInSeconds < 0) {
+        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid time calculation: $totalTimeInSeconds');
+        return;
+      }
+      
+      // Clamp values to safe ranges
+      final clampedDecibel = decibel.clamp(0.0, 120.0);
+      final clampedTime = totalTimeInSeconds.clamp(0.0, 300.0); // Max 5 minutes
+      
+      // Create new data point with validation
+      final newPoint = FlSpot(clampedTime, clampedDecibel);
+      
+      // Validate the new point before adding
+      if (newPoint.x.isNaN || newPoint.x.isInfinite || newPoint.y.isNaN || newPoint.y.isInfinite) {
+        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid FlSpot created: ${newPoint.x}, ${newPoint.y}');
+        return;
+      }
+      
+      // Get current data and validate
+      var currentData = chartData.value;
+      if (currentData.length > 300) { // Limit total data points to prevent memory issues
+        currentData = currentData.sublist(currentData.length - 250); // Keep last 250 points
+      }
+      
+      var newData = [...currentData, newPoint];
+      
+      // Handle sliding window for data older than 60 seconds
+      if (totalTimeInSeconds > 60) {
+        final timeOffset = totalTimeInSeconds - 60;
+        
+        // Validate time offset
+        if (timeOffset.isNaN || timeOffset.isInfinite || timeOffset <= 0) {
+          if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid time offset: $timeOffset');
+          return;
+        }
+        
+        // Shift all points and filter out invalid ones
+        newData = newData
+            .map((point) {
+              final newX = point.x - timeOffset;
+              return FlSpot(newX, point.y);
+            })
+            .where((point) => 
+              point.x >= 0 && 
+              point.x <= 60 &&
+              !point.x.isNaN && 
+              !point.x.isInfinite && 
+              !point.y.isNaN && 
+              !point.y.isInfinite &&
+              point.y >= 0 &&
+              point.y <= 120
+            )
+            .toList();
+        
+        // Update start time safely
+        try {
+          final offsetMs = (timeOffset * 1000).round().abs();
+          if (offsetMs > 0 && offsetMs < 86400000) { // Reasonable offset (< 24 hours)
+            startTime.value = startTime.value!.add(Duration(milliseconds: offsetMs));
+          }
+        } catch (e) {
+          if (!kReleaseMode) debugPrint('DEBUG: Chart - Error updating start time: $e');
+        }
+      }
+      
+      // Final validation before updating chart data
+      if (newData.isNotEmpty && newData.every((point) => 
+        !point.x.isNaN && !point.x.isInfinite && 
+        !point.y.isNaN && !point.y.isInfinite &&
+        point.x >= 0 && point.y >= 0)) {
+        chartData.value = newData;
+      } else {
+        if (!kReleaseMode) debugPrint('DEBUG: Chart - Filtered data contains invalid points, skipping update');
+      }
+    } catch (e) {
+      if (!kReleaseMode) debugPrint('DEBUG: Chart - Error in _addDataPoint: $e');
+      // Don't crash the app on chart data errors
     }
-    chartData.value = newData;
   }
 
   void _cleanupOldData(
     ValueNotifier<List<FlSpot>> chartData,
     ValueNotifier<DateTime?> startTime,
   ) {
-    // This method is now handled in _addDataPoint for better performance
-    // Keep it for backwards compatibility but make it do nothing
+    try {
+      final currentData = chartData.value;
+      if (currentData.isEmpty) return;
+      
+      // Remove invalid data points
+      final validData = currentData.where((point) => 
+        !point.x.isNaN && 
+        !point.x.isInfinite && 
+        !point.y.isNaN && 
+        !point.y.isInfinite &&
+        point.x >= 0 && 
+        point.x <= 60 &&
+        point.y >= 0 && 
+        point.y <= 120
+      ).toList();
+      
+      // Limit data points to prevent memory issues
+      if (validData.length > 300) {
+        final trimmedData = validData.sublist(validData.length - 250);
+        chartData.value = trimmedData;
+      } else if (validData.length != currentData.length) {
+        // Only update if we actually removed invalid data
+        chartData.value = validData;
+      }
+    } catch (e) {
+      if (!kReleaseMode) debugPrint('DEBUG: Chart - Error in cleanup: $e');
+    }
   }
 
   List<FlSpot> _generateThresholdLine(List<FlSpot> dataPoints, double threshold) {

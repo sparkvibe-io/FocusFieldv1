@@ -319,7 +319,29 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 
-### Recent Major Updates (v0.1.0)
+### Recent Major Updates (v0.1.1 - Stability Release)
+
+#### 🛡️ **Critical Stability Fixes**
+- ✅ **Memory Leak Resolution**: Fixed chart widget memory leaks and resource cleanup
+- ✅ **Data Validation**: Comprehensive NaN/infinite value handling prevents crashes
+- ✅ **Stream Management**: Resolved concurrent stream conflicts in audio processing
+- ✅ **Error Boundaries**: Added graceful error handling for critical components
+- ✅ **App Initialization**: Fixed race conditions and permission flow timing
+- ✅ **Resource Disposal**: Proper cleanup of audio resources and timers
+
+#### 🎯 **Performance Improvements**
+- ✅ **Chart Optimization**: Reduced update frequency and memory usage
+- ✅ **Audio Processing**: Improved microphone access reliability and error handling
+- ✅ **State Management**: Better concurrent operation handling and cleanup
+- ✅ **UI Responsiveness**: Error boundaries prevent widget crashes from affecting app
+
+#### 📱 **User Experience Enhancements**
+- ✅ **Permission Handling**: More user-friendly permission requests and guidance
+- ✅ **Error Recovery**: Automatic component recovery from temporary failures
+- ✅ **Graceful Degradation**: App continues functioning even with component errors
+- ✅ **Debug Improvements**: Better error reporting for development troubleshooting
+
+### Previous Updates (v0.1.0)
 - ✅ **Enhanced Progress Ring**: Always-visible interactive control with real-time countdown
 - ✅ **Real-Time Noise Chart**: Live visualization with smoothing algorithms
 - ✅ **Advanced Theme System**: System/Light/Dark modes with quick switching
@@ -370,12 +392,77 @@ See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 - [ ] Enhanced accessibility features
 - [ ] Comprehensive integration testing
 
+## 🔧 Troubleshooting
+
+### Common Issues and Solutions
+
+#### App Crashes on Startup
+- **Cause**: Usually related to permission handling or initialization
+- **Solution**: Clear app data, restart device, ensure microphone permissions are granted
+- **Prevention**: v0.1.1 includes comprehensive fixes for startup crashes
+
+#### Real-Time Chart Not Working
+- **Cause**: Memory issues or invalid data processing
+- **Solution**: Chart will show "temporarily unavailable" and auto-recover
+- **Prevention**: v0.1.1 includes chart stability improvements and error boundaries
+
+#### Microphone Permission Issues
+- **iOS**: Settings > Privacy & Security > Microphone > Silence Score
+- **Android**: Settings > Apps > Silence Score > Permissions > Microphone
+- **Note**: App now provides better guidance for permission setup
+
+#### Audio Processing Errors & Native Buffer Crashes
+- **Cause**: Native audio buffer errors from underlying noise_meter package
+- **Symptoms**: App crashes with "AudioReaderError" or similar native errors
+- **Solution**: App now includes automatic recovery - chart shows "recovering" message
+- **Prevention**: v0.1.1 includes comprehensive audio crash protection with:
+  - Native error detection and graceful handling
+  - Automatic component recovery with exponential backoff
+  - Audio resource management and cleanup
+  - Fallback UI when audio processing fails
+
+#### Memory Usage
+- **Optimized**: Chart data is now limited and cleaned up automatically
+- **Background**: Ambient monitoring uses reduced frequency updates
+- **Resources**: Proper disposal prevents memory leaks
+
+### Development Issues
+
+#### Build Errors
+```bash
+# Clean and rebuild
+flutter clean
+flutter pub get
+flutter run
+```
+
+#### Permission Testing
+```bash
+# Reset app permissions (iOS Simulator)
+xcrun simctl privacy booted reset all com.sparkvibe.silencescore
+
+# Reset app data (Android)
+adb shell pm clear com.sparkvibe.silencescore
+```
+
+### Getting Help
+
 ## 🆘 Support
 
-- **Documentation**: Check this README and inline code comments
+- **Documentation**: Check this README and [docs folder](docs/)
 - **Issues**: Report bugs and feature requests via GitHub Issues
+- **Troubleshooting**: See troubleshooting section above for common solutions
 - **Discussions**: Join community discussions for help and ideas
 - **Privacy**: Review our privacy policy for data handling details
+
+### Reporting Issues
+
+When reporting issues, please include:
+- Device model and OS version
+- Flutter version (`flutter --version`)
+- Steps to reproduce
+- Expected vs actual behavior
+- Error messages or logs if available
 
 ---
 
