@@ -12,7 +12,7 @@ This document outlines the comprehensive launch strategy for SilenceScore's Phas
 ## Phase Overview
 
 ### Phase 1 Features (Premium Tier - $1.99/month)
-- ✅ Extended sessions (up to 60 minutes)
+- ✅ Extended sessions (up to 120 minutes)
 - ✅ Advanced analytics and trends
 - ✅ Data export functionality (CSV/PDF)
 - ✅ Premium themes and customization
@@ -67,7 +67,7 @@ This document outlines the comprehensive launch strategy for SilenceScore's Phas
   - [ ] Subscription restoration functionality
 
 - [ ] **Premium Feature Development**
-  - [ ] Extended session duration (60 minutes) 
+  - [ ] Extended session duration (120 minutes) 
   - [ ] Advanced analytics dashboard
   - [ ] Premium themes and customization
   - [ ] Data export functionality (CSV/PDF)

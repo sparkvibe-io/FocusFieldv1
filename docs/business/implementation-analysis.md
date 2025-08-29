@@ -107,7 +107,7 @@ class SubscriptionService {
 ```
 
 #### Day 5-7: Premium Feature Implementation
-- [ ] Extend session duration to 60 minutes for Premium
+- [ ] Extend session duration to 120 minutes for Premium
 - [ ] Add Premium Plus multi-environment profiles
 - [ ] Implement feature restriction logic
 - [ ] Create upgrade prompts and paywalls

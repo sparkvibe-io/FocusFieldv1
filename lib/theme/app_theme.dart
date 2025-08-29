@@ -66,24 +66,141 @@ class AppTheme {
       case AppThemeMode.dark:
         return ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark);
       case AppThemeMode.oceanBlue:
-        return ColorScheme.fromSeed(
+        final baseOcean = ColorScheme.fromSeed(
           seedColor: const Color(0xFF1565C0),
           brightness: brightness,
         );
+        if (brightness == Brightness.light) {
+          return baseOcean.copyWith(
+            surface: const Color(0xFFF7FAFD),
+            surfaceContainer: const Color(0xFFE6F0FA),
+            surfaceContainerHighest: const Color(0xFFD9E9F7),
+            primary: const Color(0xFF0D57A4),
+            onPrimary: Colors.white,
+            primaryContainer: const Color(0xFFB3D4FF),
+            onPrimaryContainer: const Color(0xFF002E5C),
+            secondary: const Color(0xFF0277BD),
+            tertiary: const Color(0xFF00ACC1),
+            outline: const Color(0xFF4F6B85),
+          );
+        } else {
+          return baseOcean.copyWith(
+            surface: const Color(0xFF071923),
+            surfaceContainer: const Color(0xFF0F2734),
+            surfaceContainerHighest: const Color(0xFF143140),
+            primary: const Color(0xFF64B5F6),
+            onPrimary: const Color(0xFF002B49),
+            primaryContainer: const Color(0xFF0D4364),
+            onPrimaryContainer: const Color(0xFFBFE1FF),
+            secondary: const Color(0xFF29B6F6),
+            tertiary: const Color(0xFF26C6DA),
+            outline: const Color(0xFF4D6B7B),
+          );
+        }
       case AppThemeMode.forestGreen:
-        return ColorScheme.fromSeed(
+        final baseForest = ColorScheme.fromSeed(
           seedColor: const Color(0xFF2E7D32),
           brightness: brightness,
         );
+        if (brightness == Brightness.light) {
+          return baseForest.copyWith(
+            surface: const Color(0xFFF6FBF5),
+            surfaceContainer: const Color(0xFFE6F3E5),
+            surfaceContainerHighest: const Color(0xFFD9EAD8),
+            primary: const Color(0xFF1B6B25),
+            primaryContainer: const Color(0xFFBCE5BF),
+            onPrimaryContainer: const Color(0xFF06330C),
+            secondary: const Color(0xFF388E3C),
+            tertiary: const Color(0xFF8D6E63),
+            outline: const Color(0xFF5C745D),
+          );
+        } else {
+          return baseForest.copyWith(
+            surface: const Color(0xFF101F13),
+            surfaceContainer: const Color(0xFF1B2B1E),
+            surfaceContainerHighest: const Color(0xFF223526),
+            primary: const Color(0xFF81C784),
+            onPrimary: const Color(0xFF083913),
+            primaryContainer: const Color(0xFF1F4F24),
+            onPrimaryContainer: const Color(0xFFCDECCF),
+            secondary: const Color(0xFF66BB6A),
+            tertiary: const Color(0xFFA1887F),
+            outline: const Color(0xFF517055),
+          );
+        }
       case AppThemeMode.purpleNight:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF6A1B9A),
           brightness: Brightness.dark,
         );
       case AppThemeMode.goldLuxury:
-        return ColorScheme.fromSeed(
+        final baseGold = ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF8F00),
           brightness: brightness,
+        );
+        if (brightness == Brightness.light) {
+          return baseGold.copyWith(
+            surface: const Color(0xFFFCFAF6),
+            surfaceContainer: const Color(0xFFF3E8D6),
+            surfaceContainerHighest: const Color(0xFFE6D9C5),
+            primary: const Color(0xFFB26A00),
+            primaryContainer: const Color(0xFFFFDDAE),
+            onPrimaryContainer: const Color(0xFF402400),
+            secondary: const Color(0xFFC77800),
+            tertiary: const Color(0xFF795548),
+            outline: const Color(0xFF8B7155),
+          );
+        } else {
+          return baseGold.copyWith(
+            surface: const Color(0xFF20160A),
+            surfaceContainer: const Color(0xFF2C2114),
+            surfaceContainerHighest: const Color(0xFF3A2D1F),
+            primary: const Color(0xFFFFCA7A),
+            onPrimary: const Color(0xFF3D2500),
+            primaryContainer: const Color(0xFF5C3A00),
+            onPrimaryContainer: const Color(0xFFFFE3B6),
+            secondary: const Color(0xFFFFB74D),
+            tertiary: const Color(0xFFD7CCC8),
+            outline: const Color(0xFF786047),
+          );
+        }
+      case AppThemeMode.solarSunrise:
+        return ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFF7043), // Warm orange
+          brightness: brightness,
+        );
+      case AppThemeMode.midnightTeal:
+        final baseTeal = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF00BFA5),
+          brightness: Brightness.dark,
+        );
+        return baseTeal.copyWith(
+          surface: const Color(0xFF00201D),
+            onSurface: const Color(0xFFE0F2F1),
+          surfaceContainer: const Color(0xFF00332E),
+          primary: const Color(0xFF00BFA5),
+          secondary: const Color(0xFF26A69A),
+          tertiary: const Color(0xFF4DB6AC),
+          primaryContainer: const Color(0xFF005047),
+          onPrimaryContainer: const Color(0xFF84F5E3),
+          outline: const Color(0xFF3E5F5B),
+        );
+      case AppThemeMode.cyberNeon:
+        final baseNeon = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF00E5FF),
+          brightness: Brightness.dark,
+        );
+        return baseNeon.copyWith(
+          surface: const Color(0xFF000A10),
+          onSurface: const Color(0xFFE0F7FA),
+          surfaceContainer: const Color(0xFF001821),
+          primary: const Color(0xFF00E5FF),
+          secondary: const Color(0xFFFF4081), // pink accent
+          tertiary: const Color(0xFF7C4DFF), // purple accent
+          primaryContainer: const Color(0xFF003844),
+          onPrimaryContainer: const Color(0xFF9CF3FF),
+          outline: const Color(0xFF336974),
+          surfaceContainerHighest: const Color(0xFF00252F),
         );
     }
   }

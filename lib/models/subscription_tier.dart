@@ -1,7 +1,6 @@
 enum SubscriptionTier {
   free,
-  premium,
-  premiumPlus;
+  premium;
 
   String get displayName {
     switch (this) {
@@ -9,8 +8,7 @@ enum SubscriptionTier {
         return 'Free';
       case SubscriptionTier.premium:
         return 'Premium';
-      case SubscriptionTier.premiumPlus:
-        return 'Premium Plus';
+  // No Premium Plus currently
     }
   }
 
@@ -20,8 +18,7 @@ enum SubscriptionTier {
         return 'Basic silence tracking with 5-minute sessions';
       case SubscriptionTier.premium:
         return 'Extended sessions, analytics, and data export';
-      case SubscriptionTier.premiumPlus:
-        return 'AI insights, cloud sync, multi-environments, and social features';
+  // Future higher tier description placeholder removed
     }
   }
 
@@ -30,9 +27,9 @@ enum SubscriptionTier {
       case SubscriptionTier.free:
         return 0.0;
       case SubscriptionTier.premium:
-        return 1.99;
-      case SubscriptionTier.premiumPlus:
-        return 3.99;
+  // Legacy static price (will be replaced by dynamic RevenueCat values)
+  return 1.99;
+  // No higher tier
     }
   }
 
@@ -41,9 +38,9 @@ enum SubscriptionTier {
       case SubscriptionTier.free:
         return 0.0;
       case SubscriptionTier.premium:
-        return 9.99;
-      case SubscriptionTier.premiumPlus:
-        return 24.99;
+  // Legacy static price (will be replaced by dynamic RevenueCat values)
+  return 19.99; // Updated to align with documentation
+  // No higher tier
     }
   }
 
@@ -52,9 +49,8 @@ enum SubscriptionTier {
       case SubscriptionTier.free:
         return 5;
       case SubscriptionTier.premium:
-        return 60;
-      case SubscriptionTier.premiumPlus:
-        return 120;
+  return 120; // Increased to 2 hours
+  // No higher tier
     }
   }
 
@@ -64,8 +60,7 @@ enum SubscriptionTier {
         return 7;
       case SubscriptionTier.premium:
         return 90;
-      case SubscriptionTier.premiumPlus:
-        return 365;
+  // No higher tier
     }
   }
 
@@ -74,7 +69,7 @@ enum SubscriptionTier {
   }
 
   bool get hasCloudSync {
-    return this == SubscriptionTier.premiumPlus;
+  return false; // Not yet available
   }
 
   bool get hasDataExport {
@@ -86,15 +81,15 @@ enum SubscriptionTier {
   }
 
   bool get hasMultiEnvironments {
-    return this == SubscriptionTier.premiumPlus;
+  return false; // Not yet available
   }
 
   bool get hasAIInsights {
-    return this == SubscriptionTier.premiumPlus;
+  return false; // Not yet available
   }
 
   bool get hasSocialFeatures {
-    return this == SubscriptionTier.premiumPlus;
+  return false; // Not yet available
   }
 
   // Helper method to check if current tier has access to a feature
@@ -125,9 +120,7 @@ enum SubscriptionTier {
     switch (tierString.toLowerCase()) {
       case 'premium':
         return SubscriptionTier.premium;
-      case 'premiumplus':
-      case 'premium_plus':
-        return SubscriptionTier.premiumPlus;
+  // Future mapping placeholder removed
       default:
         return SubscriptionTier.free;
     }
@@ -140,8 +133,7 @@ enum SubscriptionTier {
         return 'free';
       case SubscriptionTier.premium:
         return 'premium';
-      case SubscriptionTier.premiumPlus:
-        return 'premiumplus';
+  // No higher tier
     }
   }
 }

@@ -5,11 +5,7 @@ import 'dart:io';
 import 'package:silence_score/constants/app_constants.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 
-enum SupportPriority {
-  standard,
-  premium,
-  premiumPlus,
-}
+enum SupportPriority { standard, premium }
 
 class SupportTicket {
   final String subject;
@@ -90,9 +86,7 @@ class SupportService {
   Future<void> openEmailSupport(SupportTicket ticket) async {
     const String email = supportEmail;
     
-    final String priority = ticket.priority == SupportPriority.premiumPlus 
-        ? '[PREMIUM PLUS]' 
-        : ticket.priority == SupportPriority.premium 
+  final String priority = ticket.priority == SupportPriority.premium 
             ? '[PREMIUM]' 
             : '[STANDARD]';
     
@@ -181,8 +175,7 @@ class SupportService {
         return SupportPriority.standard;
       case SubscriptionTier.premium:
         return SupportPriority.premium;
-      case SubscriptionTier.premiumPlus:
-        return SupportPriority.premiumPlus;
+  // No higher tier yet
     }
   }
 

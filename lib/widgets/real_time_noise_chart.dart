@@ -446,6 +446,14 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         !point.x.isNaN && !point.x.isInfinite && 
         !point.y.isNaN && !point.y.isInfinite &&
         point.x >= 0 && point.y >= 0)) {
+        // Ensure the graph always starts at the left edge (x=0) so users
+        // don't see the line beginning mid‑chart when starting a session
+        // or after window shifts. If the earliest point is offset, insert
+        // an anchor using its y value at x=0 without disturbing ordering.
+        if (newData.first.x > 0) {
+          final anchor = FlSpot(0, newData.first.y);
+          newData = [anchor, ...newData.map((p) => FlSpot(p.x, p.y))];
+        }
         chartData.value = newData;
       } else {
         if (!kReleaseMode) debugPrint('DEBUG: Chart - Filtered data contains invalid points, skipping update');

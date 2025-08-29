@@ -54,60 +54,56 @@ class PracticeOverviewWidget extends StatelessWidget {
   }
 
   Widget _buildCompactStatsAndChart(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        final isNarrow = width < 360;
-        final statsRow = Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Flexible(
-              child: _buildCompactStat(
-                context,
-                silenceData.totalPoints.toString(),
-                'Points',
-                Icons.stars,
-                Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            Flexible(
-              child: _buildCompactStat(
-                context,
-                silenceData.currentStreak.toString(),
-                'Streak',
-                Icons.local_fire_department,
-                Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            Flexible(
-              child: _buildCompactStat(
-                context,
-                silenceData.totalSessions.toString(),
-                'Sessions',
-                Icons.play_circle,
-                Theme.of(context).colorScheme.tertiary,
-              ),
-            ),
-          ],
-        );
-        if (isNarrow) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              statsRow,
-              const SizedBox(height: 12),
-              _build7DayChart(context),
-            ],
-          );
-        }
-        return Row(
-          children: [
-            Flexible(flex: 3, child: statsRow),
-            const SizedBox(width: 8),
-            Flexible(flex: 2, child: _build7DayChart(context)),
-          ],
-        );
-      },
+    // Always place the chart to the right of the stats to conserve vertical space.
+    final theme = Theme.of(context);
+    final statsRow = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Flexible(
+          child: _buildCompactStat(
+            context,
+            silenceData.totalPoints.toString(),
+            'Points',
+            Icons.stars,
+            theme.colorScheme.primary,
+          ),
+        ),
+        Flexible(
+          child: _buildCompactStat(
+            context,
+            silenceData.currentStreak.toString(),
+            'Streak',
+            Icons.local_fire_department,
+            theme.colorScheme.secondary,
+          ),
+        ),
+        Flexible(
+          child: _buildCompactStat(
+            context,
+            silenceData.totalSessions.toString(),
+            'Sessions',
+            Icons.play_circle,
+            theme.colorScheme.tertiary,
+          ),
+        ),
+      ],
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Stats take remaining width
+        Expanded(flex: 5, child: statsRow),
+        const SizedBox(width: 12),
+        // Chart given a fixed min width suitable for seven bars; wraps in Flexible for overflow
+        Flexible(
+          flex: 3,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: _build7DayChart(context),
+          ),
+        ),
+      ],
     );
   }
 
@@ -154,9 +150,14 @@ class PracticeOverviewWidget extends StatelessWidget {
     // to avoid right overflows on very narrow widths.
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Target a compact total height <= 48 (label ~12, spacing 2, bars 32)
-        const double barAreaHeight = 32;
-        const double maxBarVisualHeight = 20; // within barAreaHeight
+    // Dynamically allocate enough height for bar + spacing + label across devices.
+    // (line height varies by font metrics, so we add a small safety buffer.)
+    const double maxBarVisualHeight = 20; // visual max for bar itself
+    const double labelFontSize = 10.0;
+    const double spacingBelowBar = 2.0;
+    const double safetyBuffer = 6.0; // accounts for font ascent/descent variance
+    final double barAreaHeight =
+      maxBarVisualHeight + labelFontSize + spacingBelowBar + safetyBuffer; // ~38
         final maxPoints = _getMaxDayPoints();
 
         return Column(
@@ -294,7 +295,10 @@ class _DayBar extends StatelessWidget {
           fit: BoxFit.scaleDown,
           child: Text(
             label,
-            style: theme.textTheme.labelSmall,
+            style: theme.textTheme.labelSmall?.copyWith(
+              fontSize: 10,
+              height: 1.0, // tighten to reduce risk of overflow
+            ),
           ),
         ),
       ],

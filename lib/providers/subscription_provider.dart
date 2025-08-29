@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 import 'package:silence_score/services/subscription_service.dart';
+import 'package:silence_score/services/hosted_paywall_service.dart';
 
 // Subscription service provider
 final subscriptionServiceProvider = Provider<SubscriptionService>((ref) {
@@ -13,10 +14,12 @@ final subscriptionTierProvider = StreamProvider<SubscriptionTier>((ref) {
   return subscriptionService.tierStream;
 });
 
-// Subscription tier state provider (synchronous access)
-final subscriptionTierStateProvider = StateProvider<SubscriptionTier>((ref) {
-  final subscriptionService = ref.watch(subscriptionServiceProvider);
-  return subscriptionService.currentTier;
+// Subscription tier state provider (latest value; stream already provides reactivity)
+final subscriptionTierStateProvider = Provider<SubscriptionTier>((ref) {
+  final service = ref.watch(subscriptionServiceProvider);
+  // Ensure stream is listened to so updates propagate elsewhere if needed
+  ref.watch(subscriptionTierProvider);
+  return service.currentTier;
 });
 
 // Provider for checking if service is initialized
@@ -27,14 +30,17 @@ final subscriptionInitializedProvider = StateProvider<bool>((ref) {
 
 // Feature access providers
 final premiumAccessProvider = Provider<bool>((ref) {
-  final tier = ref.watch(subscriptionTierStateProvider);
-  return tier != SubscriptionTier.free;
+  final tierAsync = ref.watch(subscriptionTierProvider);
+  return tierAsync.maybeWhen(
+    data: (tier) => tier != SubscriptionTier.free,
+    orElse: () {
+      // Fallback to current snapshot if stream not ready
+      final service = ref.watch(subscriptionServiceProvider);
+      return service.currentTier != SubscriptionTier.free;
+    },
+  );
 });
 
-final premiumPlusAccessProvider = Provider<bool>((ref) {
-  final tier = ref.watch(subscriptionTierStateProvider);
-  return tier == SubscriptionTier.premiumPlus;
-});
 
 // Session limits provider
 final maxSessionMinutesProvider = Provider<int>((ref) {
@@ -50,8 +56,14 @@ final historyDaysProvider = Provider<int>((ref) {
 
 // Feature access helper provider
 final featureAccessProvider = Provider.family<bool, String>((ref, featureId) {
-  final tier = ref.watch(subscriptionTierStateProvider);
-  return tier.hasFeatureAccess(featureId);
+  final tierAsync = ref.watch(subscriptionTierProvider);
+  return tierAsync.maybeWhen(
+    data: (tier) => tier.hasFeatureAccess(featureId),
+    orElse: () {
+      final service = ref.watch(subscriptionServiceProvider);
+      return service.currentTier.hasFeatureAccess(featureId);
+    },
+  );
 });
 
 // Subscription actions notifier
@@ -84,19 +96,6 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> purchasePremiumPlus({bool isYearly = false}) async {
-    state = const AsyncValue.loading();
-    try {
-      final success = await _subscriptionService.purchasePremiumPlus(isYearly: isYearly);
-      if (success) {
-        state = const AsyncValue.data(null);
-      } else {
-        state = AsyncValue.error('Purchase was cancelled or failed', StackTrace.current);
-      }
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-    }
-  }
 
   Future<void> restorePurchases() async {
     state = const AsyncValue.loading();
@@ -118,3 +117,18 @@ final subscriptionActionsProvider = StateNotifierProvider<SubscriptionActionsNot
   final subscriptionService = ref.watch(subscriptionServiceProvider);
   return SubscriptionActionsNotifier(subscriptionService);
 });
+
+// Hosted paywall provider (null if unavailable)
+final hostedPaywallProvider = FutureProvider<Map<String, dynamic>?>(
+  (ref) async {
+    final service = ref.read(subscriptionServiceProvider);
+    if (!service.isInitialized) {
+      try {
+        await service.initialize();
+      } catch (_) {
+        return null; // fallback silently
+      }
+    }
+    return HostedPaywallService.instance.getHostedPaywall();
+  },
+);

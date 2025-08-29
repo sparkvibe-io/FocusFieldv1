@@ -5,6 +5,9 @@ class AppConstants {
   
   // Silence detection settings
   static const double defaultDecibelThreshold = 38.0; // dB
+  static const double decibelMin = 20.0; // global lower bound
+  static const double decibelMax = 80.0; // expanded upper bound (was 60)
+  static const double highThresholdWarning = 70.0; // caution threshold
   static const int silenceDurationSeconds = 60; // 1 minute (default)
   static const int sampleIntervalMs = 200; // Sample every 200ms (system constant)
   
@@ -36,18 +39,24 @@ class AppConstants {
   );
   
   // Product IDs (these can be public)
-  static const String premiumMonthlyProductId = 'premium_monthly_199';
-  static const String premiumYearlyProductId = 'premium_yearly_999';
-  static const String premiumPlusMonthlyProductId = 'premium_plus_monthly_399';
-  static const String premiumPlusYearlyProductId = 'premium_plus_yearly_2499';
+  // Product identifiers (current live offering). NOTE: Colons in product IDs may not be accepted by all stores;
+  // verify with App Store / Play Console. If invalid, prefer dots/underscores (e.g. premium.tier.monthly).
+  static const String premiumMonthlyProductId = 'premium.tier:monthly';
+  static const String premiumYearlyProductId = 'premium.tier:yearly';
+  // Premium Plus postponed (future expansion) – identifiers removed for now.
+
+  // RevenueCat Hosted Paywall Identifiers
+  // The currently published paywall configured in the RevenueCat dashboard.
+  static const String hostedPaywallIdentifier = 'Premium_Current_25';
+  // Cache duration for hosted paywall (in minutes) before refetching.
+  static const int hostedPaywallCacheMinutes = 30;
   
   // Feature limits
   static const int freeSessionMaxMinutes = 5;
-  static const int premiumSessionMaxMinutes = 60;
-  static const int premiumPlusSessionMaxMinutes = 120;
+  static const int premiumSessionMaxMinutes = 60; // legacy cap (kept for backward compatibility only)
+  // Premium actual limit now 120 minutes (see SubscriptionTier.premium.maxSessionMinutes)
   static const int freeHistoryDays = 7;
   static const int premiumHistoryDays = 90;
-  static const int premiumPlusHistoryDays = 365;
   
   // Storage keys
   static const String totalPointsKey = 'total_points';
@@ -87,15 +96,17 @@ class AppConstants {
   static const String upgradeTitle = 'Upgrade to Premium';
   static const String premiumFeaturesTitle = 'Premium Features';
   static const String premiumDescription = 'Unlock extended sessions, advanced analytics, and data export';
-  static const String premiumPlusDescription = 'Get AI insights, cloud sync, multi-environments, and social features';
   static const String subscribeButtonText = 'Subscribe Now';
   static const String restorePurchasesText = 'Restore Purchases';
   static const String premiumRequiredMessage = 'This feature requires Premium subscription';
-  static const String premiumPlusRequiredMessage = 'This feature requires Premium Plus subscription';
   static const String subscriptionSuccessMessage = 'Successfully subscribed! Enjoy your premium features';
   static const String subscriptionErrorMessage = 'Unable to process subscription. Please try again';
   static const String restoreSuccessMessage = 'Purchases restored successfully';
   static const String restoreErrorMessage = 'No purchases found to restore';
+
+  // Legal & Compliance URLs (update these to real hosted policy pages before production release)
+  static const String privacyPolicyUrl = 'https://sparkvibe.io/privacy';
+  static const String termsOfServiceUrl = 'https://sparkvibe.io/terms';
   
   // Environment Detection Helpers
   static bool get isProduction => !isDevelopmentMode;

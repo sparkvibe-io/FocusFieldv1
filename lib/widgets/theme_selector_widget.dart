@@ -87,108 +87,37 @@ class ThemeSelectorWidget extends ConsumerWidget {
               isPremium: true,
               hasPremiumAccess: hasPremiumAccess,
             ),
+            _buildCompactThemeOption(
+              context,
+              AppThemeMode.solarSunrise,
+              currentTheme,
+              themeNotifier,
+              isPremium: true,
+              hasPremiumAccess: hasPremiumAccess,
+            ),
+            _buildCompactThemeOption(
+              context,
+              AppThemeMode.midnightTeal,
+              currentTheme,
+              themeNotifier,
+              isPremium: true,
+              hasPremiumAccess: hasPremiumAccess,
+            ),
+            _buildCompactThemeOption(
+              context,
+              AppThemeMode.cyberNeon,
+              currentTheme,
+              themeNotifier,
+              isPremium: true,
+              hasPremiumAccess: hasPremiumAccess,
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildThemeOption(
-    BuildContext context,
-    AppThemeMode themeMode,
-    AppThemeMode currentTheme,
-    ThemeNotifier themeNotifier,
-    {required bool isPremium, required bool hasPremiumAccess}
-  ) {
-    final isSelected = currentTheme == themeMode;
-    final isAccessible = !isPremium || hasPremiumAccess;
-    
-    return GestureDetector(
-      onTap: () {
-        if (isAccessible) {
-          themeNotifier.setTheme(themeMode);
-        } else {
-          showPaywall(
-            context,
-            featureDescription: 'Unlock beautiful premium themes with your subscription',
-          );
-        }
-      },
-      child: Container(
-        width: 80,
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected 
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outline.withOpacity(0.3),
-            width: isSelected ? 3 : 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Theme color preview
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: themeMode.primaryColor,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: themeMode.primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                themeMode.icon,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            
-            const SizedBox(height: 8),
-            
-            // Theme name
-            Text(
-              themeMode.displayName,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isAccessible 
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            
-            // Premium lock icon
-            if (isPremium && !hasPremiumAccess) ...[
-              const SizedBox(height: 2),
-              Icon(
-                Icons.lock,
-                size: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
-            ],
-            
-            // Selection indicator
-            if (isSelected) ...[
-              const SizedBox(height: 2),
-              Icon(
-                Icons.check_circle,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
+  // (Old expanded theme option widget removed – compact variant in use)
 
   Widget _buildCompactThemeOption(
     BuildContext context,

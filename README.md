@@ -1,46 +1,43 @@
 # Silence Score
 
-A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, and advanced customization options.
+A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
 ## 🌟 Features
 
 ### Core Functionality
-- **Real-Time Silence Detection**: Advanced ambient noise monitoring using device microphone
-- **Interactive Progress Ring**: Large, always-visible countdown control with MM:SS timer and session progress
-- **Real-Time Noise Chart**: Live decibel visualization with threshold indicators and smoothing algorithms
-- **Smart Point System**: Earn 1 point per minute of successful silence sessions
-- **Streak Analytics**: Track daily streaks, best performances, and comprehensive session history
-- **Achievement System**: Visual feedback with confetti celebrations for successful sessions
+- **Real-Time Silence Detection**: Ambient noise monitoring using device microphone
+- **Interactive Session Progress Ring**: Large countdown control with MM:SS timer
+- **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing
+- **Smart Point System**: Earn 1 point per minute of successful quiet time
+- **Streak Analytics**: Track daily streaks, best performances, and session history
+- **Noise Floor Calibration**: Quick ambient baseline measurement (clamped 20–80 dB)
+- **Achievement System**: Visual feedback with confetti celebrations
 
 ### Advanced Analytics
-- **Live Noise Visualization**: Real-time decibel level chart with ambient monitoring
-- **Session History Graph**: Visual representation of your silence journey over time
-- **Compact Statistics Display**: Streamlined overview of total points, streaks, and session counts
-- **Detailed Session Records**: Complete history with timestamps, noise levels, and completion status
-- **Performance Metrics**: Success rates, average scores, and progress tracking
+- **Weekly Trends & Moving Average**: Recent performance insight
+- **Session History Graph**: Visual representation of quiet progress
+- **Compact Statistics Display**: Points, streaks, sessions
+- **Performance Metrics**: Success rates & averages
 
 ### Customization & Settings
-- **Tabbed Settings Interface**: Organized Basic, Advanced, and About sections
-- **Adjustable Threshold**: Fine-tune decibel sensitivity (20-60 dB) for your environment
-- **Session Duration**: Customizable session length (1-60 minutes) with minute-based selection
-- **Advanced Theme System**: System, Light, and Dark modes with quick toggle
-- **Real-Time Configuration**: Settings apply immediately without restart
-- **Visual Feedback**: Intuitive sliders with live value indicators
+- **Tabbed Settings Interface**: Basic, Advanced, About
+- **Adjustable Decibel Threshold**: 20–80 dB (default 38) with high-threshold warning ≥70 dB
+- **Session Duration**: Free up to 5 minutes; Premium up to 120 minutes
+- **Calibration Dialog**: Previous vs new threshold, ambient warnings
+- **Theme System**: System / Light / Dark
+- **Accessibility Settings**: High contrast, large text, vibration feedback
 
 ### User Experience
-- **Interactive Progress Control**: Large, always-visible progress ring serves as main session control
-- **Smooth Visual Updates**: Optimized rendering with noise smoothing algorithms
-- **Confetti Celebrations**: Animated rewards for successful silence sessions
-- **Intelligent Permission Management**: Clear microphone access guidance with settings shortcuts
-- **Compact Design**: Optimized layout fitting all controls on one screen
-- **Accessibility Features**: High contrast support and scalable typography
+- **Progress Ring Control**: Start/stop & visual completion
+- **Smooth Visual Updates**: Smoothing filters reduce jitter
+- **Confetti Celebrations**: Successful session reward
+- **Permission Guidance**: Microphone access onboarding
+- **Compact Layout**: Key controls on one screen
 
 ### Data & Privacy
-- **Local Storage**: All data stored securely on your device
-- **No Audio Recording**: Only measures decibel levels, no audio is stored
-- **Data Export**: Export session history and statistics (Premium feature)
-- **Cloud Sync**: Cross-device synchronization (Premium Plus - Phase 2)
-- **Backup/Restore**: Safeguard your progress with backup functionality (Premium Plus - Phase 2)
+- **Local Storage Only**: No audio recorded or transmitted
+- **Data Export (Premium)**: CSV & PDF reports
+- **Reset Option**: Wipes all local settings & history
 
 ## 📱 Screenshots
 
@@ -168,20 +165,18 @@ The app requires microphone access to measure ambient noise levels:
 ## ⚙️ Configuration
 
 ### Default Settings
-- **Decibel Threshold**: 38 dB (quiet library level)
-- **Session Duration**: 60 seconds (configurable 1-60 minutes)
-- **Sample Rate**: 200ms intervals for real-time monitoring (system constant)
-- **Points System**: 1 point per minute of successful session
-- **Chart Smoothing**: Exponential moving average for stable visual feedback
-- **Theme**: System default (auto-switching based on device settings)
+- **Decibel Threshold**: 38 dB (adjustable 20–80)
+- **Session Duration (Free Default)**: 5 minutes (Premium configurable 1–120 minutes)
+- **Sample Interval**: 200ms (system constant)
+- **Points System**: 1 point per quiet minute
+- **Chart Smoothing**: Exponential moving average
+- **Theme**: System default
 
 ### Advanced Configuration
-- **Noise Smoothing**: Intelligent filtering to reduce visual noise and blinking
-- **Session Duration**: Minute-based selection from 1 to 60 minutes
-- **Threshold Sensitivity**: Fine-grained control over silence detection
-- **Ambient Monitoring**: Background noise tracking when not in active session
-- **Theme Cycling**: Quick switching between System, Light, and Dark modes
-- **Performance Optimization**: Reduced update frequencies for better battery life
+- **Calibration**: Ambient baseline sets initial threshold
+- **High Threshold Warning**: Shown at ≥70 dB to discourage overly permissive settings
+- **Export Formats**: CSV raw data, PDF formatted report (Premium)
+- **Accessibility**: High contrast mode & scalable text
 
 ## 🛠️ Development
 
@@ -245,6 +240,11 @@ flutter analyze --no-fatal-infos
 ```
 
 ## 🎯 Advanced Features
+
+### Calibration & Threshold Intelligence
+- **Noise Floor Calibration**: ~5s ambient measure; clamps extremes
+- **High Ambient Warning**: Alerts on ≥70 dB baseline
+- **Manual Fine-Tuning**: Slider always available post-calibration
 
 ### Real-Time Monitoring
 - **Ambient Noise Tracking**: Continuous background monitoring when not in session
@@ -354,19 +354,19 @@ See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 ## 🗺️ Roadmap
 
 ### Phase 1 Features (Premium Tier - $1.99/month)
-- [x] Extended sessions (up to 60 minutes)
-- [x] Advanced analytics and trends
-- [x] Data export functionality (CSV/PDF)
-- [x] Premium themes and customization
+- [x] Extended sessions (up to 120 minutes)
+- [x] Advanced analytics & weekly trends
+- [x] Data export (CSV/PDF)
+- [x] Premium themes
 - [x] Priority support
+- [x] Calibration dialog & high-threshold warnings
 
-### Phase 2 Features (Premium Plus Tier - $3.99/month)
-- [ ] Cloud synchronization and backup
-- [ ] AI-powered insights and recommendations
-- [ ] Multi-environment profiles (Home, Office, Travel)
-- [ ] Social features and community challenges
-- [ ] Team collaboration features
-- [ ] Advanced customization options
+### Phase 2 Features (Planned)
+- [ ] Cloud synchronization & backup
+- [ ] AI-powered insights
+- [ ] Multi-environment profiles
+- [ ] Social/community features
+- [ ] Team collaboration
 
 ### Future Enhancements
 - [ ] Sound visualization with waveform display
@@ -465,48 +465,55 @@ When reporting issues, please include:
 
 ## 💰 Monetization & Subscription System
 
-### Implementation Status: ✅ **READY FOR LAUNCH**
+### Status: ⚙️ Implemented (Docs & Dynamic Pricing Update In Progress)
 
-SilenceScore features a complete subscription monetization system:
+SilenceScore includes a RevenueCat-based subscription system with dynamic product pricing (fetched from live store offerings when available) and a mock mode for local development.
 
-#### ✅ **Fully Implemented Infrastructure**
-- **RevenueCat Integration**: Complete IAP system with purchase flows
-- **Three-Tier System**: Free, Premium ($1.99/month), Premium Plus ($3.99/month)
-- **Feature Gating**: Premium features properly restricted with upgrade prompts
-- **Professional Paywall**: Beautiful subscription purchase interface
-- **State Management**: Riverpod providers for subscription state
-- **Mock Mode**: Development testing without real payments
+#### Core Infrastructure
+- RevenueCat integration via `purchases_flutter`
+- Tiered access: Free, Premium, Premium Plus (future expansion)
+- Feature gating with `FeatureGate` + Riverpod providers
+- Custom paywall (`PaywallWidget`) currently showing dynamic prices when offerings load; will evolve to remote-config / A/B capable layout
+- Mock mode (`ENABLE_MOCK_SUBSCRIPTIONS=true`) for development without store connections
 
-#### ✅ **Current Configuration**
-- **Package ID**: `io.sparkvibe.silencescore` (iOS & Android)
-- **RevenueCat API Key**: Configured and verified ✅
-- **Development Mode**: Mock subscriptions enabled for testing
-- **Build Verification**: Android APK builds successfully with full monetization
+#### Product Identifiers (Current)
+```
+premium.tier:monthly
+premium.tier:yearly
+```
+(Verify colon usage is accepted by both stores; if not, migrate to `premium.tier.monthly` & `premium.tier.yearly`.)
 
-#### 📋 **Next Steps for Launch**
-1. **App Store Connect**: Configure subscription products (Premium & Premium Plus)
-2. **Google Play Console**: Configure subscription products
-3. **Production Switch**: Set `ENABLE_MOCK_SUBSCRIPTIONS=false` for live payments
+#### Pricing (Live via RevenueCat)
+- Prices and localized currency are pulled dynamically from RevenueCat Paywall/Offerings.
+- Legacy fallback values (1.99 / 19.99) remain in code only if offerings fail to load.
 
-#### 💎 **Premium Features (Phase 1 - Ready)**
-- Extended sessions (60 minutes vs 5 minutes free)
-- Advanced analytics and trend visualization
-- Data export functionality (CSV/PDF)
-- Premium themes and customization
-- Priority support system
+#### Key Environment Flags
+- `REVENUECAT_API_KEY` (required for production builds)
+- `IS_DEVELOPMENT` (default true locally)
+- `ENABLE_MOCK_SUBSCRIPTIONS` (set false for real purchases)
 
-#### 🚀 **Premium Plus Features (Phase 2 - Planned)**
-- Cloud synchronization and backup
-- AI-powered insights and recommendations
-- Multi-environment profiles
-- Social features and challenges
-- Team collaboration features
+#### Launch Readiness Checklist (Remaining)
+1. Add legal links (Privacy Policy, Terms) to paywall footer
+2. Confirm introductory offers / trials (if desired) configured in stores & RevenueCat
+3. Turn off mock mode in production build scripts
+4. QA sandbox purchases on iOS & internal testing on Android
+5. Add refund / manage subscription help link (store-specific deep link)
 
-### Revenue Strategy
-- **Target Markets**: US, Canada, UK, Australia
-- **Year 1 Goal**: 15,000 downloads, 8% Premium conversion ($28,656 ARR)
-- **Launch Timeline**: 6 weeks to live app stores
-- **Current Status**: Week 1 complete, ahead of schedule
+#### Premium (Phase 1 Active)
+- Extended sessions (60m vs 5m free)
+- Advanced analytics
+- Data export (CSV/PDF)
+- Premium themes
+- Priority support
+
+#### Future Higher Tier (Deferred)
+- Cloud sync, AI insights, multi-environments, social features (not active yet)
+
+#### Notes
+- Migration to the official RevenueCat Paywall (for localization & trials) is planned; current widget is an interim custom layout showing dynamic prices.
+- Static numeric pricing in `SubscriptionTier` remains only as a fallback.
+
+For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to reflect the above identifiers and pricing alignment).
 
 ## 🔧 Project Status & Development Progress
 
@@ -549,4 +556,4 @@ SilenceScore features a complete subscription monetization system:
 5. **Launch Marketing** (Week 4-6): Execute go-to-market strategy
 
 ## Last Updated
-July 27, 2025 - Monetization infrastructure complete, ready for platform configuration 
+August 29, 2025 - Calibration, high-threshold warning, accessibility settings, and documentation alignment completed.

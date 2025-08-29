@@ -151,14 +151,14 @@ flutter clean && flutter pub get
 
 ### Silence Detection
 - Uses `noise_meter` package to monitor ambient decibel levels
-- Default threshold: 38 dB (configurable 20-60 dB)
+- Default threshold: 38 dB (configurable 20-80 dB)
 - Real-time monitoring at 200ms intervals during sessions
 - Ambient monitoring at 1Hz when not in active session
 - Exponential moving average for noise smoothing
 
 ### Point System
 - 1 point per minute of successful silence session
-- Sessions can be 1-60 minutes (configurable)
+- Sessions can be 1-120 minutes (configurable)
 - Daily streak tracking with best performance records
 - Achievement system with confetti celebrations
 

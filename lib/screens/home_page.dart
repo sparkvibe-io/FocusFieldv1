@@ -17,10 +17,10 @@ import 'package:silence_score/widgets/feature_gate.dart';
 import 'package:silence_score/widgets/error_boundary.dart';
 import 'package:silence_score/widgets/audio_safe_widget.dart';
 import 'package:silence_score/widgets/permission_dialogs.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/providers/accessibility_provider.dart';
 import 'package:silence_score/providers/notification_provider.dart';
 import 'package:silence_score/services/accessibility_service.dart';
+import 'package:silence_score/providers/subscription_provider.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -107,7 +107,8 @@ class HomePage extends HookConsumerWidget {
           ),
         ],
       ),
-      body: silenceDataAsyncValue.when(
+      body: _SubscriptionInitializer(
+        child: silenceDataAsyncValue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -124,18 +125,19 @@ class HomePage extends HookConsumerWidget {
             ],
           ),
         ),
-        data: (silenceData) {
-          return _buildMainContent(
-            context,
-            silenceData,
-            silenceState,
-            silenceStateNotifier,
-            silenceDataNotifier,
-            decibelThreshold,
-            confettiController,
-            ref,
-          );
-        },
+          data: (silenceData) {
+            return _buildMainContent(
+              context,
+              silenceData,
+              silenceState,
+              silenceStateNotifier,
+              silenceDataNotifier,
+              decibelThreshold,
+              confettiController,
+              ref,
+            );
+          },
+        ),
       ),
     );
   }
@@ -523,4 +525,37 @@ class HomePage extends HookConsumerWidget {
       ),
     );
   }
+}
+
+// Ensures the SubscriptionService is initialized exactly once early in the widget tree.
+class _SubscriptionInitializer extends ConsumerStatefulWidget {
+  const _SubscriptionInitializer({required this.child});
+  final Widget child;
+
+  @override
+  ConsumerState<_SubscriptionInitializer> createState() => _SubscriptionInitializerState();
+}
+
+class _SubscriptionInitializerState extends ConsumerState<_SubscriptionInitializer> {
+  bool _started = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    if (_started) return;
+    _started = true;
+    try {
+      await ref.read(subscriptionServiceProvider).initialize();
+    } catch (e) {
+      // ignore: avoid_print
+      print('Subscription initialization failed: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

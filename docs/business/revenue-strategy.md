@@ -38,7 +38,7 @@ SilenceScore employs a diversified revenue strategy combining subscription-based
 **Target Audience**: Productivity professionals, remote workers, students
 
 **Premium Features**:
-- **Extended Sessions**: Up to 60-minute sessions
+- **Extended Sessions**: Up to 120-minute sessions
 - **Advanced Analytics**: Detailed performance graphs, weekly/monthly trends
 - **Data Export**: CSV/PDF reports for productivity tracking
 - **Premium Customization**: Exclusive themes, custom notifications
@@ -191,7 +191,7 @@ dependencies:
 
 #### Month 3-4: Premium Feature Development
 **Key Deliverables**:
-- [ ] Extended session duration (60 minutes)
+- [ ] Extended session duration (120 minutes)
 - [ ] Advanced analytics dashboard
 - [ ] Data export functionality (CSV/PDF)
 - [ ] Premium themes and customization

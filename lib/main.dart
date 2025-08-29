@@ -6,12 +6,24 @@ import 'package:silence_score/providers/accessibility_provider.dart';
 import 'package:silence_score/screens/splash_screen.dart';
 import 'package:silence_score/theme/app_theme.dart';
 import 'package:silence_score/services/navigation_service.dart';
+import 'package:silence_score/constants/app_constants.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Optimize for performance
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // Proactively configure RevenueCat before any widgets/providers request offerings
+  if (!AppConstants.enableMockSubscriptions && AppConstants.isValidRevenueCatKey) {
+    try {
+      final config = PurchasesConfiguration(AppConstants.revenueCatApiKey);
+      await Purchases.configure(config);
+    } catch (e) {
+      // ignore: avoid_print
+      print('Early RevenueCat configure failed: $e');
+    }
+  }
   
   runApp(const ProviderScope(child: SilenceScoreApp()));
 }

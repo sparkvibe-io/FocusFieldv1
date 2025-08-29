@@ -36,11 +36,13 @@ When you first open SilenceScore, you'll be asked to grant microphone permission
 
 ### Initial Calibration
 
-The app will automatically calibrate to your environment:
+Use the Noise Calibration tool (available in Settings > Advanced) to establish a baseline:
+1. Open Settings > Advanced > Noise Calibration
+2. Stay still & quiet for ~5 seconds
+3. The app sets an initial decibel threshold based on ambient noise
+4. If ambient noise is high (≥ 70 dB) you’ll see a warning suggesting a quieter space
 
-1. **Stay quiet** for 10-15 seconds during initial setup
-2. **Normal environment sounds** will be used to establish baseline
-3. **Threshold adjustments** can be made later in settings
+You can recalibrate anytime. Calibration values are clamped to the supported range (20–80 dB).
 
 ## Main Interface
 
@@ -48,237 +50,170 @@ The app will automatically calibrate to your environment:
 
 The main screen displays:
 
-#### 1. Score Ring
-- **Large circular indicator** showing your current silence score (0-100)
-- **Color coding**: 
-  - Green (90-100): Excellent silence
-  - Blue (70-89): Good silence  
-  - Yellow (50-69): Fair noise levels
-  - Red (0-49): Noisy environment
+#### 1. Session Progress Ring
+- **Large circular countdown** showing remaining session time (MM:SS)
+- Tap to start or stop the current session
+- Outer ring progress reflects percentage of session completed
 
 #### 2. Real-Time Chart
-- **Live noise level graph** showing recent measurements
-- **Time axis**: Last 60 seconds of data
-- **Decibel scale**: Shows actual noise levels in dB
+- **Live decibel graph** showing recent measurements
+- Includes current threshold indicator
+- Smoothed for readability (exponential moving average)
 
 #### 3. Current Status
 - **Noise Level**: Current decibel reading
-- **Duration**: How long current session has been running
-- **Silent/Noisy**: Binary status indicator
+- **Elapsed / Remaining** session time
+- **State**: Running / Stopped indicator
 
-#### 4. Control Buttons
-- **Start/Stop**: Begin or end monitoring session
-- **Settings**: Access configuration options
-- **History**: View past sessions
+#### 4. Control / Access
+- **Tap ring** to start/stop
+- **Settings**: Adjust decibel threshold, duration, advanced options
+- **History / Analytics**: View recent sessions and weekly trends
 
 ## Using SilenceScore
 
 ### Starting a Session
 
-1. **Tap the "Start" button** on the main screen
-2. **Position your device** in the area you want to monitor
-3. **Keep the app open** for continuous monitoring (or enable background mode)
+1. Tap the progress ring (or Start button if shown)
+2. Device can stay on a stable surface nearby
+3. Track progress visually; session auto-completes at 100%
 
-### Understanding Your Score
+### Understanding Silence Tracking
 
-Your silence score is calculated based on:
+A session counts “quiet time” when ambient noise stays below your configured decibel threshold.
 
-#### Scoring Criteria
-- **Noise Level**: Lower decibel readings = higher scores
-- **Consistency**: Steady quiet environments score better than fluctuating ones
-- **Duration**: Longer periods of silence improve overall score
-
-#### Score Ranges
-- **90-100**: Excellent - Very quiet environment, ideal for concentration
-- **70-89**: Good - Quiet with occasional minor sounds
-- **50-69**: Fair - Moderate noise levels, suitable for casual activities
-- **0-49**: Poor - Noisy environment, may impact concentration
+#### Key Factors
+- **Threshold**: Lower threshold = more sensitive to noise
+- **Consistency**: Fewer spikes above threshold improves uninterrupted quiet stretches
+- **Duration**: Longer sessions help build streaks & points
 
 ### Real-Time Feedback
 
 #### Visual Indicators
-- **Progress ring** fills and changes color based on current score
-- **Chart line** shows immediate noise level changes
-- **Status text** provides quick assessment
-
-#### Audio Feedback (Optional)
-- **Gentle chimes** when entering silent periods
-- **Subtle alerts** when noise levels increase significantly
+- **Ring Progress**: Session completion percentage
+- **Chart Line**: Smoothed decibel readings
+- **Threshold Marker**: Context for what counts as noise
+- **Warning Banner (Settings)**: Displays when threshold is set very high (≥ 70 dB)
 
 ### Stopping a Session
 
-1. **Tap "Stop"** when you're finished monitoring
-2. **Session data** is automatically saved
-3. **Summary** shows your session statistics
+1. Tap the ring again to stop early
+2. Completed or stopped sessions record duration & quiet performance (points, streak logic)
+3. Refresh analytics/views to see updated cumulative stats
 
 ## Settings and Customization
 
 ### Accessing Settings
 
-1. **Tap the gear icon** on the main screen
-2. **Scroll through options** to find desired settings
-3. **Changes save automatically**
+1. Tap the gear icon (or menu action)
+2. Use tabs: **Basic**, **Advanced**, **About**
+3. Changes apply instantly; no restart needed
 
 ### Key Settings
 
-#### Sensitivity Settings
-- **Silence Threshold**: Adjust what noise level counts as "silent"
-  - Default: -40 dB
-  - Range: -60 dB (very sensitive) to -20 dB (less sensitive)
-- **Measurement Frequency**: How often readings are taken
-  - Options: Every 100ms, 500ms, or 1 second
+#### Decibel Threshold
+- **Range**: 20–80 dB
+- **Default**: 38 dB
+- **Purpose**: Maximum ambient noise level considered “quiet”
+- **Guidance**:
+  - 20–30 dB: Very sensitive (library / night)
+  - 31–45 dB: Typical quiet workspace
+  - 46–60+ dB: Tolerates more background hum
+- Setting ≥ 70 dB triggers a high-threshold warning (may ignore meaningful noise)
+- Use Calibration first, then fine-tune manually if needed
 
-#### Visual Preferences
-- **Theme**: Light or dark mode
-- **Color Scheme**: Customize ring and chart colors
-- **Display Units**: Choose dB scale or simplified 1-10 scale
+#### Session Duration
+- **Free Tier**: Up to 5 minutes
+- **Premium**: Up to 120 minutes
+- Adjustable in whole minutes via slider
+
+#### Theme
+- System / Light / Dark modes
+- Applies immediately
+
+#### Accessibility
+Available (Advanced > Accessibility):
+- **Vibration Feedback**: Haptic indicators for key events (if supported)
+- **Voice Announcements**: (Future expansion placeholder – may not be active yet)
+- **High Contrast Mode**: Increased contrast for text & key UI regions
+- **Large Text**: Scales typography for readability
 
 #### Notifications
-- **Score Alerts**: Get notified when your score reaches certain thresholds
-- **Session Reminders**: Alerts to start monitoring sessions
-- **Background Monitoring**: Allow monitoring when app is not active
+- Reminders & milestone celebration (if enabled in Notification settings sheet)
 
-#### Data Management
-- **Auto-Save**: Automatically save sessions (recommended)
-- **Export Data**: Save session data as CSV files
-- **Clear History**: Remove old session data
+#### Data & Export (Premium)
+- Export session data as **CSV** or **PDF** report
+- Includes summary statistics & historical overview
 
-### Advanced Settings
+### Calibration (Advanced)
+- Opens a dialog performing a ~5 second ambient measurement
+- Shows previous vs new threshold when available
+- Clamps extreme values to 20–80 dB range
+- Warns on high ambient baseline (≥ 70 dB)
+- Indicates if no significant change detected
 
-#### Calibration
-- **Manual Calibration**: Set custom baseline for your environment
-- **Auto-Calibration**: Let the app learn your typical noise levels
-- **Reset Calibration**: Return to default settings
+### Reset
+- Full reset clears settings & historical data (confirmation required)
 
-#### Privacy
-- **Data Retention**: How long to keep session history
-- **Analytics**: Share anonymous usage data (optional)
-- **Location**: Include location data with sessions (optional)
+## Session History & Analytics
 
-## Session History
+### Recent Sessions
+- Shows last sessions (rolling window) with time & high-level result
 
-### Viewing Past Sessions
+### Weekly Trends
+- Aggregated points / quiet performance over past week
+- Smoothed moving average for readability
 
-1. **Tap "History"** on the main screen
-2. **Browse sessions** by date
-3. **Tap any session** to view detailed statistics
+### Export (Premium)
+- Choose CSV for raw analysis or PDF for formatted report
 
-### Session Details
-
-Each session shows:
-
-#### Summary Statistics
-- **Duration**: Total session length
-- **Average Score**: Mean silence score for the session
-- **Peak Quiet**: Longest continuous silent period
-- **Noise Events**: Number of significant noise interruptions
-
-#### Detailed Graph
-- **Full session timeline** with score progression
-- **Noise level overlay** showing actual decibel measurements
-- **Event markers** highlighting significant changes
-
-#### Session Insights
-- **Best Periods**: Times when your environment was quietest
-- **Problematic Times**: Periods with consistent noise issues
-- **Trends**: How your scores change throughout the session
-
-### Comparing Sessions
-
-#### Weekly View
-- **7-day overview** of all sessions
-- **Average scores** for each day
-- **Trend analysis** showing improvement or decline
-
-#### Monthly Summary
-- **Month-at-a-glance** statistics
-- **Goal tracking** if you've set score targets
-- **Environmental patterns** based on time of day
-
-## Tips for Better Scores
+## Tips for Better Quiet Time
 
 ### Environment Optimization
+- Close windows & isolate mechanical hum sources
+- Use soft furnishings to absorb reflections
+- Track time-of-day patterns via weekly trends
 
-#### Physical Setup
-- **Close windows** during high-traffic times
-- **Use soft furnishings** to absorb sound (curtains, carpets, cushions)
-- **Position away from noise sources** (appliances, HVAC vents)
-- **Consider white noise machines** for consistent background sound
+### Device Placement
+- Keep device stationary and unobstructed
+- Consistent location improves comparative analysis
 
-#### Timing Strategies
-- **Monitor during off-peak hours** when neighborhood is quieter
-- **Track patterns** to identify your quietest times
-- **Plan important work** during historically quiet periods
-
-### App Usage Best Practices
-
-#### Device Placement
-- **Stable surface**: Avoid handling device during monitoring
-- **Central location**: Place where you'll be working/studying
-- **Consistent positioning**: Use same spot for comparable readings
-
-#### Session Management
-- **Regular monitoring**: Daily sessions provide better insights
-- **Appropriate duration**: 30 minutes to 2 hours for meaningful data
-- **Note-taking**: Record what causes noise spikes for future reference
+### Threshold Strategy
+- Start with Calibration
+- Lower threshold gradually if sessions rarely complete
+- Raise threshold only if minor background hum causes excessive noise events
 
 ## Troubleshooting
 
-### Common Issues
+### No Decibel Readings
+1. Confirm microphone permission in system settings
+2. Force close & reopen the app
+3. Test device microphone with a voice memo
 
-#### App Not Detecting Sound
-1. **Check permissions**: Ensure microphone access is granted
-2. **Restart app**: Close and reopen SilenceScore
-3. **Test microphone**: Try recording a voice memo to verify microphone works
-4. **Check volume**: Ensure device volume is adequate (doesn't affect measurement)
+### High Readings in Quiet Room
+1. Re-run Calibration
+2. Ensure phone isn’t touching vibrating surfaces
+3. Clean microphone port gently
+4. Lower threshold a few dB and observe
 
-#### Inconsistent Readings
-1. **Recalibrate**: Go to Settings > Calibration > Reset
-2. **Stable placement**: Ensure device isn't moving during measurement
-3. **Clean microphone**: Gently clean microphone opening
-4. **Update app**: Check for app updates in your app store
+### Sessions End Too Quickly
+1. Threshold might be too low for environment
+2. Re-calibrate and compare difference
+3. Reduce transient noises (fans, keyboards)
 
-#### Battery Drain
-1. **Background monitoring**: Disable if not needed
-2. **Reduce frequency**: Lower measurement frequency in settings
-3. **Close other apps**: Free up system resources
-4. **Enable low power mode**: Use device's battery saving features
+### Battery Concerns
+- Continuous monitoring uses modest resources (optimized sampling)
+- Avoid unnecessary very long sessions on low battery
 
-#### Low Scores Despite Quiet Environment
-1. **Adjust threshold**: Lower the silence threshold in settings
-2. **Check for hidden noise sources**: Fans, electronics, appliances
-3. **Microphone sensitivity**: Some devices are more sensitive than others
-4. **Environmental factors**: Air conditioning, heating, external noise
+### Data Export Issues (Premium)
+- Ensure at least one recorded session
+- Retry if share sheet was dismissed prematurely
 
-### Getting Support
-
-#### In-App Help
-- **Settings > Help**: Access built-in troubleshooting guide
-- **Settings > About**: View app version and system information
-
-#### Contact Support
-- **Email**: support@sparkvibe.com
-- **Include**: Device model, app version, and description of issue
-- **Response time**: Typically within 24 hours
-
-### Privacy and Data
-
-#### What We Collect
-- **Noise level measurements** (in decibels only)
-- **Session timing** and duration
-- **App usage statistics** (if analytics enabled)
-
-#### What We Don't Collect
-- **Audio recordings**: No sound is ever recorded or stored
-- **Personal conversations**: Only noise levels are measured
-- **Location data**: Unless explicitly enabled by user
-
-#### Data Storage
-- **Local storage**: All session data stored on your device
-- **Export options**: You control your data export
-- **Deletion**: Uninstalling app removes all local data
+## Privacy & Data
+- Only decibel numeric values are processed; no audio stored
+- All data remains on-device unless you export
+- Reset removes all stored history
 
 ---
-
-**Last Updated**: July 25, 2025  
+**Last Updated**: August 29, 2025  
 **Version**: 1.0.0

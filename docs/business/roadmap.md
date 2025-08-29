@@ -6,18 +6,23 @@
 
 #### Core Monetization Features
 - **In-App Purchases Integration**
-  - [ ] Flutter `purchases_flutter` plugin setup
-  - [ ] App Store Connect and Google Play Console configuration
-  - [ ] Subscription management and restoration
-  - [ ] Paywall UI design and implementation
+  - [x] Flutter `purchases_flutter` plugin setup
+  - [x] App Store Connect and Google Play Console configuration (initial, final polish pending)
+  - [x] Subscription management and restoration
+  - [x] Paywall UI design and implementation (iteration 1)
   - [ ] Free trial period implementation (7 days)
 
 - **Premium Features Development**
-  - [ ] Extended session duration (60 minutes)
-  - [ ] Advanced analytics dashboard
+  - [x] Extended session duration (120 minutes)
+  - [x] Advanced analytics dashboard (weekly trends + compact stats)
   - [ ] Cloud sync infrastructure (Firebase/AWS)
-  - [ ] Data export functionality (CSV/PDF)
-  - [ ] Premium themes and customization options
+  - [x] Data export functionality (CSV/PDF)
+  - [x] Premium themes and customization options
+
+- **Calibration & Threshold Enhancements**
+  - [x] Noise floor calibration dialog
+  - [x] High-threshold (≥70 dB) warning
+  - [ ] Adaptive auto-adjust (future)
 
 - **Analytics & Optimization**
   - [ ] Firebase Analytics integration
@@ -45,7 +50,7 @@
 
 - **Advanced Analytics Platform**
   - [ ] Real-time noise level monitoring
-  - [ ] Historical trend analysis
+  - [ ] Historical trend analysis (extended beyond weekly)
   - [ ] Productivity correlation insights
   - [ ] Custom reporting engine
   - [ ] Data visualization improvements
@@ -62,7 +67,7 @@
 - [ ] Battery usage improvements
 - [ ] Offline mode capabilities
 - [ ] Enhanced notification system
-- [ ] Accessibility improvements
+- [ ] Accessibility improvements (expanded voice announcements)
 
 ### Q1 2026 (6-9 Months)
 

@@ -23,7 +23,9 @@ class FeatureGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasAccess = ref.watch(featureAccessProvider(featureId));
+  // Watching premiumAccessProvider ensures rebuild when tier changes
+  final _ = ref.watch(premiumAccessProvider);
+  final hasAccess = ref.watch(featureAccessProvider(featureId));
 
     if (hasAccess) {
       return child;
@@ -41,17 +43,7 @@ class FeatureGate extends ConsumerWidget {
   }
 
   Widget _buildPaywallPrompt(BuildContext context, WidgetRef ref) {
-    String message;
-    switch (requiredTier) {
-      case SubscriptionTier.premium:
-        message = 'Premium Feature';
-        break;
-      case SubscriptionTier.premiumPlus:
-        message = 'Premium Plus Feature';
-        break;
-      default:
-        message = 'Premium Feature';
-    }
+  String message = 'Premium Feature';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -130,7 +122,7 @@ class FeatureGate extends ConsumerWidget {
   String _getFeatureDescription(String featureId) {
     switch (featureId) {
       case 'extended_sessions':
-        return 'Sessions up to 60 minutes';
+  return 'Sessions up to 120 minutes';
       case 'advanced_analytics':
         return 'Detailed trends and insights';
       case 'cloud_sync':

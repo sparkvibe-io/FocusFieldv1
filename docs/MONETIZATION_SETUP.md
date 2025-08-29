@@ -13,28 +13,31 @@ This guide provides complete setup instructions for SilenceScore's subscription 
 ## Implementation Status
 
 ### Core Infrastructure
-- **Subscription Service** (`lib/services/subscription_service.dart`): RevenueCat integration with purchase flows
-- **Subscription Provider** (`lib/providers/subscription_provider.dart`): Riverpod state management
-- **Feature Gating** (`lib/widgets/feature_gate.dart`): Access control for premium features
-- **Paywall UI** (`lib/widgets/paywall_widget.dart`): Subscription purchase interface
-- **Subscription Tiers** (`lib/models/subscription_tier.dart`): Three-tier system (Free, Premium, Premium Plus)
-- **Centralized Config** (`lib/constants/app_constants.dart`): Single source of truth for all settings
+- **Subscription Service** (`lib/services/subscription_service.dart`)
+- **Subscription Provider** (`lib/providers/subscription_provider.dart`)
+- **Feature Gating** (`lib/widgets/feature_gate.dart`)
+- **Paywall UI** (`lib/widgets/paywall_widget.dart`)
+- **Subscription Tiers** (`lib/models/subscription_tier.dart`)
+- **Centralized Config** (`lib/constants/app_constants.dart`)
+- **Calibration & Threshold UX** (Premium enhancement context)
 
 ### Pricing Strategy
-- **Premium**: $1.99/month or $19.99/year
-- **Premium Plus**: $3.99/month or $39.99/year (Phase 2)
-- **Feature Limits**: Session history (20/unlimited), analytics depth, export capabilities
+- Premium (single tier): Dynamic (store-side) – reference baseline $1.99/month or $19.99/year
+- Localized price strings fetched from RevenueCat offerings / paywall
+- Static fallback only if offerings fail to load
 
 ### Phase 1 Focus (Premium Tier Only)
-- Extended sessions (up to 60 minutes)
-- Advanced analytics and trends
-- Data export functionality (CSV/PDF)
-- Premium themes and customization
+Implemented:
+- Extended sessions (up to 120 minutes)
+- Advanced analytics & weekly trends
+- Data export (CSV & PDF)
+- Premium themes & customization
 - Priority support
+- Calibration dialog & high-threshold warnings (available to all, but extended sessions + export remain premium)
 
 ### Build Status
-- ✅ iOS build successful
-- ✅ Android build successful (minSdkVersion updated to 23 for Firebase compatibility)
+- ✅ iOS build successful (sandbox purchase tests pending final store config)
+- ✅ Android build successful (dynamic pricing fallback stable)
 
 ## 🔧 Required Configuration Steps
 
@@ -48,12 +51,10 @@ This guide provides complete setup instructions for SilenceScore's subscription 
    - Android: `io.sparkvibe.silencescore`
 
 #### Configure Products
-Create the following subscription products in RevenueCat:
+Create the following subscription product identifiers (must match exactly across App Store Connect, Google Play Console, and RevenueCat):
 ```
-Premium Monthly: silence_score_premium_monthly
-Premium Yearly: silence_score_premium_yearly
-Premium Plus Monthly: silence_score_premium_plus_monthly
-Premium Plus Yearly: silence_score_premium_plus_yearly
+premium.tier:monthly  # Monthly (rename to premium.tier.monthly if stores reject colon)
+premium.tier:yearly   # Yearly (rename to premium.tier.yearly if needed)
 ```
 
 #### Update API Key
@@ -140,26 +141,23 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 The system automatically gates features based on subscription tier:
 
 ### Free Tier Limitations
-- Session history: Last 20 sessions only
+- Session length: **Up to 5 minutes**
+- 7-day rolling history
 - Basic analytics only
-- No export functionality
-- 5-minute session limit
+- No data export
 
-### Premium Tier ($1.99) - Phase 1
-- Unlimited session history
-- Advanced analytics and trends
-- Data export (CSV/PDF)
-- Extended sessions (60 minutes)
+### Premium Tier ($1.99 baseline)
+- Extended sessions up to 120 minutes
+- Weekly trends & advanced analytics
+- CSV & PDF export
 - Premium themes
 - Priority support
 
-### Premium Plus Tier ($3.99) - Phase 2
-- All Premium features
-- Cloud synchronization and backup
+### Deferred Higher Tier (Future)
+- Cloud synchronization & backup
 - AI-powered insights
 - Multi-environment profiles
-- Social features and challenges
-- Advanced customization options
+- Social & challenge features
 
 ### Usage Example
 ```dart
@@ -231,40 +229,19 @@ final canAccess = await checkFeatureAccessOrShowPaywall(
 - Google Play Console help center
 
 ## 📝 Next Development Priorities
-
-1. **Phase 1 Revenue System** (Priority 1)
-   - Configure RevenueCat API key
-   - Set up App Store/Play Console subscriptions
-   - Complete Premium tier features
-   - End-to-end testing
-
-2. **Phase 1 Premium Features** (Priority 2)
-   - Extended session implementation
-   - Advanced analytics dashboard
-   - Data export functionality (CSV/PDF)
-   - Premium themes and customization
-   - Priority support system
-
-3. **Phase 2 Planning** (Priority 3)
-   - Premium Plus tier architecture design
-   - Cloud sync infrastructure planning
-   - AI insights framework development
-   - Social features and multi-environment design
+1. Validate sandbox purchases (iOS) & internal testing (Android)
+2. Add legal links (Privacy/Terms) to paywall footer
+3. Store metadata & screenshots finalization
+4. Evaluate A/B paywall layout (post-launch)
 
 ---
-
-**Status**: 🟡 Ready for Configuration
-**Next Action**: Set up RevenueCat account and obtain API key
-**Estimated Setup Time**: 2-4 hours for complete configuration
-**Launch Ready**: After successful sandbox testing
-
-## Related Documents
-- [docs/business/phase1-launch-plan.md](docs/business/phase1-launch-plan.md) - Complete launch strategy
-- [docs/business/implementation-analysis.md](docs/business/implementation-analysis.md) - Technical implementation roadmap
-- [docs/business/revenue-strategy.md](docs/business/revenue-strategy.md) - Revenue model and pricing strategy
+**Status**: 🟡 Store configuration & compliance polishing  
+**Next Action**: Finalize product setup + legal links  
+**Estimated Remaining Effort**: ~2 hours (store config + QA)  
+**Launch Readiness**: Pending sandbox verification & legal footer additions
 
 ## Last Updated
-January 27, 2025
+August 29, 2025
 
 ---
 

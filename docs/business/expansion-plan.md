@@ -30,7 +30,7 @@ SilenceScore is positioned to become the leading silence measurement and product
 - ✅ Essential app functionality
 
 #### Premium Tier ($1.99/month | $9.99/year)
-- **Extended Sessions**: Up to 60 minutes
+- **Extended Sessions**: Up to 120 minutes
 - **Advanced Analytics**: 
   - Detailed performance graphs
   - Weekly and monthly trend analysis
