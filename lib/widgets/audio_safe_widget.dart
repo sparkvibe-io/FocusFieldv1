@@ -25,12 +25,14 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
   int _errorCount = 0;
   DateTime? _lastError;
   Timer? _recoveryTimer;
+  FlutterExceptionHandler? _previousOnError; // preserve previous handler
 
   @override
   void initState() {
     super.initState();
     
-    // Set up global error handler for native audio crashes
+    // Preserve existing handler and install scoped handler for native audio crashes
+    _previousOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
       final errorString = details.exception.toString().toLowerCase();
       final stackString = details.stack.toString().toLowerCase();
@@ -39,8 +41,12 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
       if (_isAudioRelatedError(errorString, stackString)) {
         _handleAudioError(details);
       } else {
-        // Pass through other errors
-        FlutterError.presentError(details);
+        // Delegate to previous if exists otherwise present
+        if (_previousOnError != null) {
+          _previousOnError!(details);
+        } else {
+          FlutterError.presentError(details);
+        }
       }
     };
   }
@@ -48,6 +54,10 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
   @override
   void dispose() {
     _recoveryTimer?.cancel();
+    // Restore previous handler if still ours
+    if (FlutterError.onError != _previousOnError) {
+      FlutterError.onError = _previousOnError;
+    }
     super.dispose();
   }
 

@@ -22,12 +22,14 @@ import 'package:silence_score/providers/notification_provider.dart';
 import 'package:silence_score/services/accessibility_service.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:silence_score/utils/debug_log.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+  final loc = AppLocalizations.of(context); // may be null during initial test frame
     final silenceDataAsyncValue = ref.watch(silenceDataNotifierProvider);
     final silenceState = ref.watch(silenceStateProvider);
     final silenceStateNotifier = ref.read(silenceStateProvider.notifier);
@@ -84,7 +86,7 @@ class HomePage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.appTitle),
+        title: Text(loc?.appTitle ?? 'Silence Score'),
         actions: [
           IconButton(
             icon: Icon(_getThemeIcon(ref)),
@@ -92,7 +94,7 @@ class HomePage extends HookConsumerWidget {
               ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
               _toggleTheme(context, ref);
             },
-            tooltip: AppLocalizations.of(context)!.toggleThemeTooltip,
+            tooltip: loc?.toggleThemeTooltip ?? 'Toggle theme',
           ),
           IconButton(
             icon: const Icon(Icons.settings),
@@ -117,11 +119,11 @@ class HomePage extends HookConsumerWidget {
             children: [
               const Icon(Icons.error, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text(AppLocalizations.of(context)!.errorLoadingSettings(error.toString())),
+              Text(loc?.errorLoadingSettings(error.toString()) ?? 'Error loading settings: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(silenceDataNotifierProvider),
-                child: Text(AppLocalizations.of(context)!.actionRetry),
+                child: Text(loc?.actionRetry ?? 'Retry'),
               ),
             ],
           ),
@@ -251,7 +253,7 @@ class HomePage extends HookConsumerWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  AppLocalizations.of(context)!.audioChartRecovering,
+                                  AppLocalizations.of(context)?.audioChartRecovering ?? 'Audio chart recovering…',
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   textAlign: TextAlign.center,
                                 ),
@@ -340,7 +342,7 @@ class HomePage extends HookConsumerWidget {
     
     if (silenceState.success == true) {
       return Text(
-        AppLocalizations.of(context)!.statusSuccess,
+  (AppLocalizations.of(context)?.statusSuccess) ?? 'Success',
         style: theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -353,7 +355,7 @@ class HomePage extends HookConsumerWidget {
     
     if (silenceState.success == false) {
       return Text(
-        AppLocalizations.of(context)!.statusFailure,
+  (AppLocalizations.of(context)?.statusFailure) ?? 'Failed',
         style: theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.error,
         ),
@@ -509,7 +511,7 @@ class HomePage extends HookConsumerWidget {
     themeNotifier.cycleTheme(hasPremiumAccess: hasPremiumAccess);
     
     // Show brief feedback to user
-    final availableThemes = hasPremiumAccess 
+  final availableThemes = hasPremiumAccess 
         ? AppThemeMode.values 
         : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
     final currentIndex = availableThemes.indexOf(currentTheme);
@@ -517,9 +519,9 @@ class HomePage extends HookConsumerWidget {
         ? (currentIndex + 1) % availableThemes.length
         : 0;
     final nextTheme = availableThemes[nextIndex];
-    ScaffoldMessenger.of(context).showSnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.themeChanged(nextTheme.displayName)),
+    content: Text(AppLocalizations.of(context)?.themeChanged(nextTheme.displayName) ?? 'Theme changed to ${nextTheme.displayName}'),
         duration: const Duration(milliseconds: 1000),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 100, left: 16, right: 16),
@@ -552,8 +554,7 @@ class _SubscriptionInitializerState extends ConsumerState<_SubscriptionInitializ
     try {
       await ref.read(subscriptionServiceProvider).initialize();
     } catch (e) {
-      // ignore: avoid_print
-      print('Subscription initialization failed: $e');
+      DebugLog.d('Subscription initialization failed: $e');
     }
   }
 

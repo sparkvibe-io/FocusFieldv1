@@ -3,12 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/screens/home_page.dart';
 import 'package:silence_score/constants/app_constants.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _pumpApp(WidgetTester tester) async {
   await tester.pumpWidget(
     const ProviderScope(
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: HomePage(),
       ),
     ),

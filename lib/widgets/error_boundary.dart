@@ -23,32 +23,45 @@ class ErrorBoundary extends StatefulWidget {
 
 class _ErrorBoundaryState extends State<ErrorBoundary> {
   bool _hasError = false;
+  FlutterExceptionHandler? _previousOnError; // preserve previous handler
 
   @override
   void initState() {
     super.initState();
     
-    // Set up error handler for this boundary
+    // Preserve existing handler and install scoped handler
+    _previousOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      // Check if this error is related to our context
-      if (details.toString().contains(widget.context) || 
-          details.stack.toString().contains(widget.context)) {
-        setState(() {
+      final matchesContext = details.toString().contains(widget.context) ||
+          details.stack.toString().contains(widget.context);
+      if (matchesContext) {
+        if (mounted) {
+          setState(() { _hasError = true; });
+        } else {
           _hasError = true;
-        });
-        
-        // Call custom error handler if provided
+        }
         widget.onError?.call(details);
-        
-        // Log error in debug mode
         if (!kReleaseMode) {
           DebugLog.d('DEBUG: ErrorBoundary caught error in ${widget.context}: ${details.exception}');
         }
+        return; // swallow handled error
+      }
+      // Delegate to previous handler if exists, else present
+      if (_previousOnError != null) {
+        _previousOnError!(details);
       } else {
-        // Re-throw if not our error
         FlutterError.presentError(details);
       }
     };
+  }
+
+  @override
+  void dispose() {
+    // Restore previous handler only if we are still the current one
+    if (FlutterError.onError != _previousOnError) {
+      FlutterError.onError = _previousOnError;
+    }
+    super.dispose();
   }
 
   @override
