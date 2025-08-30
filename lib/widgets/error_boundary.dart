@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:silence_score/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 
 /// Error boundary widget that catches and handles widget build errors gracefully
@@ -41,7 +42,7 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
         
         // Log error in debug mode
         if (!kReleaseMode) {
-          debugPrint('DEBUG: ErrorBoundary caught error in ${widget.context}: ${details.exception}');
+          DebugLog.d('DEBUG: ErrorBoundary caught error in ${widget.context}: ${details.exception}');
         }
       } else {
         // Re-throw if not our error
@@ -151,7 +152,7 @@ class SafeWidget extends StatelessWidget {
       onError: (details) {
         // Log the error for debugging
         if (!kReleaseMode) {
-          debugPrint('DEBUG: SafeWidget error in ${this.context}: ${details.exception}');
+          DebugLog.d('DEBUG: SafeWidget error in ${this.context}: ${details.exception}');
         }
       },
     );

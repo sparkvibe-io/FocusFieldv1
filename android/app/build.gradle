@@ -25,7 +25,8 @@ android {
 
     defaultConfig {
         applicationId "io.sparkvibe.silencescore"
-        minSdkVersion 23
+    // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
+    minSdkVersion 24
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"

@@ -89,7 +89,7 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
       if (success) {
         state = const AsyncValue.data(null);
       } else {
-        state = AsyncValue.error('Purchase was cancelled or failed', StackTrace.current);
+  state = AsyncValue.error('Purchase cancelled', StackTrace.current);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -116,6 +116,18 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
 final subscriptionActionsProvider = StateNotifierProvider<SubscriptionActionsNotifier, AsyncValue<void>>((ref) {
   final subscriptionService = ref.watch(subscriptionServiceProvider);
   return SubscriptionActionsNotifier(subscriptionService);
+});
+
+// Startup initialization provider (watched once in main to trigger service init without UI waiting)
+final startupSubscriptionInitProvider = FutureProvider<void>((ref) async {
+  final service = ref.read(subscriptionServiceProvider);
+  if (!service.isInitialized) {
+    try {
+      await service.initialize();
+    } catch (_) {
+      // Silent fallback; UI will remain on free tier
+    }
+  }
 });
 
 // Hosted paywall provider (null if unavailable)

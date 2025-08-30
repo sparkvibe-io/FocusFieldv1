@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:silence_score/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 
 /// Specialized error boundary for audio-related widgets that may crash due to native audio buffer issues
@@ -102,9 +103,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
     _errorCount++;
     _lastError = now;
 
-    if (!kReleaseMode) {
-      debugPrint('DEBUG: AudioSafeWidget caught audio error #$_errorCount in ${widget.debugContext}: ${details.exception}');
-    }
+  DebugLog.d('DEBUG: AudioSafeWidget caught audio error #$_errorCount in ${widget.debugContext}: ${details.exception}');
 
     setState(() {
       _hasError = true;
@@ -116,9 +115,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
     
     _recoveryTimer = Timer(recoveryDelay, () {
       if (mounted && _hasError) {
-        if (!kReleaseMode) {
-          debugPrint('DEBUG: AudioSafeWidget attempting recovery for ${widget.debugContext} after ${recoveryDelay.inSeconds}s');
-        }
+  DebugLog.d('DEBUG: AudioSafeWidget attempting recovery for ${widget.debugContext} after ${recoveryDelay.inSeconds}s');
         
         setState(() {
           _hasError = false;
@@ -140,9 +137,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
           return widget.child;
         } catch (error, stackTrace) {
           // Catch synchronous audio-related errors
-          if (!kReleaseMode) {
-            debugPrint('DEBUG: AudioSafeWidget caught synchronous error in ${widget.debugContext}: $error');
-          }
+          DebugLog.d('DEBUG: AudioSafeWidget caught synchronous error in ${widget.debugContext}: $error');
           
           final errorString = error.toString().toLowerCase();
           final stackString = stackTrace.toString().toLowerCase();

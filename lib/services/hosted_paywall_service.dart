@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:silence_score/constants/app_constants.dart';
 
@@ -18,13 +19,11 @@ class HostedPaywallService {
   Future<Map<String, dynamic>?> getHostedPaywall({bool forceRefresh = false}) async {
     if (AppConstants.enableMockSubscriptions) {
       // Helpful diagnostic so devs know why hosted paywall is absent.
-      // ignore: avoid_print
-      print('HostedPaywallService: returning null (mock subscriptions enabled)');
+  if (!kReleaseMode) debugPrint('HostedPaywallService: returning null (mock subscriptions enabled)');
       return null; // skip in mock mode
     }
     if (!AppConstants.isValidRevenueCatKey) {
-      // ignore: avoid_print
-      print('HostedPaywallService: returning null (RevenueCat API key not set)');
+  if (!kReleaseMode) debugPrint('HostedPaywallService: returning null (RevenueCat API key not set)');
       return null; // API key missing
     }
 
@@ -53,8 +52,7 @@ class HostedPaywallService {
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
       if (current == null) {
-        // ignore: avoid_print
-        print('HostedPaywallService: current offering is null. Offerings all keys: ${offerings.all.keys.toList()}');
+  if (!kReleaseMode) debugPrint('HostedPaywallService: current offering is null. Offerings all keys: ${offerings.all.keys.toList()}');
         return null;
       }
 
@@ -69,15 +67,13 @@ class HostedPaywallService {
           'currencyCode': p.storeProduct.currencyCode,
         }).toList(),
       };
-  // ignore: avoid_print
-  print('HostedPaywallService: constructed pseudo-hosted paywall with ${current.availablePackages.length} packages');
+  if (!kReleaseMode) debugPrint('HostedPaywallService: constructed pseudo-hosted paywall with ${current.availablePackages.length} packages');
       _cachedPaywall = paywallMap;
       await prefs.setString(_cacheKey, json.encode(_cachedPaywall));
       await prefs.setInt(_cacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
       return _cachedPaywall;
     } catch (e) {
-      // ignore: avoid_print
-      print('HostedPaywallService: failed to fetch offerings/paywall: $e');
+  if (!kReleaseMode) debugPrint('HostedPaywallService: failed to fetch offerings/paywall: $e');
       return null; // graceful fallback
     }
   }

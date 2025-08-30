@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:noise_meter/noise_meter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io' show Platform;
 
 /// Simple service to perform ambient noise calibration.
 /// Collects microphone readings for a fixed duration and returns a
@@ -10,6 +12,13 @@ class NoiseCalibrationService {
   static final NoiseCalibrationService instance = NoiseCalibrationService._();
 
   Future<double?> calibrate({Duration duration = const Duration(seconds: 5), double marginDb = 5}) async {
+    if (Platform.isAndroid) {
+      final status = await Permission.microphone.status;
+      if (status != PermissionStatus.granted) {
+        final req = await Permission.microphone.request();
+        if (req != PermissionStatus.granted) return null;
+      }
+    }
     final noiseMeter = NoiseMeter();
     final readings = <double>[];
     StreamSubscription? sub;
