@@ -7,6 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:silence_score/providers/silence_provider.dart';
 import 'dart:math' as math;
 import 'package:silence_score/utils/throttled_logger.dart';
+import 'package:silence_score/utils/debug_log.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -40,8 +41,8 @@ class RealTimeNoiseChart extends HookConsumerWidget {
     // Check permission status
     useEffect(() {
       silenceDetector.hasPermission().then((permission) {
-        hasPermission.value = permission;
-        debugPrint('DEBUG: Chart - Permission status: $permission');
+  hasPermission.value = permission;
+  DebugLog.d('DEBUG: Chart - Permission status: $permission');
       });
       return null;
     }, []);
@@ -125,11 +126,11 @@ class RealTimeNoiseChart extends HookConsumerWidget {
           try {
             _cleanupOldData(chartData, startTime);
           } catch (e) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Cleanup error: $e');
+            DebugLog.d('DEBUG: Chart - Cleanup error: $e');
           }
         });
       } catch (e) {
-        if (!kReleaseMode) debugPrint('DEBUG: Chart - Failed to create cleanup timer: $e');
+  DebugLog.d('DEBUG: Chart - Failed to create cleanup timer: $e');
       }
       
       return () {
@@ -336,7 +337,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       // Comprehensive validation
       if (startTime.value == null) return;
       if (decibel.isNaN || decibel.isInfinite || decibel < 0 || decibel > 150) {
-        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid decibel in _addDataPoint: $decibel');
+  DebugLog.d('DEBUG: Chart - Invalid decibel in _addDataPoint: $decibel');
         return;
       }
       
@@ -346,7 +347,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       
       // Validate time calculation
       if (totalTimeInSeconds.isNaN || totalTimeInSeconds.isInfinite || totalTimeInSeconds < 0) {
-        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid time calculation: $totalTimeInSeconds');
+  DebugLog.d('DEBUG: Chart - Invalid time calculation: $totalTimeInSeconds');
         return;
       }
       
@@ -359,7 +360,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       
       // Validate the new point before adding
       if (newPoint.x.isNaN || newPoint.x.isInfinite || newPoint.y.isNaN || newPoint.y.isInfinite) {
-        if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid FlSpot created: ${newPoint.x}, ${newPoint.y}');
+  DebugLog.d('DEBUG: Chart - Invalid FlSpot created: ${newPoint.x}, ${newPoint.y}');
         return;
       }
       
@@ -377,7 +378,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         
         // Validate time offset
         if (timeOffset.isNaN || timeOffset.isInfinite || timeOffset <= 0) {
-          if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid time offset: $timeOffset');
+          DebugLog.d('DEBUG: Chart - Invalid time offset: $timeOffset');
           return;
         }
         
@@ -406,7 +407,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
             startTime.value = startTime.value!.add(Duration(milliseconds: offsetMs));
           }
         } catch (e) {
-          if (!kReleaseMode) debugPrint('DEBUG: Chart - Error updating start time: $e');
+          DebugLog.d('DEBUG: Chart - Error updating start time: $e');
         }
       }
       
@@ -425,10 +426,10 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         }
         chartData.value = newData;
       } else {
-        if (!kReleaseMode) debugPrint('DEBUG: Chart - Filtered data contains invalid points, skipping update');
+  DebugLog.d('DEBUG: Chart - Filtered data contains invalid points, skipping update');
       }
     } catch (e) {
-      if (!kReleaseMode) debugPrint('DEBUG: Chart - Error in _addDataPoint: $e');
+  DebugLog.d('DEBUG: Chart - Error in _addDataPoint: $e');
       // Don't crash the app on chart data errors
     }
   }
@@ -462,7 +463,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         chartData.value = validData;
       }
     } catch (e) {
-      if (!kReleaseMode) debugPrint('DEBUG: Chart - Error in cleanup: $e');
+  DebugLog.d('DEBUG: Chart - Error in cleanup: $e');
     }
   }
 

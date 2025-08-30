@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:silence_score/services/silence_detector.dart';
 import 'package:silence_score/utils/throttled_logger.dart';
+import 'package:silence_score/utils/debug_log.dart';
 
 /// Aggregates high-frequency realtime decibel readings into a lower frequency
 /// smoothed stream (default 1Hz) to reduce UI rebuild pressure.
@@ -39,7 +39,8 @@ class RealTimeNoiseController {
       if (!_isValid(d)) return;
       _buffer.add(d);
     }, onError: (e) {
-      if (!kReleaseMode) sensorLogger.log('DEBUG: NoiseController stream error: $e');
+      sensorLogger.log('DEBUG: NoiseController stream error: $e');
+      DebugLog.d('DEBUG: NoiseController stream error: $e');
     });
 
     _timer = Timer.periodic(aggregationInterval, (_) => _flush());

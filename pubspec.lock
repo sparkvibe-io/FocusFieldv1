@@ -326,6 +326,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_riverpod:
     dependency: transitive
     description:
@@ -384,6 +389,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -613,6 +626,14 @@ packages:
     description:
       name: purchases_flutter
       sha256: "239aae77964d4e6da88f1b870259df7c1325dcad7187d257a024b885d85534eb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.2.1"
+  purchases_ui_flutter:
+    dependency: "direct main"
+    description:
+      name: purchases_ui_flutter
+      sha256: "350b4b74c0bc8da8de8d25e3a03fb9f6ace3a2796ef90e6b136620cc5bbb140c"
       url: "https://pub.dev"
     source: hosted
     version: "9.2.1"

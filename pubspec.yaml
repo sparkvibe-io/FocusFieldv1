@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
   cupertino_icons: ^1.0.8
   hooks_riverpod: ^2.6.1
   flutter_hooks: ^0.21.3+1
@@ -19,6 +22,7 @@ dependencies:
   permission_handler: ^12.0.1
   fl_chart: ^1.0.0
   purchases_flutter: ^9.2.1
+  purchases_ui_flutter: ^9.2.1 # RevenueCat native paywall UI (aligned with purchases_flutter)
   firebase_core: ^4.0.0
   firebase_auth: ^6.0.1
   cloud_firestore: ^6.0.0
@@ -39,3 +43,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true 
+  generate: true
