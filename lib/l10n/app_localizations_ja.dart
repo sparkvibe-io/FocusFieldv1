@@ -659,4 +659,139 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
+
+  @override
+  String get notificationSettingsTitle => '通知設定';
+
+  @override
+  String get notificationPermissionRequired => '通知許可が必要です';
+
+  @override
+  String get notificationPermissionRationale => 'そっと促し達成を祝う通知を受け取るには有効にしてください。';
+
+  @override
+  String get requesting => 'リクエスト中...';
+
+  @override
+  String get enableNotificationsCta => '通知を有効にする';
+
+  @override
+  String get enableNotificationsTitle => '通知を有効にする';
+
+  @override
+  String get enableNotificationsSubtitle => 'SilenceScore の通知を許可';
+
+  @override
+  String get dailyReminderTitle => 'スマートな毎日のリマインダー';
+
+  @override
+  String get dailyReminderSubtitle => 'スマートまたは固定時間';
+
+  @override
+  String get dailyTimeLabel => '毎日の時間';
+
+  @override
+  String get dailyTimeHint => '固定時間を選ぶかパターン学習に任せましょう。';
+
+  @override
+  String get useSmartCta => 'スマートを使う';
+
+  @override
+  String get sessionCompletedTitle => 'セッション完了';
+
+  @override
+  String get sessionCompletedSubtitle => '完了したセッションを祝う';
+
+  @override
+  String get achievementUnlockedTitle => '実績解除';
+
+  @override
+  String get achievementUnlockedSubtitle => '節目の通知';
+
+  @override
+  String get weeklySummaryTitle => '週間サマリー';
+
+  @override
+  String get weeklySummarySubtitle => '週ごとの洞察 (曜日と時間)';
+
+  @override
+  String get weeklyTimeLabel => '週間時間';
+
+  @override
+  String get notificationPreview => 'プレビュー';
+
+  @override
+  String get dailySilenceReminderTitle => '毎日の静寂リマインダー';
+
+  @override
+  String get weeklyProgressReportTitle => '週間進捗レポート 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => '実績解除! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'セッション達成! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'セッション終了';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ 今日から静寂の旅を始めましょう。内なる穏やかさを。';
+
+  @override
+  String get reminderRestart => '🌱 再開しませんか？いつでも新しい始まり。';
+
+  @override
+  String get reminderDayTwo => '⭐ 連続2日目！継続は静けさを育てます。';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 $streak日連続！強い習慣が育っています。';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 $streak日連続すごい！あなたの集中は刺激的です。';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 $streak日連続は驚異的！静寂の達人です。';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 初回セッション完了！ようこそ。';
+
+  @override
+  String get achievementWeekStreak => '🌟 7日連続達成！継続こそ力。';
+
+  @override
+  String get achievementMonthStreak => '🏆 30日連続！止まりません。';
+
+  @override
+  String get achievementPerfectSession => '✨ 完璧な静寂セッション。何も乱しませんでした。';
+
+  @override
+  String get achievementLongSession => '⏰ 長時間セッション達成。集中が深まっています。';
+
+  @override
+  String get achievementGeneric => '🎊 実績解除！その調子！';
+
+  @override
+  String get weeklyProgressNone => '💭 今週は静寂が少なめ。穏やかな時間を取りませんか？';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 今週 $count 回。毎回が心を静めます。';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 今週 $count 回！リズムができています。';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '� 今週 $count 回でパーフェクト！素晴らしい継続。';
+  }
 }

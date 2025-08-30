@@ -659,4 +659,139 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complétez des sessions pour débloquer les succès';
+
+  @override
+  String get notificationSettingsTitle => 'Paramètres de notification';
+
+  @override
+  String get notificationPermissionRequired => 'Permission requise';
+
+  @override
+  String get notificationPermissionRationale => 'Activez les notifications pour des rappels doux et célébrer vos succès.';
+
+  @override
+  String get requesting => 'Demande...';
+
+  @override
+  String get enableNotificationsCta => 'Activer';
+
+  @override
+  String get enableNotificationsTitle => 'Activer les notifications';
+
+  @override
+  String get enableNotificationsSubtitle => 'Autoriser SilenceScore à envoyer des notifications';
+
+  @override
+  String get dailyReminderTitle => 'Rappel quotidien intelligent';
+
+  @override
+  String get dailyReminderSubtitle => 'Intelligent ou heure fixe';
+
+  @override
+  String get dailyTimeLabel => 'Heure quotidienne';
+
+  @override
+  String get dailyTimeHint => 'Choisir une heure fixe ou laisser l\'appli apprendre votre rythme.';
+
+  @override
+  String get useSmartCta => 'Utiliser Smart';
+
+  @override
+  String get sessionCompletedTitle => 'Session terminée';
+
+  @override
+  String get sessionCompletedSubtitle => 'Célébrer les sessions terminées';
+
+  @override
+  String get achievementUnlockedTitle => 'Succès débloqué';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Notifications de jalons';
+
+  @override
+  String get weeklySummaryTitle => 'Résumé hebdomadaire';
+
+  @override
+  String get weeklySummarySubtitle => 'Aperçu hebdo (jour & heure)';
+
+  @override
+  String get weeklyTimeLabel => 'Heure hebdo';
+
+  @override
+  String get notificationPreview => 'Aperçu';
+
+  @override
+  String get dailySilenceReminderTitle => 'Rappel quotidien de silence';
+
+  @override
+  String get weeklyProgressReportTitle => 'Progrès hebdomadaire 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => 'Succès débloqué ! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'Session réussie ! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Session terminée';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ Commencez votre voyage silencieux aujourd\'hui et trouvez le calme.';
+
+  @override
+  String get reminderRestart => '🌱 Repartir ? Chaque instant est un nouveau départ.';
+
+  @override
+  String get reminderDayTwo => '⭐ Jour 2 de votre série ! La constance construit la sérénité.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 Série de $streak jours ! Vous bâtissez une habitude solide.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Impressionnante série de $streak jours ! Votre engagement inspire.';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Incroyable série de $streak jours ! Maîtrise du silence !';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 Première session accomplie ! Bienvenue.';
+
+  @override
+  String get achievementWeekStreak => '🌟 Série de 7 jours ! La constance est votre super‑pouvoir.';
+
+  @override
+  String get achievementMonthStreak => '🏆 Série de 30 jours débloquée ! Inarrêtable.';
+
+  @override
+  String get achievementPerfectSession => '✨ Session de silence parfaite. Aucune perturbation.';
+
+  @override
+  String get achievementLongSession => '⏰ Longue session maîtrisée. Votre focus grandit.';
+
+  @override
+  String get achievementGeneric => '🎊 Succès débloqué ! Continuez !';
+
+  @override
+  String get weeklyProgressNone => '💭 Semaine légère en pratique. Prêt pour une session ?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count sessions cette semaine. Chaque pratique approfondit votre calme.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count sessions – vous trouvez votre rythme.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Semaine parfaite avec $count sessions. Super constance.';
+  }
 }

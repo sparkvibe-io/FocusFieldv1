@@ -14,6 +14,12 @@ class StorageService {
   static const String _lastSessionDateKey = 'last_session_date';
   static const String _totalSessionsKey = 'total_sessions';
   static const String _averageScoreKey = 'average_score';
+  // Notification scheduling keys
+  static const String _dailyReminderHourKey = 'daily_reminder_hour';
+  static const String _dailyReminderMinuteKey = 'daily_reminder_minute';
+  static const String _weeklySummaryWeekdayKey = 'weekly_summary_weekday'; // 1=Mon .. 7=Sun
+  static const String _weeklySummaryHourKey = 'weekly_summary_hour';
+  static const String _weeklySummaryMinuteKey = 'weekly_summary_minute';
   
   static StorageService? _instance;
   static SharedPreferences? _prefs;
@@ -66,30 +72,57 @@ class StorageService {
       'averageScore': _prefs!.getDouble(_averageScoreKey) ?? 0.0,
       'appVersion': _prefs!.getString(_appVersionKey) ?? '1.0.0',
       'isFirstLaunch': _prefs!.getBool(_firstLaunchKey) ?? true,
+      // Notification scheduling (nullable defaults)
+      'dailyReminderHour': _prefs!.getInt(_dailyReminderHourKey),
+      'dailyReminderMinute': _prefs!.getInt(_dailyReminderMinuteKey),
+      'weeklySummaryWeekday': _prefs!.getInt(_weeklySummaryWeekdayKey) ?? DateTime.monday,
+      'weeklySummaryHour': _prefs!.getInt(_weeklySummaryHourKey) ?? 9,
+      'weeklySummaryMinute': _prefs!.getInt(_weeklySummaryMinuteKey) ?? 0,
     };
   }
 
   /// Save all settings at once
   Future<void> saveAllSettings(Map<String, dynamic> settings) async {
     await _init();
-    
-    if (settings.containsKey('decibelThreshold')) {
-      await _prefs!.setDouble(_decibelThresholdKey, settings['decibelThreshold']);
-    }
-    if (settings.containsKey('sessionDuration')) {
-      await _prefs!.setInt(_sessionDurationKey, settings['sessionDuration']);
-    }
-    if (settings.containsKey('sampleInterval')) {
-      await _prefs!.setInt(_sampleIntervalKey, settings['sampleInterval']);
-    }
-    if (settings.containsKey('pointsPerSuccess')) {
-      await _prefs!.setInt(_pointsPerSuccessKey, settings['pointsPerSuccess']);
-    }
-    if (settings.containsKey('totalSessions')) {
-      await _prefs!.setInt(_totalSessionsKey, settings['totalSessions']);
-    }
-    if (settings.containsKey('averageScore')) {
-      await _prefs!.setDouble(_averageScoreKey, settings['averageScore']);
+    for (final entry in settings.entries) {
+      final key = entry.key;
+      final value = entry.value;
+      if (value == null) continue; // skip null writes
+      switch (key) {
+        case 'decibelThreshold':
+          await _prefs!.setDouble(_decibelThresholdKey, value as double); break;
+        case 'sessionDuration':
+          await _prefs!.setInt(_sessionDurationKey, value as int); break;
+        case 'sampleInterval':
+          await _prefs!.setInt(_sampleIntervalKey, value as int); break;
+        case 'pointsPerSuccess':
+          await _prefs!.setInt(_pointsPerSuccessKey, value as int); break;
+        case 'totalSessions':
+          await _prefs!.setInt(_totalSessionsKey, value as int); break;
+        case 'averageScore':
+          await _prefs!.setDouble(_averageScoreKey, value as double); break;
+        case 'dailyReminderHour':
+          await _prefs!.setInt(_dailyReminderHourKey, value as int); break;
+        case 'dailyReminderMinute':
+          await _prefs!.setInt(_dailyReminderMinuteKey, value as int); break;
+        case 'weeklySummaryWeekday':
+          await _prefs!.setInt(_weeklySummaryWeekdayKey, value as int); break;
+        case 'weeklySummaryHour':
+          await _prefs!.setInt(_weeklySummaryHourKey, value as int); break;
+        case 'weeklySummaryMinute':
+          await _prefs!.setInt(_weeklySummaryMinuteKey, value as int); break;
+        default:
+          // Generic persistence for any new primitive key
+          if (value is int) {
+            await _prefs!.setInt(key, value);
+          } else if (value is double) {
+            await _prefs!.setDouble(key, value);
+          } else if (value is bool) {
+            await _prefs!.setBool(key, value);
+          } else if (value is String) {
+            await _prefs!.setString(key, value);
+          }
+      }
     }
   }
 

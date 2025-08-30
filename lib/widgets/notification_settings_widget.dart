@@ -14,6 +14,13 @@ class NotificationSettingsWidget extends ConsumerStatefulWidget {
 class _NotificationSettingsWidgetState extends ConsumerState<NotificationSettingsWidget> {
   bool _isRequestingPermission = false;
 
+  String _formatTime(int hour, int minute) {
+    final time = TimeOfDay(hour: hour, minute: minute);
+    return time.format(context);
+  }
+
+  // (weekday label helper removed in simplified UI)
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,28 +30,23 @@ class _NotificationSettingsWidgetState extends ConsumerState<NotificationSetting
 
     return settings.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error loading settings: $error'),
-      ),
-      data: (settingsData) {
-        final enableNotifications = settingsData['enableNotifications'] as bool? ?? true;
-        final enableDailyReminders = settingsData['enableDailyReminders'] as bool? ?? false;
-        final enableSessionComplete = settingsData['enableSessionComplete'] as bool? ?? true;
-        final enableAchievementNotifications = settingsData['enableAchievementNotifications'] as bool? ?? true;
-        final enableWeeklyProgress = settingsData['enableWeeklyProgress'] as bool? ?? false;
+      error: (e, _) => Center(child: Text('Error: $e')),
+      data: (data) {
+        final enableNotifications = data['enableNotifications'] as bool? ?? true;
+        final enableDailyReminders = data['enableDailyReminders'] as bool? ?? false;
+        final enableSessionComplete = data['enableSessionComplete'] as bool? ?? true;
+        final enableAchievementNotifications = data['enableAchievementNotifications'] as bool? ?? true;
+        final enableWeeklyProgress = data['enableWeeklyProgress'] as bool? ?? false;
+        final dailyReminderHour = data['dailyReminderHour'] as int?;
+        final dailyReminderMinute = data['dailyReminderMinute'] as int?;
+        final weeklyWeekday = data['weeklySummaryWeekday'] as int? ?? DateTime.monday;
+        final weeklyHour = data['weeklySummaryHour'] as int? ?? 9;
+        final weeklyMinute = data['weeklySummaryMinute'] as int? ?? 0;
 
         return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-          ),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // Handle bar
               Container(
                 margin: const EdgeInsets.only(top: 8),
                 width: 40,
@@ -54,206 +56,232 @@ class _NotificationSettingsWidgetState extends ConsumerState<NotificationSetting
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-
-              // Header
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.notifications,
-                      color: theme.colorScheme.primary,
-                      size: 24,
-                    ),
+                    Icon(Icons.notifications, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
-                    Text(
-                      'Notification Settings',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text('Notification Settings', style: theme.textTheme.titleLarge),
                     const Spacer(),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                    ),
+                    IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
                   ],
                 ),
               ),
-
-              // Permission status
               if (!notificationService.hasNotificationPermission)
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: theme.colorScheme.error.withValues(alpha: 0.5),
-                      width: 1,
-                    ),
+                    color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.notifications_off,
-                            color: theme.colorScheme.error,
-                            size: 20,
-                          ),
+                          Icon(Icons.notifications_off, color: theme.colorScheme.error, size: 20),
                           const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Notification Permission Required',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                color: theme.colorScheme.error,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                          Text('Permission required', style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.error, fontWeight: FontWeight.w600)),
                         ],
                       ),
+                      const SizedBox(height: 4),
+                      Text('Enable notifications to receive reminders and celebrate achievements.', style: theme.textTheme.bodySmall),
                       const SizedBox(height: 8),
-                      Text(
-                        'Enable notifications to receive gentle reminders and celebrate your silence achievements.',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onErrorContainer,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: _isRequestingPermission ? null : _requestPermission,
-                          icon: _isRequestingPermission
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.settings, size: 16),
+                          icon: _isRequestingPermission ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.settings),
                           label: Text(_isRequestingPermission ? 'Requesting...' : 'Enable Notifications'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.error,
-                            foregroundColor: theme.colorScheme.onError,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-              // Settings list
-              Flexible(
+              Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Master toggle
                       _buildSettingsTile(
                         context: context,
                         title: 'Enable Notifications',
                         subtitle: 'Allow SilenceScore to send notifications',
                         icon: Icons.notifications_active,
                         value: enableNotifications,
-                        onChanged: notificationService.hasNotificationPermission
-                            ? (value) {
-                                settingsNotifier.updateSetting('enableNotifications', value);
-                                notificationService.updateSettings(notifications: value);
-                              }
-                            : null,
+                        onChanged: notificationService.hasNotificationPermission ? (v) {
+                          settingsNotifier.updateSetting('enableNotifications', v);
+                          notificationService.updateSettings(notifications: v);
+                        } : null,
                         isMainToggle: true,
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // Daily reminders
                       _buildSettingsTile(
                         context: context,
                         title: 'Smart Daily Reminders',
-                        subtitle: 'Gentle reminders based on your practice patterns',
+                        subtitle: 'Smart or chosen time',
                         icon: Icons.schedule,
                         value: enableDailyReminders,
-                        onChanged: enableNotifications && notificationService.hasNotificationPermission
-                            ? (value) {
-                                settingsNotifier.updateSetting('enableDailyReminders', value);
-                                notificationService.updateSettings(dailyReminders: value);
-                              }
-                            : null,
+                        onChanged: enableNotifications && notificationService.hasNotificationPermission ? (v) {
+                          settingsNotifier.updateSetting('enableDailyReminders', v);
+                          notificationService.updateSettings(dailyReminders: v);
+                          if (v) {
+                            notificationService.scheduleDailyReminderNotification(context: context);
+                          } else {
+                            notificationService.cancelScheduledNotifications();
+                          }
+                        } : null,
                       ),
-
-                      // Session completion
+                      if (enableDailyReminders && notificationService.hasNotificationPermission)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, bottom: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(children: [
+                                Text('Daily Time', style: theme.textTheme.labelMedium),
+                                const SizedBox(width: 12),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    final picked = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay(
+                                        hour: dailyReminderHour ?? TimeOfDay.now().hour,
+                                        minute: dailyReminderMinute ?? TimeOfDay.now().minute,
+                                      ),
+                                    );
+                                    if (picked != null) {
+                                      settingsNotifier.updateSetting('dailyReminderHour', picked.hour);
+                                      settingsNotifier.updateSetting('dailyReminderMinute', picked.minute);
+                                      notificationService.updateSettings(dailyHour: picked.hour, dailyMinute: picked.minute);
+                                      await notificationService.scheduleDailyReminderNotification(context: context);
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Daily reminder at ${picked.format(context)}')));
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    dailyReminderHour != null && dailyReminderMinute != null
+                                      ? _formatTime(dailyReminderHour, dailyReminderMinute)
+                                      : 'Smart (${notificationService.getOptimalReminderTime()?.format(context) ?? 'learning'})',
+                                  ),
+                                ),
+                                if (dailyReminderHour != null)
+                                  TextButton(
+                                    onPressed: () {
+                                      settingsNotifier.updateSetting('dailyReminderHour', null);
+                                      settingsNotifier.updateSetting('dailyReminderMinute', null);
+                                      notificationService.updateSettings(dailyHour: null, dailyMinute: null);
+                                      notificationService.scheduleDailyReminderNotification(context: context);
+                                    },
+                                    child: const Text('Use Smart'),
+                                  ),
+                              ]),
+                              const SizedBox(height: 4),
+                              Text('Choose a fixed time or let SilenceScore learn your pattern.', style: theme.textTheme.bodySmall),
+                            ],
+                          ),
+                        ),
                       _buildSettingsTile(
                         context: context,
                         title: 'Session Completed',
-                        subtitle: 'Celebrate when you complete a silence session',
+                        subtitle: 'Celebrate completed sessions',
                         icon: Icons.check_circle,
                         value: enableSessionComplete,
-                        onChanged: enableNotifications && notificationService.hasNotificationPermission
-                            ? (value) {
-                                settingsNotifier.updateSetting('enableSessionComplete', value);
-                                notificationService.updateSettings(sessionComplete: value);
-                              }
-                            : null,
+                        onChanged: enableNotifications && notificationService.hasNotificationPermission ? (v) {
+                          settingsNotifier.updateSetting('enableSessionComplete', v);
+                          notificationService.updateSettings(sessionComplete: v);
+                        } : null,
                       ),
-
-                      // Achievement notifications
                       _buildSettingsTile(
                         context: context,
                         title: 'Achievement Unlocked',
-                        subtitle: 'Get notified when you reach new milestones',
+                        subtitle: 'Milestone notifications',
                         icon: Icons.emoji_events,
                         value: enableAchievementNotifications,
-                        onChanged: enableNotifications && notificationService.hasNotificationPermission
-                            ? (value) {
-                                settingsNotifier.updateSetting('enableAchievementNotifications', value);
-                                notificationService.updateSettings(achievementNotifications: value);
-                              }
-                            : null,
+                        onChanged: enableNotifications && notificationService.hasNotificationPermission ? (v) {
+                          settingsNotifier.updateSetting('enableAchievementNotifications', v);
+                          notificationService.updateSettings(achievementNotifications: v);
+                        } : null,
                       ),
-
-                      // Weekly progress (Premium feature)
                       _buildSettingsTile(
                         context: context,
                         title: 'Weekly Progress Summary',
-                        subtitle: 'Weekly insights about your silence practice',
+                        subtitle: 'Weekly insights (weekday & time)',
                         icon: Icons.insights,
                         value: enableWeeklyProgress,
-                        onChanged: enableNotifications && notificationService.hasNotificationPermission
-                            ? (value) {
-                                settingsNotifier.updateSetting('enableWeeklyProgress', value);
-                                notificationService.updateSettings(weeklyProgress: value);
-                              }
-                            : null,
+                        onChanged: enableNotifications && notificationService.hasNotificationPermission ? (v) {
+                          settingsNotifier.updateSetting('enableWeeklyProgress', v);
+                          notificationService.updateSettings(weeklyProgress: v);
+                          if (v) {
+                            notificationService.scheduleWeeklySummaryNotification(context: context);
+                          } else {
+                            notificationService.cancelScheduledNotifications();
+                          }
+                        } : null,
                         isPremium: true,
                       ),
-
-                      const SizedBox(height: 16),
-
-                      // Preview section
-                      if (enableNotifications && notificationService.hasNotificationPermission) ...[
-                        Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-                        const SizedBox(height: 16),
-                        
-                        Text(
-                          'Notification Preview',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                      if (enableWeeklyProgress && notificationService.hasNotificationPermission)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, bottom: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: List.generate(7, (index) {
+                                  final day = index + 1;
+                                  const labels = ['M','T','W','T','F','S','S'];
+                                  final selected = weeklyWeekday == day;
+                                  return ChoiceChip(
+                                    label: Text(labels[index]),
+                                    selected: selected,
+                                    onSelected: (sel) async {
+                                      if (!sel) return;
+                                      settingsNotifier.updateSetting('weeklySummaryWeekday', day);
+                                      notificationService.updateSettings(weeklyWeekday: day);
+                                      await notificationService.scheduleWeeklySummaryNotification(context: context);
+                                    },
+                                  );
+                                }),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(children: [
+                                Text('Weekly Time', style: theme.textTheme.labelMedium),
+                                const SizedBox(width: 12),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    final picked = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay(hour: weeklyHour, minute: weeklyMinute),
+                                    );
+                                    if (picked != null) {
+                                      settingsNotifier.updateSetting('weeklySummaryHour', picked.hour);
+                                      settingsNotifier.updateSetting('weeklySummaryMinute', picked.minute);
+                                      notificationService.updateSettings(weeklyHour: picked.hour, weeklyMinute: picked.minute);
+                                      await notificationService.scheduleWeeklySummaryNotification(context: context);
+                                    }
+                                  },
+                                  child: Text(_formatTime(weeklyHour, weeklyMinute)),
+                                ),
+                              ]),
+                            ],
                           ),
                         ),
+                      const SizedBox(height: 16),
+                      if (enableNotifications && notificationService.hasNotificationPermission) ...[
+                        Divider(color: theme.colorScheme.outline.withOpacity(0.2)),
+                        const SizedBox(height: 16),
+                        Text('Notification Preview', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 12),
-                        
                         _buildNotificationPreview(
                           context: context,
                           title: 'Daily Reminder',
-                          message: notificationService.getSmartReminderMessage(),
+                          message: notificationService.getSmartReminderMessage(context),
                           icon: Icons.schedule,
                         ),
-                        
                         if (enableSessionComplete) ...[
                           const SizedBox(height: 8),
                           _buildNotificationPreview(
@@ -263,13 +291,12 @@ class _NotificationSettingsWidgetState extends ConsumerState<NotificationSetting
                             icon: Icons.check_circle,
                           ),
                         ],
-                        
                         if (enableAchievementNotifications) ...[
                           const SizedBox(height: 8),
                           _buildNotificationPreview(
                             context: context,
                             title: 'Achievement',
-                            message: notificationService.getAchievementMessage('week_streak'),
+                            message: notificationService.getAchievementMessage(context, 'week_streak'),
                             icon: Icons.emoji_events,
                           ),
                         ],

@@ -240,4 +240,51 @@
   ,"@previousThreshold": {"placeholders": {"value": {"type": "double"}}}
   ,"@newThreshold": {"placeholders": {"value": {"type": "double"}}}
   ,"@themeChanged": {"placeholders": {"themeName": {"type": "String"}}}
+  ,"notificationSettingsTitle": "Notification Settings"
+  ,"notificationPermissionRequired": "Notification Permission Required"
+  ,"notificationPermissionRationale": "Enable notifications to receive gentle reminders and celebrate achievements."
+  ,"requesting": "Requesting..."
+  ,"enableNotificationsCta": "Enable Notifications"
+  ,"enableNotificationsTitle": "Enable Notifications"
+  ,"enableNotificationsSubtitle": "Allow SilenceScore to send notifications"
+  ,"dailyReminderTitle": "Smart Daily Reminders"
+  ,"dailyReminderSubtitle": "Smart or chosen time"
+  ,"dailyTimeLabel": "Daily Time"
+  ,"dailyTimeHint": "Choose a fixed time or let SilenceScore learn your pattern."
+  ,"useSmartCta": "Use Smart"
+  ,"sessionCompletedTitle": "Session Completed"
+  ,"sessionCompletedSubtitle": "Celebrate completed sessions"
+  ,"achievementUnlockedTitle": "Achievement Unlocked"
+  ,"achievementUnlockedSubtitle": "Milestone notifications"
+  ,"weeklySummaryTitle": "Weekly Progress Summary"
+  ,"weeklySummarySubtitle": "Weekly insights (weekday & time)"
+  ,"weeklyTimeLabel": "Weekly Time"
+  ,"notificationPreview": "Notification Preview"
+  ,"dailySilenceReminderTitle": "Daily Silence Reminder"
+  ,"weeklyProgressReportTitle": "Weekly Progress Report 📊"
+  ,"achievementUnlockedGenericTitle": "Achievement Unlocked! 🏆"
+  ,"sessionCompleteSuccessTitle": "Session Complete! 🎉"
+  ,"sessionCompleteEndedTitle": "Session Ended"
+  ,"reminderStartJourney": "🧘‍♂️ Start your silence journey today! Find your inner peace."
+  ,"reminderRestart": "🌱 Ready to restart your silence practice? Every moment is a new beginning."
+  ,"reminderDayTwo": "⭐ Day 2 of your silence streak! Consistency builds tranquility."
+  ,"reminderStreakShort": "🔥 {streak}-day streak! You're building a powerful habit."
+  ,"reminderStreakMedium": "🏆 Amazing {streak}-day streak! Your dedication is inspiring."
+  ,"reminderStreakLong": "👑 Incredible {streak}-day streak! You're a silence master!"
+  ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
+  ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
+  ,"@reminderStreakLong": {"placeholders": {"streak": {"type": "int"}}}
+  ,"achievementFirstSession": "🎉 First session completed! Welcome to your silence journey!"
+  ,"achievementWeekStreak": "🌟 7-day streak achieved! Consistency is your superpower!"
+  ,"achievementMonthStreak": "🏆 30-day streak unlocked! You're unstoppable!"
+  ,"achievementPerfectSession": "✨ Perfect silence session! Not a sound disturbed your peace."
+  ,"achievementLongSession": "⏰ Extended session master! Your focus grows stronger."
+  ,"achievementGeneric": "🎊 Achievement unlocked! Keep up the great work!"
+  ,"weeklyProgressNone": "💭 This week could use some silence. Ready for a peaceful session?"
+  ,"weeklyProgressFew": "🌿 {count} sessions this week. Every practice deepens your calm."
+  ,"weeklyProgressSome": "🌊 {count} sessions this week! You're finding your rhythm."
+  ,"weeklyProgressPerfect": "🎯 Perfect week with {count} sessions! Your dedication shines."
+  ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
+  ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
+  ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
 }

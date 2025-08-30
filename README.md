@@ -141,6 +141,57 @@ The app requires microphone access to measure ambient noise levels:
 
 **Privacy Note**: No audio is recorded or stored - the app only measures decibel levels in real-time for silence detection. A shared cached permission Future prevents duplicate OS dialogs.
 
+## 🔔 Notification System
+
+SilenceScore includes a flexible, privacy‑friendly local notification system designed to reinforce habit formation without being spammy.
+
+### Architecture
+| Component | Responsibility |
+|-----------|----------------|
+| `NotificationService` | Core API: smart reminder logic, scheduling (daily / weekly), achievement & session notifications |
+| `NotificationPermissionHandler` | Isolated permission checks & requests (Android 13+ POST_NOTIFICATIONS, iOS alert/badge/sound) |
+| `notification_settings_widget.dart` | User interface for enabling features & picking schedule overrides |
+| SharedPreferences (StorageService) | Persists user scheduling overrides (daily time, weekly weekday/time) & last reminder sent date |
+
+### Features
+1. Smart Daily Reminders
+  - Learns your preferred practice window from recent session start times (keeps last 30) and triggers within ±30 minutes of the most common time.
+  - Optional explicit time override: user can pick a fixed daily reminder time; reverting to Smart re-enables adaptive behavior.
+2. Weekly Progress Summary (Premium)
+  - User‑selectable weekday + time (default Monday @ 09:00) summarizing weekly engagement.
+3. Session Completion Notifications
+  - Instant feedback when a session finishes (success vs incomplete messaging).
+4. Achievement Notifications
+  - Milestone unlock messages (first session, streaks, perfect/long sessions, etc.).
+5. Adaptive Messaging
+  - Reminder & streak copy adjusts to current streak length and total session count.
+6. Testability
+  - Injected `NowProvider` enables deterministic unit tests; separate permission handler allows logic testing without platform channels.
+
+### Scheduling Behavior
+Daily: Uses user override (if set) else computed optimal hour/minute; scheduled with `matchDateTimeComponents: time` so it repeats daily.  
+Weekly: Uses stored weekday & time with `matchDateTimeComponents: dayOfWeekAndTime`.  
+Both rely on the `timezone` package; zones initialized on service init (skipped in tests).
+
+### Persistence Keys
+`dailyReminderHour`, `dailyReminderMinute`, `weeklySummaryWeekday`, `weeklySummaryHour`, `weeklySummaryMinute`, and `last_reminder` (for per‑day guard).
+
+### User Flow
+1. User opens Notification Settings sheet; if permission missing, a banner prompts enablement.  
+2. Toggling Daily Reminders or Weekly Summary triggers (re) scheduling immediately.  
+3. Selecting a time or weekday updates SharedPreferences and reschedules.  
+4. Choosing "Use Smart" clears daily fixed time keys and reverts to adaptive reminder scheduling.
+
+### Future Enhancements (Not Yet Implemented)
+- Dynamic weekly summary body generation at fire time (currently placeholder text).  
+- Advanced analytics injection for richer weekly insights.  
+- Quiet hours / do-not-disturb awareness.  
+- A/B messaging variants & localization coverage expansion.
+
+### Testing
+Unit tests cover smart reminder eligibility (`shouldSendDailyReminder`) with injected clock and controlled session history. Additional scheduling tests verify that enabling features with overrides places correct schedule parameters (see `test/notification_service_test.dart`).
+
+
 ## 🏗️ Architecture
 
 ### State Management
@@ -185,7 +236,62 @@ The app requires microphone access to measure ambient noise levels:
 
 The app uses Flutter `gen-l10n` with multiple fully integrated locales.
 
-Supported locales (Phase 1): `en`, `es`, `fr`, `de`, `pt`, `pt_BR`, `ja`.
+Supported locales: `en`, `es`, `fr`, `de`, `pt`, `pt_BR`, `ja`.
+
+#### Notification & Dynamic Message Localization
+All notification strings (settings UI, reminders, achievements, weekly summaries, streak copy) are fully localized across supported locales.
+
+Dynamic strings with placeholders use explicit metadata blocks in each non‑English ARB (e.g. `@reminderStreakShort`, `@weeklyProgressFew`) to ensure typed method generation (`int streak`, `int count`). This avoids accidental `Object` parameter generation and keeps runtime type safety.
+
+Streak tiers implemented:
+- `reminderStreakShort` – early streak encouragement
+- `reminderStreakMedium` – mid milestone motivation
+- `reminderStreakLong` – long streak celebration
+
+Weekly progress variants:
+- `weeklyProgressFew`
+- `weeklyProgressSome`
+- `weeklyProgressPerfect`
+
+Fixed two‑day copy (`reminderDayTwo`) intentionally kept static (no placeholder) to remove unnecessary function signatures.
+
+#### Adding / Updating Translations
+1. Add or edit keys in `app_en.arb` (source of truth). Include `@key` metadata for any placeholder variables.
+2. Copy the new key to every other `app_<locale>.arb` with either a real translation or temporary English placeholder.
+3. If the string has placeholders, also add the matching `@key` metadata in each locale (copy from English, do not translate placeholder names).
+4. Run:
+  ```bash
+  flutter gen-l10n
+  ```
+5. Run tests (includes interpolation + completeness checks):
+  ```bash
+  flutter test
+  ```
+6. Replace any temporary placeholders with real translations before release.
+
+#### Translation Quality & Style
+- Keep punctuation and emoji usage parallel to English where culturally appropriate.
+- Avoid translating variable names.
+- Preserve capitalization segmentation if it impacts accessibility (screen readers often break on emoji + punctuation).
+- Prefer concise motivational tone for reminders; avoid overly formal phrasing.
+
+#### Validation Tests
+Added dedicated tests to guard localization integrity:
+- `localization_smoke_test.dart` (English interpolation)
+- `localization_de_test.dart`, `localization_es_test.dart`, `localization_pt_test.dart`, `localization_pt_br_test.dart`, `localization_ja_test.dart` (per‑locale interpolation checks)
+- `localization_completeness_test.dart` ensures every locale ARB contains all keys from English (excludes metadata keys starting with `@`).
+
+If a new locale is introduced without all keys, the completeness test will fail, preventing silent partial localization regressions.
+
+#### Common Pitfalls Prevented
+- Missing placeholder metadata → would generate `Object` parameter types (guarded by convention + tests).
+- Untranslated new key in one locale → caught by completeness test.
+- Placeholder name mismatch → `flutter gen-l10n` failure (resolve by copying `@key` entry exactly).
+
+#### Future i18n Enhancements
+- Automated extraction & translation pipeline (e.g. using a script to diff new keys and produce a translator handoff JSON/CSV).
+- Pluralization for weekly summaries if variant granularity increases.
+- Fallback locale smoke test during CI launch build.
 
 Key files:
 - `l10n/l10n.yaml` – configuration
@@ -205,8 +311,10 @@ Notes:
 - Placeholders must match exactly; don't translate variable names.
 - Avoid hard-coded text in widgets; everything user-facing should be localized.
 - Use plural formatting where counts vary (see `minutesOfSilenceCongrats`).
+ - Run `flutter gen-l10n` after any ARB change; commit regenerated files.
+ - Completeness & interpolation tests enforce consistency—keep them green before merging.
 
-Translation backlog is tracked via `untranslated_messages.txt` when running `flutter gen-l10n`.
+Translation backlog (if any) is tracked via `untranslated_messages.txt` when running `flutter gen-l10n`.
 
 
 ### Project Structure

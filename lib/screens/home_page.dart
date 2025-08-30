@@ -431,7 +431,7 @@ class HomePage extends HookConsumerWidget {
           
           // System notification + in-app feedback
           if (notificationService.enableSessionComplete) {
-            notificationService.showSessionComplete(success, durationInMinutes);
+            notificationService.showSessionComplete(context, success, durationInMinutes);
             final message = notificationService.getCompletionMessage(success, durationInMinutes);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

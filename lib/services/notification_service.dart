@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_permissions.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 typedef NowProvider = DateTime Function();
 
@@ -19,8 +20,8 @@ class NotificationService {
   static const String _lastReminderKey = 'last_reminder';
   
   // Flutter Local Notifications
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  late final NotificationPermissionHandler _permissionHandler = NotificationPermissionHandler(_flutterLocalNotificationsPlugin);
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  NotificationPermissionHandler? _permissionHandler; // lazy
 
   // IDs
   static const int dailyReminderId = 1001;
@@ -35,10 +36,20 @@ class NotificationService {
   bool enableSessionComplete = true;
   bool enableAchievementNotifications = true;
   bool enableWeeklyProgress = false;
+  // User-selected scheduling overrides (nullable means use smart detection / defaults)
+  int? dailyReminderHour; // 0-23
+  int? dailyReminderMinute; // 0-59
+  int weeklySummaryWeekday = DateTime.monday; // 1=Mon..7=Sun
+  int weeklySummaryHour = 9;
+  int weeklySummaryMinute = 0;
   
   // Permission status
   bool _hasNotificationPermission = false;
   bool _isInitialized = false;
+
+  // Test hook for capturing scheduling without invoking platform plugin
+  @visibleForTesting
+  void Function({required int id, required DateTime scheduled, required DateTimeComponents? match})? onZonedSchedule;
   
   List<DateTime> _sessionTimes = [];
   @visibleForTesting
@@ -51,8 +62,9 @@ class NotificationService {
     final isTest = _isInTestEnvironment();
     if (!isTest) {
       await _initializeNotifications();
-      await _permissionHandler.initialize();
-      _hasNotificationPermission = _permissionHandler.hasPermission;
+  _permissionHandler ??= NotificationPermissionHandler(_flutterLocalNotificationsPlugin);
+  await _permissionHandler!.initialize();
+  _hasNotificationPermission = _permissionHandler!.hasPermission;
       // Initialize timezone database once
       try { tz.initializeTimeZones(); } catch (_) {}
       if (tz.local.name == 'UTC') {
@@ -105,12 +117,22 @@ class NotificationService {
     bool? sessionComplete,
     bool? achievementNotifications,
     bool? weeklyProgress,
+  int? dailyHour,
+  int? dailyMinute,
+  int? weeklyWeekday,
+  int? weeklyHour,
+  int? weeklyMinute,
   }) {
     if (notifications != null) enableNotifications = notifications;
     if (dailyReminders != null) enableDailyReminders = dailyReminders;
     if (sessionComplete != null) enableSessionComplete = sessionComplete;
     if (achievementNotifications != null) enableAchievementNotifications = achievementNotifications;
     if (weeklyProgress != null) enableWeeklyProgress = weeklyProgress;
+  if (dailyHour != null) dailyReminderHour = dailyHour;
+  if (dailyMinute != null) dailyReminderMinute = dailyMinute;
+  if (weeklyWeekday != null) weeklySummaryWeekday = weeklyWeekday;
+  if (weeklyHour != null) weeklySummaryHour = weeklyHour;
+  if (weeklyMinute != null) weeklySummaryMinute = weeklyMinute;
   }
 
   // Record when user starts a session
@@ -127,6 +149,10 @@ class NotificationService {
 
   // Get the most common session time for reminders
   TimeOfDay? getOptimalReminderTime() {
+    // If user picked an explicit time, honor it regardless of history
+    if (dailyReminderHour != null && dailyReminderMinute != null) {
+      return TimeOfDay(hour: dailyReminderHour!, minute: dailyReminderMinute!);
+    }
     if (_sessionTimes.isEmpty) return null;
     
     // Group sessions by hour and find the most common
@@ -278,14 +304,16 @@ class NotificationService {
 
   // Permission handling
   Future<bool> requestNotificationPermission() async {
-    final granted = await _permissionHandler.request();
-    _hasNotificationPermission = granted;
+  _permissionHandler ??= NotificationPermissionHandler(_flutterLocalNotificationsPlugin);
+  final granted = await _permissionHandler!.request();
+  _hasNotificationPermission = granted;
     return granted;
   }
 
   Future<void> refreshPermissionStatus() async {
-    await _permissionHandler.refreshStatus();
-    _hasNotificationPermission = _permissionHandler.hasPermission;
+  _permissionHandler ??= NotificationPermissionHandler(_flutterLocalNotificationsPlugin);
+  await _permissionHandler!.refreshStatus();
+  _hasNotificationPermission = _permissionHandler!.hasPermission;
   }
 
   // Show actual notifications
@@ -328,59 +356,66 @@ class NotificationService {
   }
 
   // Convenience methods for different notification types
-  Future<void> showDailyReminder() async {
+  Future<void> showDailyReminder(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     await showNotification(
-      title: 'Daily Silence Reminder',
-      body: getSmartReminderMessage(),
+      title: l?.dailySilenceReminderTitle ?? 'Daily Silence Reminder',
+      body: getSmartReminderMessage(context),
       payload: 'daily_reminder',
     );
   }
 
-  Future<void> showSessionComplete(bool success, int durationMinutes) async {
+  Future<void> showSessionComplete(BuildContext context, bool success, int durationMinutes) async {
     if (!enableSessionComplete) return;
-    
+    final l = AppLocalizations.of(context);
     await showNotification(
-      title: success ? 'Session Complete! 🎉' : 'Session Ended',
+      title: success ? (l?.sessionCompleteSuccessTitle ?? 'Session Complete! 🎉') : (l?.sessionCompleteEndedTitle ?? 'Session Ended'),
       body: getCompletionMessage(success, durationMinutes),
       payload: 'session_complete',
     );
   }
 
-  Future<void> showAchievement(String achievement) async {
+  Future<void> showAchievement(BuildContext context, String achievement) async {
     if (!enableAchievementNotifications) return;
-    
+    final l = AppLocalizations.of(context);
     await showNotification(
-      title: 'Achievement Unlocked! 🏆',
-      body: getAchievementMessage(achievement),
+      title: l?.achievementUnlockedGenericTitle ?? 'Achievement Unlocked! 🏆',
+      body: getAchievementMessage(context, achievement),
       payload: 'achievement:$achievement',
     );
   }
 
-  Future<void> showWeeklyProgress(int sessionsThisWeek, int averageScore) async {
+  Future<void> showWeeklyProgress(BuildContext context, int sessionsThisWeek, int averageScore) async {
     if (!enableWeeklyProgress) return;
-    
+    final l = AppLocalizations.of(context);
     await showNotification(
-      title: 'Weekly Progress Report 📊',
-      body: getWeeklyProgressMessage(sessionsThisWeek, averageScore),
+      title: l?.weeklyProgressReportTitle ?? 'Weekly Progress Report 📊',
+      body: getWeeklyProgressMessage(context, sessionsThisWeek, averageScore),
       payload: 'weekly_progress',
     );
   }
 
   bool get hasNotificationPermission => _hasNotificationPermission;
+  @visibleForTesting void setTestPlugin(dynamic plugin){_flutterLocalNotificationsPlugin=plugin as FlutterLocalNotificationsPlugin;}
+  @visibleForTesting void forcePermissionGranted(){_hasNotificationPermission=true;}
 
   // Scheduling helpers -------------------------------------------------------
-  Future<void> scheduleDailyReminderNotification() async {
+  Future<void> scheduleDailyReminderNotification({BuildContext? context}) async {
     if (!enableNotifications || !enableDailyReminders || !_hasNotificationPermission) return;
     final optimal = getOptimalReminderTime();
     if (optimal == null) return; // need history
     final nowDt = now();
     final scheduleTime = DateTime(nowDt.year, nowDt.month, nowDt.day, optimal.hour, optimal.minute);
     final target = scheduleTime.isAfter(nowDt) ? scheduleTime : scheduleTime.add(const Duration(days: 1));
+    if (_isInTestEnvironment()) {
+      onZonedSchedule?.call(id: dailyReminderId, scheduled: target, match: DateTimeComponents.time);
+      return;
+    }
     final tzTime = tz.TZDateTime.from(target, tz.local);
-  await _flutterLocalNotificationsPlugin.zonedSchedule(
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
       dailyReminderId,
-      'Daily Silence Reminder',
-      getSmartReminderMessage(),
+  context != null ? (AppLocalizations.of(context)?.dailySilenceReminderTitle ?? 'Daily Silence Reminder') : 'Daily Silence Reminder',
+  getSmartReminderMessage(context),
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails('silence_score_general','General Notifications',channelDescription: 'General notifications for SilenceScore app',importance: Importance.high, priority: Priority.high, icon: '@mipmap/ic_launcher'),
@@ -392,18 +427,26 @@ class NotificationService {
     );
   }
 
-  Future<void> scheduleWeeklySummaryNotification({int weekday = DateTime.monday, int hour = 9, int minute = 0}) async {
+  Future<void> scheduleWeeklySummaryNotification({BuildContext? context, int weekday = DateTime.monday, int hour = 9, int minute = 0}) async {
     if (!enableNotifications || !enableWeeklyProgress || !_hasNotificationPermission) return;
-    final nowDt = now();
+  // Allow stored overrides to supersede passed parameters
+  final effectiveWeekday = weeklySummaryWeekday; // already stored default / user setting
+  final effectiveHour = weeklySummaryHour;
+  final effectiveMinute = weeklySummaryMinute;
+  final nowDt = now();
     // Find next occurrence of given weekday
-    int daysUntil = (weekday - nowDt.weekday) % 7;
-    var scheduled = DateTime(nowDt.year, nowDt.month, nowDt.day, hour, minute).add(Duration(days: daysUntil));
+  int daysUntil = (effectiveWeekday - nowDt.weekday) % 7;
+  var scheduled = DateTime(nowDt.year, nowDt.month, nowDt.day, effectiveHour, effectiveMinute).add(Duration(days: daysUntil));
     if (scheduled.isBefore(nowDt)) scheduled = scheduled.add(const Duration(days: 7));
+    if (_isInTestEnvironment()) {
+      onZonedSchedule?.call(id: weeklySummaryId, scheduled: scheduled, match: DateTimeComponents.dayOfWeekAndTime);
+      return;
+    }
     final tzTime = tz.TZDateTime.from(scheduled, tz.local);
-  await _flutterLocalNotificationsPlugin.zonedSchedule(
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
       weeklySummaryId,
-      'Weekly Progress Report 📊',
-      getWeeklyProgressMessage(0, 0), // body will be static placeholder; dynamic updates require cancel+reschedule
+  context != null ? (AppLocalizations.of(context)?.weeklyProgressReportTitle ?? 'Weekly Progress Report 📊') : 'Weekly Progress Report 📊',
+  getWeeklyProgressMessage(context, 0, 0),
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails('silence_score_general','General Notifications',channelDescription: 'General notifications for SilenceScore app',importance: Importance.high, priority: Priority.high, icon: '@mipmap/ic_launcher'),
@@ -420,67 +463,82 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.cancel(weeklySummaryId);
   }
 
+  /// Triggered externally right before firing weekly summary to compute dynamic content.
+  /// For now we expose a method to manually send an updated weekly summary using current data.
+  Future<void> showDynamicWeeklySummary(BuildContext context) async {
+    if (!enableNotifications || !enableWeeklyProgress || !_hasNotificationPermission) return;
+    // Compute sessions in last 7 days
+    final nowDt = now();
+    final start = nowDt.subtract(const Duration(days: 6));
+    final sessions = _sessionTimes.where((t) => t.isAfter(DateTime(start.year, start.month, start.day)) && t.isBefore(nowDt.add(const Duration(days:1)))).toList();
+    final sessionsThisWeek = sessions.map((e) => DateTime(e.year, e.month, e.day)).toSet().length; // unique days
+    // Simple average score placeholder: minutes per session * 1 (point per min). In absence of full scoring, approximate.
+    final avg = sessions.isEmpty ? 0 : (sessions.length * 5) ~/ sessions.length; // placeholder 5 min per session assumption
+  await showWeeklyProgress(context, sessionsThisWeek, avg);
+  }
+
   // Enhanced reminder messages based on user engagement
-  String getSmartReminderMessage() {
+  String getSmartReminderMessage(BuildContext? context) {
     final streak = getCurrentStreak();
     final sessionCount = _sessionTimes.length;
-    
+    final l = context != null ? AppLocalizations.of(context) : null;
+
     if (streak == 0 && sessionCount == 0) {
-      return '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+      return l?.reminderStartJourney ?? '🧘‍♂️ Start your silence journey today! Find your inner peace.';
     }
-    
+
     if (streak == 0 && sessionCount > 0) {
-      return '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+      return l?.reminderRestart ?? '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
     }
-    
+
     if (streak == 1) {
-      return '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+      return l?.reminderDayTwo ?? '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
     }
-    
+
     if (streak < 7) {
-      return '🔥 $streak-day streak! You\'re building a powerful habit.';
+      return l?.reminderStreakShort(streak) ?? '🔥 $streak-day streak! You\'re building a powerful habit.';
     }
-    
+
     if (streak < 30) {
-      return '🏆 Amazing $streak-day streak! Your dedication is inspiring.';
+      return l?.reminderStreakMedium(streak) ?? '🏆 Amazing $streak-day streak! Your dedication is inspiring.';
     }
-    
-    return '👑 Incredible $streak-day streak! You\'re a silence master!';
+
+    return l?.reminderStreakLong(streak) ?? '👑 Incredible $streak-day streak! You\'re a silence master!';
   }
 
   // Achievement notification messages
-  String getAchievementMessage(String achievement) {
+  String getAchievementMessage(BuildContext? context, String achievement) {
     switch (achievement) {
       case 'first_session':
-        return '🎉 First session completed! Welcome to your silence journey!';
+        return AppLocalizations.of(context!)?.achievementFirstSession ?? '🎉 First session completed! Welcome to your silence journey!';
       case 'week_streak':
-        return '🌟 7-day streak achieved! Consistency is your superpower!';
+        return AppLocalizations.of(context!)?.achievementWeekStreak ?? '🌟 7-day streak achieved! Consistency is your superpower!';
       case 'month_streak':
-        return '🏆 30-day streak unlocked! You\'re unstoppable!';
+        return AppLocalizations.of(context!)?.achievementMonthStreak ?? '🏆 30-day streak unlocked! You\'re unstoppable!';
       case 'perfect_session':
-        return '✨ Perfect silence session! Not a sound disturbed your peace.';
+        return AppLocalizations.of(context!)?.achievementPerfectSession ?? '✨ Perfect silence session! Not a sound disturbed your peace.';
       case 'long_session':
-        return '⏰ Extended session master! Your focus grows stronger.';
+        return AppLocalizations.of(context!)?.achievementLongSession ?? '⏰ Extended session master! Your focus grows stronger.';
       default:
-        return '🎊 Achievement unlocked! Keep up the great work!';
+        return AppLocalizations.of(context!)?.achievementGeneric ?? '🎊 Achievement unlocked! Keep up the great work!';
     }
   }
 
   // Weekly progress summary
-  String getWeeklyProgressMessage(int sessionsThisWeek, int averageScore) {
+  String getWeeklyProgressMessage(BuildContext? context, int sessionsThisWeek, int averageScore) {
     if (sessionsThisWeek == 0) {
-      return '💭 This week could use some silence. Ready for a peaceful session?';
+      return AppLocalizations.of(context!)?.weeklyProgressNone ?? '💭 This week could use some silence. Ready for a peaceful session?';
     }
     
     if (sessionsThisWeek < 3) {
-      return '🌿 $sessionsThisWeek sessions this week. Every practice deepens your calm.';
+  return AppLocalizations.of(context!)?.weeklyProgressFew(sessionsThisWeek) ?? '🌿 $sessionsThisWeek sessions this week. Every practice deepens your calm.';
     }
     
     if (sessionsThisWeek < 7) {
-      return '🌊 $sessionsThisWeek sessions this week! You\'re finding your rhythm.';
+  return AppLocalizations.of(context!)?.weeklyProgressSome(sessionsThisWeek) ?? '🌊 $sessionsThisWeek sessions this week! You\'re finding your rhythm.';
     }
     
-    return '🎯 Perfect week with $sessionsThisWeek sessions! Your dedication shines.';
+  return AppLocalizations.of(context!)?.weeklyProgressPerfect(sessionsThisWeek) ?? '🎯 Perfect week with $sessionsThisWeek sessions! Your dedication shines.';
   }
   bool _isInTestEnvironment() {
     try {

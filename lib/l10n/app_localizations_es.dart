@@ -659,4 +659,139 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Completa sesiones para desbloquear logros';
+
+  @override
+  String get notificationSettingsTitle => 'Ajustes de notificaciones';
+
+  @override
+  String get notificationPermissionRequired => 'Permiso requerido';
+
+  @override
+  String get notificationPermissionRationale => 'Activa notificaciones para recordatorios suaves y celebrar logros.';
+
+  @override
+  String get requesting => 'Solicitando...';
+
+  @override
+  String get enableNotificationsCta => 'Activar notificaciones';
+
+  @override
+  String get enableNotificationsTitle => 'Activar notificaciones';
+
+  @override
+  String get enableNotificationsSubtitle => 'Permite a SilenceScore enviar notificaciones';
+
+  @override
+  String get dailyReminderTitle => 'Recordatorio diario inteligente';
+
+  @override
+  String get dailyReminderSubtitle => 'Inteligente o hora fija';
+
+  @override
+  String get dailyTimeLabel => 'Hora diaria';
+
+  @override
+  String get dailyTimeHint => 'Elige hora fija o deja que la app aprenda tu patrón.';
+
+  @override
+  String get useSmartCta => 'Usar inteligente';
+
+  @override
+  String get sessionCompletedTitle => 'Sesión completada';
+
+  @override
+  String get sessionCompletedSubtitle => 'Celebrar sesiones completadas';
+
+  @override
+  String get achievementUnlockedTitle => 'Logro desbloqueado';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Notificaciones de hitos';
+
+  @override
+  String get weeklySummaryTitle => 'Resumen semanal';
+
+  @override
+  String get weeklySummarySubtitle => 'Resumen semanal (día & hora)';
+
+  @override
+  String get weeklyTimeLabel => 'Hora semanal';
+
+  @override
+  String get notificationPreview => 'Vista previa';
+
+  @override
+  String get dailySilenceReminderTitle => 'Recordatorio diario de silencio';
+
+  @override
+  String get weeklyProgressReportTitle => 'Progreso semanal 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => '¡Logro desbloqueado! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => '¡Sesión lista! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Sesión finalizada';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ ¡Comienza hoy tu viaje de silencio y encuentra tu calma!';
+
+  @override
+  String get reminderRestart => '🌱 ¿Reinicias? Cada momento es un nuevo comienzo.';
+
+  @override
+  String get reminderDayTwo => '⭐ ¡Día 2 de tu racha! La constancia crea tranquilidad.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 ¡Racha de $streak días! Construyes un gran hábito.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Impresionante racha de $streak días. ¡Inspiras dedicación!';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Increíble racha de $streak días. ¡Maestría en silencio!';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 ¡Primera sesión lograda! Bienvenido a tu viaje.';
+
+  @override
+  String get achievementWeekStreak => '🌟 ¡Racha de 7 días! La constancia es tu superpoder.';
+
+  @override
+  String get achievementMonthStreak => '🏆 ¡Racha de 30 días desbloqueada! Imparable.';
+
+  @override
+  String get achievementPerfectSession => '✨ Sesión de silencio perfecta. Nada interrumpió tu paz.';
+
+  @override
+  String get achievementLongSession => '⏰ Sesión larga dominada. Tu enfoque crece.';
+
+  @override
+  String get achievementGeneric => '🎊 Logro desbloqueado. ¡Sigue así!';
+
+  @override
+  String get weeklyProgressNone => '💭 Semana silenciosa en la práctica. ¿Listo para una sesión?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count sesiones esta semana. Cada práctica profundiza tu calma.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count sesiones – vas encontrando tu ritmo.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Semana perfecta con $count sesiones. Gran constancia.';
+  }
 }

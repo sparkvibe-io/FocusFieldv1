@@ -1315,6 +1315,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete sessions to unlock achievements'**
   String get achievementLockedPrompt;
+
+  /// No description provided for @notificationSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettingsTitle;
+
+  /// No description provided for @notificationPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission Required'**
+  String get notificationPermissionRequired;
+
+  /// No description provided for @notificationPermissionRationale.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notifications to receive gentle reminders and celebrate achievements.'**
+  String get notificationPermissionRationale;
+
+  /// No description provided for @requesting.
+  ///
+  /// In en, this message translates to:
+  /// **'Requesting...'**
+  String get requesting;
+
+  /// No description provided for @enableNotificationsCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get enableNotificationsCta;
+
+  /// No description provided for @enableNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get enableNotificationsTitle;
+
+  /// No description provided for @enableNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow SilenceScore to send notifications'**
+  String get enableNotificationsSubtitle;
+
+  /// No description provided for @dailyReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Daily Reminders'**
+  String get dailyReminderTitle;
+
+  /// No description provided for @dailyReminderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart or chosen time'**
+  String get dailyReminderSubtitle;
+
+  /// No description provided for @dailyTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Time'**
+  String get dailyTimeLabel;
+
+  /// No description provided for @dailyTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a fixed time or let SilenceScore learn your pattern.'**
+  String get dailyTimeHint;
+
+  /// No description provided for @useSmartCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Smart'**
+  String get useSmartCta;
+
+  /// No description provided for @sessionCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Completed'**
+  String get sessionCompletedTitle;
+
+  /// No description provided for @sessionCompletedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Celebrate completed sessions'**
+  String get sessionCompletedSubtitle;
+
+  /// No description provided for @achievementUnlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement Unlocked'**
+  String get achievementUnlockedTitle;
+
+  /// No description provided for @achievementUnlockedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone notifications'**
+  String get achievementUnlockedSubtitle;
+
+  /// No description provided for @weeklySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Progress Summary'**
+  String get weeklySummaryTitle;
+
+  /// No description provided for @weeklySummarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly insights (weekday & time)'**
+  String get weeklySummarySubtitle;
+
+  /// No description provided for @weeklyTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Time'**
+  String get weeklyTimeLabel;
+
+  /// No description provided for @notificationPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Preview'**
+  String get notificationPreview;
+
+  /// No description provided for @dailySilenceReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Silence Reminder'**
+  String get dailySilenceReminderTitle;
+
+  /// No description provided for @weeklyProgressReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Progress Report 📊'**
+  String get weeklyProgressReportTitle;
+
+  /// No description provided for @achievementUnlockedGenericTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement Unlocked! 🏆'**
+  String get achievementUnlockedGenericTitle;
+
+  /// No description provided for @sessionCompleteSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Complete! 🎉'**
+  String get sessionCompleteSuccessTitle;
+
+  /// No description provided for @sessionCompleteEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Ended'**
+  String get sessionCompleteEndedTitle;
+
+  /// No description provided for @reminderStartJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'🧘‍♂️ Start your silence journey today! Find your inner peace.'**
+  String get reminderStartJourney;
+
+  /// No description provided for @reminderRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'🌱 Ready to restart your silence practice? Every moment is a new beginning.'**
+  String get reminderRestart;
+
+  /// No description provided for @reminderDayTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'⭐ Day 2 of your silence streak! Consistency builds tranquility.'**
+  String get reminderDayTwo;
+
+  /// No description provided for @reminderStreakShort.
+  ///
+  /// In en, this message translates to:
+  /// **'🔥 {streak}-day streak! You\'re building a powerful habit.'**
+  String reminderStreakShort(int streak);
+
+  /// No description provided for @reminderStreakMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Amazing {streak}-day streak! Your dedication is inspiring.'**
+  String reminderStreakMedium(int streak);
+
+  /// No description provided for @reminderStreakLong.
+  ///
+  /// In en, this message translates to:
+  /// **'👑 Incredible {streak}-day streak! You\'re a silence master!'**
+  String reminderStreakLong(int streak);
+
+  /// No description provided for @achievementFirstSession.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 First session completed! Welcome to your silence journey!'**
+  String get achievementFirstSession;
+
+  /// No description provided for @achievementWeekStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'🌟 7-day streak achieved! Consistency is your superpower!'**
+  String get achievementWeekStreak;
+
+  /// No description provided for @achievementMonthStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 30-day streak unlocked! You\'re unstoppable!'**
+  String get achievementMonthStreak;
+
+  /// No description provided for @achievementPerfectSession.
+  ///
+  /// In en, this message translates to:
+  /// **'✨ Perfect silence session! Not a sound disturbed your peace.'**
+  String get achievementPerfectSession;
+
+  /// No description provided for @achievementLongSession.
+  ///
+  /// In en, this message translates to:
+  /// **'⏰ Extended session master! Your focus grows stronger.'**
+  String get achievementLongSession;
+
+  /// No description provided for @achievementGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'🎊 Achievement unlocked! Keep up the great work!'**
+  String get achievementGeneric;
+
+  /// No description provided for @weeklyProgressNone.
+  ///
+  /// In en, this message translates to:
+  /// **'💭 This week could use some silence. Ready for a peaceful session?'**
+  String get weeklyProgressNone;
+
+  /// No description provided for @weeklyProgressFew.
+  ///
+  /// In en, this message translates to:
+  /// **'🌿 {count} sessions this week. Every practice deepens your calm.'**
+  String weeklyProgressFew(int count);
+
+  /// No description provided for @weeklyProgressSome.
+  ///
+  /// In en, this message translates to:
+  /// **'🌊 {count} sessions this week! You\'re finding your rhythm.'**
+  String weeklyProgressSome(int count);
+
+  /// No description provided for @weeklyProgressPerfect.
+  ///
+  /// In en, this message translates to:
+  /// **'🎯 Perfect week with {count} sessions! Your dedication shines.'**
+  String weeklyProgressPerfect(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

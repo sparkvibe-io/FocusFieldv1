@@ -659,4 +659,139 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Sitzungen abschließen zum Freischalten';
+
+  @override
+  String get notificationSettingsTitle => 'Benachrichtigungseinstellungen';
+
+  @override
+  String get notificationPermissionRequired => 'Berechtigung erforderlich';
+
+  @override
+  String get notificationPermissionRationale => 'Aktiviere Benachrichtigungen für sanfte Erinnerungen und Erfolge.';
+
+  @override
+  String get requesting => 'Anfrage...';
+
+  @override
+  String get enableNotificationsCta => 'Benachrichtigungen aktivieren';
+
+  @override
+  String get enableNotificationsTitle => 'Benachrichtigungen aktivieren';
+
+  @override
+  String get enableNotificationsSubtitle => 'Erlaube SilenceScore Benachrichtigungen zu senden';
+
+  @override
+  String get dailyReminderTitle => 'Intelligente Tageserinnerung';
+
+  @override
+  String get dailyReminderSubtitle => 'Intelligent oder feste Zeit';
+
+  @override
+  String get dailyTimeLabel => 'Tägliche Zeit';
+
+  @override
+  String get dailyTimeHint => 'Feste Zeit wählen oder Muster automatisch lernen lassen.';
+
+  @override
+  String get useSmartCta => 'Smart nutzen';
+
+  @override
+  String get sessionCompletedTitle => 'Session abgeschlossen';
+
+  @override
+  String get sessionCompletedSubtitle => 'Abgeschlossene Sessions feiern';
+
+  @override
+  String get achievementUnlockedTitle => 'Erfolg freigeschaltet';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Meilenstein-Benachrichtigungen';
+
+  @override
+  String get weeklySummaryTitle => 'Wöchentliche Zusammenfassung';
+
+  @override
+  String get weeklySummarySubtitle => 'Wöchentliche Einblicke (Wochentag & Zeit)';
+
+  @override
+  String get weeklyTimeLabel => 'Wöchentliche Zeit';
+
+  @override
+  String get notificationPreview => 'Vorschau';
+
+  @override
+  String get dailySilenceReminderTitle => 'Tägliche Stille-Erinnerung';
+
+  @override
+  String get weeklyProgressReportTitle => 'Wochenfortschritt 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => 'Erfolg freigeschaltet! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'Session fertig! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Session beendet';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ Starte heute deine Stille-Reise – finde innere Ruhe.';
+
+  @override
+  String get reminderRestart => '🌱 Neustart? Jeder Moment ist ein neuer Anfang.';
+
+  @override
+  String get reminderDayTwo => '⭐ Tag 2 deiner Serie! Beständigkeit baut Gelassenheit.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 $streak-Tage Serie! Du baust eine starke Gewohnheit auf.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Beeindruckende $streak-Tage Serie! Deine Hingabe inspiriert.';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Unglaubliche $streak-Tage Serie! Du bist ein Stille-Meister!';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 Erste Session geschafft! Willkommen auf deiner Reise.';
+
+  @override
+  String get achievementWeekStreak => '🌟 7-Tage Serie erreicht! Konsistenz ist deine Superkraft!';
+
+  @override
+  String get achievementMonthStreak => '🏆 30-Tage Serie freigeschaltet! Unaufhaltsam!';
+
+  @override
+  String get achievementPerfectSession => '✨ Perfekte stille Session! Keine Störung deiner Ruhe.';
+
+  @override
+  String get achievementLongSession => '⏰ Lange Session gemeistert! Dein Fokus wächst.';
+
+  @override
+  String get achievementGeneric => '🎊 Erfolg freigeschaltet! Weiter so!';
+
+  @override
+  String get weeklyProgressNone => '💭 Diese Woche war ruhig im Kalender – bereit für eine stille Session?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count Sessions diese Woche. Jede Praxis vertieft deine Ruhe.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count Sessions – du findest deinen Rhythmus.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Perfekte Woche mit $count Sessions! Großartige Beständigkeit.';
+  }
 }

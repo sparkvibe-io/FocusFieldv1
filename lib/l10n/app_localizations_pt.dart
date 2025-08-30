@@ -659,6 +659,141 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
+
+  @override
+  String get notificationSettingsTitle => 'Configurações de notificação';
+
+  @override
+  String get notificationPermissionRequired => 'Permissão necessária';
+
+  @override
+  String get notificationPermissionRationale => 'Ative notificações para lembretes suaves e celebrar conquistas.';
+
+  @override
+  String get requesting => 'Solicitando...';
+
+  @override
+  String get enableNotificationsCta => 'Ativar notificações';
+
+  @override
+  String get enableNotificationsTitle => 'Ativar notificações';
+
+  @override
+  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
+
+  @override
+  String get dailyReminderTitle => 'Lembrete diário inteligente';
+
+  @override
+  String get dailyReminderSubtitle => 'Inteligente ou horário fixo';
+
+  @override
+  String get dailyTimeLabel => 'Horário diário';
+
+  @override
+  String get dailyTimeHint => 'Escolha horário fixo ou deixe o app aprender seu padrão.';
+
+  @override
+  String get useSmartCta => 'Usar inteligente';
+
+  @override
+  String get sessionCompletedTitle => 'Sessão concluída';
+
+  @override
+  String get sessionCompletedSubtitle => 'Celebrar sessões concluídas';
+
+  @override
+  String get achievementUnlockedTitle => 'Conquista desbloqueada';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Notificações de marcos';
+
+  @override
+  String get weeklySummaryTitle => 'Resumo semanal';
+
+  @override
+  String get weeklySummarySubtitle => 'Visão semanal (dia & hora)';
+
+  @override
+  String get weeklyTimeLabel => 'Horário semanal';
+
+  @override
+  String get notificationPreview => 'Prévia';
+
+  @override
+  String get dailySilenceReminderTitle => 'Lembrete diário de silêncio';
+
+  @override
+  String get weeklyProgressReportTitle => 'Progresso semanal 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => 'Conquista desbloqueada! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'Sessão finalizada! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Sessão encerrada';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre calma.';
+
+  @override
+  String get reminderRestart => '🌱 Recomeçar? Cada momento é um novo início.';
+
+  @override
+  String get reminderDayTwo => '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 Sequência de $streak dias! Construindo hábito forte.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Sequência incrível de $streak dias! Dedicação inspiradora.';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Sequência incrível de $streak dias! Mestre do silêncio!';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 Primeira sessão concluída! Bem-vindo.';
+
+  @override
+  String get achievementWeekStreak => '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
+
+  @override
+  String get achievementMonthStreak => '🏆 Sequência de 30 dias desbloqueada! Imparável.';
+
+  @override
+  String get achievementPerfectSession => '✨ Sessão perfeita de silêncio. Nada interrompeu sua paz.';
+
+  @override
+  String get achievementLongSession => '⏰ Sessão longa dominada. Foco crescendo.';
+
+  @override
+  String get achievementGeneric => '🎊 Conquista desbloqueada! Continue!';
+
+  @override
+  String get weeklyProgressNone => '💭 Semana leve de prática. Pronto para uma sessão?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count sessões nesta semana. Cada prática aprofunda a calma.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count sessões nesta semana! Encontrando o ritmo.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Semana perfeita com $count sessões! Sua consistência brilha.';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1316,4 +1451,139 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
+
+  @override
+  String get notificationSettingsTitle => 'Configurações de notificação';
+
+  @override
+  String get notificationPermissionRequired => 'Permissão necessária';
+
+  @override
+  String get notificationPermissionRationale => 'Ative notificações para receber lembretes e celebrar conquistas.';
+
+  @override
+  String get requesting => 'Solicitando...';
+
+  @override
+  String get enableNotificationsCta => 'Ativar notificações';
+
+  @override
+  String get enableNotificationsTitle => 'Ativar notificações';
+
+  @override
+  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
+
+  @override
+  String get dailyReminderTitle => 'Lembrete diário inteligente';
+
+  @override
+  String get dailyReminderSubtitle => 'Inteligente ou horário escolhido';
+
+  @override
+  String get dailyTimeLabel => 'Horário diário';
+
+  @override
+  String get dailyTimeHint => 'Escolha um horário fixo ou deixe o app aprender seu padrão.';
+
+  @override
+  String get useSmartCta => 'Usar inteligente';
+
+  @override
+  String get sessionCompletedTitle => 'Sessão concluída';
+
+  @override
+  String get sessionCompletedSubtitle => 'Celebrar sessões finalizadas';
+
+  @override
+  String get achievementUnlockedTitle => 'Conquista desbloqueada';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Notificações de marcos';
+
+  @override
+  String get weeklySummaryTitle => 'Resumo semanal';
+
+  @override
+  String get weeklySummarySubtitle => 'Visão semanal (dia e hora)';
+
+  @override
+  String get weeklyTimeLabel => 'Horário semanal';
+
+  @override
+  String get notificationPreview => 'Prévia';
+
+  @override
+  String get dailySilenceReminderTitle => 'Lembrete diário de silêncio';
+
+  @override
+  String get weeklyProgressReportTitle => 'Relatório semanal 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => 'Conquista desbloqueada! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'Sessão concluída! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Sessão finalizada';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre sua paz.';
+
+  @override
+  String get reminderRestart => '🌱 Recomeçar a prática? Cada momento é um novo começo.';
+
+  @override
+  String get reminderDayTwo => '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 Sequência de $streak dias! Você está criando um hábito forte.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Incrível sequência de $streak dias! Sua dedicação inspira.';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Sequência impressionante de $streak dias! Mestre do silêncio!';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 Primeira sessão concluída! Bem-vindo(a).';
+
+  @override
+  String get achievementWeekStreak => '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
+
+  @override
+  String get achievementMonthStreak => '🏆 Sequência de 30 dias desbloqueada! Imparável.';
+
+  @override
+  String get achievementPerfectSession => '✨ Sessão perfeita. Nada perturbou sua paz.';
+
+  @override
+  String get achievementLongSession => '⏰ Sessão longa dominada. Foco crescente.';
+
+  @override
+  String get achievementGeneric => '🎊 Conquista desbloqueada! Continue assim!';
+
+  @override
+  String get weeklyProgressNone => '💭 Semana tranquila de prática. Pronto(a) para uma sessão?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count sessões esta semana. Cada prática aprofunda a calma.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count sessões nesta semana! Encontrando o ritmo.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Semana perfeita com $count sessões! Sua consistência brilha.';
+  }
 }

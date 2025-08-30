@@ -659,4 +659,139 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
+
+  @override
+  String get notificationSettingsTitle => 'Notification Settings';
+
+  @override
+  String get notificationPermissionRequired => 'Notification Permission Required';
+
+  @override
+  String get notificationPermissionRationale => 'Enable notifications to receive gentle reminders and celebrate achievements.';
+
+  @override
+  String get requesting => 'Requesting...';
+
+  @override
+  String get enableNotificationsCta => 'Enable Notifications';
+
+  @override
+  String get enableNotificationsTitle => 'Enable Notifications';
+
+  @override
+  String get enableNotificationsSubtitle => 'Allow SilenceScore to send notifications';
+
+  @override
+  String get dailyReminderTitle => 'Smart Daily Reminders';
+
+  @override
+  String get dailyReminderSubtitle => 'Smart or chosen time';
+
+  @override
+  String get dailyTimeLabel => 'Daily Time';
+
+  @override
+  String get dailyTimeHint => 'Choose a fixed time or let SilenceScore learn your pattern.';
+
+  @override
+  String get useSmartCta => 'Use Smart';
+
+  @override
+  String get sessionCompletedTitle => 'Session Completed';
+
+  @override
+  String get sessionCompletedSubtitle => 'Celebrate completed sessions';
+
+  @override
+  String get achievementUnlockedTitle => 'Achievement Unlocked';
+
+  @override
+  String get achievementUnlockedSubtitle => 'Milestone notifications';
+
+  @override
+  String get weeklySummaryTitle => 'Weekly Progress Summary';
+
+  @override
+  String get weeklySummarySubtitle => 'Weekly insights (weekday & time)';
+
+  @override
+  String get weeklyTimeLabel => 'Weekly Time';
+
+  @override
+  String get notificationPreview => 'Notification Preview';
+
+  @override
+  String get dailySilenceReminderTitle => 'Daily Silence Reminder';
+
+  @override
+  String get weeklyProgressReportTitle => 'Weekly Progress Report 📊';
+
+  @override
+  String get achievementUnlockedGenericTitle => 'Achievement Unlocked! 🏆';
+
+  @override
+  String get sessionCompleteSuccessTitle => 'Session Complete! 🎉';
+
+  @override
+  String get sessionCompleteEndedTitle => 'Session Ended';
+
+  @override
+  String get reminderStartJourney => '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+
+  @override
+  String get reminderRestart => '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+
+  @override
+  String get reminderDayTwo => '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+
+  @override
+  String reminderStreakShort(int streak) {
+    return '🔥 $streak-day streak! You\'re building a powerful habit.';
+  }
+
+  @override
+  String reminderStreakMedium(int streak) {
+    return '🏆 Amazing $streak-day streak! Your dedication is inspiring.';
+  }
+
+  @override
+  String reminderStreakLong(int streak) {
+    return '👑 Incredible $streak-day streak! You\'re a silence master!';
+  }
+
+  @override
+  String get achievementFirstSession => '🎉 First session completed! Welcome to your silence journey!';
+
+  @override
+  String get achievementWeekStreak => '🌟 7-day streak achieved! Consistency is your superpower!';
+
+  @override
+  String get achievementMonthStreak => '🏆 30-day streak unlocked! You\'re unstoppable!';
+
+  @override
+  String get achievementPerfectSession => '✨ Perfect silence session! Not a sound disturbed your peace.';
+
+  @override
+  String get achievementLongSession => '⏰ Extended session master! Your focus grows stronger.';
+
+  @override
+  String get achievementGeneric => '🎊 Achievement unlocked! Keep up the great work!';
+
+  @override
+  String get weeklyProgressNone => '💭 This week could use some silence. Ready for a peaceful session?';
+
+  @override
+  String weeklyProgressFew(int count) {
+    return '🌿 $count sessions this week. Every practice deepens your calm.';
+  }
+
+  @override
+  String weeklyProgressSome(int count) {
+    return '🌊 $count sessions this week! You\'re finding your rhythm.';
+  }
+
+  @override
+  String weeklyProgressPerfect(int count) {
+    return '🎯 Perfect week with $count sessions! Your dedication shines.';
+  }
 }
