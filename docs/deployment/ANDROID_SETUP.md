@@ -1,7 +1,63 @@
 # Android Setup Guide for SilenceScore
 
 ## Overview
-This guide covers the complete setup for building and distributing the SilenceScore Android app, including development environment, signing configuration, and Google Play Store preparation.
+# Android Platform Setup
+
+Relocated from `android/ANDROID_SETUP.md` per documentation standards.
+
+## Overview
+Steps to configure, build, and release the Android version of SilenceScore.
+
+## Prerequisites
+- Android Studio (latest)
+- Java 17 toolchain
+- Play Console access
+- RevenueCat API key
+
+## Configuration
+1. Package name: `io.sparkvibe.silencescore` (validate in `android/app/build.gradle`).
+2. Microphone permission already declared (`RECORD_AUDIO`).
+3. Add release keystore:
+     - Place `keystore.jks` outside repo.
+     - Reference in `key.properties` (gitignored):
+```properties
+storePassword=...
+keyPassword=...
+keyAlias=release
+storeFile=/absolute/path/keystore.jks
+```
+4. Ensure `minSdkVersion` matches noise package requirements.
+
+## Debug Run
+```bash
+flutter run -d android --dart-define=REVENUECAT_API_KEY=YOUR_KEY
+```
+
+## Release Build
+```bash
+flutter build appbundle --release \
+    --dart-define=REVENUECAT_API_KEY=YOUR_KEY \
+    --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+```
+
+## Internal Testing
+1. Upload AAB to Internal Track.
+2. Add tester emails.
+3. Accept opt-in link & install.
+
+## Troubleshooting
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| Build fails on API level | minSdk mismatch | Update `compileSdkVersion` & dependencies |
+| Microphone not working | Permission denied | App settings > Permissions > Microphone |
+| Play upload warning | Missing privacy data | Complete Data Safety form |
+
+## Next
+- Validate sandbox subscription purchases.
+- Optimize startup time (deferred heavy init).
+
+## Last Updated
+August 30, 2025
 
 ## Current Configuration
 - **Package Name**: `io.sparkvibe.silencescore`

@@ -1,3 +1,47 @@
+# iOS Platform Setup
+
+Relocated from `ios/iOS_SETUP.md` per documentation standards (centralize under `docs/`).
+
+## Overview
+Guide for configuring and building the iOS version of SilenceScore.
+
+## Prerequisites
+- Xcode (latest stable)
+- Apple Developer Account
+- CocoaPods installed (`sudo gem install cocoapods`)
+- RevenueCat API key (configured via `--dart-define`)
+
+## Configuration Steps
+1. Open `ios/Runner.xcworkspace` in Xcode.
+2. Set the Bundle Identifier: `io.sparkvibe.silencescore`.
+3. Ensure signing team is selected (Automatically manage signing ON).
+4. Verify `Info.plist` contains:
+	- `NSMicrophoneUsageDescription` with clear rationale.
+5. Run `pod install` inside `ios/` if dependencies change.
+
+## Debug Run
+```bash
+flutter run -d ios --dart-define=REVENUECAT_API_KEY=YOUR_KEY
+```
+
+## Archive & TestFlight
+1. From Xcode: Product > Archive.
+2. Validate and upload build.
+3. Configure TestFlight testers & internal group.
+
+## Troubleshooting
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| Microphone denied | User rejected | Settings > Privacy > Microphone |
+| Pod install fails | Outdated repo | `pod repo update && pod install` |
+| Build fails M1 | Ruby/ffi mismatch | `gem install ffi` then pod install |
+
+## Next
+- Add screenshots & App Store metadata.
+- Validate sandbox subscription purchases.
+
+## Last Updated
+August 30, 2025
 # iOS Team Configuration
 # Copy this file to ios/Runner.xcodeproj/project.xcassets/ and configure your team
 

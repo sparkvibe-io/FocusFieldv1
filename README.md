@@ -39,6 +39,8 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - **Data Export (Premium)**: CSV & PDF reports
 - **Reset Option**: Wipes all local settings & history
 
+> Note: Cloud backup / sync is not yet available (local-only). See the "Planned / Not Yet Implemented" section below.
+
 ## 📱 Screenshots
 
 *[Screenshots will be added here]*
@@ -179,6 +181,33 @@ The app requires microphone access to measure ambient noise levels:
 - **Accessibility**: High contrast mode & scalable text
 
 ## 🛠️ Development
+### Internationalization (i18n)
+
+The app uses Flutter `gen-l10n` with multiple fully integrated locales.
+
+Supported locales (Phase 1): `en`, `es`, `fr`, `de`, `pt`, `pt_BR`, `ja`.
+
+Key files:
+- `l10n/l10n.yaml` – configuration
+- `lib/l10n/app_en.arb` – source of truth
+- `lib/l10n/app_*.arb` – translated locale files
+- Generated: `lib/l10n/app_localizations.dart` (do not edit manually)
+
+Add a new locale:
+1. Duplicate `app_en.arb` to `app_xx.arb`.
+2. Translate values; preserve placeholder keys.
+3. Run `flutter gen-l10n` (or just `flutter run`).
+4. Ensure the new locale is included in `supportedLocales` if not auto-wired.
+5. Validate UI for overflow & multi-byte glyph rendering.
+6. Provide translation metadata (`@key` objects) for complex strings / achievements.
+
+Notes:
+- Placeholders must match exactly; don't translate variable names.
+- Avoid hard-coded text in widgets; everything user-facing should be localized.
+- Use plural formatting where counts vary (see `minutesOfSilenceCongrats`).
+
+Translation backlog is tracked via `untranslated_messages.txt` when running `flutter gen-l10n`.
+
 
 ### Project Structure
 ```
@@ -280,8 +309,8 @@ _Section de-duplicated; previous duplicate removed._
 - **Progress Celebrations**: Animated rewards for accomplishments
 
 ### Data Management
-- **Export Functionality**: Download session history and statistics
-- **Backup/Restore**: Safeguard your progress with cloud backup
+- **Export Functionality**: Download session history and statistics (Premium)
+- **Backup/Restore (Planned)**: Cloud sync & cross‑device backup not yet implemented
 - **Data Reset**: Clear all data with confirmation dialogs
 
 ### Accessibility
@@ -312,7 +341,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📋 Changelog
 
-See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
+See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 
 ### Recent Major Updates (v0.1.1 - Stability Release)
 
@@ -369,6 +398,9 @@ See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 - [ ] Multi-environment profiles
 - [ ] Social/community features
 - [ ] Team collaboration
+ - [ ] Spike / interruption detection
+ - [ ] Silence quality score metric
+ - [ ] Streak goal customization & reminders
 
 ### Future Enhancements
 - [ ] Sound visualization with waveform display
@@ -380,6 +412,30 @@ See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 - [ ] Custom notification schedules
 - [ ] Multi-language support
 - [ ] Advanced analytics dashboard
+
+## 🚧 Planned / Not Yet Implemented Features
+
+The following items are referenced in UI placeholders, roadmap checklists, or marketing copy but are NOT yet fully implemented in the current build:
+
+- Cloud synchronization & cross‑device backup (local storage only today)
+- AI Insights (label present; no AI-generated analysis yet)
+- Multi-environment / profile presets (e.g., Work / Study / Sleep)
+- Social or community features (sharing, leaderboards, collaboration)
+- Team / group collaboration workspace
+- Spike / interruption detection (noise spike event tracking)
+- Silence quality score (composite metric beyond average dB)
+- Advanced cloud backup / restore flows
+- Streak goal customization & proactive reminders/notifications
+- Health platform integrations (Apple Health, Google Fit)
+
+Premium Paywall – Currently Delivered:
+- Extended sessions (up to 120 minutes)
+- 90‑day history retention
+- Advanced analytics (performance metrics, trends)
+- Data export (CSV / PDF)
+- Premium theme pack
+
+Everything else in the premium roadmap is aspirational until moved to the delivered list.
 
 ### Technical Improvements
 - [ ] Flutter Sound integration for enhanced audio processing
