@@ -8,202 +8,132 @@ class SplashScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 1500),
-    );
-    final fadeAnimation = useAnimation(
-      Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: Curves.easeInOut,
-        ),
-      ),
-    );
-    final scaleAnimation = useAnimation(
-      Tween<double>(begin: 0.8, end: 1.0).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: Curves.elasticOut,
-        ),
+
+    // Subtle breathing animation for the icon
+    final breatheController = useAnimationController(
+      duration: const Duration(milliseconds: 2600),
+    )..repeat(reverse: true);
+
+    final breathe = useAnimation(
+      Tween<double>(begin: 0.92, end: 1.04).animate(
+        CurvedAnimation(parent: breatheController, curve: Curves.easeInOutCubic),
       ),
     );
 
+    // Fade for text / overall content
+    final fadeController = useAnimationController(duration: const Duration(milliseconds: 900))..forward();
+    final fade = useAnimation(Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: fadeController, curve: Curves.easeInOut)));
+
     useEffect(() {
-      // Start the animation
-      animationController.forward();
-      
-      // Navigate to app initializer after 3 seconds
-      Future.delayed(const Duration(seconds: 3), () {
+      final navDelay = Future.delayed(const Duration(milliseconds: 1800), () {
         if (context.mounted) {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const AppInitializer(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              transitionDuration: const Duration(milliseconds: 800),
+              pageBuilder: (_, a, __) => const AppInitializer(),
+              transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+              transitionDuration: const Duration(milliseconds: 600),
             ),
           );
         }
       });
-      
-      return null;
+      return () {
+        breatheController.dispose();
+        fadeController.dispose();
+        navDelay.ignore();
+      };
     }, []);
 
+    final bgGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        theme.colorScheme.surfaceVariant.withValues(alpha: 0.4),
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+        theme.colorScheme.surface,
+      ],
+    );
+
     return Scaffold(
-      backgroundColor: theme.colorScheme.primary,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.primaryContainer,
-              theme.colorScheme.secondary,
-            ],
-          ),
-        ),
+      backgroundColor: theme.colorScheme.surface,
+      body: DecoratedBox(
+        decoration: BoxDecoration(gradient: bgGradient),
         child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Center(
-                  child: AnimatedBuilder(
-                    animation: animationController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: scaleAnimation,
-                        child: Opacity(
-                          opacity: fadeAnimation,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // App Icon/Logo
-                              Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(30),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.2),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.volume_off_rounded,
-                                  size: 60,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 32),
-                              
-                              // App Title
-                              Text(
-                                'Silence Score',
-                                style: theme.textTheme.headlineLarge?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 42,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 16),
-                              
-                              // Catchy Tagline
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(25),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  '🤫 Master the Art of Silence',
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+          child: Center(
+            child: AnimatedOpacity(
+              opacity: fade,
+              duration: const Duration(milliseconds: 400),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Icon with soft glass effect
+                  Transform.scale(
+                    scale: breathe,
+                    child: Container(
+                      width: 110,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            theme.colorScheme.primary.withValues(alpha: 0.18),
+                            theme.colorScheme.primary.withValues(alpha: 0.05),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              
-              // Bottom section with subtitle
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    AnimatedBuilder(
-                      animation: animationController,
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: fadeAnimation,
-                          child: Column(
-                            children: [
-                              Text(
-                                'Train Your Focus',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Find Peace in the Quiet Moments',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.7),
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 32),
-                              
-                              // Loading indicator
-                              SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 3,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white.withValues(alpha: 0.8),
-                                  ),
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 48),
-                            ],
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.20),
+                            blurRadius: 22,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 8),
                           ),
-                        );
-                      },
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.volume_off_rounded,
+                        size: 54,
+                        color: theme.colorScheme.primary.withValues(alpha: 0.95),
+                        semanticLabel: 'App icon',
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 40),
+                  // Wordmark
+                  Text(
+                    'Silence Score',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.95),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Find your quiet',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.4,
+                      valueColor: AlwaysStoppedAnimation(
+                        theme.colorScheme.primary.withValues(alpha: 0.65),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
