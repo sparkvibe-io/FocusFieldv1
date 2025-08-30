@@ -7,7 +7,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 ### Core Functionality
 - **Real-Time Silence Detection**: Ambient noise monitoring using device microphone
 - **Interactive Session Progress Ring**: Large countdown control with MM:SS timer
-- **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing
+- **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing (1Hz aggregated controller)
 - **Smart Point System**: Earn 1 point per minute of successful quiet time
 - **Streak Analytics**: Track daily streaks, best performances, and session history
 - **Noise Floor Calibration**: Quick ambient baseline measurement (clamped 20–80 dB)
@@ -29,7 +29,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 ### User Experience
 - **Progress Ring Control**: Start/stop & visual completion
-- **Smooth Visual Updates**: Smoothing filters reduce jitter
+- **Smooth Visual Updates**: Smoothing filters + aggregated controller reduce jitter & frame drops
 - **Confetti Celebrations**: Successful session reward
 - **Permission Guidance**: Microphone access onboarding
 - **Compact Layout**: Key controls on one screen
@@ -137,7 +137,7 @@ The app requires microphone access to measure ambient noise levels:
 - **iOS**: Added `NSMicrophoneUsageDescription` in Info.plist
 - **Android**: Added `RECORD_AUDIO` permission in AndroidManifest.xml
 
-**Privacy Note**: No audio is recorded or stored - the app only measures decibel levels in real-time for silence detection.
+**Privacy Note**: No audio is recorded or stored - the app only measures decibel levels in real-time for silence detection. A shared cached permission Future prevents duplicate OS dialogs.
 
 ## 🏗️ Architecture
 
@@ -147,9 +147,9 @@ The app requires microphone access to measure ambient noise levels:
 - **Async State Handling**: Robust error handling and loading states
 
 ### Core Services
-- **Silence Detection**: Advanced noise_meter integration with ambient monitoring
+- **Silence Detection**: Advanced noise_meter integration with ambient monitoring & circuit breaker safeguards
 - **Data Persistence**: Shared preferences with JSON serialization
-- **Permission Handling**: Intelligent permission management with fallback strategies
+- **Permission Handling**: Shared-single-flight permission request + caching with fallback strategies
 
 ### UI Components
 - **Material 3**: Latest Material Design with dynamic color support
@@ -197,14 +197,14 @@ lib/
 
 #### Widgets
 - `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
-- `RealTimeNoiseChart`: Live decibel visualization with smoothing and threshold indicators
+- `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates
 - `SessionHistoryGraph`: Historical performance tracking with visual trends
 - `CompactPointsDisplay`: Streamlined statistics overview with points, streaks, and totals
 - `SessionHistoryCard`: Detailed session records with achievements (legacy)
 - `ScoreCard`: Comprehensive statistics display (legacy)
 
 #### Services
-- `SilenceDetector`: Core noise monitoring and analysis
+- `SilenceDetector`: Core noise monitoring, permission coalescing, circuit breaker & analysis
 - `StorageService`: Data persistence and management
 - `PermissionHandler`: Microphone access management
 
@@ -249,9 +249,9 @@ flutter analyze --no-fatal-infos
 ### Real-Time Monitoring
 - **Ambient Noise Tracking**: Continuous background monitoring when not in session
 - **Live Visualization**: Real-time decibel level charts with intelligent smoothing algorithms
-- **Visual Noise Reduction**: Exponential moving average prevents flickering and provides stable feedback
+- **Visual Noise Reduction**: Exponential moving average + aggregation prevents flicker & reduces work
 - **Threshold Indicators**: Dynamic visual feedback for noise level status with color-coded responses
-- **Performance Optimized**: Reduced update frequencies (1Hz ambient, 5Hz active) for better battery life
+- **Performance Optimized**: Aggregated 1Hz stream + throttled logger drastically lowers rebuild pressure
 
 ### Interactive Controls
 - **Primary Progress Ring**: Large, always-visible control serving as main session interface
@@ -325,7 +325,9 @@ See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 - ✅ **Resource Disposal**: Proper cleanup of audio resources and timers
 
 #### 🎯 **Performance Improvements**
-- ✅ **Chart Optimization**: Reduced update frequency and memory usage
+- ✅ **Chart Optimization**: Aggregated 1Hz controller + sliding window memory trimming
+- ✅ **Logging Throttling**: High-frequency sensor debug output collapsed (ThrottledLogger)
+- ✅ **Permission Coalescing**: Single-flight microphone permission Future prevents duplicates
 - ✅ **Audio Processing**: Improved microphone access reliability and error handling
 - ✅ **State Management**: Better concurrent operation handling and cleanup
 - ✅ **UI Responsiveness**: Error boundaries prevent widget crashes from affecting app
@@ -549,11 +551,12 @@ For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to re
 - **Legal Documents**: Privacy policy and terms of service finalization
 
 ### 🎯 **Next Immediate Priorities**
-1. **Platform Setup** (This Week): Configure App Store and Play Console subscriptions
-2. **Visual Assets** (Next Week): Create app icons and store screenshots
-3. **Legal Documents** (Next Week): Finalize privacy policy and terms
-4. **Store Submission** (Week 3): Submit for app store review
-5. **Launch Marketing** (Week 4-6): Execute go-to-market strategy
+1. **Native Paywall Polishing**: Document new dismissal behavior (no forced fallback sheet)
+2. **Platform Setup**: Configure App Store and Play Console subscriptions
+3. **Visual Assets**: Create app icons and store screenshots
+4. **Legal Documents**: Finalize privacy policy and terms
+5. **Store Submission**: Submit for app store review
+6. **Launch Marketing**: Execute go-to-market strategy
 
 ## Last Updated
-August 29, 2025 - Calibration, high-threshold warning, accessibility settings, and documentation alignment completed.
+August 29, 2025 - Added native paywall dismissal handling (suppresses fallback on close), aggregated noise controller, throttled logger, shared permission Future, and documentation updates.

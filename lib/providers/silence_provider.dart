@@ -3,6 +3,7 @@ import 'package:silence_score/constants/app_constants.dart';
 import 'package:silence_score/models/silence_data.dart';
 import 'package:silence_score/services/silence_detector.dart';
 import 'package:silence_score/services/storage_service.dart';
+import 'package:silence_score/services/real_time_noise_controller.dart';
 
 // Storage service provider
 final storageServiceProvider = FutureProvider<StorageService>((ref) async {
@@ -113,6 +114,14 @@ final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
     durationSeconds: duration,
     sampleIntervalMs: AppConstants.sampleIntervalMs,
   );
+});
+
+/// Aggregated real-time noise controller provider (1Hz updates)
+final realTimeNoiseControllerProvider = Provider<RealTimeNoiseController>((ref) {
+  final detector = ref.watch(silenceDetectorProvider);
+  final controller = RealTimeNoiseController(detector);
+  ref.onDispose(controller.dispose);
+  return controller;
 });
 
 // Silence data provider with async initialization

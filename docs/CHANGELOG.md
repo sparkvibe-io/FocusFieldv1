@@ -93,6 +93,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `SubscriptionTier.hasCloudSync` to require Premium Plus
 - Updated feature descriptions in paywall and feature gate widgets
 - Updated app constants to reflect new tier structure
+ - Added RealTimeNoiseController (1Hz aggregation) reducing frame skips on charts
+ - Introduced ThrottledLogger for high-frequency debug output suppression
+ - Implemented shared single-flight microphone permission Future + short-lived cache
+ - Adjusted FeatureGate fallback logic: native paywall dismissal no longer auto-opens custom paywall
+ - Refactored paywall launcher to return PaywallAttemptResult (unlocked/dismissed/notShown)
+ - Removed unused legacy audio crash protection code paths; consolidated under SafeAudioExecutor
 
 ## [v0.1.0] - 2025-01-XX - Initial Development
 

@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/widgets/paywall_widget.dart';
+import 'package:silence_score/services/paywall_launcher.dart';
 
 /// Widget that checks if user has access to a feature and shows paywall if not
 class FeatureGate extends ConsumerWidget {
@@ -143,21 +144,36 @@ class FeatureGate extends ConsumerWidget {
   }
 
   void _showPaywall(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: PaywallWidget(
-          requiredTier: requiredTier,
-          featureDescription: _getFeatureDescription(featureId),
-          onDismiss: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
+    // Try native RevenueCat paywall first (if plugin available)
+    PaywallLauncher.presentIfNeeded().then((result) {
+      switch (result) {
+        case PaywallAttemptResult.unlocked:
+          return; // purchase handled
+        case PaywallAttemptResult.dismissed:
+          // User saw native paywall and closed it; do not force fallback.
+          return;
+        case PaywallAttemptResult.notShown:
+          // Only in this case show custom fallback (e.g. mock mode or error)
+          if (context.mounted) {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: PaywallWidget(
+                  requiredTier: requiredTier,
+                  featureDescription: _getFeatureDescription(featureId),
+                  onDismiss: () => Navigator.of(context).pop(),
+                ),
+              ),
+            );
+          }
+          return;
+      }
+    });
   }
 }
 
@@ -167,21 +183,33 @@ void showPaywall(
   SubscriptionTier requiredTier = SubscriptionTier.premium,
   String? featureDescription,
 }) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: PaywallWidget(
-        requiredTier: requiredTier,
-        featureDescription: featureDescription,
-        onDismiss: () => Navigator.of(context).pop(),
-      ),
-    ),
-  );
+  PaywallLauncher.presentIfNeeded().then((result) {
+    switch (result) {
+      case PaywallAttemptResult.unlocked:
+        return;
+      case PaywallAttemptResult.dismissed:
+        return; // do nothing
+      case PaywallAttemptResult.notShown:
+        if (context.mounted) {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: PaywallWidget(
+                requiredTier: requiredTier,
+                featureDescription: featureDescription,
+                onDismiss: () => Navigator.of(context).pop(),
+              ),
+            ),
+          );
+        }
+        return;
+    }
+  });
 }
 
 /// Helper function to check feature access and show paywall if needed

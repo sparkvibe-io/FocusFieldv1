@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:silence_score/providers/silence_provider.dart';
 import 'dart:math' as math;
+import 'package:silence_score/utils/throttled_logger.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -20,7 +21,8 @@ class RealTimeNoiseChart extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final silenceDetector = ref.read(silenceDetectorProvider);
+  final silenceDetector = ref.read(silenceDetectorProvider);
+  final noiseController = ref.watch(realTimeNoiseControllerProvider);
     
     // Chart data points (time, decibel)
     final chartData = useState<List<FlSpot>>([]);
@@ -46,106 +48,73 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
     // Subscribe to real-time decibel readings with proper error handling
     useEffect(() {
-      StreamSubscription<double>? subscription;
+      // Common update logic used by aggregated controller and ambient fallback.
+      bool isDisposed = false;
       Timer? ambientTimer;
       Timer? fallbackTimer;
-      bool isDisposed = false;
-      
-      // Safe state update function
+
       void safeUpdateDecibel(double decibel) {
         if (isDisposed) return;
-        
-        // Validate decibel value before processing
         if (decibel.isNaN || decibel.isInfinite || decibel < 0 || decibel > 150) {
-          if (!kReleaseMode) debugPrint('DEBUG: Chart - Invalid decibel value: $decibel, skipping');
+          if (!kReleaseMode) sensorLogger.log('DEBUG: Chart - Invalid decibel value: $decibel');
           return;
         }
-        
-        // Clamp to reasonable range
-        final clampedDecibel = decibel.clamp(0.0, 120.0);
-        currentDecibel.value = clampedDecibel;
-        
-        // Apply smoothing with validation
+        final clamped = decibel.clamp(0.0, 120.0);
+        currentDecibel.value = clamped;
         final currentSmoothed = smoothedDecibel.value;
-        if (!currentSmoothed.isNaN && !currentSmoothed.isInfinite) {
-          smoothedDecibel.value = currentSmoothed * 0.7 + clampedDecibel * 0.3;
-        } else {
-          smoothedDecibel.value = clampedDecibel;
-        }
-        
-        _addDataPoint(chartData, startTime, clampedDecibel);
+        smoothedDecibel.value = (!currentSmoothed.isNaN && !currentSmoothed.isInfinite)
+            ? currentSmoothed * 0.7 + clamped * 0.3
+            : clamped;
+        _addDataPoint(chartData, startTime, clamped);
       }
-      
-      if (isListening) {
-        // During session - listen to detector stream with error handling
-        subscription = silenceDetector.realtimeStream.listen(
-          (decibel) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Session decibel: $decibel');
-            safeUpdateDecibel(decibel);
-          },
-          onError: (error) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Stream error: $error');
-            // Don't crash on stream errors
-          },
-        );
-      } else {
-        // Ambient monitoring when not in session - reduced frequency
-        ambientTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
-          if (isDisposed) return;
-          
-          try {
-            final decibel = silenceDetector.currentDecibel;
-            if (decibel > 0) {
-              if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient decibel: $decibel');
-              safeUpdateDecibel(decibel);
-            }
-          } catch (e) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient timer error: $e');
-          }
-        });
-        
-        // Start ambient monitoring with proper error handling
+
+      // Session or ambient: subscribe to aggregated stream (already throttled to 1Hz)
+      final sub = noiseController.stream.listen((d) {
+        if (!kReleaseMode) sensorLogger.log('DEBUG: Chart - Aggregated dB: ${d.toStringAsFixed(1)}');
+        safeUpdateDecibel(d);
+      }, onError: (e) {
+        if (!kReleaseMode) sensorLogger.log('DEBUG: Chart - Aggregated stream error: $e');
+      });
+
+      if (!isListening) {
+        // Start ambient monitoring (still needed to keep _currentDecibel updated)
         try {
           silenceDetector.startAmbientMonitoring(
             onError: (error) {
-              if (!kReleaseMode) debugPrint('DEBUG: Chart - Ambient monitoring error: $error');
+              if (!kReleaseMode) sensorLogger.log('DEBUG: Chart - Ambient monitoring error: $error');
             },
           );
         } catch (e) {
-          if (!kReleaseMode) debugPrint('DEBUG: Chart - Failed to start ambient monitoring: $e');
+          if (!kReleaseMode) sensorLogger.log('DEBUG: Chart - Failed to start ambient monitoring: $e');
         }
-        
-        // Fallback timer with validation
-        fallbackTimer = Timer.periodic(const Duration(milliseconds: 2000), (_) {
+
+        // Lightweight ambient sampling (lower frequency than before)
+        ambientTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+          if (isDisposed) return;
+            final d = silenceDetector.currentDecibel;
+            if (d > 0) safeUpdateDecibel(d);
+        });
+
+        // Fallback animation before permission granted
+        fallbackTimer = Timer.periodic(const Duration(seconds: 2), (_) {
           if (isDisposed || hasPermission.value || chartData.value.isNotEmpty) return;
-          
-          try {
-            final now = DateTime.now();
-            final timeSinceStart = now.difference(startTime.value ?? now).inSeconds;
-            final placeholderDecibel = 35.0 + (math.sin(timeSinceStart * 0.1) * 5);
-            
-            safeUpdateDecibel(placeholderDecibel);
-          } catch (e) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Fallback timer error: $e');
-          }
+          final now = DateTime.now();
+          final timeSinceStart = now.difference(startTime.value ?? now).inSeconds;
+          final placeholderDecibel = 35.0 + (math.sin(timeSinceStart * 0.1) * 5);
+          safeUpdateDecibel(placeholderDecibel);
         });
       }
-      
+
       return () {
         isDisposed = true;
-        subscription?.cancel();
+        sub.cancel();
         ambientTimer?.cancel();
         fallbackTimer?.cancel();
-        
         if (!isListening) {
-          try {
-            silenceDetector.stopAmbientMonitoring();
-          } catch (e) {
-            if (!kReleaseMode) debugPrint('DEBUG: Chart - Error stopping ambient monitoring: $e');
-          }
+          try { silenceDetector.stopAmbientMonitoring(); } catch (_) {}
         }
       };
-    }, [isListening, hasPermission.value]);
+    }, [isListening, hasPermission.value, noiseController]);
 
     // Clean up old data points periodically with error handling
     useEffect(() {

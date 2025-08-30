@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:silence_score/constants/app_constants.dart';
@@ -13,6 +14,11 @@ class SilenceDetector {
   final int _durationSeconds;
   final int _sampleIntervalMs;
   DateTime? _sessionStartTime; // To track the actual start time
+  
+  // Shared permission request future to prevent concurrent OS dialog / status churn
+  Future<bool>? _permissionRequestFuture;
+  PermissionStatus? _cachedPermissionStatus;
+  DateTime? _lastPermissionCheck;
   
   // Real-time streaming controllers with proper disposal
   final StreamController<double> _realtimeController = StreamController<double>.broadcast();
@@ -30,7 +36,6 @@ class SilenceDetector {
   // Audio buffer crash protection (legacy - kept for compatibility)
   int _audioErrorCount = 0;
   DateTime? _lastAudioError;
-  bool _audioBufferCrashProtection = false;
   static const int _maxAudioErrors = 3;
   static const Duration _audioErrorWindow = Duration(minutes: 1);
 
@@ -44,77 +49,60 @@ class SilenceDetector {
 
   /// Request microphone permission by actually trying to access the microphone
   Future<bool> requestPermission() async {
+    // Reuse in-flight request if present
+    if (_permissionRequestFuture != null) {
+      return _permissionRequestFuture!;
+    }
+    _permissionRequestFuture = _requestPermissionInternal();
+    final result = await _permissionRequestFuture!;
+    _permissionRequestFuture = null;
+    return result;
+  }
+
+  Future<bool> _requestPermissionInternal() async {
     try {
       if (!kReleaseMode) print('DEBUG: Requesting microphone permission...');
-      
-      // First check current permission status
+
       final initialStatus = await Permission.microphone.status;
+      _cachePermissionStatus(initialStatus);
       if (!kReleaseMode) print('DEBUG: Initial permission status: $initialStatus');
-      
-      if (initialStatus == PermissionStatus.granted) {
-        if (!kReleaseMode) print('DEBUG: Permission already granted');
-        return true;
+
+      if (initialStatus == PermissionStatus.granted) return true;
+      if (initialStatus == PermissionStatus.permanentlyDenied) return false;
+
+      if (Platform.isAndroid) {
+        final req = await Permission.microphone.request();
+        _cachePermissionStatus(req);
+        if (!kReleaseMode) print('DEBUG: Android permission request result: $req');
+        return req == PermissionStatus.granted;
       }
-      
-      if (initialStatus == PermissionStatus.permanentlyDenied) {
-        if (!kReleaseMode) print('DEBUG: Permission permanently denied');
-        return false;
-      }
-      
-      // On iOS, we need to actually try to access the microphone to trigger permission dialog
-      if (!kReleaseMode) print('DEBUG: Attempting to access microphone to trigger permission dialog...');
-      final tempNoiseMeter = NoiseMeter();
-      StreamSubscription<NoiseReading>? tempSubscription;
-      bool microphoneWorking = false;
-      
-      try {
-        // Try to start listening - this will trigger the iOS permission dialog
-        tempSubscription = tempNoiseMeter.noise.listen(
-          (NoiseReading reading) {
-            // We got a reading, which means permission was granted
-            if (!kReleaseMode) print('DEBUG: Successfully accessed microphone, permission granted');
-            microphoneWorking = true;
-          },
-          onError: (error) {
-            if (!kReleaseMode) print('DEBUG: Error accessing microphone: $error');
-          },
-        );
-        
-        // Wait a bit to see if we get permission or an error
-        await Future.delayed(const Duration(milliseconds: 1000));
-        
-        // Clean up the temporary subscription
-        tempSubscription.cancel();
-        
-        if (!kReleaseMode) print('DEBUG: Microphone working: $microphoneWorking');
-        
-        // If we got microphone readings, permission is granted regardless of what permission_handler says
-        if (microphoneWorking) {
-          if (!kReleaseMode) print('DEBUG: Microphone access successful, returning true');
-          return true;
+
+      if (Platform.isIOS || Platform.isMacOS) {
+        if (!kReleaseMode) print('DEBUG: Attempting mic access to trigger dialog (iOS/macOS)');
+        final tempNoiseMeter = NoiseMeter();
+        StreamSubscription<NoiseReading>? tempSubscription;
+        bool microphoneWorking = false;
+        try {
+          tempSubscription = tempNoiseMeter.noise.listen(
+            (r) { microphoneWorking = true; },
+            onError: (_) {},
+          );
+          await Future.delayed(const Duration(milliseconds: 900));
+          await tempSubscription.cancel();
+        } catch (e) {
+          if (!kReleaseMode) print('DEBUG: iOS/macOS mic trigger error: $e');
+          await tempSubscription?.cancel();
         }
-        
-        // Check final permission status as fallback
         final finalStatus = await Permission.microphone.status;
-        if (!kReleaseMode) print('DEBUG: Final permission status: $finalStatus');
-        
-        return finalStatus == PermissionStatus.granted;
-        
-      } catch (e) {
-        if (!kReleaseMode) print('DEBUG: Exception during microphone access: $e');
-        tempSubscription?.cancel();
-        
-        // If we got microphone readings before the exception, permission is still granted
-        if (microphoneWorking) {
-          if (!kReleaseMode) print('DEBUG: Microphone was working before exception, returning true');
-          return true;
-        }
-        
-        // Check if permission was granted despite the exception
-        final finalStatus = await Permission.microphone.status;
-        if (!kReleaseMode) print('DEBUG: Permission status after exception: $finalStatus');
-        return finalStatus == PermissionStatus.granted;
+        _cachePermissionStatus(finalStatus);
+        if (!kReleaseMode) print('DEBUG: iOS/macOS final permission status: $finalStatus micWorking=$microphoneWorking');
+        return microphoneWorking || finalStatus == PermissionStatus.granted;
       }
+
+      final fallback = await Permission.microphone.request();
+      _cachePermissionStatus(fallback);
+      if (!kReleaseMode) print('DEBUG: Fallback platform request result: $fallback');
+      return fallback == PermissionStatus.granted;
     } catch (e) {
       if (!kReleaseMode) print('DEBUG: Error requesting permission: $e');
       return false;
@@ -123,9 +111,21 @@ class SilenceDetector {
 
   /// Check if microphone permission is granted
   Future<bool> hasPermission() async {
+    // Small cache window to reduce status syscalls
+    if (_cachedPermissionStatus != null && _lastPermissionCheck != null) {
+      if (DateTime.now().difference(_lastPermissionCheck!) < const Duration(seconds: 3)) {
+        return _cachedPermissionStatus == PermissionStatus.granted;
+      }
+    }
     final status = await Permission.microphone.status;
+    _cachePermissionStatus(status);
     if (!kReleaseMode) print('DEBUG: Checking permission status: $status');
     return status == PermissionStatus.granted;
+  }
+
+  void _cachePermissionStatus(PermissionStatus status) {
+    _cachedPermissionStatus = status;
+    _lastPermissionCheck = DateTime.now();
   }
 
   /// Open app settings (useful when permission is permanently denied)
@@ -153,6 +153,18 @@ class SilenceDetector {
   }) async {
     try {
       if (!kReleaseMode) print('DEBUG: Starting silence detection...');
+
+      // Android safety: never create NoiseMeter before permission granted
+      if (Platform.isAndroid) {
+        final granted = await hasPermission();
+        if (!granted) {
+          final req = await Permission.microphone.request();
+          if (req != PermissionStatus.granted) {
+            onError('Microphone permission is required to start a session.');
+            return;
+          }
+        }
+      }
       
       // Check circuit breaker state before attempting audio access
       if (_audioExecutor.isBlocked) {
@@ -376,6 +388,17 @@ class SilenceDetector {
     
     try {
       if (!kReleaseMode) print('DEBUG: Starting ambient monitoring...');
+
+      if (Platform.isAndroid) {
+        final granted = await hasPermission();
+        if (!granted) {
+          final req = await Permission.microphone.request();
+          if (req != PermissionStatus.granted) {
+            onError('Microphone permission required for ambient monitoring.');
+            return;
+          }
+        }
+      }
       
       // Check circuit breaker state before attempting audio access
       if (_audioExecutor.isBlocked) {
@@ -524,23 +547,7 @@ class SilenceDetector {
   int get durationSeconds => _durationSeconds;
 
   /// Create NoiseMeter with native crash protection
-  Future<NoiseMeter?> _createNoiseMeterSafely() async {
-    try {
-      // Add a small delay to prevent rapid creation attempts
-      await Future.delayed(const Duration(milliseconds: 100));
-      
-      final noiseMeter = NoiseMeter();
-      
-      // Give it a moment to initialize
-      await Future.delayed(const Duration(milliseconds: 50));
-      
-      return noiseMeter;
-    } catch (e) {
-      if (!kReleaseMode) print('DEBUG: Failed to create NoiseMeter safely: $e');
-      _handleAudioError('NoiseMeter creation error: $e');
-      return null;
-    }
-  }
+  // Removed unused _createNoiseMeterSafely after refactor (aggregation reduced rapid creations)
   
   /// Check if decibel value is valid and safe
   bool _isValidDecibel(double decibel) {
@@ -710,63 +717,19 @@ class SilenceDetector {
     
     // Enable crash protection if too many errors
     if (_audioErrorCount >= _maxAudioErrors) {
-      _audioBufferCrashProtection = true;
       if (!kReleaseMode) {
-        print('DEBUG: Audio buffer crash protection activated after $_audioErrorCount errors');
+        print('DEBUG: High audio error count ($_audioErrorCount) - SafeAudioExecutor should now be throttling access');
       }
-      
-      // Schedule a reset of crash protection
-      Timer(const Duration(minutes: 5), () {
-        _audioBufferCrashProtection = false;
-        _audioErrorCount = 0;
-        if (!kReleaseMode) {
-          print('DEBUG: Audio buffer crash protection reset');
-        }
-      });
+      // Reset counter after warning to avoid repeated logs
+      _audioErrorCount = 0;
     }
   }
   
   /// Check if we should skip audio access due to recent errors
-  bool _shouldSkipAudioAccess() {
-    // Check legacy crash protection
-    if (_audioBufferCrashProtection) return true;
-    
-    // Check enhanced audio executor state
-    if (_audioExecutor.isBlocked || !_audioExecutor.isBufferStable || !_audioExecutor.isFlutterStable) {
-      if (!kReleaseMode) {
-        print('DEBUG: Audio access blocked by enhanced protection (blocked: ${_audioExecutor.isBlocked}, buffer stable: ${_audioExecutor.isBufferStable}, flutter stable: ${_audioExecutor.isFlutterStable})');
-      }
-      return true;
-    }
-    
-    // Check immediate protection
-    if (_audioExecutor.isImmediateProtectionActive) {
-      if (!kReleaseMode) {
-        print('DEBUG: Audio access blocked by immediate protection');
-      }
-      return true;
-    }
-    
-    // Check legacy error counting
-    if (_lastAudioError != null && _audioErrorCount >= 2) {
-      final timeSinceError = DateTime.now().difference(_lastAudioError!);
-      return timeSinceError.inSeconds < 30; // Wait 30 seconds after 2 errors
-    }
-    
-    return false;
-  }
+  // Removed unused _shouldSkipAudioAccess method (logic consolidated in SafeAudioExecutor checks)
   
   /// Safely cleanup stream subscription
-  Future<void> _safeCleanupSubscription(StreamSubscription<NoiseReading>? subscription) async {
-    if (subscription == null) return;
-    
-    try {
-      await subscription.cancel();
-    } catch (e) {
-      if (!kReleaseMode) print('DEBUG: Error canceling subscription: $e');
-      // Don't propagate subscription cleanup errors
-    }
-  }
+  // Removed unused _safeCleanupSubscription helper (stream lifecycle simplified)
 
   /// Test if microphone actually works with native crash protection
   Future<bool> testMicrophoneAccess() async {
