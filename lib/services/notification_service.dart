@@ -3,8 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'notification_permissions.dart';
+
+typedef NowProvider = DateTime Function();
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -15,8 +19,15 @@ class NotificationService {
   static const String _lastReminderKey = 'last_reminder';
   
   // Flutter Local Notifications
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = 
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  late final NotificationPermissionHandler _permissionHandler = NotificationPermissionHandler(_flutterLocalNotificationsPlugin);
+
+  // IDs
+  static const int dailyReminderId = 1001;
+  static const int weeklySummaryId = 1002;
+
+  // Time provider (injectable for tests)
+  NowProvider now = DateTime.now;
   
   // Settings
   bool enableNotifications = true;
@@ -30,14 +41,24 @@ class NotificationService {
   bool _isInitialized = false;
   
   List<DateTime> _sessionTimes = [];
+  @visibleForTesting
+  void setSessionTimes(List<DateTime> times) { _sessionTimes = List.from(times); }
 
-  Future<void> initialize() async {
+  Future<void> initialize({NowProvider? nowProvider}) async {
     if (_isInitialized) return;
+    if (nowProvider != null) now = nowProvider;
 
     final isTest = _isInTestEnvironment();
     if (!isTest) {
       await _initializeNotifications();
-      await _checkNotificationPermission();
+      await _permissionHandler.initialize();
+      _hasNotificationPermission = _permissionHandler.hasPermission;
+      // Initialize timezone database once
+      try { tz.initializeTimeZones(); } catch (_) {}
+      if (tz.local.name == 'UTC') {
+        // Attempt to set local location if possible
+        try { tz.setLocalLocation(tz.getLocation(_platformTimeZoneName() ?? 'UTC')); } catch (_) {}
+      }
     } else {
       if (!kReleaseMode) debugPrint('[NotificationService] Skipping notification plugin init in test environment');
       _hasNotificationPermission = false; // treat as no permission in tests
@@ -138,37 +159,32 @@ class NotificationService {
   // Check if we should send a reminder today
   Future<bool> shouldSendDailyReminder() async {
     if (!enableNotifications || !enableDailyReminders) return false;
-    
+    if (_sessionTimes.isEmpty) return false; // need history
+
     final prefs = await SharedPreferences.getInstance();
     final lastReminderString = prefs.getString(_lastReminderKey);
-    
-    if (lastReminderString == null) return true;
-    
-    final lastReminder = DateTime.parse(lastReminderString);
-    final today = DateTime.now();
-    
-    // Send reminder if it's a new day and past the optimal reminder time
-    final isNewDay = lastReminder.day != today.day || 
-                     lastReminder.month != today.month || 
-                     lastReminder.year != today.year;
-    
-    if (!isNewDay) return false;
-    
+
+    final todayNow = now();
+    final today = DateTime(todayNow.year, todayNow.month, todayNow.day);
+
+    if (lastReminderString != null) {
+      final lastReminder = DateTime.parse(lastReminderString);
+      final sameDay = lastReminder.year == today.year && lastReminder.month == today.month && lastReminder.day == today.day;
+      if (sameDay) return false; // already sent today
+    }
+
     final optimalTime = getOptimalReminderTime();
     if (optimalTime == null) return false;
-    
-    final now = TimeOfDay.now();
+
     final optimalMinutes = optimalTime.hour * 60 + optimalTime.minute;
-    final currentMinutes = now.hour * 60 + now.minute;
-    
-    // Send reminder if current time is within 30 minutes of optimal time
+    final currentMinutes = todayNow.hour * 60 + todayNow.minute;
     return (currentMinutes - optimalMinutes).abs() <= 30;
   }
 
   // Mark that we sent a reminder today
   Future<void> markReminderSent() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_lastReminderKey, DateTime.now().toIso8601String());
+  await prefs.setString(_lastReminderKey, now().toIso8601String());
   }
 
   // Get reminder message based on user's pattern
@@ -262,54 +278,14 @@ class NotificationService {
 
   // Permission handling
   Future<bool> requestNotificationPermission() async {
-    try {
-      // For Android 13+ (API 33+), we need to request POST_NOTIFICATIONS permission
-      if (Platform.isAndroid) {
-        final status = await Permission.notification.request();
-        _hasNotificationPermission = status.isGranted;
-        
-        // Also request from flutter_local_notifications for iOS-style permissions
-        if (status.isGranted) {
-          final granted = await _flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-              ?.requestNotificationsPermission();
-          _hasNotificationPermission = granted ?? false;
-        }
-      } else {
-        // For iOS, use flutter_local_notifications
-        final granted = await _flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-            ?.requestPermissions(
-              alert: true,
-              badge: true,
-              sound: true,
-            );
-        _hasNotificationPermission = granted ?? false;
-      }
-      
-      return _hasNotificationPermission;
-    } catch (e) {
-      debugPrint('Error requesting notification permission: $e');
-      return false;
-    }
+    final granted = await _permissionHandler.request();
+    _hasNotificationPermission = granted;
+    return granted;
   }
 
-  Future<void> _checkNotificationPermission() async {
-    try {
-      if (Platform.isAndroid) {
-        final status = await Permission.notification.status;
-        _hasNotificationPermission = status.isGranted;
-      } else {
-        // For iOS, check through flutter_local_notifications
-        final granted = await _flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions();
-        _hasNotificationPermission = granted?.isEnabled ?? false;
-      }
-    } catch (e) {
-      debugPrint('Error checking notification permission: $e');
-      _hasNotificationPermission = false;
-    }
+  Future<void> refreshPermissionStatus() async {
+    await _permissionHandler.refreshStatus();
+    _hasNotificationPermission = _permissionHandler.hasPermission;
   }
 
   // Show actual notifications
@@ -392,6 +368,58 @@ class NotificationService {
 
   bool get hasNotificationPermission => _hasNotificationPermission;
 
+  // Scheduling helpers -------------------------------------------------------
+  Future<void> scheduleDailyReminderNotification() async {
+    if (!enableNotifications || !enableDailyReminders || !_hasNotificationPermission) return;
+    final optimal = getOptimalReminderTime();
+    if (optimal == null) return; // need history
+    final nowDt = now();
+    final scheduleTime = DateTime(nowDt.year, nowDt.month, nowDt.day, optimal.hour, optimal.minute);
+    final target = scheduleTime.isAfter(nowDt) ? scheduleTime : scheduleTime.add(const Duration(days: 1));
+    final tzTime = tz.TZDateTime.from(target, tz.local);
+  await _flutterLocalNotificationsPlugin.zonedSchedule(
+      dailyReminderId,
+      'Daily Silence Reminder',
+      getSmartReminderMessage(),
+      tzTime,
+      const NotificationDetails(
+        android: AndroidNotificationDetails('silence_score_general','General Notifications',channelDescription: 'General notifications for SilenceScore app',importance: Importance.high, priority: Priority.high, icon: '@mipmap/ic_launcher'),
+        iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: 'daily_reminder',
+    );
+  }
+
+  Future<void> scheduleWeeklySummaryNotification({int weekday = DateTime.monday, int hour = 9, int minute = 0}) async {
+    if (!enableNotifications || !enableWeeklyProgress || !_hasNotificationPermission) return;
+    final nowDt = now();
+    // Find next occurrence of given weekday
+    int daysUntil = (weekday - nowDt.weekday) % 7;
+    var scheduled = DateTime(nowDt.year, nowDt.month, nowDt.day, hour, minute).add(Duration(days: daysUntil));
+    if (scheduled.isBefore(nowDt)) scheduled = scheduled.add(const Duration(days: 7));
+    final tzTime = tz.TZDateTime.from(scheduled, tz.local);
+  await _flutterLocalNotificationsPlugin.zonedSchedule(
+      weeklySummaryId,
+      'Weekly Progress Report 📊',
+      getWeeklyProgressMessage(0, 0), // body will be static placeholder; dynamic updates require cancel+reschedule
+      tzTime,
+      const NotificationDetails(
+        android: AndroidNotificationDetails('silence_score_general','General Notifications',channelDescription: 'General notifications for SilenceScore app',importance: Importance.high, priority: Priority.high, icon: '@mipmap/ic_launcher'),
+        iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+      payload: 'weekly_progress',
+    );
+  }
+
+  Future<void> cancelScheduledNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancel(dailyReminderId);
+    await _flutterLocalNotificationsPlugin.cancel(weeklySummaryId);
+  }
+
   // Enhanced reminder messages based on user engagement
   String getSmartReminderMessage() {
     final streak = getCurrentStreak();
@@ -459,6 +487,15 @@ class NotificationService {
       return Platform.environment.containsKey('FLUTTER_TEST');
     } catch (_) {
       return false;
+    }
+  }
+
+  String? _platformTimeZoneName() {
+    try {
+      // Basic heuristic; could integrate native channel for accuracy
+      return DateTime.now().timeZoneName;
+    } catch (_) {
+      return null;
     }
   }
 }

@@ -401,7 +401,7 @@ class HomePage extends HookConsumerWidget {
         silenceStateNotifier.setProgress(progress);
         // No voice announcements during session to avoid breaking silence
       },
-      onComplete: (success) async {
+  onComplete: (success) async {
         // Only complete if the session wasn't manually stopped
         if (ref.read(silenceStateProvider).canStop) {
           silenceStateNotifier.setListening(false);
@@ -429,16 +429,17 @@ class HomePage extends HookConsumerWidget {
           // Add session record to data
           await silenceDataNotifier.addSessionRecord(sessionRecord);
           
-          // Show session completion notification if enabled
+          // System notification + in-app feedback
           if (notificationService.enableSessionComplete) {
+            notificationService.showSessionComplete(success, durationInMinutes);
             final message = notificationService.getCompletionMessage(success, durationInMinutes);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(message),
-                duration: const Duration(seconds: 4),
-                behavior: SnackBarBehavior.floating,
-              ),
+                SnackBar(
+                  content: Text(message),
+                  duration: const Duration(seconds: 4),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             }
           }
