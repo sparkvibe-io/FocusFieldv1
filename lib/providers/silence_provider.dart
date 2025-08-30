@@ -112,7 +112,6 @@ final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
   return SilenceDetector(
     threshold: threshold,
     durationSeconds: duration,
-    sampleIntervalMs: AppConstants.sampleIntervalMs,
   );
 });
 

@@ -1,0 +1,164 @@
+{
+  "appTitle": "Silence Score",
+  "splashLoading": "Fokus-Engine wird vorbereitet…",
+  "paywallTitle": "Trainiere tiefere Fokussierung mit Premium",
+  "featureExtendSessions": "Verlängere Sitzungen von 5 auf 120 Minuten",
+  "featureHistory": "Greife auf 90 Tage Verlauf zu",
+  "featureMetrics": "Schalte Leistungsmetriken und Trenddiagramme frei",
+  "featureExport": "Exportiere Sitzungsdaten (CSV / PDF)",
+  "featureThemes": "Nutze das komplette Themenpaket",
+  "featureThreshold": "Feinabstimmung des Schwellenwerts mit Umgebungsbasis",
+  "featureSupport": "Schnellerer Support & früher Zugriff",
+  "subscribeCta": "Weiter",
+  "restorePurchases": "Käufe wiederherstellen",
+  "privacyPolicy": "Datenschutz",
+  "termsOfService": "AGB",
+  "manageSubscription": "Verwalten",
+  "legalDisclaimer": "Automatisch verlängerndes Abo. Jederzeit im Store kündbar.",
+  "minutesOfSilenceCongrats": "Starke Leistung! {minutes, plural, one {# Minute stille erreicht ✨} other {# Minuten Stille erreicht ✨}}",
+  "minutes": "Minuten",
+  "minute": "Minute",
+  "exportCsv": "CSV exportieren",
+  "exportPdf": "PDF exportieren",
+  "settings": "Einstellungen",
+  "themes": "Themen",
+  "analytics": "Analytik",
+  "history": "Verlauf",
+  "startSession": "Sitzung starten",
+  "stopSession": "Stopp",
+  "pauseSession": "Pause",
+  "resumeSession": "Fortsetzen",
+  "sessionSaved": "Sitzung gespeichert",
+  "copied": "Kopiert",
+  "errorGeneric": "Etwas ist schiefgelaufen",
+  "permissionMicrophoneDenied": "Mikrofonberechtigung verweigert",
+  "actionRetry": "Erneut",
+  "listeningStatus": "Hört zu...",
+  "successPointMessage": "Stille erreicht! +1 Punkt",
+  "tooNoisyMessage": "Zu laut! Versuche es erneut",
+  "totalPoints": "Gesamtpunkte",
+  "currentStreak": "Aktuelle Serie",
+  "bestStreak": "Beste Serie",
+  "welcomeMessage": "Drücke Start, um zu beginnen",
+  "resetAllData": "Alle Daten zurücksetzen",
+  "resetDataConfirmation": "Fortschritt wirklich zurücksetzen?",
+  "resetDataSuccess": "Daten zurückgesetzt",
+  "decibelThresholdLabel": "Dezibel-Schwelle",
+  "decibelThresholdHint": "Maximale Geräuschpegelgrenze festlegen (dB)",
+  "microphonePermissionTitle": "Mikrofonberechtigung",
+  "microphonePermissionMessage": "Silence Score benötigt Mikrofonzugriff zur Messung. Kein Audio wird gespeichert.",
+  "permissionDeniedMessage": "Mikrofon erforderlich. In den Einstellungen aktivieren.",
+  "noiseMeterError": "Mikrofon nicht verfügbar",
+  "premiumFeaturesTitle": "Premium-Funktionen",
+  "premiumDescription": "Schalte erweiterte Sitzungen, Analytik und Export frei",
+  "premiumRequiredMessage": "Funktion nur für Premium",
+  "subscriptionSuccessMessage": "Abo erfolgreich!",
+  "subscriptionErrorMessage": "Abo fehlgeschlagen",
+  "restoreSuccessMessage": "Käufe wiederhergestellt",
+  "restoreErrorMessage": "Keine Käufe gefunden",
+  "yearlyPlanTitle": "Jährlich",
+  "monthlyPlanTitle": "Monatlich",
+  "savePercent": "SPARE {percent}%",
+  "billedAnnually": "Abgerechnet {price}/Jahr",
+  "billedMonthly": "Abgerechnet {price}/Monat",
+  "mockSubscriptionsBanner": "Mock-Abos aktiv"
+  ,"splashTagline": "Finde deine Ruhe"
+  ,"appIconSemantic": "App-Symbol"
+  ,"tabBasic": "Basis"
+  ,"tabAdvanced": "Erweitert"
+  ,"tabAbout": "Info"
+  ,"resetAllSettings": "Alle Einstellungen zurücksetzen"
+  ,"decibelThresholdMaxNoise": "Dezibel-Schwelle (max. Lärm)"
+  ,"highThresholdWarningText": "Hoher Schwellenwert kann relevante Geräusche ignorieren."
+  ,"decibelThresholdTooltip": "Typisch ruhige Räume: 30–40 dB. Kalibrieren; nur erhöhen falls Brummen zählt."
+  ,"sessionDuration": "Sitzungsdauer"
+  ,"upgradeForMinutes": "Upgrade für {minutes}m"
+  ,"freeUpToMinutes": "Frei: bis {minutes} Min"
+  ,"durationLabel": "Dauer"
+  ,"noiseCalibration": "Lärmkallibrierung"
+  ,"calibrateBaseline": "Basis kalibrieren"
+  ,"exportData": "Daten exportieren"
+  ,"sessionHistory": "Sitzungsverlauf"
+  ,"notifications": "Benachrichtigungen"
+  ,"remindersCelebrations": "Erinnerungen & Feiern"
+  ,"accessibility": "Barrierefreiheit"
+  ,"accessibilityFeatures": "Barrierefreiheitsfunktionen"
+  ,"appInformation": "App-Information"
+  ,"version": "Version"
+  ,"bundleId": "Bundle-ID"
+  ,"environment": "Umgebung"
+  ,"helpSupport": "Hilfe & Support"
+  ,"faq": "FAQ"
+  ,"support": "Support"
+  ,"rateApp": "Bewerten"
+  ,"errorLoadingSettings": "Fehler beim Laden: {error}"
+  ,"chooseExportFormat": "Format für {sessions} Sitzungen wählen:"
+  ,"csvSpreadsheet": "CSV Tabelle"
+  ,"rawDataForAnalysis": "Rohdaten für Analyse"
+  ,"pdfReport": "PDF Bericht"
+  ,"formattedReportWithCharts": "Bericht mit Diagrammen"
+  ,"generatingExport": "Erzeuge {format} Export..."
+  ,"exportCompleted": "{format} Export fertig"
+  ,"exportFailed": "Export fehlgeschlagen: {error}"
+  ,"frequentlyAskedQuestions": "Häufige Fragen"
+  ,"close": "Schließen"
+  ,"vibrationFeedback": "Vibration"
+  ,"vibrateOnSessionEvents": "Bei Ereignissen vibrieren"
+  ,"voiceAnnouncements": "Sprachansagen"
+  ,"announceSessionProgress": "Fortschritt ansagen"
+  ,"highContrastMode": "Hoher Kontrast"
+  ,"improveVisualAccessibility": "Visuelle Zugänglichkeit verbessern"
+  ,"largeText": "Großer Text"
+  ,"increaseTextSize": "Text vergrößern"
+  ,"accessibilitySettings": "Barrierefreiheits-Einstellungen"
+  ,"measuringAmbientNoise": "Umgebungsgeräusch messen (≈5s)..."
+  ,"retry": "Erneut"
+  ,"previousThreshold": "Vorher: {value} dB"
+  ,"newThreshold": "Neuer Schwellenwert: {value} dB"
+  ,"noSignificantChange": "Kein signifikanter Unterschied"
+  ,"highAmbientDetected": "Hohe Umgebung erkannt"
+  ,"adjustAnytimeSettings": "Jederzeit in Einstellungen anpassen"
+  ,"toggleThemeTooltip": "Theme wechseln"
+  ,"audioChartRecovering": "Audio-Chart erholt sich..."
+  ,"themeChanged": "Theme: {themeName}"
+  ,"privacyComingSoon": "Privacy policy coming soon."
+  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
+  ,"startSessionButton": "Sitzung starten"
+  ,"stopSessionButton": "Stopp"
+  ,"statusListening": "Hört zu..."
+  ,"statusSuccess": "Stille erreicht! +1 Punkt"
+  ,"statusFailure": "Zu laut!"
+  ,"upgrade": "Upgrade"
+  ,"exportCsvSpreadsheet": "CSV Tabelle"
+  ,"exportPdfReport": "PDF Bericht"
+  ,"formattedReportCharts": "Bericht mit Diagrammen"
+  ,"csv": "CSV"
+  ,"pdf": "PDF"
+  ,"theme": "Theme"
+  ,"open": "Öffnen"
+  ,"microphone": "Mikrofon"
+  ,"premium": "Premium"
+  ,"sessions": "Sitzungen"
+  ,"format": "Format"
+  ,"successRate": "Erfolgsrate"
+  ,"avgSession": "Ø Sitzung"
+  ,"consistency": "Konsistenz"
+  ,"bestTime": "Beste Zeit"
+  ,"weeklyTrends": "Wöchentliche Trends"
+  ,"performanceMetrics": "Leistungsmetriken"
+  ,"advancedAnalytics": "Erweiterte Analytik"
+  ,"premiumBadge": "PREMIUM"
+  ,"sessionHistoryTitle": "Sitzungsverlauf"
+  ,"recentSessionHistory": "Letzte Sitzungen"
+  ,"achievementFirstStepTitle": "Erster Schritt"
+  ,"achievementFirstStepDesc": "Erste Sitzung abgeschlossen"
+  ,"achievementOnFireTitle": "In Serie"
+  ,"achievementOnFireDesc": "3-Tage Serie"
+  ,"achievementWeekWarriorTitle": "Wochen-Kämpfer"
+  ,"achievementWeekWarriorDesc": "7-Tage Serie"
+  ,"achievementDecadeTitle": "Dekade"
+  ,"achievementDecadeDesc": "10 Punkte Meilenstein"
+  ,"achievementHalfCenturyTitle": "Halbes Jahrhundert"
+  ,"achievementHalfCenturyDesc": "50 Punkte Meilenstein"
+  ,"achievementLockedPrompt": "Sitzungen abschließen zum Freischalten"
+}

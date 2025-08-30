@@ -1,0 +1,232 @@
+{
+  "appTitle": "Silence Score",
+  "splashLoading": "Preparing focus engine…",
+  "paywallTitle": "Train Deeper Focus with Premium",
+  "featureExtendSessions": "Extend focus sessions from 5 min to 120 min",
+  "featureHistory": "Access 90 days of past sessions",
+  "featureMetrics": "Unlock performance metrics and trend charts",
+  "featureExport": "Download your session data (CSV / PDF)",
+  "featureThemes": "Use the full custom theme pack",
+  "featureThreshold": "Fine-tune threshold with ambient baseline",
+  "featureSupport": "Faster help and early feature access",
+  "subscribeCta": "Continue",
+  "restorePurchases": "Restore Purchases",
+  "privacyPolicy": "Privacy",
+  "termsOfService": "Terms",
+  "manageSubscription": "Manage",
+  "legalDisclaimer": "Auto-renewing subscription. Cancel anytime in store settings.",
+  "minutesOfSilenceCongrats": "Great job! {minutes, plural, one {# minute of peaceful silence achieved! ✨} other {# minutes of peaceful silence achieved! ✨}}",
+  "@minutesOfSilenceCongrats": {
+    "description": "Shown in a notification when a user hits a silence milestone (pluralized).",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "description": "Whole number of minutes of silence achieved"
+      }
+    }
+  },
+  "minutes": "minutes",
+  "minute": "minute",
+  "exportCsv": "Export CSV",
+  "exportPdf": "Export PDF",
+  "settings": "Settings",
+  "themes": "Themes",
+  "analytics": "Analytics",
+  "history": "History",
+  "startSession": "Start Session",
+  "stopSession": "Stop",
+  "pauseSession": "Pause",
+  "resumeSession": "Resume",
+  "sessionSaved": "Session saved",
+  "copied": "Copied",
+  "errorGeneric": "Something went wrong",
+  "permissionMicrophoneDenied": "Microphone permission denied",
+  "actionRetry": "Retry",
+  "listeningStatus": "Listening...",
+  "successPointMessage": "Silence achieved! +1 point",
+  "tooNoisyMessage": "Too noisy! Try again",
+  "totalPoints": "Total Points",
+  "currentStreak": "Current Streak",
+  "bestStreak": "Best Streak",
+  "welcomeMessage": "Press Start to begin your silence journey!",
+  "resetAllData": "Reset All Data",
+  "resetDataConfirmation": "Are you sure you want to reset all your progress?",
+  "resetDataSuccess": "Data reset successfully",
+  "decibelThresholdLabel": "Decibel Threshold",
+  "decibelThresholdHint": "Set the maximum allowed noise level (dB)",
+  "microphonePermissionTitle": "Microphone Permission",
+  "microphonePermissionMessage": "Silence Score needs microphone access to measure ambient noise levels. No audio is stored.",
+  "permissionDeniedMessage": "Microphone permission is required to measure silence. Please enable it in settings.",
+  "noiseMeterError": "Unable to access microphone",
+  "premiumFeaturesTitle": "Premium Features",
+  "premiumDescription": "Unlock extended sessions, advanced analytics, and data export",
+  "premiumRequiredMessage": "This feature requires Premium subscription",
+  "subscriptionSuccessMessage": "Successfully subscribed! Enjoy your premium features",
+  "subscriptionErrorMessage": "Unable to process subscription. Please try again",
+  "restoreSuccessMessage": "Purchases restored successfully",
+  "restoreErrorMessage": "No purchases found to restore",
+  "yearlyPlanTitle": "Yearly",
+  "monthlyPlanTitle": "Monthly",
+  "savePercent": "SAVE {percent}%",
+  "@savePercent": {"placeholders": {"percent": {"type": "String"}}},
+  "billedAnnually": "Billed at {price}/yr.",
+  "@billedAnnually": {"placeholders": {"price": {"type": "String"}}},
+  "billedMonthly": "Billed at {price}/mo.",
+  "@billedMonthly": {"placeholders": {"price": {"type": "String"}}},
+  "mockSubscriptionsBanner": "Mock Subscriptions Enabled"
+  ,"splashTagline": "Find your quiet"
+  ,"appIconSemantic": "App icon"
+  ,"tabBasic": "Basic"
+  ,"tabAdvanced": "Advanced"
+  ,"tabAbout": "About"
+  ,"resetAllSettings": "Reset All Settings"
+  ,"resetAllSettingsDescription": "This will reset all settings and data. Cannot be undone."
+  ,"cancel": "Cancel"
+  ,"reset": "Reset"
+  ,"allSettingsReset": "All settings and data have been reset"
+  ,"decibelThresholdMaxNoise": "Decibel Threshold (max noise level)"
+  ,"highThresholdWarningText": "High threshold may ignore meaningful noise events."
+  ,"decibelThresholdTooltip": "Typical quiet spaces: 30–40 dB. Calibrate; raise only if normal hum counts as noise."
+  ,"sessionDuration": "Session Duration"
+  ,"upgradeForMinutes": "Upgrade for {minutes}m"
+  ,"freeUpToMinutes": "Free: up to {minutes} min"
+  ,"durationLabel": "Duration"
+  ,"minutesShort": "min"
+  ,"noiseCalibration": "Noise Calibration"
+  ,"calibrateBaseline": "Calibrate baseline"
+  ,"unlockAdvancedCalibration": "Unlock advanced noise calibration"
+  ,"exportData": "Export Data"
+  ,"sessionHistory": "Session history"
+  ,"notifications": "Notifications"
+  ,"remindersCelebrations": "Reminders & celebrations"
+  ,"accessibility": "Accessibility"
+  ,"accessibilityFeatures": "Accessibility features"
+  ,"appInformation": "App Information"
+  ,"version": "Version"
+  ,"bundleId": "Bundle ID"
+  ,"environment": "Environment"
+  ,"helpSupport": "Help & Support"
+  ,"faq": "FAQ"
+  ,"support": "Support"
+  ,"rateApp": "Rate App"
+  ,"errorLoadingSettings": "Error loading settings: {error}"
+  ,"exportNoData": "No data available to export"
+  ,"chooseExportFormat": "Choose export format for your {sessions} sessions:"
+  ,"csvSpreadsheet": "CSV Spreadsheet"
+  ,"rawDataForAnalysis": "Raw data for analysis"
+  ,"pdfReport": "PDF Report"
+  ,"formattedReportWithCharts": "Formatted report with charts"
+  ,"generatingExport": "Generating {format} export..."
+  ,"exportCompleted": "{format} export completed!"
+  ,"exportFailed": "Export failed: {error}"
+  ,"frequentlyAskedQuestions": "Frequently Asked Questions"
+  ,"faqHowWorksQ": "How does SilenceScore work?"
+  ,"faqHowWorksA": "It measures ambient noise – time below threshold earns points."
+  ,"faqAudioRecordedQ": "Is audio recorded?"
+  ,"faqAudioRecordedA": "No. Only decibel levels are sampled; audio is never stored."
+  ,"faqAdjustSensitivityQ": "Adjust sensitivity?"
+  ,"faqAdjustSensitivityA": "Use Settings > Basic > Decibel Threshold ({min}–{max} dB) and calibrate first."
+  ,"faqPremiumFeaturesQ": "Premium features?"
+  ,"faqPremiumFeaturesA": "Extended sessions (up to 120m), advanced analytics, export, themes."
+  ,"faqNotificationsQ": "Notifications?"
+  ,"faqNotificationsA": "Smart reminders learn habits and celebrate milestones."
+  ,"close": "Close"
+  ,"supportTitle": "Support"
+  ,"responseTimeLabel": "Response Time: {time}"
+  ,"docs": "Docs"
+  ,"contactSupport": "Contact Support"
+  ,"emailOpenDescription": "Opens your email app with system information pre-filled"
+  ,"subject": "Subject"
+  ,"briefDescription": "Brief description"
+  ,"description": "Description"
+  ,"issueDescriptionHint": "Provide details about your issue..."
+  ,"openingEmail": "Opening Email..."
+  ,"openEmailApp": "Open Email App"
+  ,"fillSubjectDescription": "Please fill subject and description"
+  ,"emailOpened": "Email app opened. Send when ready."
+  ,"noEmailAppFound": "No email app found. Contact:"
+  ,"standardSubject": "Subject: [STANDARD] {subject}"
+  ,"issueLine": "Issue: {issue}"
+  ,"failedOpenFaq": "Failed to open FAQ: {error}"
+  ,"failedOpenDocs": "Failed to open documentation: {error}"
+  ,"accessibilitySettings": "Accessibility Settings"
+  ,"vibrationFeedback": "Vibration Feedback"
+  ,"vibrateOnSessionEvents": "Vibrate on session events"
+  ,"voiceAnnouncements": "Voice Announcements"
+  ,"announceSessionProgress": "Announce session progress"
+  ,"highContrastMode": "High Contrast Mode"
+  ,"improveVisualAccessibility": "Improve visual accessibility"
+  ,"largeText": "Large Text"
+  ,"increaseTextSize": "Increase text size"
+  ,"save": "Save"
+  ,"accessibilitySettingsSaved": "Accessibility settings saved"
+  ,"noiseFloorCalibration": "Noise Floor Calibration"
+  ,"measuringAmbientNoise": "Measuring ambient noise (≈5s)..."
+  ,"couldNotReadMic": "Could not read microphone"
+  ,"calibrationFailed": "Calibration failed"
+  ,"retry": "Retry"
+  ,"previousThreshold": "Previous: {value} dB"
+  ,"newThreshold": "New threshold: {value} dB"
+  ,"noSignificantChange": "No significant change detected."
+  ,"highAmbientDetected": "High ambient environment detected. Consider a quieter space for more sensitivity."
+  ,"adjustAnytimeSettings": "You can adjust this anytime in Settings."
+  ,"toggleThemeTooltip": "Toggle theme"
+  ,"audioChartRecovering": "Audio chart recovering..."
+  ,"themeChanged": "Theme: {themeName}"
+  ,"privacyComingSoon": "Privacy policy coming soon."
+  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
+  ,"startSessionButton": "Start Session"
+  ,"stopSessionButton": "Stop"
+  ,"statusListening": "Listening..."
+  ,"statusSuccess": "Silence achieved! +1 point"
+  ,"statusFailure": "Too noisy! Try again"
+  ,"upgrade": "Upgrade"
+  ,"exportCsvSpreadsheet": "CSV Spreadsheet"
+  ,"exportPdfReport": "PDF Report"
+  ,"formattedReportCharts": "Formatted report with charts"
+  ,"csv": "CSV"
+  ,"pdf": "PDF"
+  ,"theme": "Theme"
+  ,"open": "Open"
+  ,"microphone": "Microphone"
+  ,"premium": "Premium"
+  ,"sessions": "sessions"
+  ,"format": "format"
+  ,"successRate": "Success Rate"
+  ,"avgSession": "Avg Session"
+  ,"consistency": "Consistency"
+  ,"bestTime": "Best Time"
+  ,"weeklyTrends": "Weekly Trends"
+  ,"performanceMetrics": "Performance Metrics"
+  ,"advancedAnalytics": "Advanced Analytics"
+  ,"premiumBadge": "PREMIUM"
+  ,"sessionHistoryTitle": "Session History"
+  ,"recentSessionHistory": "Recent Session History"
+  ,"achievementFirstStepTitle": "First Step"
+  ,"achievementFirstStepDesc": "Completed your first session"
+  ,"achievementOnFireTitle": "On Fire"
+  ,"achievementOnFireDesc": "3-day streak achieved"
+  ,"achievementWeekWarriorTitle": "Week Warrior"
+  ,"achievementWeekWarriorDesc": "7-day streak achieved"
+  ,"achievementDecadeTitle": "Decade"
+  ,"achievementDecadeDesc": "10 points milestone"
+  ,"achievementHalfCenturyTitle": "Half Century"
+  ,"achievementHalfCenturyDesc": "50 points milestone"
+  ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
+  ,"@upgradeForMinutes": {"placeholders": {"minutes": {"type": "int"}}}
+  ,"@freeUpToMinutes": {"placeholders": {"minutes": {"type": "int"}}}
+  ,"@errorLoadingSettings": {"placeholders": {"error": {"type": "String"}}}
+  ,"@chooseExportFormat": {"placeholders": {"sessions": {"type": "int"}}}
+  ,"@generatingExport": {"placeholders": {"format": {"type": "String"}}}
+  ,"@exportCompleted": {"placeholders": {"format": {"type": "String"}}}
+  ,"@exportFailed": {"placeholders": {"error": {"type": "String"}}}
+  ,"@faqAdjustSensitivityA": {"placeholders": {"min": {"type": "int"}, "max": {"type": "int"}}}
+  ,"@responseTimeLabel": {"placeholders": {"time": {"type": "String"}}}
+  ,"@standardSubject": {"placeholders": {"subject": {"type": "String"}}}
+  ,"@issueLine": {"placeholders": {"issue": {"type": "String"}}}
+  ,"@failedOpenFaq": {"placeholders": {"error": {"type": "String"}}}
+  ,"@failedOpenDocs": {"placeholders": {"error": {"type": "String"}}}
+  ,"@previousThreshold": {"placeholders": {"value": {"type": "double"}}}
+  ,"@newThreshold": {"placeholders": {"value": {"type": "double"}}}
+  ,"@themeChanged": {"placeholders": {"themeName": {"type": "String"}}}
+}

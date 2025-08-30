@@ -1,0 +1,86 @@
+{
+  "appTitle": "Silence Score",
+  "splashLoading": "Preparando motor de foco…",
+  "paywallTitle": "Treine foco mais profundo com Premium",
+  "featureExtendSessions": "Estenda sessões de 5 min para 120 min",
+  "featureHistory": "Acesse 90 dias de histórico",
+  "featureMetrics": "Desbloqueie métricas e gráficos de tendência",
+  "featureExport": "Baixe seus dados (CSV / PDF)",
+  "featureThemes": "Use todo o pacote de temas",
+  "featureThreshold": "Ajuste fino do limite com base ambiente",
+  "featureSupport": "Suporte mais rápido e acesso antecipado",
+  "subscribeCta": "Continuar",
+  "restorePurchases": "Restaurar compras",
+  "privacyPolicy": "Privacidade",
+  "termsOfService": "Termos",
+  "manageSubscription": "Gerenciar",
+  "legalDisclaimer": "Assinatura com renovação automática. Cancele a qualquer momento.",
+  "minutesOfSilenceCongrats": "Ótimo! {minutes, plural, one {# minuto de silêncio ✨} other {# minutos de silêncio ✨}}",
+  "minutes": "minutos",
+  "minute": "minuto"
+  ,"splashTagline": "Encontre seu silêncio"
+  ,"appIconSemantic": "Ícone do app"
+  ,"tabBasic": "Básico"
+  ,"tabAdvanced": "Avançado"
+  ,"tabAbout": "Sobre"
+  ,"resetAllSettings": "Redefinir todas as configurações"
+  ,"decibelThresholdMaxNoise": "Limite de decibéis (ruído máx)"
+  ,"highThresholdWarningText": "Limite alto pode ignorar ruídos importantes."
+  ,"sessionDuration": "Duração da sessão"
+  ,"upgradeForMinutes": "Upgrade para {minutes}m"
+  ,"freeUpToMinutes": "Grátis: até {minutes} min"
+  ,"durationLabel": "Duração"
+  ,"noiseCalibration": "Calibração de ruído"
+  ,"exportData": "Exportar dados"
+  ,"notifications": "Notificações"
+  ,"accessibility": "Acessibilidade"
+  ,"appInformation": "Informações do app"
+  ,"version": "Versão"
+  ,"environment": "Ambiente"
+  ,"faq": "FAQ"
+  ,"support": "Suporte"
+  ,"rateApp": "Avaliar"
+  ,"toggleThemeTooltip": "Trocar tema"
+  ,"audioChartRecovering": "Recuperando gráfico de áudio..."
+  ,"themeChanged": "Tema: {themeName}"
+  ,"privacyComingSoon": "Privacy policy coming soon."
+  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
+  ,"startSessionButton": "Iniciar sessão"
+  ,"stopSessionButton": "Parar"
+  ,"statusListening": "Ouvindo..."
+  ,"statusSuccess": "Silêncio alcançado! +1 ponto"
+  ,"statusFailure": "Muito barulho!"
+  ,"upgrade": "Upgrade"
+  ,"exportCsvSpreadsheet": "Planilha CSV"
+  ,"exportPdfReport": "Relatório PDF"
+  ,"formattedReportCharts": "Relatório com gráficos"
+  ,"csv": "CSV"
+  ,"pdf": "PDF"
+  ,"theme": "Tema"
+  ,"open": "Abrir"
+  ,"microphone": "Microfone"
+  ,"premium": "Premium"
+  ,"sessions": "sessões"
+  ,"format": "formato"
+  ,"successRate": "Taxa de sucesso"
+  ,"avgSession": "Sessão méd."
+  ,"consistency": "Consistência"
+  ,"bestTime": "Melhor tempo"
+  ,"weeklyTrends": "Tendências semanais"
+  ,"performanceMetrics": "Métricas de desempenho"
+  ,"advancedAnalytics": "Análises avançadas"
+  ,"premiumBadge": "PREMIUM"
+  ,"sessionHistoryTitle": "Histórico de sessões"
+  ,"recentSessionHistory": "Histórico recente"
+  ,"achievementFirstStepTitle": "Primeiro passo"
+  ,"achievementFirstStepDesc": "Primeira sessão concluída"
+  ,"achievementOnFireTitle": "Em sequência"
+  ,"achievementOnFireDesc": "Sequência de 3 dias"
+  ,"achievementWeekWarriorTitle": "Guerreiro da semana"
+  ,"achievementWeekWarriorDesc": "Sequência de 7 dias"
+  ,"achievementDecadeTitle": "Década"
+  ,"achievementDecadeDesc": "Marco de 10 pontos"
+  ,"achievementHalfCenturyTitle": "Meio século"
+  ,"achievementHalfCenturyDesc": "Marco de 50 pontos"
+  ,"achievementLockedPrompt": "Complete sessões para desbloquear conquistas"
+}

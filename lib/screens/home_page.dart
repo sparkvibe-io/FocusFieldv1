@@ -21,6 +21,7 @@ import 'package:silence_score/providers/accessibility_provider.dart';
 import 'package:silence_score/providers/notification_provider.dart';
 import 'package:silence_score/services/accessibility_service.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -83,7 +84,7 @@ class HomePage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppConstants.appTitle),
+        title: Text(AppLocalizations.of(context)!.appTitle),
         actions: [
           IconButton(
             icon: Icon(_getThemeIcon(ref)),
@@ -91,7 +92,7 @@ class HomePage extends HookConsumerWidget {
               ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
               _toggleTheme(context, ref);
             },
-            tooltip: 'Toggle theme',
+            tooltip: AppLocalizations.of(context)!.toggleThemeTooltip,
           ),
           IconButton(
             icon: const Icon(Icons.settings),
@@ -116,11 +117,11 @@ class HomePage extends HookConsumerWidget {
             children: [
               const Icon(Icons.error, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error loading data: $error'),
+              Text(AppLocalizations.of(context)!.errorLoadingSettings(error.toString())),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(silenceDataNotifierProvider),
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.actionRetry),
               ),
             ],
           ),
@@ -250,7 +251,7 @@ class HomePage extends HookConsumerWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Audio chart recovering...',
+                                  AppLocalizations.of(context)!.audioChartRecovering,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   textAlign: TextAlign.center,
                                 ),
@@ -339,7 +340,7 @@ class HomePage extends HookConsumerWidget {
     
     if (silenceState.success == true) {
       return Text(
-        AppConstants.successMessage,
+        AppLocalizations.of(context)!.statusSuccess,
         style: theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -352,7 +353,7 @@ class HomePage extends HookConsumerWidget {
     
     if (silenceState.success == false) {
       return Text(
-        AppConstants.failureMessage,
+        AppLocalizations.of(context)!.statusFailure,
         style: theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.error,
         ),
@@ -518,7 +519,7 @@ class HomePage extends HookConsumerWidget {
     final nextTheme = availableThemes[nextIndex];
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Theme: ${nextTheme.displayName}'),
+        content: Text(AppLocalizations.of(context)!.themeChanged(nextTheme.displayName)),
         duration: const Duration(milliseconds: 1000),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 100, left: 16, right: 16),

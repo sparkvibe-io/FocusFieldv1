@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:silence_score/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/providers/silence_provider.dart';
@@ -278,7 +278,7 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
     if (!mounted) return;
     
     try {
-      if (!kReleaseMode) debugPrint('DEBUG: Starting permission check...');
+  DebugLog.d('DEBUG: Starting permission check...');
       
       final silenceDetector = ref.read(silenceDetectorProvider);
       
@@ -286,26 +286,26 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
       final hasPermission = await silenceDetector.hasPermission().timeout(
         const Duration(seconds: PermissionConstants.permissionCheckTimeoutSec),
         onTimeout: () {
-          if (!kReleaseMode) debugPrint('DEBUG: Permission check timed out');
+          DebugLog.d('DEBUG: Permission check timed out');
           return false;
         },
       );
       
-      if (!kReleaseMode) debugPrint('DEBUG: Initial permission status: $hasPermission');
+  DebugLog.d('DEBUG: Initial permission status: $hasPermission');
       
       if (!hasPermission && mounted) {
-        if (!kReleaseMode) debugPrint('DEBUG: No permission, requesting...');
+  DebugLog.d('DEBUG: No permission, requesting...');
         
         // Request permission proactively with timeout
         final permissionGranted = await silenceDetector.requestPermission().timeout(
           const Duration(seconds: PermissionConstants.permissionRequestTimeoutSec),
           onTimeout: () {
-            if (!kReleaseMode) debugPrint('DEBUG: Permission request timed out');
+            DebugLog.d('DEBUG: Permission request timed out');
             return false;
           },
         );
         
-        if (!kReleaseMode) debugPrint('DEBUG: Permission request result: $permissionGranted');
+  DebugLog.d('DEBUG: Permission request result: $permissionGranted');
         
         // If still no permission, show a dialog to guide the user
         if (!permissionGranted && mounted) {
@@ -314,11 +314,11 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
           if (mounted) await PermissionDialogs.showMicrophoneRationale(context, ref);
         }
       } else if (hasPermission) {
-        if (!kReleaseMode) debugPrint('DEBUG: Permission already granted');
+  DebugLog.d('DEBUG: Permission already granted');
       }
     } catch (e) {
       // Permission request failed, but don't block the app
-      if (!kReleaseMode) debugPrint('DEBUG: Permission check failed: $e');
+  DebugLog.d('DEBUG: Permission check failed: $e');
       
       // Only show error dialog if it's a critical failure
       if (mounted && e.toString().contains('permanently')) {

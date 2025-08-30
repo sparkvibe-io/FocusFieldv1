@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:silence_score/models/silence_data.dart';
 import 'package:silence_score/services/advanced_analytics_service.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 class AdvancedAnalyticsWidget extends ConsumerWidget {
   final SilenceData silenceData;
@@ -33,9 +34,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
   childrenPadding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
         leading: Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
-        title: Row(children: [
+    title: Row(children: [
           Expanded(
-            child: Text('Advanced Analytics', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+      child: Text(AppLocalizations.of(context)!.advancedAnalytics, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -43,7 +44,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text('PREMIUM', style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
+            child: Text(AppLocalizations.of(context)!.premiumBadge, style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary)),
           ),
         ]),
         children: [
@@ -63,7 +64,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
 
   Widget _performanceMetrics(BuildContext context, PerformanceMetrics m, {required bool compact}) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('Performance Metrics', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+  Text(AppLocalizations.of(context)!.performanceMetrics, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
       SizedBox(height: compact ? 8 : 12),
       LayoutBuilder(builder: (context, c) {
         final w = c.maxWidth;
@@ -77,10 +78,10 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           crossAxisSpacing: 12,
           mainAxisSpacing: 8,
           children: [
-            _metricCard(context, 'Success Rate', '${m.overallSuccessRate.toStringAsFixed(1)}%', Icons.check_circle_outline, _successRateColor(m.overallSuccessRate), compact),
-            _metricCard(context, 'Avg Session', '${m.averageSessionLength.toStringAsFixed(1)}m', Icons.timer_outlined, Theme.of(context).colorScheme.secondary, compact),
-            _metricCard(context, 'Consistency', '${(m.consistencyScore * 100).toStringAsFixed(0)}%', Icons.trending_up, _consistencyColor(m.consistencyScore), compact),
-            _metricCard(context, 'Best Time', _formatHour(m.bestTimeOfDay), Icons.schedule, Theme.of(context).colorScheme.tertiary, compact),
+            _metricCard(context, AppLocalizations.of(context)!.successRate, '${m.overallSuccessRate.toStringAsFixed(1)}%', Icons.check_circle_outline, _successRateColor(m.overallSuccessRate), compact),
+            _metricCard(context, AppLocalizations.of(context)!.avgSession, '${m.averageSessionLength.toStringAsFixed(1)}m', Icons.timer_outlined, Theme.of(context).colorScheme.secondary, compact),
+            _metricCard(context, AppLocalizations.of(context)!.consistency, '${(m.consistencyScore * 100).toStringAsFixed(0)}%', Icons.trending_up, _consistencyColor(m.consistencyScore), compact),
+            _metricCard(context, AppLocalizations.of(context)!.bestTime, _formatHour(m.bestTimeOfDay), Icons.schedule, Theme.of(context).colorScheme.tertiary, compact),
           ],
         );
       })
@@ -112,7 +113,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     }
     final overall = trends.isEmpty ? 0.0 : trends.map((e) => e.successRate).reduce((a, b) => a + b) / trends.length;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('Weekly Trends', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+  Text(AppLocalizations.of(context)!.weeklyTrends, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
       SizedBox(height: compact ? 8 : 12),
       Container(
         height: compact ? 110 : 140,

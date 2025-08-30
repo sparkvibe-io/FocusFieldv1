@@ -67,42 +67,7 @@ class AppConstants {
   static const String subscriptionTierKey = 'subscription_tier';
   static const String lastSyncDateKey = 'last_sync_date';
   
-  // UI strings
-  static const String stopButtonText = 'Stop';
-  static const String listeningText = 'Listening...';
-  static const String successMessage = 'Silence achieved! +1 point';
-  static const String failureMessage = 'Too noisy! Try again';
-  static const String totalPointsLabel = 'Total Points';
-  static const String currentStreakLabel = 'Current Streak';
-  static const String bestStreakLabel = 'Best Streak';
-  static const String welcomeMessage = 'Press Start to begin your silence journey!';
-  static const String settingsTitle = 'Settings';
-  static const String resetDataText = 'Reset All Data';
-  static const String resetDataConfirmation = 'Are you sure you want to reset all your progress?';
-  static const String resetDataSuccess = 'Data reset successfully';
-  static const String decibelThresholdLabel = 'Decibel Threshold';
-  static const String decibelThresholdHint = 'Set the maximum allowed noise level (dB)';
-  
-  // Permission strings
-  static const String microphonePermissionTitle = 'Microphone Permission';
-  static const String microphonePermissionMessage = 'Silence Score needs microphone access to measure ambient noise levels. No audio is stored.';
-  static const String permissionDeniedMessage = 'Microphone permission is required to measure silence. Please enable it in settings.';
-  
-  // Error messages
-  static const String noiseMeterError = 'Unable to access microphone';
-  static const String generalError = 'Something went wrong. Please try again.';
-  
-  // Premium & Subscription strings
-  static const String upgradeTitle = 'Upgrade to Premium';
-  static const String premiumFeaturesTitle = 'Premium Features';
-  static const String premiumDescription = 'Unlock extended sessions, advanced analytics, and data export';
-  static const String subscribeButtonText = 'Subscribe Now';
-  static const String restorePurchasesText = 'Restore Purchases';
-  static const String premiumRequiredMessage = 'This feature requires Premium subscription';
-  static const String subscriptionSuccessMessage = 'Successfully subscribed! Enjoy your premium features';
-  static const String subscriptionErrorMessage = 'Unable to process subscription. Please try again';
-  static const String restoreSuccessMessage = 'Purchases restored successfully';
-  static const String restoreErrorMessage = 'No purchases found to restore';
+  // UI string constants removed after full localization migration.
 
   // Legal & Compliance URLs (update these to real hosted policy pages before production release)
   static const String privacyPolicyUrl = 'https://sparkvibe.io/privacy';

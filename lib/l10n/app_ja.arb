@@ -1,0 +1,164 @@
+{
+  "appTitle": "Silence Score",
+  "splashLoading": "集中エンジンを準備中…",
+  "paywallTitle": "プレミアムでより深い集中を",
+  "featureExtendSessions": "セッションを5分から120分へ拡張",
+  "featureHistory": "過去90日間の履歴にアクセス",
+  "featureMetrics": "パフォーマンス指標とトレンドを解放",
+  "featureExport": "セッションデータをエクスポート (CSV / PDF)",
+  "featureThemes": "全テーマパックを使用",
+  "featureThreshold": "環境ベースでしきい値を微調整",
+  "featureSupport": "迅速なサポートと先行アクセス",
+  "subscribeCta": "続行",
+  "restorePurchases": "購入を復元",
+  "privacyPolicy": "プライバシー",
+  "termsOfService": "利用規約",
+  "manageSubscription": "管理",
+  "legalDisclaimer": "自動更新サブスクリプション。ストア設定でいつでも解約可能。",
+  "minutesOfSilenceCongrats": "素晴らしい！{minutes, plural, one {# 分の静けさを達成 ✨} other {# 分の静けさを達成 ✨}}",
+  "minutes": "分",
+  "minute": "分",
+  "exportCsv": "CSVエクスポート",
+  "exportPdf": "PDFエクスポート",
+  "settings": "設定",
+  "themes": "テーマ",
+  "analytics": "分析",
+  "history": "履歴",
+  "startSession": "開始",
+  "stopSession": "停止",
+  "pauseSession": "一時停止",
+  "resumeSession": "再開",
+  "sessionSaved": "セッションを保存しました",
+  "copied": "コピー済み",
+  "errorGeneric": "問題が発生しました",
+  "permissionMicrophoneDenied": "マイク権限が拒否されました",
+  "actionRetry": "再試行",
+  "listeningStatus": "計測中...",
+  "successPointMessage": "静けさ達成！+1 ポイント",
+  "tooNoisyMessage": "騒がしすぎます。再試行してください",
+  "totalPoints": "合計ポイント",
+  "currentStreak": "現在の連続",
+  "bestStreak": "最高連続",
+  "welcomeMessage": "開始を押して静けさの旅を始めましょう",
+  "resetAllData": "すべてのデータをリセット",
+  "resetDataConfirmation": "進捗をすべてリセットしますか？",
+  "resetDataSuccess": "データをリセットしました",
+  "decibelThresholdLabel": "デシベルしきい値",
+  "decibelThresholdHint": "許容される最大ノイズレベル (dB) を設定",
+  "microphonePermissionTitle": "マイク権限",
+  "microphonePermissionMessage": "Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。",
+  "permissionDeniedMessage": "測定にはマイク権限が必要です。設定で有効にしてください。",
+  "noiseMeterError": "マイクにアクセスできません",
+  "premiumFeaturesTitle": "プレミアム機能",
+  "premiumDescription": "延長セッション・高度な分析・エクスポートを解放",
+  "premiumRequiredMessage": "この機能はプレミアムが必要です",
+  "subscriptionSuccessMessage": "購読が完了しました",
+  "subscriptionErrorMessage": "購読を処理できませんでした",
+  "restoreSuccessMessage": "購入を復元しました",
+  "restoreErrorMessage": "購入が見つかりません",
+  "yearlyPlanTitle": "年額",
+  "monthlyPlanTitle": "月額",
+  "savePercent": "{percent}% お得",
+  "billedAnnually": "年額 {price}",
+  "billedMonthly": "月額 {price}",
+  "mockSubscriptionsBanner": "モック購読有効"
+  ,"splashTagline": "静けさを見つけよう"
+  ,"appIconSemantic": "アプリアイコン"
+  ,"tabBasic": "基本"
+  ,"tabAdvanced": "詳細"
+  ,"tabAbout": "情報"
+  ,"resetAllSettings": "全設定をリセット"
+  ,"decibelThresholdMaxNoise": "デシベルしきい値 (最大騒音)"
+  ,"highThresholdWarningText": "高いしきい値は重要な音を無視する可能性があります"
+  ,"decibelThresholdTooltip": "静かな場所: 30–40 dB 校正後 通常ハムがノイズなら上げる"
+  ,"sessionDuration": "セッション時間"
+  ,"upgradeForMinutes": "{minutes}分にアップグレード"
+  ,"freeUpToMinutes": "無料: 最大 {minutes} 分"
+  ,"durationLabel": "時間"
+  ,"noiseCalibration": "ノイズ較正"
+  ,"calibrateBaseline": "ベース較正"
+  ,"exportData": "データ書き出し"
+  ,"sessionHistory": "セッション履歴"
+  ,"notifications": "通知"
+  ,"remindersCelebrations": "リマインダーと祝福"
+  ,"accessibility": "アクセシビリティ"
+  ,"accessibilityFeatures": "アクセシビリティ機能"
+  ,"appInformation": "アプリ情報"
+  ,"version": "バージョン"
+  ,"bundleId": "バンドルID"
+  ,"environment": "環境"
+  ,"helpSupport": "ヘルプとサポート"
+  ,"faq": "FAQ"
+  ,"support": "サポート"
+  ,"rateApp": "評価"
+  ,"errorLoadingSettings": "設定読み込みエラー: {error}"
+  ,"chooseExportFormat": "{sessions}件のセッション形式を選択:"
+  ,"csvSpreadsheet": "CSVスプレッドシート"
+  ,"rawDataForAnalysis": "分析用生データ"
+  ,"pdfReport": "PDFレポート"
+  ,"formattedReportWithCharts": "グラフ付き整形レポート"
+  ,"generatingExport": "{format} 書き出し生成中..."
+  ,"exportCompleted": "{format} 書き出し完了"
+  ,"exportFailed": "書き出し失敗: {error}"
+  ,"frequentlyAskedQuestions": "よくある質問"
+  ,"close": "閉じる"
+  ,"vibrationFeedback": "バイブレーション"
+  ,"vibrateOnSessionEvents": "イベント時に振動"
+  ,"voiceAnnouncements": "音声案内"
+  ,"announceSessionProgress": "進行を案内"
+  ,"highContrastMode": "ハイコントラスト"
+  ,"improveVisualAccessibility": "視認性向上"
+  ,"largeText": "大きな文字"
+  ,"increaseTextSize": "文字サイズ拡大"
+  ,"accessibilitySettings": "アクセシビリティ設定"
+  ,"measuringAmbientNoise": "環境ノイズ測定中 (≈5秒)"
+  ,"retry": "再試行"
+  ,"previousThreshold": "以前: {value} dB"
+  ,"newThreshold": "新しいしきい値: {value} dB"
+  ,"noSignificantChange": "大きな変化なし"
+  ,"highAmbientDetected": "高い環境ノイズ検出"
+  ,"adjustAnytimeSettings": "設定でいつでも調整可能"
+  ,"toggleThemeTooltip": "テーマ切替"
+  ,"audioChartRecovering": "オーディオチャート回復中..."
+  ,"themeChanged": "テーマ: {themeName}"
+  ,"privacyComingSoon": "Privacy policy coming soon."
+  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
+  ,"startSessionButton": "Start Session"
+  ,"stopSessionButton": "Stop"
+  ,"statusListening": "Listening..."
+  ,"statusSuccess": "Silence achieved! +1 point"
+  ,"statusFailure": "Too noisy! Try again"
+  ,"upgrade": "Upgrade"
+  ,"exportCsvSpreadsheet": "CSV Spreadsheet"
+  ,"exportPdfReport": "PDF Report"
+  ,"formattedReportCharts": "Formatted report with charts"
+  ,"csv": "CSV"
+  ,"pdf": "PDF"
+  ,"theme": "Theme"
+  ,"open": "Open"
+  ,"microphone": "Microphone"
+  ,"premium": "Premium"
+  ,"sessions": "sessions"
+  ,"format": "format"
+  ,"successRate": "Success Rate"
+  ,"avgSession": "Avg Session"
+  ,"consistency": "Consistency"
+  ,"bestTime": "Best Time"
+  ,"weeklyTrends": "Weekly Trends"
+  ,"performanceMetrics": "Performance Metrics"
+  ,"advancedAnalytics": "Advanced Analytics"
+  ,"premiumBadge": "PREMIUM"
+  ,"sessionHistoryTitle": "Session History"
+  ,"recentSessionHistory": "Recent Session History"
+  ,"achievementFirstStepTitle": "First Step"
+  ,"achievementFirstStepDesc": "Completed your first session"
+  ,"achievementOnFireTitle": "On Fire"
+  ,"achievementOnFireDesc": "3-day streak achieved"
+  ,"achievementWeekWarriorTitle": "Week Warrior"
+  ,"achievementWeekWarriorDesc": "7-day streak achieved"
+  ,"achievementDecadeTitle": "Decade"
+  ,"achievementDecadeDesc": "10 points milestone"
+  ,"achievementHalfCenturyTitle": "Half Century"
+  ,"achievementHalfCenturyDesc": "50 points milestone"
+  ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:silence_score/models/silence_data.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 // Session history and achievements widget
 class SessionHistoryCard extends StatelessWidget {
@@ -40,7 +41,7 @@ class SessionHistoryCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Session History',
+                  AppLocalizations.of(context)!.sessionHistoryTitle,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -79,8 +80,8 @@ class SessionHistoryCard extends StatelessWidget {
     if (totalPoints >= 1) {
       achievements.add(_buildAchievementBadge(
         context,
-        'First Step',
-        'Completed your first session',
+  AppLocalizations.of(context)!.achievementFirstStepTitle,
+  AppLocalizations.of(context)!.achievementFirstStepDesc,
         Icons.star,
         theme.colorScheme.primary,
       ));
@@ -90,8 +91,8 @@ class SessionHistoryCard extends StatelessWidget {
     if (currentStreak >= 3) {
       achievements.add(_buildAchievementBadge(
         context,
-        'On Fire',
-        '3-day streak achieved',
+  AppLocalizations.of(context)!.achievementOnFireTitle,
+  AppLocalizations.of(context)!.achievementOnFireDesc,
         Icons.local_fire_department,
         theme.colorScheme.secondary,
       ));
@@ -100,8 +101,8 @@ class SessionHistoryCard extends StatelessWidget {
     if (currentStreak >= 7) {
       achievements.add(_buildAchievementBadge(
         context,
-        'Week Warrior',
-        '7-day streak achieved',
+  AppLocalizations.of(context)!.achievementWeekWarriorTitle,
+  AppLocalizations.of(context)!.achievementWeekWarriorDesc,
         Icons.emoji_events,
         theme.colorScheme.tertiary,
       ));
@@ -111,8 +112,8 @@ class SessionHistoryCard extends StatelessWidget {
     if (totalPoints >= 10) {
       achievements.add(_buildAchievementBadge(
         context,
-        'Decade',
-        '10 points milestone',
+  AppLocalizations.of(context)!.achievementDecadeTitle,
+  AppLocalizations.of(context)!.achievementDecadeDesc,
         Icons.diamond,
         Colors.purple,
       ));
@@ -121,8 +122,8 @@ class SessionHistoryCard extends StatelessWidget {
     if (totalPoints >= 50) {
       achievements.add(_buildAchievementBadge(
         context,
-        'Half Century',
-        '50 points milestone',
+  AppLocalizations.of(context)!.achievementHalfCenturyTitle,
+  AppLocalizations.of(context)!.achievementHalfCenturyDesc,
         Icons.workspace_premium,
         Colors.amber,
       ));
@@ -144,7 +145,7 @@ class SessionHistoryCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              'Complete sessions to unlock achievements',
+              AppLocalizations.of(context)!.achievementLockedPrompt,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

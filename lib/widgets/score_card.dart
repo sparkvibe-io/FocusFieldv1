@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:silence_score/constants/app_constants.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 class ScoreCard extends StatelessWidget {
   final int totalPoints;
@@ -25,7 +26,7 @@ class ScoreCard extends StatelessWidget {
             // Main score row
             _buildScoreRow(
               context,
-              AppConstants.totalPointsLabel,
+              AppLocalizations.of(context)!.totalPoints,
               totalPoints.toString(),
               theme.colorScheme.primary,
             ),
@@ -37,7 +38,7 @@ class ScoreCard extends StatelessWidget {
                 Expanded(
                   child: _buildScoreItem(
                     context,
-                    AppConstants.currentStreakLabel,
+                    AppLocalizations.of(context)!.currentStreak,
                     currentStreak.toString(),
                     theme.colorScheme.secondary,
                   ),
@@ -46,7 +47,7 @@ class ScoreCard extends StatelessWidget {
                 Expanded(
                   child: _buildScoreItem(
                     context,
-                    AppConstants.bestStreakLabel,
+                    AppLocalizations.of(context)!.bestStreak,
                     bestStreak.toString(),
                     theme.colorScheme.tertiary,
                   ),
@@ -135,7 +136,7 @@ class ScoreCard extends StatelessWidget {
             Expanded(
               child: _buildStatIndicator(
                 context,
-                'Success Rate',
+                AppLocalizations.of(context)!.successRate,
                 _calculateSuccessRate(),
                 Icons.check_circle,
                 theme.colorScheme.primary,

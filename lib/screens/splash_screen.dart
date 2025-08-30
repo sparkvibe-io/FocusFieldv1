@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:silence_score/screens/app_initializer.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 
 class SplashScreen extends HookWidget {
   const SplashScreen({super.key});
@@ -98,14 +99,14 @@ class SplashScreen extends HookWidget {
                         Icons.volume_off_rounded,
                         size: 54,
                         color: theme.colorScheme.primary.withValues(alpha: 0.95),
-                        semanticLabel: 'App icon',
+                        semanticLabel: AppLocalizations.of(context)!.appIconSemantic,
                       ),
                     ),
                   ),
                   const SizedBox(height: 40),
                   // Wordmark
                   Text(
-                    'Silence Score',
+                    AppLocalizations.of(context)!.appTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
@@ -114,7 +115,7 @@ class SplashScreen extends HookWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Find your quiet',
+                    AppLocalizations.of(context)!.splashTagline,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w400,
                       color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.75),

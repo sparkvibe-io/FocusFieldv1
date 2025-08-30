@@ -5,6 +5,7 @@ import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:silence_score/constants/app_constants.dart';
 import 'package:silence_score/services/audio_circuit_breaker.dart';
+import 'package:silence_score/utils/debug_log.dart';
 
 class SilenceDetector {
   NoiseMeter? _noiseMeter;
@@ -12,7 +13,6 @@ class SilenceDetector {
   final List<double> _readings = [];
   final double _threshold;
   final int _durationSeconds;
-  final int _sampleIntervalMs;
   DateTime? _sessionStartTime; // To track the actual start time
   
   // Shared permission request future to prevent concurrent OS dialog / status churn
@@ -42,10 +42,8 @@ class SilenceDetector {
   SilenceDetector({
     double threshold = AppConstants.defaultDecibelThreshold,
     int durationSeconds = AppConstants.silenceDurationSeconds,
-    int sampleIntervalMs = AppConstants.sampleIntervalMs,
   })  : _threshold = threshold,
-        _durationSeconds = durationSeconds,
-        _sampleIntervalMs = sampleIntervalMs;
+        _durationSeconds = durationSeconds;
 
   /// Request microphone permission by actually trying to access the microphone
   Future<bool> requestPermission() async {
@@ -61,11 +59,11 @@ class SilenceDetector {
 
   Future<bool> _requestPermissionInternal() async {
     try {
-      if (!kReleaseMode) print('DEBUG: Requesting microphone permission...');
+  DebugLog.d('DEBUG: Requesting microphone permission...');
 
       final initialStatus = await Permission.microphone.status;
       _cachePermissionStatus(initialStatus);
-      if (!kReleaseMode) print('DEBUG: Initial permission status: $initialStatus');
+  DebugLog.d('DEBUG: Initial permission status: $initialStatus');
 
       if (initialStatus == PermissionStatus.granted) return true;
       if (initialStatus == PermissionStatus.permanentlyDenied) return false;
@@ -73,12 +71,12 @@ class SilenceDetector {
       if (Platform.isAndroid) {
         final req = await Permission.microphone.request();
         _cachePermissionStatus(req);
-        if (!kReleaseMode) print('DEBUG: Android permission request result: $req');
+  DebugLog.d('DEBUG: Android permission request result: $req');
         return req == PermissionStatus.granted;
       }
 
       if (Platform.isIOS || Platform.isMacOS) {
-        if (!kReleaseMode) print('DEBUG: Attempting mic access to trigger dialog (iOS/macOS)');
+  DebugLog.d('DEBUG: Attempting mic access to trigger dialog (iOS/macOS)');
         final tempNoiseMeter = NoiseMeter();
         StreamSubscription<NoiseReading>? tempSubscription;
         bool microphoneWorking = false;
@@ -90,21 +88,21 @@ class SilenceDetector {
           await Future.delayed(const Duration(milliseconds: 900));
           await tempSubscription.cancel();
         } catch (e) {
-          if (!kReleaseMode) print('DEBUG: iOS/macOS mic trigger error: $e');
+          DebugLog.d('DEBUG: iOS/macOS mic trigger error: $e');
           await tempSubscription?.cancel();
         }
         final finalStatus = await Permission.microphone.status;
         _cachePermissionStatus(finalStatus);
-        if (!kReleaseMode) print('DEBUG: iOS/macOS final permission status: $finalStatus micWorking=$microphoneWorking');
+  DebugLog.d('DEBUG: iOS/macOS final permission status: $finalStatus micWorking=$microphoneWorking');
         return microphoneWorking || finalStatus == PermissionStatus.granted;
       }
 
       final fallback = await Permission.microphone.request();
       _cachePermissionStatus(fallback);
-      if (!kReleaseMode) print('DEBUG: Fallback platform request result: $fallback');
+  DebugLog.d('DEBUG: Fallback platform request result: $fallback');
       return fallback == PermissionStatus.granted;
     } catch (e) {
-      if (!kReleaseMode) print('DEBUG: Error requesting permission: $e');
+  DebugLog.d('DEBUG: Error requesting permission: $e');
       return false;
     }
   }

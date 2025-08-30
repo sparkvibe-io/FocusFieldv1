@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+// Removed explicit HostedPaywallService import (no direct usage after redesign)
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/constants/app_constants.dart';
+import 'package:silence_score/l10n/app_localizations.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,122 +66,132 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   Widget build(BuildContext context) {
     final subscriptionActions = ref.watch(subscriptionActionsProvider.notifier);
     final subscriptionState = ref.watch(subscriptionActionsProvider);
-  final hostedPaywallAsync = ref.watch(hostedPaywallProvider);
+    final hostedPaywallAsync = ref.watch(hostedPaywallProvider);
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppConstants.upgradeTitle,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Hero Section (uses gradient; optionally swap with asset image by adding asset and decoration image)
+              SizedBox(
+                height: 220,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Background gradient (replace with DecorationImage for starry asset if added)
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xFF0D0D17), Color(0xFF111A2A)],
+                        ),
                       ),
-                ),
-                if (widget.onDismiss != null)
-                  IconButton(
-                    onPressed: widget.onDismiss,
-                    icon: const Icon(Icons.close),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (widget.featureDescription != null) ...[
-              Text(widget.featureDescription!, style: Theme.of(context).textTheme.bodyLarge),
-              const SizedBox(height: 24),
-            ],
-            Text(
-              AppConstants.premiumFeaturesTitle,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ..._buildFeatureList(context),
-            const SizedBox(height: 24),
-            // Hosted paywall section (if available)
-            hostedPaywallAsync.when(
-              data: (data) {
-                if (data == null) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPremiumCard(context),
-                      const SizedBox(height: 8),
-                      if (!AppConstants.enableMockSubscriptions && AppConstants.isValidRevenueCatKey)
-                        Text(
-                          'Live offerings unavailable. This can happen if:\n• Purchases not configured early\n• No current Offering set in RevenueCat\n• Product IDs mismatch (check colons)\n• Play Store products not created/published',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                                fontSize: 11,
+                    ),
+                    // Close button
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Material(
+                        color: Colors.white.withOpacity(0.10),
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: widget.onDismiss,
+                        ),
+                      ),
+                    ),
+                    // Title
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          AppLocalizations.of(context)?.paywallTitle ?? 'Premium',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                         ),
-                    ],
-                  );
-                }
-                return _buildHostedPaywallPackages(context, data);
-              },
-              loading: () => _buildPremiumCard(context), // show fallback while loading
-              error: (_, __) => _buildPremiumCard(context),
-            ),
-            const SizedBox(height: 16),
-            _buildBillingToggle(context),
-            const SizedBox(height: 24),
-            _buildPurchaseButtons(context, subscriptionActions, subscriptionState),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: subscriptionState.isLoading ? null : () => subscriptionActions.restorePurchases(),
-              child: Text(
-                AppConstants.restorePurchasesText,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
+                  ],
+                ),
               ),
-            ),
-            if (subscriptionState.hasError) ...[
-              const SizedBox(height: 8),
-              Text(
-                subscriptionState.error.toString(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.error,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 28, 28, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (AppConstants.enableMockSubscriptions)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('Mock Subscriptions Enabled', style: Theme.of(context).textTheme.bodySmall),
+                      ),
+                    // Feature bullets
+                    ..._buildFeatureList(context),
+                    const SizedBox(height: 32),
+                    hostedPaywallAsync.when(
+                      data: (data) {
+                        if (data != null) {
+                          return _buildHostedPaywallPackages(context, data);
+                        }
+                        return _buildPlanCards(context);
+                      },
+                      loading: () => _buildPlanCards(context),
+                      error: (_, __) => _buildPlanCards(context),
                     ),
-                textAlign: TextAlign.center,
+                    const SizedBox(height: 28),
+                    _buildPurchaseButtons(context, subscriptionActions, subscriptionState),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: TextButton(
+                        onPressed: subscriptionState.isLoading ? null : () => subscriptionActions.restorePurchases(),
+                        child: Text(AppLocalizations.of(context)?.restorePurchases ?? 'Restore Purchases'),
+                      ),
+                    ),
+                    if (subscriptionState.hasError) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        subscriptionState.error.toString(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    _buildLegalFooter(context),
+                    const SizedBox(height: 12),
+                  ],
+                ),
               ),
             ],
-            const SizedBox(height: 24),
-            _buildLegalFooter(context),
-          ],
+          ),
         ),
       ),
     );
   }
 
   List<Widget> _buildFeatureList(BuildContext context) {
-    final features = widget.requiredTier == SubscriptionTier.premium
-        ? [
-            'Extended sessions up to 120 minutes',
-            'Advanced analytics and trends',
-            'Data export (CSV/PDF)',
-            'Premium themes',
-            'Priority support',
-          ]
-        : [
-            'All Premium features',
-            'Cloud synchronization (Coming Soon)',
-            'AI-powered insights (Coming Soon)',
-            'Multi-environment profiles (Coming Soon)',
-            'Social features (Coming Soon)',
-            'Team challenges (Coming Soon)',
-            'Advanced customization (Coming Soon)',
-          ];
+    // Implemented premium feature set (kept in sync with README & paywall marketing)
+    final l10n = AppLocalizations.of(context);
+    final features = [
+      l10n?.featureExtendSessions,
+      l10n?.featureHistory,
+      l10n?.featureMetrics,
+      l10n?.featureExport,
+      l10n?.featureThemes,
+      l10n?.featureThreshold,
+      l10n?.featureSupport,
+    ].whereType<String>().toList();
     return features
         .map(
           (f) => Padding(
@@ -194,8 +208,133 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         .toList();
   }
 
+  Widget _buildPlanCards(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: _planCard(context, yearly: true)),
+        const SizedBox(width: 12),
+        Expanded(child: _planCard(context, yearly: false)),
+      ],
+    );
+  }
+
+  Widget _planCard(BuildContext context, {required bool yearly}) {
+  final isSelected = _isYearly == yearly;
+  final l10n = AppLocalizations.of(context);
+  final title = yearly ? (l10n?.yearlyPlanTitle ?? 'Yearly') : (l10n?.monthlyPlanTitle ?? 'Monthly');
+    final id = yearly ? AppConstants.premiumYearlyProductId : AppConstants.premiumMonthlyProductId;
+    final dyn = _dynamicPriceStrings[id];
+    // Fallback static pricing (update if actual pricing changes)
+    final baseMonthly = 1.99; // monthly price fallback
+    final fallbackYearlyTotal = 9.99; // yearly total fallback
+    late final String headline; // big number
+    late final String subline;  // billed at line
+
+    if (yearly) {
+      double total = fallbackYearlyTotal;
+      if (dyn != null) {
+        // Try to parse a numeric value from dynamic yearly price string for monthly equivalent
+        final match = RegExp(r'([0-9]+\.?[0-9]*)').firstMatch(dyn);
+        final parsed = match != null ? double.tryParse(match.group(1)!) : null;
+        if (parsed != null && parsed > 0) total = parsed;
+    subline = yearly
+      ? (l10n != null ? l10n.billedAnnually(dyn) : 'Billed at $dyn')
+      : (l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn');
+      } else {
+  subline = l10n != null ? l10n.billedAnnually('\$${total.toStringAsFixed(2)}') : 'Billed at \$${total.toStringAsFixed(2)}/yr.';
+      }
+      headline = '\$${(total / 12).toStringAsFixed(2)}/mo';
+    } else {
+      if (dyn != null) {
+        headline = dyn.contains('/mo') ? dyn : '$dyn/mo';
+  subline = l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn';
+      } else {
+  headline = '\$${baseMonthly.toStringAsFixed(2)}/mo';
+  subline = l10n != null ? l10n.billedMonthly('\$${baseMonthly.toStringAsFixed(2)}') : 'Billed at \$${baseMonthly.toStringAsFixed(2)}/mo.';
+      }
+    }
+
+    return GestureDetector(
+      onTap: () => setState(() => _isYearly = yearly),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).dividerColor.withOpacity(0.4),
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 6),
+                Text(headline, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(subline, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65))),
+              ],
+            ),
+            if (yearly)
+              Positioned(
+                top: -14,
+                left: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    l10n != null ? l10n.savePercent('58') : 'SAVE 58%',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                  ),
+                ),
+              ),
+            Positioned(
+              top: -6,
+              right: -6,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isSelected ? 1 : 0,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 3),
+                  ),
+                  child: Icon(Icons.check, color: Theme.of(context).colorScheme.onPrimary, size: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPremiumCard(BuildContext context) {
-    return Card(
+  return Card(
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -241,38 +380,6 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     }
   }
 
-  Widget _buildBillingToggle(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Monthly',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: !_isYearly
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                fontWeight: !_isYearly ? FontWeight.bold : FontWeight.normal,
-              ),
-        ),
-        const SizedBox(width: 12),
-        Switch(
-          value: _isYearly,
-          onChanged: (value) => setState(() => _isYearly = value),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'Yearly',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: _isYearly
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                fontWeight: _isYearly ? FontWeight.bold : FontWeight.normal,
-              ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPurchaseButtons(BuildContext context, SubscriptionActionsNotifier subscriptionActions, AsyncValue<void> subscriptionState) {
   return ElevatedButton(
         onPressed: subscriptionState.isLoading ? null : () => subscriptionActions.purchasePremium(isYearly: _isYearly),
@@ -284,7 +391,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         child: subscriptionState.isLoading
             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
             : Text(
-                AppConstants.subscribeButtonText,
+                AppLocalizations.of(context)?.subscribeCta ?? 'Continue',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -294,6 +401,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   }
 
   Widget _buildHostedPaywallPackages(BuildContext context, Map<String, dynamic> paywall) {
+  final l10n = AppLocalizations.of(context);
     final packages = (paywall['packages'] as List<dynamic>? ?? []);
     if (packages.isEmpty) return _buildPremiumCard(context); // fallback
     // Determine selected package by yearly toggle.
@@ -319,12 +427,12 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Current Offer',
+              l10n?.paywallTitle ?? 'Current Offer',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              _isYearly ? 'Yearly Plan' : 'Monthly Plan',
+              _isYearly ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan') : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
@@ -345,6 +453,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   }
 
   Widget _buildLegalFooter(BuildContext context) {
+  final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         Wrap(
@@ -352,14 +461,14 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           spacing: 16,
           runSpacing: 4,
           children: [
-            _linkButton('Privacy Policy', AppConstants.privacyPolicyUrl),
-            _linkButton('Terms of Service', AppConstants.termsOfServiceUrl),
-            _linkButton('Manage Subscription', _platformManageUrl()),
+            _linkButton(l10n?.privacyPolicy ?? 'Privacy', AppConstants.privacyPolicyUrl),
+            _linkButton(l10n?.termsOfService ?? 'Terms', AppConstants.termsOfServiceUrl),
+            _linkButton(l10n?.manageSubscription ?? 'Manage', _platformManageUrl()),
           ],
         ),
         const SizedBox(height: 8),
         Text(
-          'Auto-renewing subscription. Cancel anytime in store settings.',
+          l10n?.legalDisclaimer ?? 'Auto-renewing subscription. Cancel anytime in store settings.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
