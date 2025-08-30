@@ -213,6 +213,17 @@
   ,"achievementHalfCenturyTitle": "Half Century"
   ,"achievementHalfCenturyDesc": "50 points milestone"
   ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
+  ,"@achievementFirstStepTitle": {"description": "Achievement title for completing the very first session"}
+  ,"@achievementFirstStepDesc": {"description": "Achievement description: user completed their first session"}
+  ,"@achievementOnFireTitle": {"description": "Achievement title for achieving a 3 day streak"}
+  ,"@achievementOnFireDesc": {"description": "Achievement description: user achieved a 3 day streak"}
+  ,"@achievementWeekWarriorTitle": {"description": "Achievement title for achieving a 7 day streak"}
+  ,"@achievementWeekWarriorDesc": {"description": "Achievement description: user achieved a 7 day streak"}
+  ,"@achievementDecadeTitle": {"description": "Achievement title for reaching 10 total points"}
+  ,"@achievementDecadeDesc": {"description": "Achievement description: user reached 10 points milestone"}
+  ,"@achievementHalfCenturyTitle": {"description": "Achievement title for reaching 50 total points"}
+  ,"@achievementHalfCenturyDesc": {"description": "Achievement description: user reached 50 points milestone"}
+  ,"@achievementLockedPrompt": {"description": "Prompt shown when achievements are locked and user has no progress"}
   ,"@upgradeForMinutes": {"placeholders": {"minutes": {"type": "int"}}}
   ,"@freeUpToMinutes": {"placeholders": {"minutes": {"type": "int"}}}
   ,"@errorLoadingSettings": {"placeholders": {"error": {"type": "String"}}}
