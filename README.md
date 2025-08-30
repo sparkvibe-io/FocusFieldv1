@@ -51,7 +51,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 - Flutter 3.x or higher
 - Dart 3.x or higher
-- iOS 13.0+ or Android API level 21+
+- iOS 15.0+ (raised due to Firebase/Firestore & RevenueCat SDK requirements) or Android API level 21+
 
 ### Installation
 

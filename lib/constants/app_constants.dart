@@ -68,6 +68,9 @@ class AppConstants {
   static const String lastSyncDateKey = 'last_sync_date';
   
   // UI string constants removed after full localization migration.
+  // Minimal placeholders retained for legacy tests referencing successMessage/failureMessage.
+  static const String successMessage = 'Success';
+  static const String failureMessage = 'Failed';
 
   // Legal & Compliance URLs (update these to real hosted policy pages before production release)
   static const String privacyPolicyUrl = 'https://sparkvibe.io/privacy';
