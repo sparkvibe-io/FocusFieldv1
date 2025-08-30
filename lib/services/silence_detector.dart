@@ -434,26 +434,34 @@ class SilenceDetector {
         final hasPermission = await requestPermission();
         
         if (hasPermission) {
-          // Test again after permission request
-          microphoneWorks = await _audioExecutor.execute(
-            () => testMicrophoneAccessSafe(),
-            'safe_microphone_test',
-          ) ?? false;
+          final status = await Permission.microphone.status;
+          if (status == PermissionStatus.granted) {
+            // Trust granted permission; proceed without immediate retest (iOS latency mitigation)
+            microphoneWorks = true;
+            if (!kReleaseMode) print('DEBUG: Permission granted; proceeding without immediate mic reading');
+          } else {
+            microphoneWorks = await _audioExecutor.execute(
+              () => testMicrophoneAccessSafe(),
+              'safe_microphone_test',
+            ) ?? false;
+          }
         }
-        
         if (!microphoneWorks) {
           if (!kReleaseMode) print('DEBUG: Microphone still not working after permission request for ambient monitoring');
           final status = await Permission.microphone.status;
           if (!kReleaseMode) print('DEBUG: Final permission status for ambient monitoring: $status');
-          
           if (status == PermissionStatus.permanentlyDenied) {
             onError('Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.');
+            return;
           } else if (status == PermissionStatus.restricted) {
             onError('Microphone access is restricted on this device.');
-          } else {
+            return;
+          } else if (status != PermissionStatus.granted) {
             onError('Unable to access microphone for ambient monitoring. Please check your device settings.');
+            return;
+          } else {
+            if (!kReleaseMode) print('DEBUG: Permission granted but no reading yet – proceeding and awaiting stream');
           }
-          return;
         }
       }
 
@@ -573,7 +581,7 @@ class SilenceDetector {
   /// Test microphone with circuit breaker protection (enhanced version)
   Future<bool> testMicrophoneAccessSafe() async {
     if (_isDisposed) return false;
-    
+
     // Check if circuit breaker is blocking audio access
     if (_audioExecutor.isBlocked) {
       if (!kReleaseMode) {
@@ -585,74 +593,81 @@ class SilenceDetector {
       }
       return false;
     }
-    
-    // Use circuit breaker to safely execute microphone test
+
+    // Use circuit breaker to safely execute microphone test with adaptive timing
     final result = await _audioExecutor.executeWithTimeout(
       () async {
         if (!kReleaseMode) print('DEBUG: Testing microphone access with circuit breaker protection...');
-        
+
         final testNoiseMeter = NoiseMeter();
         StreamSubscription<NoiseReading>? testSubscription;
         bool microphoneWorking = false;
-        
+
         try {
           final completer = Completer<bool>();
-          
+          final bool isApple = Platform.isIOS || Platform.isMacOS;
+          final int primaryWaitMs = isApple ? 900 : 300; // allow more time for first frame on Apple platforms
+          final int fallbackExtraMs = isApple ? 600 : 0;  // extra window if first frame is delayed
+
           testSubscription = testNoiseMeter.noise.listen(
             (NoiseReading reading) {
               final decibel = reading.meanDecibel;
-              if (!kReleaseMode) print('DEBUG: Safe microphone test successful, got reading: $decibel');
-              
+              if (!kReleaseMode) print('DEBUG: Safe microphone test reading: $decibel');
               if (_isValidDecibel(decibel)) {
                 microphoneWorking = true;
-                if (!completer.isCompleted) {
-                  completer.complete(true);
-                }
-              } else {
-                if (!kReleaseMode) print('DEBUG: Invalid decibel reading in safe test: $decibel');
+                if (!completer.isCompleted) completer.complete(true);
               }
             },
             onError: (error) {
-              if (!kReleaseMode) print('DEBUG: Safe microphone test failed: $error');
-              if (!completer.isCompleted) {
-                completer.complete(false);
-              }
+              if (!kReleaseMode) print('DEBUG: Safe microphone test stream error: $error');
+              if (!completer.isCompleted) completer.complete(false);
             },
           );
-          
-          // Wait briefly for a reading - shorter timeout to prevent buffer issues
-          await Future.delayed(const Duration(milliseconds: 300));
-          
-          if (!completer.isCompleted) {
-            completer.complete(microphoneWorking);
+
+          // Initial wait window
+          await Future.delayed(Duration(milliseconds: primaryWaitMs));
+          // If still no reading on Apple platforms, extend once
+          if (!microphoneWorking && isApple) {
+            if (!kReleaseMode) print('DEBUG: No mic reading yet; extending wait window (Apple)');
+            await Future.delayed(Duration(milliseconds: fallbackExtraMs));
           }
-          
-          final testResult = await completer.future;
+
+          if (!completer.isCompleted) completer.complete(microphoneWorking);
+
+          var testResult = await completer.future;
           await testSubscription.cancel();
-          
-          // Add small delay to allow native buffers to release
-          await Future.delayed(const Duration(milliseconds: 150));
-          
-          if (!kReleaseMode) print('DEBUG: Safe microphone test result: $testResult');
+          // Small buffer release delay
+          await Future.delayed(const Duration(milliseconds: 120));
+
+          // Fallback: if no reading but permission is granted, treat as success to avoid false negatives
+          if (!testResult) {
+            final perm = await Permission.microphone.status;
+            if (!kReleaseMode) print('DEBUG: Safe mic test fallback permission status: $perm');
+            if (perm == PermissionStatus.granted) {
+              testResult = true;
+              if (!kReleaseMode) print('DEBUG: Treating mic test as success due to granted permission');
+            }
+          }
+
+          if (!kReleaseMode) print('DEBUG: Safe microphone test final result: $testResult');
           return testResult;
-          
         } catch (e) {
           if (!kReleaseMode) print('DEBUG: Exception during safe microphone test: $e');
           await testSubscription?.cancel();
-          rethrow; // Re-throw to let circuit breaker handle it
+          rethrow; // Let circuit breaker handle it
         }
       },
       'safe_microphone_test',
-      const Duration(milliseconds: 600), // Even shorter timeout to prevent native crashes
+      const Duration(seconds: 2), // longer to accommodate iOS first-frame latency
     );
-    
+
     if (result == null) {
       if (!kReleaseMode) {
         print('DEBUG: Safe microphone test failed or blocked - circuit breaker may have activated');
       }
       return false;
     }
-    
+
     return result;
   }
   
