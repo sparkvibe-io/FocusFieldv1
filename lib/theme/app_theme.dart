@@ -191,16 +191,35 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseNeon.copyWith(
-          surface: const Color(0xFF000A10),
-          onSurface: const Color(0xFFE0F7FA),
-          surfaceContainer: const Color(0xFF001821),
-          primary: const Color(0xFF00E5FF),
-          secondary: const Color(0xFFFF4081), // pink accent
-          tertiary: const Color(0xFF7C4DFF), // purple accent
-          primaryContainer: const Color(0xFF003844),
-          onPrimaryContainer: const Color(0xFF9CF3FF),
-          outline: const Color(0xFF336974),
-          surfaceContainerHighest: const Color(0xFF00252F),
+          surface: const Color(0xFF01030A),
+          onSurface: const Color(0xFFE2FCFF),
+          surfaceContainer: const Color(0xFF031727),
+          surfaceContainerHighest: const Color(0xFF082B42),
+          primary: const Color(0xFF00F5FF),
+          onPrimary: const Color(0xFF00242A),
+          primaryContainer: const Color(0xFF003F49),
+          onPrimaryContainer: const Color(0xFF8CF6FF),
+          secondary: const Color(0xFFFF2E91), // hotter pink
+          tertiary: const Color(0xFF985CFF), // vivid electric purple
+          outline: const Color(0xFF2E6F79),
+        );
+      case AppThemeMode.prideSpectrum:
+        // Dark base with multi-accent pride rainbow references
+        final basePride = ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE53935), // red
+          brightness: Brightness.dark,
+        );
+        return basePride.copyWith(
+          surface: const Color(0xFF121216),
+          surfaceContainer: const Color(0xFF1E1E23),
+          surfaceContainerHighest: const Color(0xFF2A2A30),
+          primary: const Color(0xFFE53935), // Red
+          onPrimary: Colors.white,
+          primaryContainer: const Color(0xFF8E1A18),
+          onPrimaryContainer: const Color(0xFFFFDAD6),
+          secondary: const Color(0xFFFB8C00), // Orange
+          tertiary: const Color(0xFFFFEB3B), // Yellow highlight (used sparingly)
+          outline: const Color(0xFF616161),
         );
     }
   }

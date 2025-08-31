@@ -13,7 +13,8 @@ enum AppThemeMode {
   goldLuxury,
   solarSunrise, // Warm energizing palette
   midnightTeal, // Deep calming dark teal
-  cyberNeon, // Vibrant futuristic neon
+  cyberNeon, // Vibrant futuristic neon (will be differentiated)
+  prideSpectrum, // Inclusive pride rainbow theme
 }
 
 extension AppThemeModeExtension on AppThemeMode {
@@ -39,6 +40,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Midnight Teal';
       case AppThemeMode.cyberNeon:
         return 'Cyber Neon';
+      case AppThemeMode.prideSpectrum:
+        return 'Pride Spectrum';
     }
   }
 
@@ -55,6 +58,7 @@ extension AppThemeModeExtension on AppThemeMode {
   case AppThemeMode.solarSunrise:
   case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
+  case AppThemeMode.prideSpectrum:
         return true;
     }
   }
@@ -73,6 +77,7 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.purpleNight:
   case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
+  case AppThemeMode.prideSpectrum:
         return ThemeMode.dark;
     }
   }
@@ -99,6 +104,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return Icons.dark_mode;
       case AppThemeMode.cyberNeon:
         return Icons.bolt;
+      case AppThemeMode.prideSpectrum:
+        return Icons.flag;
     }
   }
 
@@ -122,6 +129,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return const Color(0xFF00695C); // Dark teal
       case AppThemeMode.cyberNeon:
         return const Color(0xFF00E5FF); // Neon cyan
+      case AppThemeMode.prideSpectrum:
+        return const Color(0xFFEF5350); // Start of rainbow (red accent)
     }
   }
 
@@ -147,6 +156,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Calm deep teal night';
       case AppThemeMode.cyberNeon:
         return 'Futuristic neon glow';
+      case AppThemeMode.prideSpectrum:
+        return 'Celebratory rainbow pride';
     }
   }
 }
