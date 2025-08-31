@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze_test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Verify localization artifacts are up to date
+        run: bash tool/check_localizations.sh
+
+      - name: Format check
+        run: flutter format --set-exit-if-changed .
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Coverage summary (files ranking)
+        run: bash tool/coverage_summary.sh
+
+      - name: Coverage threshold enforcement
+        run: |
+          lines=$(grep -h '^DA:' coverage/lcov.info | wc -l | tr -d ' ')
+          covered=$(grep -h '^DA:' coverage/lcov.info | awk -F',' '{split($2,a,":"); if(a[2]>0) c++} END {print c+0}')
+          pct=0
+          if [ "$lines" -gt 0 ]; then
+            pct=$(( 100 * covered / lines ))
+          fi
+          echo "Line coverage: $pct% ($covered / $lines)"
+          THRESH=70
+          if [ "$pct" -lt "$THRESH" ]; then
+            echo "::error::Coverage $pct% below threshold $THRESH%"; exit 1; fi
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+
+  web_build:
+    name: Web Release Build (smoke)
+    runs-on: ubuntu-latest
+    needs: analyze_test
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build web --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web

@@ -1,0 +1,27 @@
+name: Dependency Audit
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Pub get
+        run: flutter pub get
+      - name: Outdated report
+        run: flutter pub outdated || true
+      - name: Upload outdated report
+        if: always()
+        run: flutter pub outdated --json > outdated.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pub-outdated-json
+          path: outdated.json

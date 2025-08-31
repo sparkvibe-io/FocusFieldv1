@@ -1,0 +1,98 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate localization (ensure current)
+        run: flutter gen-l10n
+      - name: Pub get
+        run: flutter pub get
+      - name: Build (AAB)
+        run: flutter build appbundle --release
+      - name: Build (APK universal)
+        run: flutter build apk --release
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-artifacts
+          path: |
+            build/app/outputs/**/*.aab
+            build/app/outputs/**/*.apk
+
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 40
+    env:
+      MATCH_KEYCHAIN_PASSWORD: temp_keychain_pass
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install CocoaPods
+        run: gem install cocoapods --no-document
+      - name: Decrypt signing certificate
+        run: |
+          if [ -n "$APPLE_CERT_BASE64" ]; then
+            echo "$APPLE_CERT_BASE64" | base64 --decode > apple_cert.p12
+            echo "Decoded certificate";
+          else
+            echo "No APPLE_CERT_BASE64 secret; skipping";
+          fi
+      - name: Create temporary keychain & import cert
+        run: |
+          if [ -f apple_cert.p12 ]; then
+            security create-keychain -p "$MATCH_KEYCHAIN_PASSWORD" build.keychain
+            security import apple_cert.p12 -k build.keychain -P "$APPLE_CERT_PASSWORD" -T /usr/bin/codesign
+            security list-keychain -d user -s build.keychain
+            security unlock-keychain -p "$MATCH_KEYCHAIN_PASSWORD" build.keychain
+            security set-keychain-settings -lut 21600 build.keychain
+          else
+            echo "No certificate to import";
+          fi
+      - name: Configure signing variables
+        run: |
+          echo "APP_STORE_CONNECT_KEY_ID=$APP_STORE_CONNECT_KEY_ID" >> $GITHUB_ENV
+          echo "APP_STORE_CONNECT_ISSUER_ID=$APP_STORE_CONNECT_ISSUER_ID" >> $GITHUB_ENV
+      - name: Generate localization (ensure current)
+        run: flutter gen-l10n
+      - name: Pub get
+        run: flutter pub get
+      - name: Pod install
+        working-directory: ios
+        run: pod install --repo-update
+      - name: Build IPA (signed if credentials present)
+        run: |
+          if [ -n "$APP_STORE_CONNECT_API_KEY" ]; then
+            echo "API key present: building signed IPA";
+            flutter build ipa --release \
+              --export-options-plist=ios/Flutter/ExportOptions.plist || flutter build ipa --release
+          else
+            echo "No API key: building unsigned IPA";
+            flutter build ipa --no-codesign
+          fi
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-artifacts
+          path: build/ios/**/*.ipa
