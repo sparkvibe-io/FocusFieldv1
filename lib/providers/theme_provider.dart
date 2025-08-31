@@ -12,8 +12,8 @@ enum AppThemeMode {
   purpleNight,
   goldLuxury,
   solarSunrise, // Warm energizing palette
-  cyberNeon, // Vibrant futuristic neon (will be differentiated)
-  prideSpectrum, // Inclusive pride rainbow theme
+  midnightTeal, // Deep modern teal with cyan & lime accents
+  cyberNeon, // Vibrant futuristic neon
 }
 
 extension AppThemeModeExtension on AppThemeMode {
@@ -37,8 +37,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Solar Sunrise';
       case AppThemeMode.cyberNeon:
         return 'Cyber Neon';
-      case AppThemeMode.prideSpectrum:
-        return 'Pride Spectrum';
+      case AppThemeMode.midnightTeal:
+        return 'Midnight Teal';
     }
   }
 
@@ -53,8 +53,8 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.purpleNight:
       case AppThemeMode.goldLuxury:
   case AppThemeMode.solarSunrise:
+  case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
-  case AppThemeMode.prideSpectrum:
         return true;
     }
   }
@@ -71,8 +71,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return ThemeMode.light;
       case AppThemeMode.dark:
       case AppThemeMode.purpleNight:
+  case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
-  case AppThemeMode.prideSpectrum:
         return ThemeMode.dark;
     }
   }
@@ -97,8 +97,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return Icons.wb_sunny;
       case AppThemeMode.cyberNeon:
         return Icons.bolt;
-      case AppThemeMode.prideSpectrum:
-        return Icons.flag;
+      case AppThemeMode.midnightTeal:
+        return Icons.dark_mode;
     }
   }
 
@@ -120,8 +120,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return const Color(0xFFFF7043); // Deep orange
       case AppThemeMode.cyberNeon:
         return const Color(0xFF00E5FF); // Neon cyan
-      case AppThemeMode.prideSpectrum:
-        return const Color(0xFFEF5350); // Start of rainbow (red accent)
+      case AppThemeMode.midnightTeal:
+        return const Color(0xFF009688); // Teal accent
     }
   }
 
@@ -145,8 +145,8 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Warm sunrise energy';
       case AppThemeMode.cyberNeon:
         return 'Futuristic neon glow';
-      case AppThemeMode.prideSpectrum:
-        return 'Celebratory rainbow pride';
+      case AppThemeMode.midnightTeal:
+        return 'Deep teal focus';
     }
   }
 }

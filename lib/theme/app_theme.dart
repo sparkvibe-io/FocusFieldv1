@@ -175,35 +175,35 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseNeon.copyWith(
-          surface: const Color(0xFF01030A),
-          onSurface: const Color(0xFFE2FCFF),
-          surfaceContainer: const Color(0xFF031727),
-          surfaceContainerHighest: const Color(0xFF082B42),
-          primary: const Color(0xFF00F5FF),
-          onPrimary: const Color(0xFF00242A),
-          primaryContainer: const Color(0xFF003F49),
-          onPrimaryContainer: const Color(0xFF8CF6FF),
-          secondary: const Color(0xFFFF2E91), // hotter pink
-          tertiary: const Color(0xFF985CFF), // vivid electric purple
-          outline: const Color(0xFF2E6F79),
+          surface: const Color(0xFF00040C),
+          onSurface: const Color(0xFFE6FFFF),
+          surfaceContainer: const Color(0xFF021222),
+          surfaceContainerHighest: const Color(0xFF04314F),
+          primary: const Color(0xFF00F8FF),
+          onPrimary: const Color(0xFF001F24),
+          primaryContainer: const Color(0xFF004955),
+          onPrimaryContainer: const Color(0xFF8AFCFF),
+          secondary: const Color(0xFFFF1F7A), // intense magenta
+          tertiary: const Color(0xFFAA66FF), // brighter purple
+          outline: const Color(0xFF22727D),
         );
-      case AppThemeMode.prideSpectrum:
-        // Dark base with multi-accent pride rainbow references
-        final basePride = ColorScheme.fromSeed(
-          seedColor: const Color(0xFFE53935), // red
+      case AppThemeMode.midnightTeal:
+        final baseTeal = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF009688),
           brightness: Brightness.dark,
         );
-        return basePride.copyWith(
-          surface: const Color(0xFF121216),
-          surfaceContainer: const Color(0xFF1E1E23),
-          surfaceContainerHighest: const Color(0xFF2A2A30),
-          primary: const Color(0xFFE53935), // Red
-          onPrimary: Colors.white,
-          primaryContainer: const Color(0xFF8E1A18),
-          onPrimaryContainer: const Color(0xFFFFDAD6),
-          secondary: const Color(0xFFFB8C00), // Orange
-          tertiary: const Color(0xFFFFEB3B), // Yellow highlight (used sparingly)
-          outline: const Color(0xFF616161),
+        return baseTeal.copyWith(
+          surface: const Color(0xFF001A1A),
+          onSurface: const Color(0xFFE0FFFA),
+          surfaceContainer: const Color(0xFF002828),
+          surfaceContainerHighest: const Color(0xFF003B3B),
+          primary: const Color(0xFF00DBC1),
+          onPrimary: const Color(0xFF00201B),
+          primaryContainer: const Color(0xFF005047),
+          onPrimaryContainer: const Color(0xFF8FF9EB),
+          secondary: const Color(0xFF26C6DA), // aqua accent
+          tertiary: const Color(0xFFAEEA00), // lime accent for contrast
+          outline: const Color(0xFF2F5F5C),
         );
     }
   }
