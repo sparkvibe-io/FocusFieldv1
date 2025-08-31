@@ -12,7 +12,6 @@ enum AppThemeMode {
   purpleNight,
   goldLuxury,
   solarSunrise, // Warm energizing palette
-  midnightTeal, // Deep calming dark teal
   cyberNeon, // Vibrant futuristic neon (will be differentiated)
   prideSpectrum, // Inclusive pride rainbow theme
 }
@@ -36,8 +35,6 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Gold Luxury';
       case AppThemeMode.solarSunrise:
         return 'Solar Sunrise';
-      case AppThemeMode.midnightTeal:
-        return 'Midnight Teal';
       case AppThemeMode.cyberNeon:
         return 'Cyber Neon';
       case AppThemeMode.prideSpectrum:
@@ -56,7 +53,6 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.purpleNight:
       case AppThemeMode.goldLuxury:
   case AppThemeMode.solarSunrise:
-  case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
   case AppThemeMode.prideSpectrum:
         return true;
@@ -75,7 +71,6 @@ extension AppThemeModeExtension on AppThemeMode {
         return ThemeMode.light;
       case AppThemeMode.dark:
       case AppThemeMode.purpleNight:
-  case AppThemeMode.midnightTeal:
   case AppThemeMode.cyberNeon:
   case AppThemeMode.prideSpectrum:
         return ThemeMode.dark;
@@ -100,8 +95,6 @@ extension AppThemeModeExtension on AppThemeMode {
         return Icons.diamond;
       case AppThemeMode.solarSunrise:
         return Icons.wb_sunny;
-      case AppThemeMode.midnightTeal:
-        return Icons.dark_mode;
       case AppThemeMode.cyberNeon:
         return Icons.bolt;
       case AppThemeMode.prideSpectrum:
@@ -125,8 +118,6 @@ extension AppThemeModeExtension on AppThemeMode {
         return const Color(0xFFFFB300);
       case AppThemeMode.solarSunrise:
         return const Color(0xFFFF7043); // Deep orange
-      case AppThemeMode.midnightTeal:
-        return const Color(0xFF00695C); // Dark teal
       case AppThemeMode.cyberNeon:
         return const Color(0xFF00E5FF); // Neon cyan
       case AppThemeMode.prideSpectrum:
@@ -152,8 +143,6 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Elegant gold accents';
       case AppThemeMode.solarSunrise:
         return 'Warm sunrise energy';
-      case AppThemeMode.midnightTeal:
-        return 'Calm deep teal night';
       case AppThemeMode.cyberNeon:
         return 'Futuristic neon glow';
       case AppThemeMode.prideSpectrum:
@@ -179,7 +168,11 @@ class ThemeNotifier extends StateNotifier<AppThemeMode> {
       final prefs = await SharedPreferences.getInstance();
       final themeIndex = prefs.getInt(_themeKey) ?? 0;
       if (mounted) {
-        state = AppThemeMode.values[themeIndex];
+        if (themeIndex >= 0 && themeIndex < AppThemeMode.values.length) {
+          state = AppThemeMode.values[themeIndex];
+        } else {
+          state = AppThemeMode.system;
+        }
       }
     } catch (e) {
       // If there's an error, default to system theme

@@ -169,22 +169,6 @@ class AppTheme {
           seedColor: const Color(0xFFFF7043), // Warm orange
           brightness: brightness,
         );
-      case AppThemeMode.midnightTeal:
-        final baseTeal = ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00BFA5),
-          brightness: Brightness.dark,
-        );
-        return baseTeal.copyWith(
-          surface: const Color(0xFF00201D),
-            onSurface: const Color(0xFFE0F2F1),
-          surfaceContainer: const Color(0xFF00332E),
-          primary: const Color(0xFF00BFA5),
-          secondary: const Color(0xFF26A69A),
-          tertiary: const Color(0xFF4DB6AC),
-          primaryContainer: const Color(0xFF005047),
-          onPrimaryContainer: const Color(0xFF84F5E3),
-          outline: const Color(0xFF3E5F5B),
-        );
       case AppThemeMode.cyberNeon:
         final baseNeon = ColorScheme.fromSeed(
           seedColor: const Color(0xFF00E5FF),

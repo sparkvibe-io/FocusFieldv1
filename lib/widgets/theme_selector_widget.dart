@@ -97,14 +97,6 @@ class ThemeSelectorWidget extends ConsumerWidget {
             ),
             _buildCompactThemeOption(
               context,
-              AppThemeMode.midnightTeal,
-              currentTheme,
-              themeNotifier,
-              isPremium: true,
-              hasPremiumAccess: hasPremiumAccess,
-            ),
-            _buildCompactThemeOption(
-              context,
               AppThemeMode.cyberNeon,
               currentTheme,
               themeNotifier,
