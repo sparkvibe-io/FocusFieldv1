@@ -23,18 +23,44 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    // Load optional release keystore (not committed). Create android/key.properties with:
+    // storeFile=../keystore.jks
+    // storePassword=****
+    // keyAlias=****
+    // keyPassword=****
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file("key.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
     defaultConfig {
         applicationId "io.sparkvibe.silencescore"
-    // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
-    minSdkVersion 24
+        // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
+        minSdkVersion 24
         targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        // versionCode / versionName now sourced from pubspec via Flutter tooling
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            } else {
+                // Fallback to debug if no release keystore; NOT for Play Store submission.
+                println("WARNING: key.properties not found. Using debug signing for release build.")
+            }
+        }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
