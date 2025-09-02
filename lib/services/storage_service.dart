@@ -17,15 +17,16 @@ class StorageService {
   // Notification scheduling keys
   static const String _dailyReminderHourKey = 'daily_reminder_hour';
   static const String _dailyReminderMinuteKey = 'daily_reminder_minute';
-  static const String _weeklySummaryWeekdayKey = 'weekly_summary_weekday'; // 1=Mon .. 7=Sun
+  static const String _weeklySummaryWeekdayKey =
+      'weekly_summary_weekday'; // 1=Mon .. 7=Sun
   static const String _weeklySummaryHourKey = 'weekly_summary_hour';
   static const String _weeklySummaryMinuteKey = 'weekly_summary_minute';
-  
+
   static StorageService? _instance;
   static SharedPreferences? _prefs;
-  
+
   StorageService._();
-  
+
   static Future<StorageService> getInstance() async {
     if (_instance == null) {
       _instance = StorageService._();
@@ -33,7 +34,7 @@ class StorageService {
     }
     return _instance!;
   }
-  
+
   Future<void> _init() async {
     _prefs ??= await SharedPreferences.getInstance();
   }
@@ -41,20 +42,26 @@ class StorageService {
   /// Initialize app settings on first launch
   Future<void> initializeApp() async {
     await _init();
-    
+
     final isFirstLaunch = _prefs!.getBool(_firstLaunchKey) ?? true;
-    
+
     if (isFirstLaunch) {
       // Set default values on first launch
-      await _prefs!.setDouble(_decibelThresholdKey, AppConstants.defaultDecibelThreshold);
-      await _prefs!.setInt(_sessionDurationKey, AppConstants.silenceDurationSeconds);
+      await _prefs!.setDouble(
+        _decibelThresholdKey,
+        AppConstants.defaultDecibelThreshold,
+      );
+      await _prefs!.setInt(
+        _sessionDurationKey,
+        AppConstants.silenceDurationSeconds,
+      );
       await _prefs!.setInt(_sampleIntervalKey, AppConstants.sampleIntervalMs);
       await _prefs!.setInt(_pointsPerSuccessKey, AppConstants.pointsPerSuccess);
       await _prefs!.setString(_appVersionKey, '1.0.0');
       await _prefs!.setInt(_totalSessionsKey, 0);
       await _prefs!.setDouble(_averageScoreKey, 0.0);
       await _prefs!.setBool(_firstLaunchKey, false);
-      
+
       // Initialize empty silence data
       await saveSilenceData(const SilenceData());
     }
@@ -64,10 +71,16 @@ class StorageService {
   Future<Map<String, dynamic>> loadAllSettings() async {
     await _init();
     return {
-      'decibelThreshold': _prefs!.getDouble(_decibelThresholdKey) ?? AppConstants.defaultDecibelThreshold,
-      'sessionDuration': _prefs!.getInt(_sessionDurationKey) ?? AppConstants.silenceDurationSeconds,
-      'sampleInterval': _prefs!.getInt(_sampleIntervalKey) ?? AppConstants.sampleIntervalMs,
-      'pointsPerSuccess': _prefs!.getInt(_pointsPerSuccessKey) ?? AppConstants.pointsPerSuccess,
+      'decibelThreshold':
+          _prefs!.getDouble(_decibelThresholdKey) ??
+          AppConstants.defaultDecibelThreshold,
+      'sessionDuration':
+          _prefs!.getInt(_sessionDurationKey) ??
+          AppConstants.silenceDurationSeconds,
+      'sampleInterval':
+          _prefs!.getInt(_sampleIntervalKey) ?? AppConstants.sampleIntervalMs,
+      'pointsPerSuccess':
+          _prefs!.getInt(_pointsPerSuccessKey) ?? AppConstants.pointsPerSuccess,
       'totalSessions': _prefs!.getInt(_totalSessionsKey) ?? 0,
       'averageScore': _prefs!.getDouble(_averageScoreKey) ?? 0.0,
       'appVersion': _prefs!.getString(_appVersionKey) ?? '1.0.0',
@@ -75,7 +88,8 @@ class StorageService {
       // Notification scheduling (nullable defaults)
       'dailyReminderHour': _prefs!.getInt(_dailyReminderHourKey),
       'dailyReminderMinute': _prefs!.getInt(_dailyReminderMinuteKey),
-      'weeklySummaryWeekday': _prefs!.getInt(_weeklySummaryWeekdayKey) ?? DateTime.monday,
+      'weeklySummaryWeekday':
+          _prefs!.getInt(_weeklySummaryWeekdayKey) ?? DateTime.monday,
       'weeklySummaryHour': _prefs!.getInt(_weeklySummaryHourKey) ?? 9,
       'weeklySummaryMinute': _prefs!.getInt(_weeklySummaryMinuteKey) ?? 0,
     };
@@ -90,27 +104,38 @@ class StorageService {
       if (value == null) continue; // skip null writes
       switch (key) {
         case 'decibelThreshold':
-          await _prefs!.setDouble(_decibelThresholdKey, value as double); break;
+          await _prefs!.setDouble(_decibelThresholdKey, value as double);
+          break;
         case 'sessionDuration':
-          await _prefs!.setInt(_sessionDurationKey, value as int); break;
+          await _prefs!.setInt(_sessionDurationKey, value as int);
+          break;
         case 'sampleInterval':
-          await _prefs!.setInt(_sampleIntervalKey, value as int); break;
+          await _prefs!.setInt(_sampleIntervalKey, value as int);
+          break;
         case 'pointsPerSuccess':
-          await _prefs!.setInt(_pointsPerSuccessKey, value as int); break;
+          await _prefs!.setInt(_pointsPerSuccessKey, value as int);
+          break;
         case 'totalSessions':
-          await _prefs!.setInt(_totalSessionsKey, value as int); break;
+          await _prefs!.setInt(_totalSessionsKey, value as int);
+          break;
         case 'averageScore':
-          await _prefs!.setDouble(_averageScoreKey, value as double); break;
+          await _prefs!.setDouble(_averageScoreKey, value as double);
+          break;
         case 'dailyReminderHour':
-          await _prefs!.setInt(_dailyReminderHourKey, value as int); break;
+          await _prefs!.setInt(_dailyReminderHourKey, value as int);
+          break;
         case 'dailyReminderMinute':
-          await _prefs!.setInt(_dailyReminderMinuteKey, value as int); break;
+          await _prefs!.setInt(_dailyReminderMinuteKey, value as int);
+          break;
         case 'weeklySummaryWeekday':
-          await _prefs!.setInt(_weeklySummaryWeekdayKey, value as int); break;
+          await _prefs!.setInt(_weeklySummaryWeekdayKey, value as int);
+          break;
         case 'weeklySummaryHour':
-          await _prefs!.setInt(_weeklySummaryHourKey, value as int); break;
+          await _prefs!.setInt(_weeklySummaryHourKey, value as int);
+          break;
         case 'weeklySummaryMinute':
-          await _prefs!.setInt(_weeklySummaryMinuteKey, value as int); break;
+          await _prefs!.setInt(_weeklySummaryMinuteKey, value as int);
+          break;
         default:
           // Generic persistence for any new primitive key
           if (value is int) {
@@ -137,7 +162,7 @@ class StorageService {
   Future<SilenceData> loadSilenceData() async {
     await _init();
     final jsonString = _prefs!.getString(_silenceDataKey);
-    
+
     if (jsonString != null) {
       try {
         final json = jsonDecode(jsonString) as Map<String, dynamic>;
@@ -147,7 +172,7 @@ class StorageService {
         return const SilenceData();
       }
     }
-    
+
     return const SilenceData();
   }
 
@@ -160,8 +185,8 @@ class StorageService {
   /// Load decibel threshold setting
   Future<double> loadDecibelThreshold() async {
     await _init();
-    return _prefs!.getDouble(_decibelThresholdKey) ?? 
-           AppConstants.defaultDecibelThreshold;
+    return _prefs!.getDouble(_decibelThresholdKey) ??
+        AppConstants.defaultDecibelThreshold;
   }
 
   /// Save session duration setting
@@ -173,8 +198,8 @@ class StorageService {
   /// Load session duration setting
   Future<int> loadSessionDuration() async {
     await _init();
-    return _prefs!.getInt(_sessionDurationKey) ?? 
-           AppConstants.silenceDurationSeconds;
+    return _prefs!.getInt(_sessionDurationKey) ??
+        AppConstants.silenceDurationSeconds;
   }
 
   /// Save sample interval setting
@@ -186,8 +211,7 @@ class StorageService {
   /// Load sample interval setting
   Future<int> loadSampleInterval() async {
     await _init();
-    return _prefs!.getInt(_sampleIntervalKey) ?? 
-           AppConstants.sampleIntervalMs;
+    return _prefs!.getInt(_sampleIntervalKey) ?? AppConstants.sampleIntervalMs;
   }
 
   /// Save points per success setting
@@ -199,8 +223,8 @@ class StorageService {
   /// Load points per success setting
   Future<int> loadPointsPerSuccess() async {
     await _init();
-    return _prefs!.getInt(_pointsPerSuccessKey) ?? 
-           AppConstants.pointsPerSuccess;
+    return _prefs!.getInt(_pointsPerSuccessKey) ??
+        AppConstants.pointsPerSuccess;
   }
 
   /// Check if this is the first app launch
@@ -245,12 +269,14 @@ class StorageService {
     await _init();
     final totalSessions = await getTotalSessions();
     final currentAverage = await getAverageScore();
-    
+
     // Calculate new average
-    final newAverage = totalSessions > 0 
-        ? ((currentAverage * totalSessions) + newScore) / (totalSessions + 1)
-        : newScore;
-    
+    final newAverage =
+        totalSessions > 0
+            ? ((currentAverage * totalSessions) + newScore) /
+                (totalSessions + 1)
+            : newScore;
+
     await _prefs!.setDouble(_averageScoreKey, newAverage);
   }
 
@@ -286,45 +312,40 @@ class StorageService {
   Future<SilenceData> updateStreak(SilenceData currentData) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    
+
     // If no last play date, start streak at 1
     if (currentData.lastPlayDate == null) {
-      return currentData.copyWith(
-        currentStreak: 1,
-        lastPlayDate: today,
-      );
+      return currentData.copyWith(currentStreak: 1, lastPlayDate: today);
     }
-    
+
     final lastPlayDay = DateTime(
       currentData.lastPlayDate!.year,
       currentData.lastPlayDate!.month,
       currentData.lastPlayDate!.day,
     );
-    
+
     // If played today, don't change streak
     if (today.isAtSameMomentAs(lastPlayDay)) {
       return currentData;
     }
-    
+
     // If played yesterday, increment streak
     final yesterday = today.subtract(const Duration(days: 1));
     if (lastPlayDay.isAtSameMomentAs(yesterday)) {
       final newStreak = currentData.currentStreak + 1;
-      final newBestStreak = newStreak > currentData.bestStreak 
-          ? newStreak 
-          : currentData.bestStreak;
-      
+      final newBestStreak =
+          newStreak > currentData.bestStreak
+              ? newStreak
+              : currentData.bestStreak;
+
       return currentData.copyWith(
         currentStreak: newStreak,
         bestStreak: newBestStreak,
         lastPlayDate: today,
       );
     }
-    
+
     // If gap is more than 1 day, reset streak
-    return currentData.copyWith(
-      currentStreak: 1,
-      lastPlayDate: today,
-    );
+    return currentData.copyWith(currentStreak: 1, lastPlayDate: today);
   }
-} 
+}

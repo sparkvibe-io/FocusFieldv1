@@ -6,10 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 import 'package:silence_score/models/silence_data.dart';
 
-enum ExportFormat {
-  csv,
-  pdf,
-}
+enum ExportFormat { csv, pdf }
 
 class ExportService {
   static ExportService? _instance;
@@ -22,7 +19,14 @@ class ExportService {
       // Create CSV data
       final List<List<dynamic>> csvData = [
         // Header row
-        ['Date', 'Duration (minutes)', 'Points Earned', 'Average Noise (dB)', 'Completed', 'Success Rate']
+        [
+          'Date',
+          'Duration (minutes)',
+          'Points Earned',
+          'Average Noise (dB)',
+          'Completed',
+          'Success Rate',
+        ],
       ];
 
       // Add session data
@@ -41,8 +45,22 @@ class ExportService {
       csvData.add([]);
       csvData.add(['Summary Statistics', '', '', '', '', '']);
       csvData.add(['Total Points', silenceData.totalPoints, '', '', '', '']);
-      csvData.add(['Total Sessions', silenceData.totalSessions, '', '', '', '']);
-      csvData.add(['Current Streak', silenceData.currentStreak, '', '', '', '']);
+      csvData.add([
+        'Total Sessions',
+        silenceData.totalSessions,
+        '',
+        '',
+        '',
+        '',
+      ]);
+      csvData.add([
+        'Current Streak',
+        silenceData.currentStreak,
+        '',
+        '',
+        '',
+        '',
+      ]);
       csvData.add(['Best Streak', silenceData.bestStreak, '', '', '', '']);
 
       // Convert to CSV string
@@ -67,14 +85,22 @@ class ExportService {
       final pdf = pw.Document();
 
       // Calculate summary statistics
-      final completedSessions = silenceData.recentSessions.where((s) => s.completed).length;
-      final successRate = silenceData.recentSessions.isNotEmpty 
-          ? (completedSessions / silenceData.recentSessions.length * 100).toStringAsFixed(1)
-          : '0.0';
-      
-      final averagePoints = silenceData.recentSessions.isNotEmpty
-          ? (silenceData.recentSessions.map((s) => s.pointsEarned).reduce((a, b) => a + b) / silenceData.recentSessions.length).toStringAsFixed(1)
-          : '0.0';
+      final completedSessions =
+          silenceData.recentSessions.where((s) => s.completed).length;
+      final successRate =
+          silenceData.recentSessions.isNotEmpty
+              ? (completedSessions / silenceData.recentSessions.length * 100)
+                  .toStringAsFixed(1)
+              : '0.0';
+
+      final averagePoints =
+          silenceData.recentSessions.isNotEmpty
+              ? (silenceData.recentSessions
+                          .map((s) => s.pointsEarned)
+                          .reduce((a, b) => a + b) /
+                      silenceData.recentSessions.length)
+                  .toStringAsFixed(1)
+              : '0.0';
 
       pdf.addPage(
         pw.MultiPage(
@@ -93,9 +119,9 @@ class ExportService {
                   ),
                 ),
               ),
-              
+
               pw.SizedBox(height: 20),
-              
+
               // Summary section
               pw.Container(
                 padding: const pw.EdgeInsets.all(16),
@@ -140,9 +166,9 @@ class ExportService {
                   ],
                 ),
               ),
-              
+
               pw.SizedBox(height: 30),
-              
+
               // Session history header
               pw.Text(
                 'Recent Session History',
@@ -151,9 +177,9 @@ class ExportService {
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
-              
+
               pw.SizedBox(height: 16),
-              
+
               // Session history table
               if (silenceData.recentSessions.isNotEmpty) ...[
                 pw.Table(
@@ -161,68 +187,93 @@ class ExportService {
                   children: [
                     // Header row
                     pw.TableRow(
-                      decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                      decoration: const pw.BoxDecoration(
+                        color: PdfColors.grey100,
+                      ),
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Date', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(
+                            'Date',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Duration', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(
+                            'Duration',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Points', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(
+                            'Points',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Avg Noise', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(
+                            'Avg Noise',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('Status', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(
+                            'Status',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),
                     // Data rows
-                    ...silenceData.recentSessions.map((session) => pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('${session.date.day}/${session.date.month}/${session.date.year}'),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('${(session.duration / 60).toStringAsFixed(1)}m'),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('${session.pointsEarned}'),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text('${session.averageNoise.toStringAsFixed(1)} dB'),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(session.completed ? '✓ Complete' : '✗ Incomplete'),
-                        ),
-                      ],
-                    )),
+                    ...silenceData.recentSessions.map(
+                      (session) => pw.TableRow(
+                        children: [
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(
+                              '${session.date.day}/${session.date.month}/${session.date.year}',
+                            ),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(
+                              '${(session.duration / 60).toStringAsFixed(1)}m',
+                            ),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text('${session.pointsEarned}'),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(
+                              '${session.averageNoise.toStringAsFixed(1)} dB',
+                            ),
+                          ),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.all(8),
+                            child: pw.Text(
+                              session.completed ? '✓ Complete' : '✗ Incomplete',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ] else ...[
                 pw.Container(
                   padding: const pw.EdgeInsets.all(20),
-                  child: pw.Center(
-                    child: pw.Text('No session data available'),
-                  ),
+                  child: pw.Center(child: pw.Text('No session data available')),
                 ),
               ],
-              
+
               pw.SizedBox(height: 30),
-              
+
               // Footer
               pw.Center(
                 child: pw.Text(
@@ -240,7 +291,7 @@ class ExportService {
       final String timestamp = DateTime.now().toIso8601String().split('T')[0];
       final file = File('${directory.path}/SilenceScore_Report_$timestamp.pdf');
       await file.writeAsBytes(await pdf.save());
-      
+
       return file;
     } catch (e) {
       throw Exception('Failed to export PDF: $e');
@@ -250,13 +301,13 @@ class ExportService {
   /// Share exported file
   Future<void> shareFile(File file, String title) async {
     try {
-  // ShareParams / SharePlus are available in share_plus ^11.x.
-  final params = ShareParams(
+      // ShareParams / SharePlus are available in share_plus ^11.x.
+      final params = ShareParams(
         files: [XFile(file.path)],
         text: title,
         subject: 'SilenceScore Export',
       );
-  await SharePlus.instance.share(params);
+      await SharePlus.instance.share(params);
     } catch (e) {
       throw Exception('Failed to share file: $e');
     }
@@ -273,4 +324,4 @@ class ExportService {
     final file = await exportToPDF(silenceData);
     await shareFile(file, 'SilenceScore Performance Report');
   }
-} 
+}

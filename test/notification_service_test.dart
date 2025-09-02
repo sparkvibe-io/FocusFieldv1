@@ -11,10 +11,7 @@ void main() {
       service = NotificationService();
       await service.initialize(nowProvider: () => DateTime(2025, 8, 30, 10, 0));
       // Ensure settings state
-      service.updateSettings(
-        notifications: true,
-        dailyReminders: true,
-      );
+      service.updateSettings(notifications: true, dailyReminders: true);
     });
 
     test('returns false when no sessions recorded', () async {

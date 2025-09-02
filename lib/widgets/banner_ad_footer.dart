@@ -31,17 +31,25 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
       size: size,
       adUnitId: _testUnitId,
       listener: BannerAdListener(
-        onAdLoaded: (ad) => setState(() { _loading = false; }),
+        onAdLoaded:
+            (ad) => setState(() {
+              _loading = false;
+            }),
         onAdFailedToLoad: (ad, err) {
           ad.dispose();
-          if (mounted) setState(() { _loading = false; });
+          if (mounted)
+            setState(() {
+              _loading = false;
+            });
         },
       ),
       request: const AdRequest(),
     );
     await ad.load();
     if (mounted) {
-      setState(() { _banner = ad; });
+      setState(() {
+        _banner = ad;
+      });
     } else {
       ad.dispose();
     }

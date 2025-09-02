@@ -18,12 +18,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
       children: [
         Text(
           'App Theme',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        
+
         // All themes in a single compact wrap
         Wrap(
           spacing: 6,
@@ -123,22 +123,20 @@ class ThemeSelectorWidget extends ConsumerWidget {
     BuildContext context,
     AppThemeMode themeMode,
     AppThemeMode currentTheme,
-    ThemeNotifier themeNotifier,
-    {required bool isPremium, required bool hasPremiumAccess}
-  ) {
+    ThemeNotifier themeNotifier, {
+    required bool isPremium,
+    required bool hasPremiumAccess,
+  }) {
     final isSelected = currentTheme == themeMode;
     final isAccessible = !isPremium || hasPremiumAccess;
-  final isCyberNeon = themeMode == AppThemeMode.cyberNeon;
-    
-  Widget tile = GestureDetector(
+    final isCyberNeon = themeMode == AppThemeMode.cyberNeon;
+
+    Widget tile = GestureDetector(
       onTap: () {
         if (isAccessible) {
           themeNotifier.setTheme(themeMode);
         } else {
-          showPaywall(
-            context,
-            featureDescription: 'Unlock premium themes',
-          );
+          showPaywall(context, featureDescription: 'Unlock premium themes');
         }
       },
       child: Container(
@@ -147,9 +145,10 @@ class ThemeSelectorWidget extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected 
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            color:
+                isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.outline.withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -167,11 +166,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     color: themeMode.primaryColor,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(
-                    themeMode.icon,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+                  child: Icon(themeMode.icon, color: Colors.white, size: 14),
                 ),
                 // Premium lock overlay
                 if (isPremium && !hasPremiumAccess)
@@ -223,22 +218,23 @@ class ThemeSelectorWidget extends ConsumerWidget {
       tile = AnimatedContainer(
         duration: const Duration(milliseconds: 650),
         curve: Curves.easeInOut,
-        decoration: isSelected
-            ? BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF00FFF0).withOpacity(0.55),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                  ),
-                  BoxShadow(
-                    color: const Color(0xFFFF2EC4).withOpacity(0.35),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
-              )
-            : null,
+        decoration:
+            isSelected
+                ? BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00FFF0).withOpacity(0.55),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFFFF2EC4).withOpacity(0.35),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                )
+                : null,
         child: tile,
       );
     }
@@ -252,21 +248,22 @@ class ThemeSelectorWidget extends ConsumerWidget {
     bool isAccessible,
   ) {
     final words = displayName.split(' ');
-    
+
     if (words.length == 1) {
       return Text(
         displayName,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isAccessible 
-              ? Theme.of(context).colorScheme.onSurface
-              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          color:
+              isAccessible
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
         ),
         textAlign: TextAlign.center,
         maxLines: 1,
       );
     }
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -274,9 +271,10 @@ class ThemeSelectorWidget extends ConsumerWidget {
           words[0],
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isAccessible 
-                ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color:
+                isAccessible
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -286,9 +284,10 @@ class ThemeSelectorWidget extends ConsumerWidget {
           words.skip(1).join(' '),
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isAccessible 
-                ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color:
+                isAccessible
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -297,4 +296,4 @@ class ThemeSelectorWidget extends ConsumerWidget {
       ],
     );
   }
-} 
+}

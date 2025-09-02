@@ -27,10 +27,14 @@ class ProgressRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-  final primaryColor = color ?? theme.colorScheme.primary;
-  final dramatic = theme.extension<DramaticThemeStyling>();
-    final bgColor = backgroundColor ?? theme.colorScheme.surfaceContainerHighest;
-  final isNeon = dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length >=3 && dramatic.statAccentColors![0].value == 0xFF00F5FF;
+    final primaryColor = color ?? theme.colorScheme.primary;
+    final dramatic = theme.extension<DramaticThemeStyling>();
+    final bgColor =
+        backgroundColor ?? theme.colorScheme.surfaceContainerHighest;
+    final isNeon =
+        dramatic?.statAccentColors != null &&
+        dramatic!.statAccentColors!.length >= 3 &&
+        dramatic.statAccentColors![0].value == 0xFF00F5FF;
 
     // Ensure progress is within valid bounds
     final clampedProgress = progress.clamp(0.0, 1.0);
@@ -63,7 +67,7 @@ class ProgressRing extends StatelessWidget {
                   strokeWidth: strokeWidth,
                 ),
               ),
-              
+
               // Progress circle (only when listening)
               if (isListening)
                 CustomPaint(
@@ -72,39 +76,57 @@ class ProgressRing extends StatelessWidget {
                     progress: clampedProgress,
                     color: primaryColor,
                     strokeWidth: strokeWidth,
-                    gradient: dramatic?.statAccentColors != null
-                        ? (isNeon
-                            ? SweepGradient(
-                                startAngle: -math.pi / 2,
-                                endAngle: 3 * math.pi / 2,
-                                colors: [
-                                  dramatic.statAccentColors![0],
-                                  dramatic.statAccentColors![1],
-                                  dramatic.statAccentColors![2],
-                                  dramatic.statAccentColors![0],
-                                ],
-                                stops: const [0, 0.33, 0.66, 1.0],
-                              )
-                            : LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  dramatic!.statAccentColors![0].withOpacity(0.9),
-                                  dramatic.statAccentColors!.last.withOpacity(0.9),
-                                ],
-                              ))
-                        : null,
-                    glow: isNeon
-                        ? [
-                            BoxShadow(color: primaryColor.withOpacity(0.45), blurRadius: 24, spreadRadius: 2),
-                            BoxShadow(color: primaryColor.withOpacity(0.25), blurRadius: 48, spreadRadius: 12),
-                          ]
-                        : [
-                            BoxShadow(color: primaryColor.withOpacity(0.22), blurRadius: 36, spreadRadius: 6),
-                          ],
+                    gradient:
+                        dramatic?.statAccentColors != null
+                            ? (isNeon
+                                ? SweepGradient(
+                                  startAngle: -math.pi / 2,
+                                  endAngle: 3 * math.pi / 2,
+                                  colors: [
+                                    dramatic.statAccentColors![0],
+                                    dramatic.statAccentColors![1],
+                                    dramatic.statAccentColors![2],
+                                    dramatic.statAccentColors![0],
+                                  ],
+                                  stops: const [0, 0.33, 0.66, 1.0],
+                                )
+                                : LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    dramatic!.statAccentColors![0].withOpacity(
+                                      0.9,
+                                    ),
+                                    dramatic.statAccentColors!.last.withOpacity(
+                                      0.9,
+                                    ),
+                                  ],
+                                ))
+                            : null,
+                    glow:
+                        isNeon
+                            ? [
+                              BoxShadow(
+                                color: primaryColor.withOpacity(0.45),
+                                blurRadius: 24,
+                                spreadRadius: 2,
+                              ),
+                              BoxShadow(
+                                color: primaryColor.withOpacity(0.25),
+                                blurRadius: 48,
+                                spreadRadius: 12,
+                              ),
+                            ]
+                            : [
+                              BoxShadow(
+                                color: primaryColor.withOpacity(0.22),
+                                blurRadius: 36,
+                                spreadRadius: 6,
+                              ),
+                            ],
                   ),
                 ),
-              
+
               // Center content with proper constraints and overflow protection
               Container(
                 constraints: BoxConstraints(
@@ -122,21 +144,30 @@ class ProgressRing extends StatelessWidget {
                         _buildCountdownText(theme),
                         const SizedBox(height: 8),
                       ],
-                      
+
                       // Icon with responsive size
                       Icon(
                         isListening ? Icons.stop : Icons.play_arrow,
-                        size: math.min(size * 0.2, 80), // Responsive size with max limit
-                        color: isListening ? theme.colorScheme.error : primaryColor,
+                        size: math.min(
+                          size * 0.2,
+                          80,
+                        ), // Responsive size with max limit
+                        color:
+                            isListening
+                                ? theme.colorScheme.error
+                                : primaryColor,
                       ),
                       const SizedBox(height: 6),
-                      
+
                       // Text label
                       Text(
                         isListening ? 'Stop' : 'Start',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isListening ? theme.colorScheme.error : primaryColor,
+                          color:
+                              isListening
+                                  ? theme.colorScheme.error
+                                  : primaryColor,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -153,20 +184,23 @@ class ProgressRing extends StatelessWidget {
 
   Widget _buildCountdownText(ThemeData theme) {
     if (sessionDurationSeconds == null) return const SizedBox.shrink();
-    
+
     // Calculate remaining time
     final totalSeconds = sessionDurationSeconds!;
     final remainingSeconds = (totalSeconds * (1 - progress)).round();
-    
+
     final minutes = remainingSeconds ~/ 60;
     final seconds = remainingSeconds % 60;
-    
+
     return Text(
       '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
       style: theme.textTheme.headlineMedium?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.primary,
-        fontSize: math.min(size * 0.08, 24), // Responsive font size with max limit
+        fontSize: math.min(
+          size * 0.08,
+          24,
+        ), // Responsive font size with max limit
       ),
       textAlign: TextAlign.center,
     );
@@ -196,11 +230,12 @@ class _ProgressPainter extends CustomPainter {
     // Draw glow if provided
     if (glow != null && glow!.isNotEmpty) {
       for (final g in glow!) {
-        final glowPaint = Paint()
-          ..color = g.color
-          ..maskFilter = MaskFilter.blur(BlurStyle.normal, g.blurRadius)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth;
+        final glowPaint =
+            Paint()
+              ..color = g.color
+              ..maskFilter = MaskFilter.blur(BlurStyle.normal, g.blurRadius)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = strokeWidth;
         canvas.drawArc(
           Rect.fromCircle(center: center, radius: radius),
           -math.pi / 2,
@@ -211,10 +246,11 @@ class _ProgressPainter extends CustomPainter {
       }
     }
 
-    final paint = Paint()
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    final paint =
+        Paint()
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
     if (gradient != null) {
       paint.shader = gradient!.createShader(
         Rect.fromCircle(center: center, radius: radius),

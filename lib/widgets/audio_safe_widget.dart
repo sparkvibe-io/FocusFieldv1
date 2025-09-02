@@ -30,13 +30,13 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
   @override
   void initState() {
     super.initState();
-    
+
     // Preserve existing handler and install scoped handler for native audio crashes
     _previousOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
       final errorString = details.exception.toString().toLowerCase();
       final stackString = details.stack.toString().toLowerCase();
-      
+
       // Check for audio buffer or native audio related errors
       if (_isAudioRelatedError(errorString, stackString)) {
         _handleAudioError(details);
@@ -104,8 +104,8 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
     if (!mounted) return;
 
     final now = DateTime.now();
-    
-  // Reset error count if enough time has passed (5 minutes window – unchanged despite longer free sessions)
+
+    // Reset error count if enough time has passed (5 minutes window – unchanged despite longer free sessions)
     if (_lastError != null && now.difference(_lastError!).inMinutes > 5) {
       _errorCount = 0;
     }
@@ -113,7 +113,9 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
     _errorCount++;
     _lastError = now;
 
-  DebugLog.d('DEBUG: AudioSafeWidget caught audio error #$_errorCount in ${widget.debugContext}: ${details.exception}');
+    DebugLog.d(
+      'DEBUG: AudioSafeWidget caught audio error #$_errorCount in ${widget.debugContext}: ${details.exception}',
+    );
 
     setState(() {
       _hasError = true;
@@ -122,11 +124,13 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
     // Auto-recovery after a delay, but with exponential backoff
     _recoveryTimer?.cancel();
     final recoveryDelay = Duration(seconds: (2 * _errorCount).clamp(2, 30));
-    
+
     _recoveryTimer = Timer(recoveryDelay, () {
       if (mounted && _hasError) {
-  DebugLog.d('DEBUG: AudioSafeWidget attempting recovery for ${widget.debugContext} after ${recoveryDelay.inSeconds}s');
-        
+        DebugLog.d(
+          'DEBUG: AudioSafeWidget attempting recovery for ${widget.debugContext} after ${recoveryDelay.inSeconds}s',
+        );
+
         setState(() {
           _hasError = false;
         });
@@ -147,17 +151,23 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
           return widget.child;
         } catch (error, stackTrace) {
           // Catch synchronous audio-related errors
-          DebugLog.d('DEBUG: AudioSafeWidget caught synchronous error in ${widget.debugContext}: $error');
-          
+          DebugLog.d(
+            'DEBUG: AudioSafeWidget caught synchronous error in ${widget.debugContext}: $error',
+          );
+
           final errorString = error.toString().toLowerCase();
           final stackString = stackTrace.toString().toLowerCase();
-          
+
           if (_isAudioRelatedError(errorString, stackString)) {
-            _handleAudioError(FlutterErrorDetails(
-              exception: error,
-              stack: stackTrace,
-              context: ErrorDescription('Audio error in ${widget.debugContext}'),
-            ));
+            _handleAudioError(
+              FlutterErrorDetails(
+                exception: error,
+                stack: stackTrace,
+                context: ErrorDescription(
+                  'Audio error in ${widget.debugContext}',
+                ),
+              ),
+            );
             return widget.fallback ?? _buildDefaultErrorWidget(context);
           } else {
             // Re-throw non-audio errors
@@ -170,7 +180,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
 
   Widget _buildDefaultErrorWidget(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -184,11 +194,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.volume_off,
-            color: theme.colorScheme.error,
-            size: 24,
-          ),
+          Icon(Icons.volume_off, color: theme.colorScheme.error, size: 24),
           const SizedBox(height: 8),
           Text(
             'Audio temporarily unavailable',
@@ -200,7 +206,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            _errorCount > 3 
+            _errorCount > 3
                 ? 'Multiple audio errors detected. Component recovering...'
                 : 'Audio processing encountered an issue. Recovering automatically...',
             style: theme.textTheme.bodySmall?.copyWith(

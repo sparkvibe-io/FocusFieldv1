@@ -14,25 +14,26 @@ class SilenceDetector {
   final double _threshold;
   final int _durationSeconds;
   DateTime? _sessionStartTime; // To track the actual start time
-  
+
   // Shared permission request future to prevent concurrent OS dialog / status churn
   Future<bool>? _permissionRequestFuture;
   PermissionStatus? _cachedPermissionStatus;
   DateTime? _lastPermissionCheck;
-  
+
   // Real-time streaming controllers with proper disposal
-  final StreamController<double> _realtimeController = StreamController<double>.broadcast();
+  final StreamController<double> _realtimeController =
+      StreamController<double>.broadcast();
   Timer? _realtimeTimer;
   double _currentDecibel = 0.0;
-  
+
   // State management for concurrent operations
   bool _isDisposed = false;
   bool _isListening = false;
   bool _isAmbientMonitoring = false;
-  
+
   // Audio circuit breaker for preventing native crashes
   final SafeAudioExecutor _audioExecutor = SafeAudioExecutor();
-  
+
   // Audio buffer crash protection (legacy - kept for compatibility)
   int _audioErrorCount = 0;
   DateTime? _lastAudioError;
@@ -42,8 +43,8 @@ class SilenceDetector {
   SilenceDetector({
     double threshold = AppConstants.defaultDecibelThreshold,
     int durationSeconds = AppConstants.silenceDurationSeconds,
-  })  : _threshold = threshold,
-        _durationSeconds = durationSeconds;
+  }) : _threshold = threshold,
+       _durationSeconds = durationSeconds;
 
   /// Request microphone permission by actually trying to access the microphone
   Future<bool> requestPermission() async {
@@ -59,11 +60,11 @@ class SilenceDetector {
 
   Future<bool> _requestPermissionInternal() async {
     try {
-  DebugLog.d('DEBUG: Requesting microphone permission...');
+      DebugLog.d('DEBUG: Requesting microphone permission...');
 
       final initialStatus = await Permission.microphone.status;
       _cachePermissionStatus(initialStatus);
-  DebugLog.d('DEBUG: Initial permission status: $initialStatus');
+      DebugLog.d('DEBUG: Initial permission status: $initialStatus');
 
       if (initialStatus == PermissionStatus.granted) return true;
       if (initialStatus == PermissionStatus.permanentlyDenied) return false;
@@ -71,20 +72,21 @@ class SilenceDetector {
       if (Platform.isAndroid) {
         final req = await Permission.microphone.request();
         _cachePermissionStatus(req);
-  DebugLog.d('DEBUG: Android permission request result: $req');
+        DebugLog.d('DEBUG: Android permission request result: $req');
         return req == PermissionStatus.granted;
       }
 
       if (Platform.isIOS || Platform.isMacOS) {
-  DebugLog.d('DEBUG: Attempting mic access to trigger dialog (iOS/macOS)');
+        DebugLog.d(
+          'DEBUG: Attempting mic access to trigger dialog (iOS/macOS)',
+        );
         final tempNoiseMeter = NoiseMeter();
         StreamSubscription<NoiseReading>? tempSubscription;
         bool microphoneWorking = false;
         try {
-          tempSubscription = tempNoiseMeter.noise.listen(
-            (r) { microphoneWorking = true; },
-            onError: (_) {},
-          );
+          tempSubscription = tempNoiseMeter.noise.listen((r) {
+            microphoneWorking = true;
+          }, onError: (_) {});
           await Future.delayed(const Duration(milliseconds: 900));
           await tempSubscription.cancel();
         } catch (e) {
@@ -93,16 +95,18 @@ class SilenceDetector {
         }
         final finalStatus = await Permission.microphone.status;
         _cachePermissionStatus(finalStatus);
-  DebugLog.d('DEBUG: iOS/macOS final permission status: $finalStatus micWorking=$microphoneWorking');
+        DebugLog.d(
+          'DEBUG: iOS/macOS final permission status: $finalStatus micWorking=$microphoneWorking',
+        );
         return microphoneWorking || finalStatus == PermissionStatus.granted;
       }
 
       final fallback = await Permission.microphone.request();
       _cachePermissionStatus(fallback);
-  DebugLog.d('DEBUG: Fallback platform request result: $fallback');
+      DebugLog.d('DEBUG: Fallback platform request result: $fallback');
       return fallback == PermissionStatus.granted;
     } catch (e) {
-  DebugLog.d('DEBUG: Error requesting permission: $e');
+      DebugLog.d('DEBUG: Error requesting permission: $e');
       return false;
     }
   }
@@ -111,13 +115,14 @@ class SilenceDetector {
   Future<bool> hasPermission() async {
     // Small cache window to reduce status syscalls
     if (_cachedPermissionStatus != null && _lastPermissionCheck != null) {
-      if (DateTime.now().difference(_lastPermissionCheck!) < const Duration(seconds: 3)) {
+      if (DateTime.now().difference(_lastPermissionCheck!) <
+          const Duration(seconds: 3)) {
         return _cachedPermissionStatus == PermissionStatus.granted;
       }
     }
     final status = await Permission.microphone.status;
     _cachePermissionStatus(status);
-  DebugLog.d('DEBUG: Checking permission status: $status');
+    DebugLog.d('DEBUG: Checking permission status: $status');
     return status == PermissionStatus.granted;
   }
 
@@ -131,7 +136,7 @@ class SilenceDetector {
     try {
       return await openAppSettings();
     } catch (e) {
-  DebugLog.d('DEBUG: Error opening app settings: $e');
+      DebugLog.d('DEBUG: Error opening app settings: $e');
       return false;
     }
   }
@@ -139,7 +144,7 @@ class SilenceDetector {
   /// Get permission status for better error handling
   Future<PermissionStatus> getPermissionStatus() async {
     final status = await Permission.microphone.status;
-  DebugLog.d('DEBUG: Getting permission status: $status');
+    DebugLog.d('DEBUG: Getting permission status: $status');
     return status;
   }
 
@@ -150,7 +155,7 @@ class SilenceDetector {
     required Function(String error) onError,
   }) async {
     try {
-  DebugLog.d('DEBUG: Starting silence detection...');
+      DebugLog.d('DEBUG: Starting silence detection...');
 
       // Android safety: never create NoiseMeter before permission granted
       if (Platform.isAndroid) {
@@ -163,24 +168,28 @@ class SilenceDetector {
           }
         }
       }
-      
+
       // Check circuit breaker state before attempting audio access
       if (_audioExecutor.isBlocked) {
         final retryTime = _audioExecutor.timeUntilRetry;
-        final retryMessage = retryTime != null ? 
-            ' Audio will be available again in ${retryTime.inSeconds} seconds.' : '';
-        onError('Audio access temporarily disabled due to recent errors.$retryMessage');
+        final retryMessage =
+            retryTime != null
+                ? ' Audio will be available again in ${retryTime.inSeconds} seconds.'
+                : '';
+        onError(
+          'Audio access temporarily disabled due to recent errors.$retryMessage',
+        );
         return;
       }
-      
+
       // First test if microphone already works with circuit breaker protection
       bool microphoneWorks = await testMicrophoneAccessSafe();
-      
+
       if (!microphoneWorks) {
-  DebugLog.d('DEBUG: Microphone not working, requesting permission...');
+        DebugLog.d('DEBUG: Microphone not working, requesting permission...');
         // Try to request permission
         final hasPermission = await requestPermission();
-        
+
         if (!hasPermission) {
           // Test again after permission request
           microphoneWorks = await testMicrophoneAccessSafe();
@@ -189,29 +198,39 @@ class SilenceDetector {
           microphoneWorks = await testMicrophoneAccessSafe();
         }
       }
-      
+
       if (!microphoneWorks) {
-  DebugLog.d('DEBUG: Microphone still not working after permission request');
+        DebugLog.d(
+          'DEBUG: Microphone still not working after permission request',
+        );
         final status = await Permission.microphone.status;
-  DebugLog.d('DEBUG: Final permission status: $status');
-        
+        DebugLog.d('DEBUG: Final permission status: $status');
+
         if (status == PermissionStatus.permanentlyDenied) {
-          onError('Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.');
+          onError(
+            'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.',
+          );
         } else if (status == PermissionStatus.restricted) {
-          onError('Microphone access is restricted on this device (possibly by parental controls or device management).');
+          onError(
+            'Microphone access is restricted on this device (possibly by parental controls or device management).',
+          );
         } else {
-          onError('Microphone permission is required to measure silence. Please allow microphone access when prompted.');
+          onError(
+            'Microphone permission is required to measure silence. Please allow microphone access when prompted.',
+          );
         }
         return;
       }
 
-  DebugLog.d('DEBUG: Microphone access verified, initializing noise meter...');
+      DebugLog.d(
+        'DEBUG: Microphone access verified, initializing noise meter...',
+      );
       // Initialize noise meter
       _noiseMeter = NoiseMeter();
       _readings.clear();
       _sessionStartTime = DateTime.now(); // Record the session start time
 
-  DebugLog.d('DEBUG: Starting noise meter...');
+      DebugLog.d('DEBUG: Starting noise meter...');
       // Start listening using the correct API
       _subscription = _noiseMeter!.noise.listen(
         (NoiseReading reading) {
@@ -222,9 +241,9 @@ class SilenceDetector {
           onError('Failed to access microphone: ${error.toString()}');
         },
       );
-  DebugLog.d('DEBUG: Noise meter started successfully');
+      DebugLog.d('DEBUG: Noise meter started successfully');
     } catch (e) {
-  DebugLog.d('DEBUG: Exception in startListening: $e');
+      DebugLog.d('DEBUG: Exception in startListening: $e');
       onError('Failed to start microphone: ${e.toString()}');
     }
   }
@@ -237,19 +256,19 @@ class SilenceDetector {
   ) {
     try {
       final decibel = reading.meanDecibel;
-      
+
       // Validate decibel reading
       if (!_isValidDecibel(decibel)) {
-  DebugLog.d('DEBUG: Invalid decibel reading: $decibel, skipping');
+        DebugLog.d('DEBUG: Invalid decibel reading: $decibel, skipping');
         return;
       }
-      
+
       // Add reading to list
       _readings.add(decibel);
-      
+
       // Update current decibel for real-time display
       _currentDecibel = decibel;
-      
+
       // Emit to real-time stream safely
       if (!_realtimeController.isClosed) {
         try {
@@ -273,7 +292,7 @@ class SilenceDetector {
         onComplete(success);
       }
     } catch (e) {
-  DebugLog.d('DEBUG: Error processing reading safely: $e');
+      DebugLog.d('DEBUG: Error processing reading safely: $e');
       _handleAudioError('Reading processing error: $e');
     }
   }
@@ -291,10 +310,10 @@ class SilenceDetector {
   /// Check if silence was maintained throughout the duration
   bool _checkSuccess() {
     if (_readings.isEmpty) return false;
-    
+
     // Calculate average decibel level
     final averageDecibel = _readings.reduce((a, b) => a + b) / _readings.length;
-    
+
     // Check if average is below threshold
     return averageDecibel <= _threshold;
   }
@@ -307,24 +326,24 @@ class SilenceDetector {
         await _subscription!.cancel();
         _subscription = null;
       }
-      
+
       // Dispose of noise meter
       _noiseMeter = null;
-      
+
       // Cancel timers
       _realtimeTimer?.cancel();
       _realtimeTimer = null;
-      
+
       // Reset state flags
       _isListening = false;
       _isAmbientMonitoring = false;
-      
-  DebugLog.d('DEBUG: Clean state ensured');
-      
+
+      DebugLog.d('DEBUG: Clean state ensured');
+
       // Small delay to ensure cleanup is complete
       await Future.delayed(const Duration(milliseconds: 100));
     } catch (e) {
-  DebugLog.d('DEBUG: Error ensuring clean state: $e');
+      DebugLog.d('DEBUG: Error ensuring clean state: $e');
     }
   }
 
@@ -338,10 +357,10 @@ class SilenceDetector {
       _realtimeTimer = null;
       _isListening = false;
       _isAmbientMonitoring = false;
-      
-  DebugLog.d('DEBUG: Listening stopped');
+
+      DebugLog.d('DEBUG: Listening stopped');
     } catch (e) {
-  DebugLog.d('DEBUG: Error stopping listening: $e');
+      DebugLog.d('DEBUG: Error stopping listening: $e');
     }
   }
 
@@ -354,24 +373,24 @@ class SilenceDetector {
   /// Dispose resources with proper cleanup
   void dispose() {
     if (_isDisposed) return;
-    
+
     try {
-  DebugLog.d('DEBUG: Disposing SilenceDetector');
-      
+      DebugLog.d('DEBUG: Disposing SilenceDetector');
+
       _isDisposed = true;
       _stopListening();
-      
+
       // Close stream controller
       if (!_realtimeController.isClosed) {
         _realtimeController.close();
       }
-      
+
       // Clear readings
       _readings.clear();
-      
-  DebugLog.d('DEBUG: SilenceDetector disposed successfully');
+
+      DebugLog.d('DEBUG: SilenceDetector disposed successfully');
     } catch (e) {
-  DebugLog.d('DEBUG: Error disposing SilenceDetector: $e');
+      DebugLog.d('DEBUG: Error disposing SilenceDetector: $e');
     }
   }
 
@@ -385,12 +404,14 @@ class SilenceDetector {
       return;
     }
     if (_isDisposed || _isListening || _isAmbientMonitoring) {
-  DebugLog.d('DEBUG: Cannot start ambient monitoring - already active or disposed');
+      DebugLog.d(
+        'DEBUG: Cannot start ambient monitoring - already active or disposed',
+      );
       return;
     }
-    
+
     try {
-  DebugLog.d('DEBUG: Starting ambient monitoring...');
+      DebugLog.d('DEBUG: Starting ambient monitoring...');
 
       if (Platform.isAndroid) {
         final granted = await hasPermission();
@@ -402,70 +423,93 @@ class SilenceDetector {
           }
         }
       }
-      
+
       // Check circuit breaker state before attempting audio access
       if (_audioExecutor.isBlocked) {
         final retryTime = _audioExecutor.timeUntilRetry;
-        final retryMessage = retryTime != null ? 
-            ' Audio will be available again in ${retryTime.inSeconds} seconds.' : '';
-        onError('Audio access temporarily disabled due to recent errors.$retryMessage');
+        final retryMessage =
+            retryTime != null
+                ? ' Audio will be available again in ${retryTime.inSeconds} seconds.'
+                : '';
+        onError(
+          'Audio access temporarily disabled due to recent errors.$retryMessage',
+        );
         return;
       }
-      
+
       // Check if buffer is stable
       if (!_audioExecutor.isBufferStable) {
-        onError('Audio system is recovering from recent issues. Please try again in a moment.');
+        onError(
+          'Audio system is recovering from recent issues. Please try again in a moment.',
+        );
         return;
       }
-      
+
       // Ensure clean state
       await _ensureCleanState();
-      
+
       // Test microphone access first with timeout and circuit breaker protection
-      bool microphoneWorks = await _audioExecutor.execute(
-        () => testMicrophoneAccessSafe(),
-        'safe_microphone_test',
-      ).timeout(
-        const Duration(seconds: 3),
-        onTimeout: () {
-          DebugLog.d('DEBUG: Microphone test timed out');
-          return false;
-        },
-      ) ?? false;
-      
+      bool microphoneWorks =
+          await _audioExecutor
+              .execute(() => testMicrophoneAccessSafe(), 'safe_microphone_test')
+              .timeout(
+                const Duration(seconds: 3),
+                onTimeout: () {
+                  DebugLog.d('DEBUG: Microphone test timed out');
+                  return false;
+                },
+              ) ??
+          false;
+
       if (!microphoneWorks) {
-  DebugLog.d('DEBUG: Microphone not working, requesting permission for ambient monitoring...');
+        DebugLog.d(
+          'DEBUG: Microphone not working, requesting permission for ambient monitoring...',
+        );
         // Try to request permission
         final hasPermission = await requestPermission();
-        
+
         if (hasPermission) {
           final status = await Permission.microphone.status;
           if (status == PermissionStatus.granted) {
             // Trust granted permission; proceed without immediate retest (iOS latency mitigation)
             microphoneWorks = true;
-            DebugLog.d('DEBUG: Permission granted; proceeding without immediate mic reading');
+            DebugLog.d(
+              'DEBUG: Permission granted; proceeding without immediate mic reading',
+            );
           } else {
-            microphoneWorks = await _audioExecutor.execute(
-              () => testMicrophoneAccessSafe(),
-              'safe_microphone_test',
-            ) ?? false;
+            microphoneWorks =
+                await _audioExecutor.execute(
+                  () => testMicrophoneAccessSafe(),
+                  'safe_microphone_test',
+                ) ??
+                false;
           }
         }
         if (!microphoneWorks) {
-          DebugLog.d('DEBUG: Microphone still not working after permission request for ambient monitoring');
+          DebugLog.d(
+            'DEBUG: Microphone still not working after permission request for ambient monitoring',
+          );
           final status = await Permission.microphone.status;
-          DebugLog.d('DEBUG: Final permission status for ambient monitoring: $status');
+          DebugLog.d(
+            'DEBUG: Final permission status for ambient monitoring: $status',
+          );
           if (status == PermissionStatus.permanentlyDenied) {
-            onError('Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.');
+            onError(
+              'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.',
+            );
             return;
           } else if (status == PermissionStatus.restricted) {
             onError('Microphone access is restricted on this device.');
             return;
           } else if (status != PermissionStatus.granted) {
-            onError('Unable to access microphone for ambient monitoring. Please check your device settings.');
+            onError(
+              'Unable to access microphone for ambient monitoring. Please check your device settings.',
+            );
             return;
           } else {
-            DebugLog.d('DEBUG: Permission granted but no reading yet – proceeding and awaiting stream');
+            DebugLog.d(
+              'DEBUG: Permission granted but no reading yet – proceeding and awaiting stream',
+            );
           }
         }
       }
@@ -473,7 +517,7 @@ class SilenceDetector {
       _noiseMeter = NoiseMeter();
       _isAmbientMonitoring = true;
       _isListening = false;
-      
+
       // Start listening for ambient monitoring with enhanced error handling
       _subscription = _noiseMeter!.noise.listen(
         (NoiseReading reading) {
@@ -488,7 +532,8 @@ class SilenceDetector {
                 }
               }
             } catch (e) {
-              if (!kReleaseMode) print('DEBUG: Error processing ambient reading: $e');
+              if (!kReleaseMode)
+                print('DEBUG: Error processing ambient reading: $e');
               _handleAudioError('Ambient reading processing error: $e');
             }
           }
@@ -496,21 +541,25 @@ class SilenceDetector {
         onError: (error) {
           if (!_isDisposed && _isAmbientMonitoring) {
             if (!kReleaseMode) print('DEBUG: Ambient monitoring error: $error');
-            
+
             // Check for specific audio buffer errors
             final errorString = error.toString();
-            if (errorString.contains('releaseBuffer') || 
-                errorString.contains('mUnreleased') || 
+            if (errorString.contains('releaseBuffer') ||
+                errorString.contains('mUnreleased') ||
                 errorString.contains('BufferSizeInFrames') ||
                 errorString.contains('AudioRecord') ||
                 errorString.contains('AudioTrack')) {
-              _handleAudioError('Audio buffer synchronization error: $errorString');
+              _handleAudioError(
+                'Audio buffer synchronization error: $errorString',
+              );
             } else if (errorString.contains('nativeDispatchPlatformMessage') ||
-                       errorString.contains('EventChannel') ||
-                       errorString.contains('FlutterJNI') ||
-                       errorString.contains('DartMessenger') ||
-                       errorString.contains('Runtime aborting')) {
-              _handleAudioError('Flutter engine communication error: $errorString');
+                errorString.contains('EventChannel') ||
+                errorString.contains('FlutterJNI') ||
+                errorString.contains('DartMessenger') ||
+                errorString.contains('Runtime aborting')) {
+              _handleAudioError(
+                'Flutter engine communication error: $errorString',
+              );
             } else {
               onError('Failed to access microphone: ${error.toString()}');
             }
@@ -518,10 +567,10 @@ class SilenceDetector {
         },
         cancelOnError: false,
       );
-      
-  DebugLog.d('DEBUG: Ambient monitoring started successfully');
+
+      DebugLog.d('DEBUG: Ambient monitoring started successfully');
     } catch (e) {
-  DebugLog.d('DEBUG: Exception in startAmbientMonitoring: $e');
+      DebugLog.d('DEBUG: Exception in startAmbientMonitoring: $e');
       _isAmbientMonitoring = false;
       _handleAudioError('Ambient monitoring startup error: $e');
       onError('Failed to start ambient monitoring: ${e.toString()}');
@@ -531,14 +580,14 @@ class SilenceDetector {
   /// Stop ambient monitoring with state management
   void stopAmbientMonitoring() {
     if (_isDisposed) return;
-    
+
     try {
       if (_isAmbientMonitoring) {
-  DebugLog.d('DEBUG: Stopping ambient monitoring');
+        DebugLog.d('DEBUG: Stopping ambient monitoring');
         _stopListening();
       }
     } catch (e) {
-  DebugLog.d('DEBUG: Error stopping ambient monitoring: $e');
+      DebugLog.d('DEBUG: Error stopping ambient monitoring: $e');
     }
   }
 
@@ -559,30 +608,30 @@ class SilenceDetector {
 
   /// Create NoiseMeter with native crash protection
   // Removed unused _createNoiseMeterSafely after refactor (aggregation reduced rapid creations)
-  
+
   /// Check if decibel value is valid and safe
   bool _isValidDecibel(double decibel) {
-    return !decibel.isNaN && 
-           !decibel.isInfinite && 
-           decibel >= 0 && 
-           decibel <= 200; // Reasonable upper limit
+    return !decibel.isNaN &&
+        !decibel.isInfinite &&
+        decibel >= 0 &&
+        decibel <= 200; // Reasonable upper limit
   }
-  
+
   /// Check if audio access is currently blocked by circuit breaker
   bool get isAudioBlocked => _audioExecutor.isBlocked;
-  
+
   /// Get time until audio access might be available again
   Duration? get audioRetryTime => _audioExecutor.timeUntilRetry;
-  
+
   /// Get circuit breaker state for debugging
   Map<String, dynamic> get audioCircuitState => _audioExecutor.getState();
-  
+
   /// Reset circuit breaker (for testing or manual recovery)
   void resetAudioCircuitBreaker() {
     _audioExecutor.reset();
-  DebugLog.d('DEBUG: Audio circuit breaker manually reset');
+    DebugLog.d('DEBUG: Audio circuit breaker manually reset');
   }
-  
+
   /// Test microphone with circuit breaker protection (enhanced version)
   Future<bool> testMicrophoneAccessSafe() async {
     if (_isDisposed) return false;
@@ -590,10 +639,14 @@ class SilenceDetector {
     // Check if circuit breaker is blocking audio access
     if (_audioExecutor.isBlocked) {
       if (!kReleaseMode) {
-  DebugLog.d('DEBUG: Microphone test blocked by circuit breaker - audio access temporarily disabled');
+        DebugLog.d(
+          'DEBUG: Microphone test blocked by circuit breaker - audio access temporarily disabled',
+        );
         final retryTime = _audioExecutor.timeUntilRetry;
         if (retryTime != null) {
-          DebugLog.d('DEBUG: Audio retry available in ${retryTime.inSeconds} seconds');
+          DebugLog.d(
+            'DEBUG: Audio retry available in ${retryTime.inSeconds} seconds',
+          );
         }
       }
       return false;
@@ -602,7 +655,9 @@ class SilenceDetector {
     // Use circuit breaker to safely execute microphone test with adaptive timing
     final result = await _audioExecutor.executeWithTimeout(
       () async {
-  DebugLog.d('DEBUG: Testing microphone access with circuit breaker protection...');
+        DebugLog.d(
+          'DEBUG: Testing microphone access with circuit breaker protection...',
+        );
 
         final testNoiseMeter = NoiseMeter();
         StreamSubscription<NoiseReading>? testSubscription;
@@ -611,8 +666,12 @@ class SilenceDetector {
         try {
           final completer = Completer<bool>();
           final bool isApple = Platform.isIOS || Platform.isMacOS;
-          final int primaryWaitMs = isApple ? 900 : 300; // allow more time for first frame on Apple platforms
-          final int fallbackExtraMs = isApple ? 600 : 0;  // extra window if first frame is delayed
+          final int primaryWaitMs =
+              isApple
+                  ? 900
+                  : 300; // allow more time for first frame on Apple platforms
+          final int fallbackExtraMs =
+              isApple ? 600 : 0; // extra window if first frame is delayed
 
           testSubscription = testNoiseMeter.noise.listen(
             (NoiseReading reading) {
@@ -633,7 +692,9 @@ class SilenceDetector {
           await Future.delayed(Duration(milliseconds: primaryWaitMs));
           // If still no reading on Apple platforms, extend once
           if (!microphoneWorking && isApple) {
-            DebugLog.d('DEBUG: No mic reading yet; extending wait window (Apple)');
+            DebugLog.d(
+              'DEBUG: No mic reading yet; extending wait window (Apple)',
+            );
             await Future.delayed(Duration(milliseconds: fallbackExtraMs));
           }
 
@@ -647,10 +708,14 @@ class SilenceDetector {
           // Fallback: if no reading but permission is granted, treat as success to avoid false negatives
           if (!testResult) {
             final perm = await Permission.microphone.status;
-            DebugLog.d('DEBUG: Safe mic test fallback permission status: $perm');
+            DebugLog.d(
+              'DEBUG: Safe mic test fallback permission status: $perm',
+            );
             if (perm == PermissionStatus.granted) {
               testResult = true;
-              DebugLog.d('DEBUG: Treating mic test as success due to granted permission');
+              DebugLog.d(
+                'DEBUG: Treating mic test as success due to granted permission',
+              );
             }
           }
 
@@ -663,138 +728,151 @@ class SilenceDetector {
         }
       },
       'safe_microphone_test',
-      const Duration(seconds: 2), // longer to accommodate iOS first-frame latency
+      const Duration(
+        seconds: 2,
+      ), // longer to accommodate iOS first-frame latency
     );
 
     if (result == null) {
       if (!kReleaseMode) {
-  DebugLog.d('DEBUG: Safe microphone test failed or blocked - circuit breaker may have activated');
+        DebugLog.d(
+          'DEBUG: Safe microphone test failed or blocked - circuit breaker may have activated',
+        );
       }
       return false;
     }
 
     return result;
   }
-  
+
   /// Handle audio errors and implement backoff
   void _handleAudioError(String error) {
     final now = DateTime.now();
-    
+
     // Reset counter if enough time has passed
-    if (_lastAudioError != null && 
-        now.difference(_lastAudioError!).inMinutes > _audioErrorWindow.inMinutes) {
+    if (_lastAudioError != null &&
+        now.difference(_lastAudioError!).inMinutes >
+            _audioErrorWindow.inMinutes) {
       _audioErrorCount = 0;
     }
-    
+
     _audioErrorCount++;
     _lastAudioError = now;
-    
+
     if (!kReleaseMode) {
-  DebugLog.d('DEBUG: Audio error #$_audioErrorCount: $error');
+      DebugLog.d('DEBUG: Audio error #$_audioErrorCount: $error');
     }
-    
+
     // Check for specific audio buffer errors and handle them appropriately
     final errorString = error.toLowerCase();
-    if (errorString.contains('releasebuffer') || 
-        errorString.contains('munreleased') || 
+    if (errorString.contains('releasebuffer') ||
+        errorString.contains('munreleased') ||
         errorString.contains('buffersizeinframes') ||
         errorString.contains('audiorecord') ||
         errorString.contains('audiotrack')) {
-      
       if (!kReleaseMode) {
-  DebugLog.d('DEBUG: Detected audio buffer synchronization error - activating enhanced protection');
+        DebugLog.d(
+          'DEBUG: Detected audio buffer synchronization error - activating enhanced protection',
+        );
       }
-      
+
       // Use the enhanced audio executor to handle buffer errors
-      _audioExecutor.execute(
-        () async {
-          // This will trigger the buffer error detection in SafeAudioExecutor
-          throw Exception(error);
-        },
-        'buffer_error_detection',
-      );
+      _audioExecutor.execute(() async {
+        // This will trigger the buffer error detection in SafeAudioExecutor
+        throw Exception(error);
+      }, 'buffer_error_detection');
     } else if (errorString.contains('nativedispatchplatformmessage') ||
-               errorString.contains('eventchannel') ||
-               errorString.contains('flutterjni') ||
-               errorString.contains('dartmessenger') ||
-               errorString.contains('runtime aborting')) {
-      
+        errorString.contains('eventchannel') ||
+        errorString.contains('flutterjni') ||
+        errorString.contains('dartmessenger') ||
+        errorString.contains('runtime aborting')) {
       if (!kReleaseMode) {
-  DebugLog.d('DEBUG: Detected Flutter engine communication error - activating enhanced protection');
+        DebugLog.d(
+          'DEBUG: Detected Flutter engine communication error - activating enhanced protection',
+        );
       }
-      
+
       // Use the enhanced audio executor to handle Flutter engine errors
-      _audioExecutor.execute(
-        () async {
-          // This will trigger the Flutter engine error detection in SafeAudioExecutor
-          throw Exception(error);
-        },
-        'flutter_engine_error_detection',
-      );
+      _audioExecutor.execute(() async {
+        // This will trigger the Flutter engine error detection in SafeAudioExecutor
+        throw Exception(error);
+      }, 'flutter_engine_error_detection');
     }
-    
+
     // Enable crash protection if too many errors
     if (_audioErrorCount >= _maxAudioErrors) {
       if (!kReleaseMode) {
-  DebugLog.d('DEBUG: High audio error count ($_audioErrorCount) - SafeAudioExecutor should now be throttling access');
+        DebugLog.d(
+          'DEBUG: High audio error count ($_audioErrorCount) - SafeAudioExecutor should now be throttling access',
+        );
       }
       // Reset counter after warning to avoid repeated logs
       _audioErrorCount = 0;
     }
   }
-  
+
   /// Check if we should skip audio access due to recent errors
   // Removed unused _shouldSkipAudioAccess method (logic consolidated in SafeAudioExecutor checks)
-  
+
   /// Safely cleanup stream subscription
   // Removed unused _safeCleanupSubscription helper (stream lifecycle simplified)
 
   /// Test if microphone actually works with native crash protection
   Future<bool> testMicrophoneAccess() async {
     try {
-  DebugLog.d('DEBUG: Testing microphone access...');
+      DebugLog.d('DEBUG: Testing microphone access...');
       final testNoiseMeter = NoiseMeter();
       StreamSubscription<NoiseReading>? testSubscription;
       bool microphoneWorking = false;
-      
+
       try {
         testSubscription = testNoiseMeter.noise.listen(
           (NoiseReading reading) {
-            DebugLog.d('DEBUG: Microphone test successful, got reading:  ${reading.meanDecibel}');
+            DebugLog.d(
+              'DEBUG: Microphone test successful, got reading:  ${reading.meanDecibel}',
+            );
             microphoneWorking = true;
           },
           onError: (error) {
             DebugLog.d('DEBUG: Microphone test failed: $error');
           },
         );
-        
+
         // Wait briefly for a reading
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         testSubscription.cancel();
-        
-  DebugLog.d('DEBUG: Microphone test result: $microphoneWorking');
+
+        DebugLog.d('DEBUG: Microphone test result: $microphoneWorking');
         return microphoneWorking;
       } catch (e) {
-  DebugLog.d('DEBUG: Exception during microphone test: $e');
+        DebugLog.d('DEBUG: Exception during microphone test: $e');
         testSubscription?.cancel();
         return false;
       }
     } catch (e) {
-  DebugLog.d('DEBUG: Error testing microphone: $e');
+      DebugLog.d('DEBUG: Error testing microphone: $e');
       return false;
     }
   }
 
   /// Get session statistics
   SessionStats getSessionStats() {
-    final averageNoise = _readings.isEmpty ? 0.0 : 
-        _readings.reduce((a, b) => a + b) / _readings.length;
-    final maxNoise = _readings.isEmpty ? 0.0 : _readings.reduce((a, b) => a > b ? a : b);
-    final minNoise = _readings.isEmpty ? 0.0 : _readings.reduce((a, b) => a < b ? a : b);
-    final silencePercentage = _readings.isEmpty ? 0.0 : 
-        (_readings.where((reading) => reading <= _threshold).length / _readings.length) * 100;
-    
+    final averageNoise =
+        _readings.isEmpty
+            ? 0.0
+            : _readings.reduce((a, b) => a + b) / _readings.length;
+    final maxNoise =
+        _readings.isEmpty ? 0.0 : _readings.reduce((a, b) => a > b ? a : b);
+    final minNoise =
+        _readings.isEmpty ? 0.0 : _readings.reduce((a, b) => a < b ? a : b);
+    final silencePercentage =
+        _readings.isEmpty
+            ? 0.0
+            : (_readings.where((reading) => reading <= _threshold).length /
+                    _readings.length) *
+                100;
+
     return SessionStats(
       averageNoise: averageNoise,
       maxNoise: maxNoise,
@@ -812,15 +890,15 @@ class SilenceDetector {
   /// Clear readings for new session with validation
   void clearReadings() {
     if (_isDisposed) return;
-    
+
     try {
       _readings.clear();
       _currentDecibel = 0.0;
       _sessionStartTime = null;
-      
-  DebugLog.d('DEBUG: Readings cleared for new session');
+
+      DebugLog.d('DEBUG: Readings cleared for new session');
     } catch (e) {
-  DebugLog.d('DEBUG: Error clearing readings: $e');
+      DebugLog.d('DEBUG: Error clearing readings: $e');
     }
   }
 }

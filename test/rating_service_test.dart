@@ -22,12 +22,15 @@ void main() {
     test('Probability increases with sessions', () async {
       // Access private probability via reflection not possible; replicate formula.
       double probability(int sessions) {
-        if (sessions <= RatingService.minSessions) return RatingService.baseProbability;
+        if (sessions <= RatingService.minSessions)
+          return RatingService.baseProbability;
         final extra = sessions - RatingService.minSessions;
-        final p = (RatingService.baseProbability + extra * RatingService.probabilitySlope)
+        final p = (RatingService.baseProbability +
+                extra * RatingService.probabilitySlope)
             .clamp(RatingService.baseProbability, RatingService.maxProbability);
         return p.toDouble();
       }
+
       final pBase = probability(RatingService.minSessions);
       final pHigher = probability(RatingService.minSessions + 5);
       expect(pHigher, greaterThan(pBase));

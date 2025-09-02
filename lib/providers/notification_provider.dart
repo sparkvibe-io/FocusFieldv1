@@ -59,7 +59,9 @@ final notificationSettingsProvider = Provider<Map<String, bool>>((ref) {
     'enableNotifications': ref.watch(enableNotificationsProvider),
     'enableDailyReminders': ref.watch(enableDailyRemindersProvider),
     'enableSessionComplete': ref.watch(enableSessionCompleteProvider),
-    'enableAchievementNotifications': ref.watch(enableAchievementNotificationsProvider),
+    'enableAchievementNotifications': ref.watch(
+      enableAchievementNotificationsProvider,
+    ),
     'enableWeeklyProgress': ref.watch(enableWeeklyProgressProvider),
   };
 });

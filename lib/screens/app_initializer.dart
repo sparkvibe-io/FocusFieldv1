@@ -21,15 +21,28 @@ class AppInitializer extends ConsumerWidget {
 
     return storageServiceAsync.when(
       loading: () => _buildLoadingScreen(context, 'Initializing app...'),
-      error: (error, stack) => _buildErrorScreen(context, 'Initialization failed: $error', ref),
+      error:
+          (error, stack) =>
+              _buildErrorScreen(context, 'Initialization failed: $error', ref),
       data: (storageService) {
         return settingsAsync.when(
           loading: () => _buildLoadingScreen(context, 'Loading settings...'),
-          error: (error, stack) => _buildErrorScreen(context, 'Settings loading failed: $error', ref),
+          error:
+              (error, stack) => _buildErrorScreen(
+                context,
+                'Settings loading failed: $error',
+                ref,
+              ),
           data: (settings) {
             return silenceDataAsync.when(
-              loading: () => _buildLoadingScreen(context, 'Loading user data...'),
-              error: (error, stack) => _buildErrorScreen(context, 'Data loading failed: $error', ref),
+              loading:
+                  () => _buildLoadingScreen(context, 'Loading user data...'),
+              error:
+                  (error, stack) => _buildErrorScreen(
+                    context,
+                    'Data loading failed: $error',
+                    ref,
+                  ),
               data: (silenceData) {
                 // Trigger rating prompt logic (non-blocking)
                 WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -39,9 +52,14 @@ class AppInitializer extends ConsumerWidget {
                     await RatingService.instance.maybePrompt(
                       context,
                       totalSessions: silenceData.totalSessions,
-                      lastSessionDurationSeconds: silenceData.recentSessions.isNotEmpty ? silenceData.recentSessions.first.duration : null,
+                      lastSessionDurationSeconds:
+                          silenceData.recentSessions.isNotEmpty
+                              ? silenceData.recentSessions.first.duration
+                              : null,
                     );
-                  } catch (_) {/* ignore rating errors */}
+                  } catch (_) {
+                    /* ignore rating errors */
+                  }
                 });
                 return const SafeWidget(
                   context: 'app_initialization',
@@ -88,13 +106,15 @@ class AppInitializer extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Loading indicator
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 24),
-              
+
               // Loading message
               Text(
                 message,
@@ -104,7 +124,7 @@ class AppInitializer extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
-              
+
               Text(
                 '🤫 Master the Art of Silence',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -120,7 +140,11 @@ class AppInitializer extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorScreen(BuildContext context, String message, WidgetRef ref) {
+  Widget _buildErrorScreen(
+    BuildContext context,
+    String message,
+    WidgetRef ref,
+  ) {
     final theme = Theme.of(context);
     return Scaffold(
       body: Container(
@@ -147,7 +171,7 @@ class AppInitializer extends ConsumerWidget {
                   color: theme.colorScheme.error,
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Error message
                 Text(
                   'Oops! Something went wrong',
@@ -158,7 +182,7 @@ class AppInitializer extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 Text(
                   message,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -167,7 +191,7 @@ class AppInitializer extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Retry button
                 SizedBox(
                   width: double.infinity,
@@ -188,49 +212,54 @@ class AppInitializer extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Reset app data button
                 TextButton(
                   onPressed: () async {
                     final confirmed = await showDialog<bool>(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Reset App Data'),
-                        content: const Text(
-                          'This will reset all app data and settings to their defaults. '
-                          'This action cannot be undone.\n\n'
-                          'Do you want to continue?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.error,
-                              foregroundColor: theme.colorScheme.onError,
+                      builder:
+                          (context) => AlertDialog(
+                            title: const Text('Reset App Data'),
+                            content: const Text(
+                              'This will reset all app data and settings to their defaults. '
+                              'This action cannot be undone.\n\n'
+                              'Do you want to continue?',
                             ),
-                            child: const Text('Reset'),
+                            actions: [
+                              TextButton(
+                                onPressed:
+                                    () => Navigator.of(context).pop(false),
+                                child: const Text('Cancel'),
+                              ),
+                              ElevatedButton(
+                                onPressed:
+                                    () => Navigator.of(context).pop(true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.error,
+                                  foregroundColor: theme.colorScheme.onError,
+                                ),
+                                child: const Text('Reset'),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
                     );
 
                     if (confirmed == true) {
                       try {
                         // Get storage service and reset
-                        final storageServiceAsync = ref.read(storageServiceProvider);
+                        final storageServiceAsync = ref.read(
+                          storageServiceProvider,
+                        );
                         if (storageServiceAsync.hasValue) {
                           await storageServiceAsync.value!.resetAllData();
                         }
-                        
+
                         // Invalidate all providers
                         ref.invalidate(storageServiceProvider);
                         ref.invalidate(appSettingsProvider);
                         ref.invalidate(silenceDataNotifierProvider);
-                        
+
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -268,32 +297,35 @@ class AppInitializer extends ConsumerWidget {
 /// Widget that checks and requests microphone permission when the app starts
 class _PermissionChecker extends ConsumerStatefulWidget {
   final Widget child;
-  
+
   const _PermissionChecker({required this.child});
-  
+
   @override
   ConsumerState<_PermissionChecker> createState() => _PermissionCheckerState();
 }
 
 class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
-  
   @override
   void initState() {
     super.initState();
     _checkPermission();
   }
-  
+
   Future<void> _checkPermission() async {
     // Wait a bit for the UI to settle
-  await Future.delayed(const Duration(milliseconds: PermissionConstants.initialPermissionDelayMs));
-    
+    await Future.delayed(
+      const Duration(
+        milliseconds: PermissionConstants.initialPermissionDelayMs,
+      ),
+    );
+
     if (!mounted) return;
-    
+
     try {
-  DebugLog.d('DEBUG: Starting permission check...');
-      
+      DebugLog.d('DEBUG: Starting permission check...');
+
       final silenceDetector = ref.read(silenceDetectorProvider);
-      
+
       // Check if we already have permission with timeout
       final hasPermission = await silenceDetector.hasPermission().timeout(
         const Duration(seconds: PermissionConstants.permissionCheckTimeoutSec),
@@ -302,36 +334,45 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
           return false;
         },
       );
-      
-  DebugLog.d('DEBUG: Initial permission status: $hasPermission');
-      
+
+      DebugLog.d('DEBUG: Initial permission status: $hasPermission');
+
       if (!hasPermission && mounted) {
-  DebugLog.d('DEBUG: No permission, requesting...');
-        
+        DebugLog.d('DEBUG: No permission, requesting...');
+
         // Request permission proactively with timeout
-        final permissionGranted = await silenceDetector.requestPermission().timeout(
-          const Duration(seconds: PermissionConstants.permissionRequestTimeoutSec),
-          onTimeout: () {
-            DebugLog.d('DEBUG: Permission request timed out');
-            return false;
-          },
-        );
-        
-  DebugLog.d('DEBUG: Permission request result: $permissionGranted');
-        
+        final permissionGranted = await silenceDetector
+            .requestPermission()
+            .timeout(
+              const Duration(
+                seconds: PermissionConstants.permissionRequestTimeoutSec,
+              ),
+              onTimeout: () {
+                DebugLog.d('DEBUG: Permission request timed out');
+                return false;
+              },
+            );
+
+        DebugLog.d('DEBUG: Permission request result: $permissionGranted');
+
         // If still no permission, show a dialog to guide the user
         if (!permissionGranted && mounted) {
           // Delay showing dialog to avoid overwhelming the user
-          await Future.delayed(const Duration(milliseconds: PermissionConstants.dialogPostRequestDelayMs));
-          if (mounted) await PermissionDialogs.showMicrophoneRationale(context, ref);
+          await Future.delayed(
+            const Duration(
+              milliseconds: PermissionConstants.dialogPostRequestDelayMs,
+            ),
+          );
+          if (mounted)
+            await PermissionDialogs.showMicrophoneRationale(context, ref);
         }
       } else if (hasPermission) {
-  DebugLog.d('DEBUG: Permission already granted');
+        DebugLog.d('DEBUG: Permission already granted');
       }
     } catch (e) {
       // Permission request failed, but don't block the app
-  DebugLog.d('DEBUG: Permission check failed: $e');
-      
+      DebugLog.d('DEBUG: Permission check failed: $e');
+
       // Only show error dialog if it's a critical failure
       if (mounted && e.toString().contains('permanently')) {
         await PermissionDialogs.showMicrophoneRationale(context, ref);
@@ -340,8 +381,7 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
       // No state flag needed post-refactor; keep hook for future extensions
     }
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return widget.child;

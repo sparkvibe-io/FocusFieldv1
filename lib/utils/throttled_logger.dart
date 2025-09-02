@@ -17,7 +17,8 @@ class ThrottledLogger {
 
   void log(String message, {bool force = false}) {
     if (!DebugLog.enabled) return;
-    if (kReleaseMode && !alwaysPrintInRelease && !force) return; // Skip in release
+    if (kReleaseMode && !alwaysPrintInRelease && !force)
+      return; // Skip in release
     final now = DateTime.now();
 
     // If message changed allow immediate output (helps when errors differ)
@@ -40,4 +41,6 @@ class ThrottledLogger {
 }
 
 /// Global (optional) shared logger for high-frequency sensors.
-final ThrottledLogger sensorLogger = ThrottledLogger(interval: const Duration(milliseconds: 900));
+final ThrottledLogger sensorLogger = ThrottledLogger(
+  interval: const Duration(milliseconds: 900),
+);

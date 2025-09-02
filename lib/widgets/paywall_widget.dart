@@ -30,7 +30,8 @@ class PaywallWidget extends ConsumerStatefulWidget {
 class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   bool _isYearly = true;
   // Dynamic pricing
-  final Map<String, String> _dynamicPriceStrings = {}; // productId -> price string
+  final Map<String, String> _dynamicPriceStrings =
+      {}; // productId -> price string
   bool _attemptedLoad = false;
   // TODO: Remove static fallback once dynamic pricing stable.
 
@@ -45,20 +46,21 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     _attemptedLoad = true;
     if (AppConstants.enableMockSubscriptions) return; // skip in mock mode
     if (!AppConstants.isValidRevenueCatKey) return; // missing API key
-  // No UI spinner; prices will update in-place when loaded.
+    // No UI spinner; prices will update in-place when loaded.
     try {
       final service = ref.read(subscriptionServiceProvider);
       final offerings = await service.getOfferings();
       final current = offerings?.current;
       if (current != null) {
         for (final pkg in current.availablePackages) {
-          _dynamicPriceStrings[pkg.storeProduct.identifier] = pkg.storeProduct.priceString;
+          _dynamicPriceStrings[pkg.storeProduct.identifier] =
+              pkg.storeProduct.priceString;
         }
       }
     } catch (_) {
       // silent fallback
     } finally {
-  // ignore cleanup flag
+      // ignore cleanup flag
     }
   }
 
@@ -110,12 +112,15 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Text(
-                          AppLocalizations.of(context)?.paywallTitle ?? 'Premium',
+                          AppLocalizations.of(context)?.paywallTitle ??
+                              'Premium',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -135,7 +140,10 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                           color: Colors.amber.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text('Mock Subscriptions Enabled', style: Theme.of(context).textTheme.bodySmall),
+                        child: Text(
+                          'Mock Subscriptions Enabled',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ),
                     // Feature bullets
                     ..._buildFeatureList(context),
@@ -151,19 +159,31 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       error: (_, __) => _buildPlanCards(context),
                     ),
                     const SizedBox(height: 28),
-                    _buildPurchaseButtons(context, subscriptionActions, subscriptionState),
+                    _buildPurchaseButtons(
+                      context,
+                      subscriptionActions,
+                      subscriptionState,
+                    ),
                     const SizedBox(height: 12),
                     Center(
                       child: TextButton(
-                        onPressed: subscriptionState.isLoading ? null : () => subscriptionActions.restorePurchases(),
-                        child: Text(AppLocalizations.of(context)?.restorePurchases ?? 'Restore Purchases'),
+                        onPressed:
+                            subscriptionState.isLoading
+                                ? null
+                                : () => subscriptionActions.restorePurchases(),
+                        child: Text(
+                          AppLocalizations.of(context)?.restorePurchases ??
+                              'Restore Purchases',
+                        ),
                       ),
                     ),
                     if (subscriptionState.hasError) ...[
                       const SizedBox(height: 8),
                       Text(
                         subscriptionState.error.toString(),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -183,24 +203,31 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   List<Widget> _buildFeatureList(BuildContext context) {
     // Implemented premium feature set (kept in sync with README & paywall marketing)
     final l10n = AppLocalizations.of(context);
-    final features = [
-      l10n?.featureExtendSessions,
-      l10n?.featureHistory,
-      l10n?.featureMetrics,
-      l10n?.featureExport,
-      l10n?.featureThemes,
-      l10n?.featureThreshold,
-      l10n?.featureSupport,
-    ].whereType<String>().toList();
+    final features =
+        [
+          l10n?.featureExtendSessions,
+          l10n?.featureHistory,
+          l10n?.featureMetrics,
+          l10n?.featureExport,
+          l10n?.featureThemes,
+          l10n?.featureThreshold,
+          l10n?.featureSupport,
+        ].whereType<String>().toList();
     return features
         .map(
           (f) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               children: [
-                Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 20),
+                Icon(
+                  Icons.check_circle,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: Text(f, style: Theme.of(context).textTheme.bodyMedium)),
+                Expanded(
+                  child: Text(f, style: Theme.of(context).textTheme.bodyMedium),
+                ),
               ],
             ),
           ),
@@ -219,16 +246,22 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   }
 
   Widget _planCard(BuildContext context, {required bool yearly}) {
-  final isSelected = _isYearly == yearly;
-  final l10n = AppLocalizations.of(context);
-  final title = yearly ? (l10n?.yearlyPlanTitle ?? 'Yearly') : (l10n?.monthlyPlanTitle ?? 'Monthly');
-    final id = yearly ? AppConstants.premiumYearlyProductId : AppConstants.premiumMonthlyProductId;
+    final isSelected = _isYearly == yearly;
+    final l10n = AppLocalizations.of(context);
+    final title =
+        yearly
+            ? (l10n?.yearlyPlanTitle ?? 'Yearly')
+            : (l10n?.monthlyPlanTitle ?? 'Monthly');
+    final id =
+        yearly
+            ? AppConstants.premiumYearlyProductId
+            : AppConstants.premiumMonthlyProductId;
     final dyn = _dynamicPriceStrings[id];
     // Fallback static pricing (update if actual pricing changes)
     final baseMonthly = 1.99; // monthly price fallback
     final fallbackYearlyTotal = 9.99; // yearly total fallback
     late final String headline; // big number
-    late final String subline;  // billed at line
+    late final String subline; // billed at line
 
     if (yearly) {
       double total = fallbackYearlyTotal;
@@ -237,20 +270,27 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         final match = RegExp(r'([0-9]+\.?[0-9]*)').firstMatch(dyn);
         final parsed = match != null ? double.tryParse(match.group(1)!) : null;
         if (parsed != null && parsed > 0) total = parsed;
-    subline = yearly
-      ? (l10n != null ? l10n.billedAnnually(dyn) : 'Billed at $dyn')
-      : (l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn');
+        subline =
+            yearly
+                ? (l10n != null ? l10n.billedAnnually(dyn) : 'Billed at $dyn')
+                : (l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn');
       } else {
-  subline = l10n != null ? l10n.billedAnnually('\$${total.toStringAsFixed(2)}') : 'Billed at \$${total.toStringAsFixed(2)}/yr.';
+        subline =
+            l10n != null
+                ? l10n.billedAnnually('\$${total.toStringAsFixed(2)}')
+                : 'Billed at \$${total.toStringAsFixed(2)}/yr.';
       }
       headline = '\$${(total / 12).toStringAsFixed(2)}/mo';
     } else {
       if (dyn != null) {
         headline = dyn.contains('/mo') ? dyn : '$dyn/mo';
-  subline = l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn';
+        subline = l10n != null ? l10n.billedMonthly(dyn) : 'Billed at $dyn';
       } else {
-  headline = '\$${baseMonthly.toStringAsFixed(2)}/mo';
-  subline = l10n != null ? l10n.billedMonthly('\$${baseMonthly.toStringAsFixed(2)}') : 'Billed at \$${baseMonthly.toStringAsFixed(2)}/mo.';
+        headline = '\$${baseMonthly.toStringAsFixed(2)}/mo';
+        subline =
+            l10n != null
+                ? l10n.billedMonthly('\$${baseMonthly.toStringAsFixed(2)}')
+                : 'Billed at \$${baseMonthly.toStringAsFixed(2)}/mo.';
       }
     }
 
@@ -263,9 +303,10 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.15),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).dividerColor.withOpacity(0.4),
+            color:
+                isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).dividerColor.withOpacity(0.4),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -275,11 +316,28 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text(headline, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  headline,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(subline, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65))),
+                Text(
+                  subline,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.65),
+                  ),
+                ),
               ],
             ),
             if (yearly)
@@ -287,13 +345,18 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                 top: -14,
                 left: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.4),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -302,10 +365,10 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                   child: Text(
                     l10n != null ? l10n.savePercent('58') : 'SAVE 58%',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -321,9 +384,16 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 3),
+                    border: Border.all(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      width: 3,
+                    ),
                   ),
-                  child: Icon(Icons.check, color: Theme.of(context).colorScheme.onPrimary, size: 18),
+                  child: Icon(
+                    Icons.check,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 18,
+                  ),
                 ),
               ),
             ),
@@ -334,7 +404,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   }
 
   Widget _buildPremiumCard(BuildContext context) {
-  return Card(
+    return Card(
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -344,19 +414,22 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
             Text(
               SubscriptionTier.premium.displayName,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 4),
-            Text(SubscriptionTier.premium.description, style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              SubscriptionTier.premium.description,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             const SizedBox(height: 8),
             Text(
               _priceDisplay(SubscriptionTier.premium, yearly: _isYearly),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -369,39 +442,57 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
       case SubscriptionTier.free:
         return 'Free';
       case SubscriptionTier.premium:
-        final id = yearly ? AppConstants.premiumYearlyProductId : AppConstants.premiumMonthlyProductId;
+        final id =
+            yearly
+                ? AppConstants.premiumYearlyProductId
+                : AppConstants.premiumMonthlyProductId;
         final dyn = _dynamicPriceStrings[id];
         if (dyn != null) return yearly ? '$dyn / year' : '$dyn / month';
         return yearly
             ? '�${SubscriptionTier.premium.yearlyPrice.toStringAsFixed(2)}/year'
             : '�${SubscriptionTier.premium.monthlyPrice.toStringAsFixed(2)}/month';
-  // No higher tier implemented yet
-  // ignore: no_default_cases
+      // No higher tier implemented yet
+      // ignore: no_default_cases
     }
   }
 
-  Widget _buildPurchaseButtons(BuildContext context, SubscriptionActionsNotifier subscriptionActions, AsyncValue<void> subscriptionState) {
-  return ElevatedButton(
-        onPressed: subscriptionState.isLoading ? null : () => subscriptionActions.purchasePremium(isYearly: _isYearly),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        child: subscriptionState.isLoading
-            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-            : Text(
+  Widget _buildPurchaseButtons(
+    BuildContext context,
+    SubscriptionActionsNotifier subscriptionActions,
+    AsyncValue<void> subscriptionState,
+  ) {
+    return ElevatedButton(
+      onPressed:
+          subscriptionState.isLoading
+              ? null
+              : () => subscriptionActions.purchasePremium(isYearly: _isYearly),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      child:
+          subscriptionState.isLoading
+              ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+              : Text(
                 AppLocalizations.of(context)?.subscribeCta ?? 'Continue',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
-      );
+    );
   }
 
-  Widget _buildHostedPaywallPackages(BuildContext context, Map<String, dynamic> paywall) {
-  final l10n = AppLocalizations.of(context);
+  Widget _buildHostedPaywallPackages(
+    BuildContext context,
+    Map<String, dynamic> paywall,
+  ) {
+    final l10n = AppLocalizations.of(context);
     final packages = (paywall['packages'] as List<dynamic>? ?? []);
     if (packages.isEmpty) return _buildPremiumCard(context); // fallback
     // Determine selected package by yearly toggle.
@@ -416,7 +507,10 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         monthly = p as Map<String, dynamic>;
       }
     }
-    final selected = _isYearly ? (yearly ?? monthly ?? packages.first) : (monthly ?? yearly ?? packages.first);
+    final selected =
+        _isYearly
+            ? (yearly ?? monthly ?? packages.first)
+            : (monthly ?? yearly ?? packages.first);
     final priceString = selected['priceString'] ?? '';
 
     return Card(
@@ -428,23 +522,27 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           children: [
             Text(
               l10n?.paywallTitle ?? 'Current Offer',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              _isYearly ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan') : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
+              _isYearly
+                  ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan')
+                  : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               _isYearly ? '$priceString / year' : '$priceString / month',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -453,7 +551,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
   }
 
   Widget _buildLegalFooter(BuildContext context) {
-  final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         Wrap(
@@ -461,17 +559,27 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           spacing: 16,
           runSpacing: 4,
           children: [
-            _linkButton(l10n?.privacyPolicy ?? 'Privacy', AppConstants.privacyPolicyUrl),
-            _linkButton(l10n?.termsOfService ?? 'Terms', AppConstants.termsOfServiceUrl),
-            _linkButton(l10n?.manageSubscription ?? 'Manage', _platformManageUrl()),
+            _linkButton(
+              l10n?.privacyPolicy ?? 'Privacy',
+              AppConstants.privacyPolicyUrl,
+            ),
+            _linkButton(
+              l10n?.termsOfService ?? 'Terms',
+              AppConstants.termsOfServiceUrl,
+            ),
+            _linkButton(
+              l10n?.manageSubscription ?? 'Manage',
+              _platformManageUrl(),
+            ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
-          l10n?.legalDisclaimer ?? 'Auto-renewing subscription. Cancel anytime in store settings.',
+          l10n?.legalDisclaimer ??
+              'Auto-renewing subscription. Cancel anytime in store settings.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              ),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
           textAlign: TextAlign.center,
         ),
       ],

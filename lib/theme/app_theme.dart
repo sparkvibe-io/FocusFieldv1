@@ -6,23 +6,31 @@ import 'package:silence_score/theme/theme_extensions.dart';
 class AppTheme {
   static ThemeData get lightTheme => _buildTheme(AppThemeMode.light);
   static ThemeData get darkTheme => _buildTheme(AppThemeMode.dark);
-  
-  static ThemeData getThemeForMode(AppThemeMode mode, {bool enableHighContrast = false}) => 
-      _buildTheme(mode, enableHighContrast: enableHighContrast);
 
-  static ThemeData _buildTheme(AppThemeMode mode, {bool enableHighContrast = false}) {
-    final brightness = mode.themeMode == ThemeMode.dark || mode == AppThemeMode.purpleNight 
-        ? Brightness.dark 
-        : Brightness.light;
-    
+  static ThemeData getThemeForMode(
+    AppThemeMode mode, {
+    bool enableHighContrast = false,
+  }) => _buildTheme(mode, enableHighContrast: enableHighContrast);
+
+  static ThemeData _buildTheme(
+    AppThemeMode mode, {
+    bool enableHighContrast = false,
+  }) {
+    final brightness =
+        mode.themeMode == ThemeMode.dark || mode == AppThemeMode.purpleNight
+            ? Brightness.dark
+            : Brightness.light;
+
     var colorScheme = _getColorScheme(mode, brightness);
-    
+
     // Apply high contrast adjustments if enabled
     if (enableHighContrast) {
       final accessibilityService = AccessibilityService();
-      colorScheme = accessibilityService.adjustColorSchemeForContrast(colorScheme);
+      colorScheme = accessibilityService.adjustColorSchemeForContrast(
+        colorScheme,
+      );
     }
-    
+
     // Dramatic extension (default neutral)
     DramaticThemeStyling dramatic = DramaticThemeStyling.neutral();
 
@@ -42,10 +50,7 @@ class AppTheme {
         cardBackgroundGradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFF0E1233),
-            const Color(0xFF050B1F),
-          ],
+          colors: [const Color(0xFF0E1233), const Color(0xFF050B1F)],
         ),
         statAccentColors: const [
           Color(0xFF00F5FF), // cyan
@@ -81,39 +86,46 @@ class AppTheme {
       );
     }
 
-  final highContrast = enableHighContrast;
-  return ThemeData(
+    final highContrast = enableHighContrast;
+    return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       extensions: [dramatic],
       // Make scaffold transparent for dramatic premium themes so gradient shows through
-      scaffoldBackgroundColor: (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
-          ? Colors.transparent
-          : colorScheme.surface,
+      scaffoldBackgroundColor:
+          (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
+              ? Colors.transparent
+              : colorScheme.surface,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
-            ? Colors.transparent
-            : colorScheme.surface,
+        backgroundColor:
+            (mode == AppThemeMode.cyberNeon ||
+                    mode == AppThemeMode.midnightTeal)
+                ? Colors.transparent
+                : colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         toolbarHeight: 56,
       ),
-  cardTheme: _cardThemeFor(mode, colorScheme).copyWith(
+      cardTheme: _cardThemeFor(mode, colorScheme).copyWith(
         elevation: highContrast ? 2 : null,
-        shadowColor: highContrast ? colorScheme.onSurface.withOpacity(0.4) : null,
+        shadowColor:
+            highContrast ? colorScheme.onSurface.withOpacity(0.4) : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: highContrast ? BorderSide(color: colorScheme.primary, width: 1.2) : BorderSide.none,
+          side:
+              highContrast
+                  ? BorderSide(color: colorScheme.primary, width: 1.2)
+                  : BorderSide.none,
         ),
       ),
-  elevatedButtonTheme: _elevatedButtonThemeFor(mode, colorScheme),
-  outlinedButtonTheme: _outlinedButtonThemeFor(mode, colorScheme),
+      elevatedButtonTheme: _elevatedButtonThemeFor(mode, colorScheme),
+      outlinedButtonTheme: _outlinedButtonThemeFor(mode, colorScheme),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
-  textTheme: _textThemeFor(mode, colorScheme).apply(
+      textTheme: _textThemeFor(mode, colorScheme).apply(
         bodyColor: highContrast ? colorScheme.onSurface : null,
         displayColor: highContrast ? colorScheme.onSurface : null,
       ),
@@ -121,27 +133,40 @@ class AppTheme {
         thickness: highContrast ? 1.2 : null,
         color: highContrast ? colorScheme.onSurface : null,
       ),
-      listTileTheme: highContrast
-          ? ListTileThemeData(
-              iconColor: colorScheme.onSurface,
-              textColor: colorScheme.onSurface,
-              tileColor: colorScheme.surface,
-              selectedColor: colorScheme.primary,
-            )
-          : null,
+      listTileTheme:
+          highContrast
+              ? ListTileThemeData(
+                iconColor: colorScheme.onSurface,
+                textColor: colorScheme.onSurface,
+                tileColor: colorScheme.surface,
+                selectedColor: colorScheme.primary,
+              )
+              : null,
     );
   }
 
   static ColorScheme _getColorScheme(AppThemeMode mode, Brightness brightness) {
     switch (mode) {
       case AppThemeMode.system:
-        return brightness == Brightness.dark 
-            ? ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark)
-            : ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light);
+        return brightness == Brightness.dark
+            ? ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.dark,
+            )
+            : ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              brightness: Brightness.light,
+            );
       case AppThemeMode.light:
-        return ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light);
+        return ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        );
       case AppThemeMode.dark:
-        return ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark);
+        return ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        );
       case AppThemeMode.oceanBlue:
         final baseOcean = ColorScheme.fromSeed(
           seedColor: const Color(0xFF1565C0),
@@ -289,10 +314,12 @@ class AppTheme {
 
   static CardThemeData _cardThemeFor(AppThemeMode mode, ColorScheme scheme) {
     // Base card style
-    final baseShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
+    final baseShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
     switch (mode) {
       case AppThemeMode.cyberNeon:
-  return CardThemeData(
+        return CardThemeData(
           color: scheme.surfaceContainer.withOpacity(0.55),
           elevation: 6,
           shadowColor: const Color(0xFF00FFF0).withOpacity(0.35),
@@ -303,7 +330,7 @@ class AppTheme {
           margin: const EdgeInsets.all(8),
         );
       case AppThemeMode.midnightTeal:
-  return CardThemeData(
+        return CardThemeData(
           color: scheme.surfaceContainer.withOpacity(0.60),
           elevation: 4,
           shadowColor: const Color(0xFF00D295).withOpacity(0.25),
@@ -314,7 +341,7 @@ class AppTheme {
           margin: const EdgeInsets.all(8),
         );
       default:
-  return CardThemeData(
+        return CardThemeData(
           elevation: 2,
           shape: baseShape,
           color: scheme.surfaceContainer,
@@ -323,7 +350,10 @@ class AppTheme {
     }
   }
 
-  static ElevatedButtonThemeData _elevatedButtonThemeFor(AppThemeMode mode, ColorScheme scheme) {
+  static ElevatedButtonThemeData _elevatedButtonThemeFor(
+    AppThemeMode mode,
+    ColorScheme scheme,
+  ) {
     final base = ElevatedButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -368,7 +398,10 @@ class AppTheme {
     }
   }
 
-  static OutlinedButtonThemeData _outlinedButtonThemeFor(AppThemeMode mode, ColorScheme scheme) {
+  static OutlinedButtonThemeData _outlinedButtonThemeFor(
+    AppThemeMode mode,
+    ColorScheme scheme,
+  ) {
     final base = OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -398,7 +431,10 @@ class AppTheme {
         return OutlinedButtonThemeData(
           style: base.merge(
             OutlinedButton.styleFrom(
-              side: BorderSide(color: scheme.outline.withOpacity(0.6), width: 1.0),
+              side: BorderSide(
+                color: scheme.outline.withOpacity(0.6),
+                width: 1.0,
+              ),
               foregroundColor: scheme.primary,
             ),
           ),
@@ -408,22 +444,36 @@ class AppTheme {
 
   static TextTheme _textThemeFor(AppThemeMode mode, ColorScheme scheme) {
     final base = ThemeData(brightness: scheme.brightness).textTheme.apply(
-          displayColor: scheme.onSurface,
-          bodyColor: scheme.onSurface,
-        );
+      displayColor: scheme.onSurface,
+      bodyColor: scheme.onSurface,
+    );
     switch (mode) {
       case AppThemeMode.cyberNeon:
         return base.copyWith(
-          titleLarge: base.titleLarge?.copyWith(color: const Color(0xFFE4FBFF), fontWeight: FontWeight.w600),
-          titleMedium: base.titleMedium?.copyWith(color: const Color(0xFF8ADFFF)),
-          bodySmall: base.bodySmall?.copyWith(color: scheme.onSurface.withOpacity(0.72)),
+          titleLarge: base.titleLarge?.copyWith(
+            color: const Color(0xFFE4FBFF),
+            fontWeight: FontWeight.w600,
+          ),
+          titleMedium: base.titleMedium?.copyWith(
+            color: const Color(0xFF8ADFFF),
+          ),
+          bodySmall: base.bodySmall?.copyWith(
+            color: scheme.onSurface.withOpacity(0.72),
+          ),
           labelSmall: base.labelSmall?.copyWith(color: const Color(0xFFFF2EC4)),
         );
       case AppThemeMode.midnightTeal:
         return base.copyWith(
-          titleLarge: base.titleLarge?.copyWith(color: const Color(0xFFC2FFE9), fontWeight: FontWeight.w600),
-          titleMedium: base.titleMedium?.copyWith(color: const Color(0xFF6BD9B7)),
-          bodySmall: base.bodySmall?.copyWith(color: scheme.onSurface.withOpacity(0.68)),
+          titleLarge: base.titleLarge?.copyWith(
+            color: const Color(0xFFC2FFE9),
+            fontWeight: FontWeight.w600,
+          ),
+          titleMedium: base.titleMedium?.copyWith(
+            color: const Color(0xFF6BD9B7),
+          ),
+          bodySmall: base.bodySmall?.copyWith(
+            color: scheme.onSurface.withOpacity(0.68),
+          ),
           labelSmall: base.labelSmall?.copyWith(color: const Color(0xFF43F56A)),
         );
       default:

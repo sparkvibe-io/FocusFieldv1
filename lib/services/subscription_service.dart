@@ -9,10 +9,12 @@ import 'package:silence_score/models/subscription_tier.dart';
 
 class SubscriptionService {
   static SubscriptionService? _instance;
-  static SubscriptionService get instance => _instance ??= SubscriptionService._();
+  static SubscriptionService get instance =>
+      _instance ??= SubscriptionService._();
   SubscriptionService._();
 
-  final StreamController<SubscriptionTier> _tierController = StreamController<SubscriptionTier>.broadcast();
+  final StreamController<SubscriptionTier> _tierController =
+      StreamController<SubscriptionTier>.broadcast();
   Stream<SubscriptionTier> get tierStream => _tierController.stream;
 
   SubscriptionTier _currentTier = SubscriptionTier.free;
@@ -31,19 +33,23 @@ class SubscriptionService {
     try {
       // Validate configuration
       AppConstants.validateConfiguration();
-      
+
       // Check if running in mock mode
       if (AppConstants.enableMockSubscriptions) {
         _isInitialized = true;
         await _loadSavedTier();
-  if (!kReleaseMode) debugPrint('📱 Subscription service initialized in MOCK MODE');
-  if (!kReleaseMode) debugPrint('🔧 Environment: ${AppConstants.currentEnvironment}');
+        if (!kReleaseMode)
+          debugPrint('📱 Subscription service initialized in MOCK MODE');
+        if (!kReleaseMode)
+          debugPrint('🔧 Environment: ${AppConstants.currentEnvironment}');
         return;
       }
 
       // Verify RevenueCat API key is set
       if (!AppConstants.isValidRevenueCatKey) {
-        throw Exception('RevenueCat API key not configured. Pass --dart-define REVENUECAT_API_KEY=XXXX');
+        throw Exception(
+          'RevenueCat API key not configured. Pass --dart-define REVENUECAT_API_KEY=XXXX',
+        );
       }
 
       // Configure RevenueCat for production
@@ -54,8 +60,11 @@ class SubscriptionService {
         configuration = PurchasesConfiguration(AppConstants.revenueCatApiKey);
       }
 
-  await Purchases.configure(configuration);
-  if (!kReleaseMode) debugPrint('SubscriptionService: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})');
+      await Purchases.configure(configuration);
+      if (!kReleaseMode)
+        debugPrint(
+          'SubscriptionService: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})',
+        );
 
       // Set up listener for purchase updates
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfoUpdate);
@@ -64,9 +73,11 @@ class SubscriptionService {
       await _refreshCustomerInfo();
 
       _isInitialized = true;
-  if (!kReleaseMode) debugPrint('SubscriptionService: Initialized successfully');
+      if (!kReleaseMode)
+        debugPrint('SubscriptionService: Initialized successfully');
     } catch (e) {
-  if (!kReleaseMode) debugPrint('SubscriptionService: Failed to initialize: $e');
+      if (!kReleaseMode)
+        debugPrint('SubscriptionService: Failed to initialize: $e');
       // Continue with free tier if initialization fails
       await _setCurrentTier(SubscriptionTier.free);
       _isInitialized = true;
@@ -86,7 +97,8 @@ class SubscriptionService {
       final tier = _getTierFromCustomerInfo(customerInfo);
       await _setCurrentTier(tier);
     } catch (e) {
-  if (!kReleaseMode) debugPrint('SubscriptionService: Failed to refresh customer info: $e');
+      if (!kReleaseMode)
+        debugPrint('SubscriptionService: Failed to refresh customer info: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -102,18 +114,25 @@ class SubscriptionService {
     try {
       final entitlementKeys = customerInfo.entitlements.active.keys;
       if (!kReleaseMode) {
-        debugPrint('SubscriptionService: Evaluating entitlements: $entitlementKeys');
-        debugPrint('SubscriptionService: Active store subscriptions: ${customerInfo.activeSubscriptions}');
+        debugPrint(
+          'SubscriptionService: Evaluating entitlements: $entitlementKeys',
+        );
+        debugPrint(
+          'SubscriptionService: Active store subscriptions: ${customerInfo.activeSubscriptions}',
+        );
       }
       // Prefer explicit entitlement key
-      if (entitlementKeys.contains(premiumEntitlementKey)) return SubscriptionTier.premium;
+      if (entitlementKeys.contains(premiumEntitlementKey))
+        return SubscriptionTier.premium;
       // Fallback heuristic: any entitlement containing premium
       for (final k in entitlementKeys) {
-        if (k.toLowerCase().contains('premium')) return SubscriptionTier.premium;
+        if (k.toLowerCase().contains('premium'))
+          return SubscriptionTier.premium;
       }
       // As last resort, if active subscriptions exist but no entitlements matched, stay free (avoid over-granting).
     } catch (e) {
-      if (!kReleaseMode) debugPrint('SubscriptionService: Entitlement evaluation error: $e');
+      if (!kReleaseMode)
+        debugPrint('SubscriptionService: Entitlement evaluation error: $e');
     }
     return SubscriptionTier.free;
   }
@@ -123,12 +142,13 @@ class SubscriptionService {
     if (_currentTier != tier) {
       _currentTier = tier;
       _tierController.add(tier);
-      
+
       // Persist to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.subscriptionTierKey, tier.toString());
-      
-  if (!kReleaseMode) debugPrint('SubscriptionService: Tier updated to ${tier.displayName}');
+
+      if (!kReleaseMode)
+        debugPrint('SubscriptionService: Tier updated to ${tier.displayName}');
     }
   }
 
@@ -136,11 +156,12 @@ class SubscriptionService {
   Future<void> _loadSavedTier() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final tierString = prefs.getString(AppConstants.subscriptionTierKey) ?? 'free';
+      final tierString =
+          prefs.getString(AppConstants.subscriptionTierKey) ?? 'free';
       final tier = SubscriptionTier.fromString(tierString);
       await _setCurrentTier(tier);
     } catch (e) {
-  debugPrint('SubscriptionService: Failed to load tier from storage: $e');
+      debugPrint('SubscriptionService: Failed to load tier from storage: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -155,26 +176,35 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-  debugPrint('📱 MOCK: Purchasing Premium ${isYearly ? 'yearly' : 'monthly'}');
-        await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+        debugPrint(
+          '📱 MOCK: Purchasing Premium ${isYearly ? 'yearly' : 'monthly'}',
+        );
+        await Future.delayed(
+          const Duration(seconds: 1),
+        ); // Simulate network delay
         await _setCurrentTier(SubscriptionTier.premium);
         return true;
       }
 
-      final productId = isYearly 
-          ? AppConstants.premiumYearlyProductId 
-          : AppConstants.premiumMonthlyProductId;
-      
+      final productId =
+          isYearly
+              ? AppConstants.premiumYearlyProductId
+              : AppConstants.premiumMonthlyProductId;
+
       final offerings = await Purchases.getOfferings();
       if (!kReleaseMode) {
         if (offerings.current == null) {
-          debugPrint('SubscriptionService: Offerings fetched but current is null. Keys: ${offerings.all.keys.toList()}');
+          debugPrint(
+            'SubscriptionService: Offerings fetched but current is null. Keys: ${offerings.all.keys.toList()}',
+          );
         } else {
-          debugPrint('SubscriptionService: Current offering: ${offerings.current!.identifier} packages: ${offerings.current!.availablePackages.length}');
+          debugPrint(
+            'SubscriptionService: Current offering: ${offerings.current!.identifier} packages: ${offerings.current!.availablePackages.length}',
+          );
         }
       }
       final offering = offerings.current;
-      
+
       if (offering == null) {
         throw Exception('No offerings available');
       }
@@ -201,9 +231,12 @@ class SubscriptionService {
         if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
           debugPrint('SubscriptionService: Purchase cancelled by user');
           return false;
-        } else if (errorCode == PurchasesErrorCode.productAlreadyPurchasedError) {
+        } else if (errorCode ==
+            PurchasesErrorCode.productAlreadyPurchasedError) {
           // Refresh customer info to ensure entitlements are applied
-          debugPrint('SubscriptionService: Product already purchased – refreshing customer info');
+          debugPrint(
+            'SubscriptionService: Product already purchased – refreshing customer info',
+          );
           await _refreshCustomerInfo();
           return _currentTier == SubscriptionTier.premium;
         }
@@ -220,8 +253,10 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-  debugPrint('📱 MOCK: Restoring purchases');
-        await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+        debugPrint('📱 MOCK: Restoring purchases');
+        await Future.delayed(
+          const Duration(seconds: 1),
+        ); // Simulate network delay
         // In mock mode, just reload from storage
         await _loadSavedTier();
         return _currentTier != SubscriptionTier.free;
@@ -232,7 +267,7 @@ class SubscriptionService {
       await _setCurrentTier(tier);
       return tier != SubscriptionTier.free;
     } catch (e) {
-  debugPrint('SubscriptionService: Restore failed: $e');
+      debugPrint('SubscriptionService: Restore failed: $e');
       rethrow;
     }
   }
@@ -242,14 +277,14 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-  debugPrint('📱 MOCK: Getting offerings');
+        debugPrint('📱 MOCK: Getting offerings');
         // Return null for mock mode since we don't need offerings for testing
         return null;
       }
 
       return await Purchases.getOfferings();
     } catch (e) {
-  debugPrint('SubscriptionService: Failed to get offerings: $e');
+      debugPrint('SubscriptionService: Failed to get offerings: $e');
       return null;
     }
   }
@@ -274,7 +309,7 @@ class SubscriptionService {
   /// Dispose resources
   void dispose() {
     _tierController.close();
-  // purchases_flutter currently lacks explicit listener removal API; if added, dispose here.
+    // purchases_flutter currently lacks explicit listener removal API; if added, dispose here.
   }
 
   // DEBUG / DEV UTILITIES -------------------------------------------------

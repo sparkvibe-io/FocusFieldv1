@@ -17,13 +17,22 @@ class SplashScreen extends HookWidget {
 
     final breathe = useAnimation(
       Tween<double>(begin: 0.92, end: 1.04).animate(
-        CurvedAnimation(parent: breatheController, curve: Curves.easeInOutCubic),
+        CurvedAnimation(
+          parent: breatheController,
+          curve: Curves.easeInOutCubic,
+        ),
       ),
     );
 
     // Fade for text / overall content
-    final fadeController = useAnimationController(duration: const Duration(milliseconds: 900))..forward();
-    final fade = useAnimation(Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: fadeController, curve: Curves.easeInOut)));
+    final fadeController = useAnimationController(
+      duration: const Duration(milliseconds: 900),
+    )..forward();
+    final fade = useAnimation(
+      Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(parent: fadeController, curve: Curves.easeInOut),
+      ),
+    );
 
     useEffect(() {
       Future.delayed(const Duration(milliseconds: 1800), () {
@@ -31,16 +40,17 @@ class SplashScreen extends HookWidget {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (_, a, __) => const AppInitializer(),
-              transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+              transitionsBuilder:
+                  (_, a, __, child) => FadeTransition(opacity: a, child: child),
               transitionDuration: const Duration(milliseconds: 600),
             ),
           );
         }
       });
       return () {
-  // Controllers from useAnimationController are disposed automatically by the hook.
-  // No manual dispose to prevent double-dispose assertion.
-  // Navigation future is harmless if it fires after unmount due to context.mounted guard.
+        // Controllers from useAnimationController are disposed automatically by the hook.
+        // No manual dispose to prevent double-dispose assertion.
+        // Navigation future is harmless if it fires after unmount due to context.mounted guard.
       };
     }, []);
 
@@ -83,12 +93,16 @@ class SplashScreen extends HookWidget {
                           ],
                         ),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.25,
+                          ),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.20),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.20,
+                            ),
                             blurRadius: 22,
                             spreadRadius: 1,
                             offset: const Offset(0, 8),
@@ -98,8 +112,11 @@ class SplashScreen extends HookWidget {
                       child: Icon(
                         Icons.volume_off_rounded,
                         size: 54,
-                        color: theme.colorScheme.primary.withValues(alpha: 0.95),
-                        semanticLabel: AppLocalizations.of(context)!.appIconSemantic,
+                        color: theme.colorScheme.primary.withValues(
+                          alpha: 0.95,
+                        ),
+                        semanticLabel:
+                            AppLocalizations.of(context)!.appIconSemantic,
                       ),
                     ),
                   ),
@@ -110,7 +127,9 @@ class SplashScreen extends HookWidget {
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.95),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.95,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -118,7 +137,9 @@ class SplashScreen extends HookWidget {
                     AppLocalizations.of(context)!.splashTagline,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w400,
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.75,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 48),

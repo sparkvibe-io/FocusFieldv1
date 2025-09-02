@@ -17,10 +17,13 @@ class PaywallLauncher {
   /// unlocked  -> user purchased/restored (unlock granted)
   /// dismissed -> paywall was shown but user closed it without purchase
   /// notShown  -> paywall not shown (mock mode, already unlocked, error)
-  static Future<PaywallAttemptResult> presentIfNeeded({String entitlementKey = SubscriptionService.premiumEntitlementKey}) async {
+  static Future<PaywallAttemptResult> presentIfNeeded({
+    String entitlementKey = SubscriptionService.premiumEntitlementKey,
+  }) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode) log('RC PaywallIfNeeded skipped: mock subscriptions enabled');
+        if (!kReleaseMode)
+          log('RC PaywallIfNeeded skipped: mock subscriptions enabled');
         return PaywallAttemptResult.notShown; // trigger fallback custom paywall
       }
       // Ensure Purchases configured
@@ -28,7 +31,8 @@ class PaywallLauncher {
       if (!service.isInitialized) {
         await service.initialize();
       }
-      if (service.isInitialized && service.currentTier != SubscriptionTier.free) {
+      if (service.isInitialized &&
+          service.currentTier != SubscriptionTier.free) {
         // Already unlocked, nothing to show
         return PaywallAttemptResult.notShown;
       }
@@ -37,7 +41,8 @@ class PaywallLauncher {
       if (_didUnlock(result)) return PaywallAttemptResult.unlocked;
       return PaywallAttemptResult.dismissed; // shown & closed without unlock
     } catch (e, st) {
-      if (!kReleaseMode) log('RC presentPaywallIfNeeded error: $e', stackTrace: st);
+      if (!kReleaseMode)
+        log('RC presentPaywallIfNeeded error: $e', stackTrace: st);
       return PaywallAttemptResult.notShown;
     }
   }
@@ -45,7 +50,8 @@ class PaywallLauncher {
   static Future<bool> present({Offering? offering}) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode) log('RC presentPaywall skipped: mock subscriptions enabled');
+        if (!kReleaseMode)
+          log('RC presentPaywall skipped: mock subscriptions enabled');
         return false;
       }
       final service = SubscriptionService.instance;
@@ -65,7 +71,8 @@ class PaywallLauncher {
   static Future<bool> presentOffering(String offeringId) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode) log('RC presentOffering skipped: mock subscriptions enabled');
+        if (!kReleaseMode)
+          log('RC presentOffering skipped: mock subscriptions enabled');
         return false;
       }
       final service = SubscriptionService.instance;
@@ -75,7 +82,10 @@ class PaywallLauncher {
       final offerings = await Purchases.getOfferings();
       final off = offerings.all[offeringId];
       if (off == null) {
-        if (!kReleaseMode) log('RC presentOffering: offering "$offeringId" not found. Falling back.');
+        if (!kReleaseMode)
+          log(
+            'RC presentOffering: offering "$offeringId" not found. Falling back.',
+          );
         return present();
       }
       return present(offering: off);
@@ -86,7 +96,8 @@ class PaywallLauncher {
   }
 
   static bool _didUnlock(PaywallResult result) {
-    return result == PaywallResult.purchased || result == PaywallResult.restored; // treat restored as unlocked
+    return result == PaywallResult.purchased ||
+        result == PaywallResult.restored; // treat restored as unlocked
   }
 
   /// Manual inline paywall widget (native) for embedding if needed.

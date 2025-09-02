@@ -28,21 +28,26 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
   @override
   void initState() {
     super.initState();
-    
+
     // Preserve existing handler and install scoped handler
     _previousOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      final matchesContext = details.toString().contains(widget.context) ||
+      final matchesContext =
+          details.toString().contains(widget.context) ||
           details.stack.toString().contains(widget.context);
       if (matchesContext) {
         if (mounted) {
-          setState(() { _hasError = true; });
+          setState(() {
+            _hasError = true;
+          });
         } else {
           _hasError = true;
         }
         widget.onError?.call(details);
         if (!kReleaseMode) {
-          DebugLog.d('DEBUG: ErrorBoundary caught error in ${widget.context}: ${details.exception}');
+          DebugLog.d(
+            'DEBUG: ErrorBoundary caught error in ${widget.context}: ${details.exception}',
+          );
         }
         return; // swallow handled error
       }
@@ -77,14 +82,14 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
       setState(() {
         _hasError = true;
       });
-      
+
       return widget.fallback ?? _buildDefaultErrorWidget(context);
     }
   }
 
   Widget _buildDefaultErrorWidget(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -98,11 +103,7 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.error_outline,
-            color: theme.colorScheme.error,
-            size: 32,
-          ),
+          Icon(Icons.error_outline, color: theme.colorScheme.error, size: 32),
           const SizedBox(height: 8),
           Text(
             'Error in ${widget.context}',
@@ -165,7 +166,9 @@ class SafeWidget extends StatelessWidget {
       onError: (details) {
         // Log the error for debugging
         if (!kReleaseMode) {
-          DebugLog.d('DEBUG: SafeWidget error in ${this.context}: ${details.exception}');
+          DebugLog.d(
+            'DEBUG: SafeWidget error in ${this.context}: ${details.exception}',
+          );
         }
       },
     );
@@ -175,10 +178,6 @@ class SafeWidget extends StatelessWidget {
 /// Extension to make any widget safe
 extension SafeWidgetExtension on Widget {
   Widget safe(String context, {Widget? fallback}) {
-    return SafeWidget(
-      context: context,
-      fallback: fallback,
-      child: this,
-    );
+    return SafeWidget(context: context, fallback: fallback, child: this);
   }
 }

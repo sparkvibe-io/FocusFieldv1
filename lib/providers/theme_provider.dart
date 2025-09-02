@@ -52,9 +52,9 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.forestGreen:
       case AppThemeMode.purpleNight:
       case AppThemeMode.goldLuxury:
-  case AppThemeMode.solarSunrise:
-  case AppThemeMode.midnightTeal:
-  case AppThemeMode.cyberNeon:
+      case AppThemeMode.solarSunrise:
+      case AppThemeMode.midnightTeal:
+      case AppThemeMode.cyberNeon:
         return true;
     }
   }
@@ -67,12 +67,12 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.oceanBlue:
       case AppThemeMode.forestGreen:
       case AppThemeMode.goldLuxury:
-  case AppThemeMode.solarSunrise:
+      case AppThemeMode.solarSunrise:
         return ThemeMode.light;
       case AppThemeMode.dark:
       case AppThemeMode.purpleNight:
-  case AppThemeMode.midnightTeal:
-  case AppThemeMode.cyberNeon:
+      case AppThemeMode.midnightTeal:
+      case AppThemeMode.cyberNeon:
         return ThemeMode.dark;
     }
   }
@@ -158,7 +158,7 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, AppThemeMode>((ref) {
 
 class ThemeNotifier extends StateNotifier<AppThemeMode> {
   static const String _themeKey = 'app_theme_mode';
-  
+
   ThemeNotifier() : super(AppThemeMode.system) {
     _loadTheme();
   }
@@ -196,18 +196,18 @@ class ThemeNotifier extends StateNotifier<AppThemeMode> {
 
   void cycleTheme({bool hasPremiumAccess = false}) {
     // Define available themes based on premium access
-    final availableThemes = hasPremiumAccess 
-        ? AppThemeMode.values 
-        : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
-    
+    final availableThemes =
+        hasPremiumAccess
+            ? AppThemeMode.values
+            : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
+
     final currentIndex = availableThemes.indexOf(state);
-    final nextIndex = currentIndex >= 0 
-        ? (currentIndex + 1) % availableThemes.length
-        : 0;
-    
+    final nextIndex =
+        currentIndex >= 0 ? (currentIndex + 1) % availableThemes.length : 0;
+
     setTheme(availableThemes[nextIndex]);
   }
-  
+
   // Method to reset to free theme if user loses premium access
   void resetToFreeThemeIfNeeded({required bool hasPremiumAccess}) {
     if (!hasPremiumAccess && state.isPremium) {

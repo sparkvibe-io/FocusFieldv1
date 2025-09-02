@@ -17,7 +17,7 @@ class CompactPointsDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -40,7 +40,7 @@ class CompactPointsDisplay extends StatelessWidget {
               theme.colorScheme.primary,
             ),
           ),
-          
+
           // Divider
           Container(
             width: 1,
@@ -48,7 +48,7 @@ class CompactPointsDisplay extends StatelessWidget {
             color: theme.colorScheme.outline.withValues(alpha: 0.2),
             margin: const EdgeInsets.symmetric(horizontal: 12),
           ),
-          
+
           // Current Streak
           Expanded(
             child: _buildCompactStat(
@@ -59,7 +59,7 @@ class CompactPointsDisplay extends StatelessWidget {
               theme.colorScheme.secondary,
             ),
           ),
-          
+
           // Best Streak
           Expanded(
             child: _buildCompactStat(
@@ -70,7 +70,7 @@ class CompactPointsDisplay extends StatelessWidget {
               theme.colorScheme.tertiary,
             ),
           ),
-          
+
           // Total Sessions
           Expanded(
             child: _buildCompactStat(
@@ -94,7 +94,7 @@ class CompactPointsDisplay extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -102,11 +102,7 @@ class CompactPointsDisplay extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: color,
-            ),
+            Icon(icon, size: 24, color: color),
             const SizedBox(width: 8),
             Text(
               value,
@@ -137,15 +133,11 @@ class CompactPointsDisplay extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: color,
-        ),
+        Icon(icon, size: 16, color: color),
         const SizedBox(height: 4),
         Text(
           value,

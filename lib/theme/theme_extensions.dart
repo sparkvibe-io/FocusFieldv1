@@ -22,13 +22,17 @@ class DramaticThemeStyling extends ThemeExtension<DramaticThemeStyling> {
     LinearGradient? cardBackgroundGradient,
     List<Color>? statAccentColors,
   }) => DramaticThemeStyling(
-        appBackgroundGradient: appBackgroundGradient ?? this.appBackgroundGradient,
-        cardBackgroundGradient: cardBackgroundGradient ?? this.cardBackgroundGradient,
-        statAccentColors: statAccentColors ?? this.statAccentColors,
-      );
+    appBackgroundGradient: appBackgroundGradient ?? this.appBackgroundGradient,
+    cardBackgroundGradient:
+        cardBackgroundGradient ?? this.cardBackgroundGradient,
+    statAccentColors: statAccentColors ?? this.statAccentColors,
+  );
 
   @override
-  DramaticThemeStyling lerp(ThemeExtension<DramaticThemeStyling>? other, double t) {
+  DramaticThemeStyling lerp(
+    ThemeExtension<DramaticThemeStyling>? other,
+    double t,
+  ) {
     if (other is! DramaticThemeStyling) return this;
     // We don't attempt to lerp gradients precisely; just switch mid‑way.
     return t < 0.5 ? this : other;

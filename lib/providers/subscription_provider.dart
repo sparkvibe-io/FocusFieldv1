@@ -41,7 +41,6 @@ final premiumAccessProvider = Provider<bool>((ref) {
   );
 });
 
-
 // Session limits provider
 final maxSessionMinutesProvider = Provider<int>((ref) {
   final tier = ref.watch(subscriptionTierStateProvider);
@@ -68,7 +67,8 @@ final featureAccessProvider = Provider.family<bool, String>((ref, featureId) {
 
 // Subscription actions notifier
 class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
-  SubscriptionActionsNotifier(this._subscriptionService) : super(const AsyncValue.data(null));
+  SubscriptionActionsNotifier(this._subscriptionService)
+    : super(const AsyncValue.data(null));
 
   final SubscriptionService _subscriptionService;
 
@@ -85,17 +85,18 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> purchasePremium({bool isYearly = false}) async {
     state = const AsyncValue.loading();
     try {
-      final success = await _subscriptionService.purchasePremium(isYearly: isYearly);
+      final success = await _subscriptionService.purchasePremium(
+        isYearly: isYearly,
+      );
       if (success) {
         state = const AsyncValue.data(null);
       } else {
-  state = AsyncValue.error('Purchase cancelled', StackTrace.current);
+        state = AsyncValue.error('Purchase cancelled', StackTrace.current);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
-
 
   Future<void> restorePurchases() async {
     state = const AsyncValue.loading();
@@ -104,7 +105,10 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
       if (success) {
         state = const AsyncValue.data(null);
       } else {
-        state = AsyncValue.error('No purchases found to restore', StackTrace.current);
+        state = AsyncValue.error(
+          'No purchases found to restore',
+          StackTrace.current,
+        );
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -113,10 +117,11 @@ class SubscriptionActionsNotifier extends StateNotifier<AsyncValue<void>> {
 }
 
 // Subscription actions provider
-final subscriptionActionsProvider = StateNotifierProvider<SubscriptionActionsNotifier, AsyncValue<void>>((ref) {
-  final subscriptionService = ref.watch(subscriptionServiceProvider);
-  return SubscriptionActionsNotifier(subscriptionService);
-});
+final subscriptionActionsProvider =
+    StateNotifierProvider<SubscriptionActionsNotifier, AsyncValue<void>>((ref) {
+      final subscriptionService = ref.watch(subscriptionServiceProvider);
+      return SubscriptionActionsNotifier(subscriptionService);
+    });
 
 // Startup initialization provider (watched once in main to trigger service init without UI waiting)
 final startupSubscriptionInitProvider = FutureProvider<void>((ref) async {
@@ -131,16 +136,16 @@ final startupSubscriptionInitProvider = FutureProvider<void>((ref) async {
 });
 
 // Hosted paywall provider (null if unavailable)
-final hostedPaywallProvider = FutureProvider<Map<String, dynamic>?>(
-  (ref) async {
-    final service = ref.read(subscriptionServiceProvider);
-    if (!service.isInitialized) {
-      try {
-        await service.initialize();
-      } catch (_) {
-        return null; // fallback silently
-      }
+final hostedPaywallProvider = FutureProvider<Map<String, dynamic>?>((
+  ref,
+) async {
+  final service = ref.read(subscriptionServiceProvider);
+  if (!service.isInitialized) {
+    try {
+      await service.initialize();
+    } catch (_) {
+      return null; // fallback silently
     }
-    return HostedPaywallService.instance.getHostedPaywall();
-  },
-);
+  }
+  return HostedPaywallService.instance.getHostedPaywall();
+});

@@ -45,7 +45,8 @@ class SilenceData {
       'lastPlayDate': lastPlayDate?.millisecondsSinceEpoch,
       'totalSessions': totalSessions,
       'averageScore': averageScore,
-      'recentSessions': recentSessions.map((session) => session.toJson()).toList(),
+      'recentSessions':
+          recentSessions.map((session) => session.toJson()).toList(),
     };
   }
 
@@ -54,14 +55,20 @@ class SilenceData {
       totalPoints: json['totalPoints'] ?? 0,
       currentStreak: json['currentStreak'] ?? 0,
       bestStreak: json['bestStreak'] ?? 0,
-      lastPlayDate: json['lastPlayDate'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(json['lastPlayDate'])
-          : null,
+      lastPlayDate:
+          json['lastPlayDate'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['lastPlayDate'])
+              : null,
       totalSessions: json['totalSessions'] ?? 0,
       averageScore: (json['averageScore'] ?? 0.0).toDouble(),
-      recentSessions: (json['recentSessions'] as List<dynamic>?)
-          ?.map((sessionJson) => SessionRecord.fromJson(sessionJson as Map<String, dynamic>))
-          .toList() ?? [],
+      recentSessions:
+          (json['recentSessions'] as List<dynamic>?)
+              ?.map(
+                (sessionJson) =>
+                    SessionRecord.fromJson(sessionJson as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
     );
   }
 }
@@ -100,4 +107,4 @@ class SessionRecord {
       completed: json['completed'] ?? false,
     );
   }
-} 
+}

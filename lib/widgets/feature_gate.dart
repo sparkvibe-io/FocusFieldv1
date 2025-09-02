@@ -24,9 +24,9 @@ class FeatureGate extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  // Watching premiumAccessProvider ensures rebuild when tier changes
-  final _ = ref.watch(premiumAccessProvider);
-  final hasAccess = ref.watch(featureAccessProvider(featureId));
+    // Watching premiumAccessProvider ensures rebuild when tier changes
+    final _ = ref.watch(premiumAccessProvider);
+    final hasAccess = ref.watch(featureAccessProvider(featureId));
 
     if (hasAccess) {
       return child;
@@ -44,7 +44,7 @@ class FeatureGate extends ConsumerWidget {
   }
 
   Widget _buildPaywallPrompt(BuildContext context, WidgetRef ref) {
-  String message = 'Premium Feature';
+    String message = 'Premium Feature';
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -61,7 +61,9 @@ class FeatureGate extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Icon(
@@ -123,7 +125,7 @@ class FeatureGate extends ConsumerWidget {
   String _getFeatureDescription(String featureId) {
     switch (featureId) {
       case 'extended_sessions':
-  return 'Sessions up to 120 minutes';
+        return 'Sessions up to 120 minutes';
       case 'advanced_analytics':
         return 'Detailed trends and insights';
       case 'cloud_sync':
@@ -159,16 +161,17 @@ class FeatureGate extends ConsumerWidget {
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-              builder: (context) => Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: PaywallWidget(
-                  requiredTier: requiredTier,
-                  featureDescription: _getFeatureDescription(featureId),
-                  onDismiss: () => Navigator.of(context).pop(),
-                ),
-              ),
+              builder:
+                  (context) => Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: PaywallWidget(
+                      requiredTier: requiredTier,
+                      featureDescription: _getFeatureDescription(featureId),
+                      onDismiss: () => Navigator.of(context).pop(),
+                    ),
+                  ),
             );
           }
           return;
@@ -195,16 +198,17 @@ void showPaywall(
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (context) => Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: PaywallWidget(
-                requiredTier: requiredTier,
-                featureDescription: featureDescription,
-                onDismiss: () => Navigator.of(context).pop(),
-              ),
-            ),
+            builder:
+                (context) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: PaywallWidget(
+                    requiredTier: requiredTier,
+                    featureDescription: featureDescription,
+                    onDismiss: () => Navigator.of(context).pop(),
+                  ),
+                ),
           );
         }
         return;
@@ -221,7 +225,7 @@ bool checkFeatureAccessOrShowPaywall(
   String? featureDescription,
 }) {
   final hasAccess = ref.read(featureAccessProvider(featureId));
-  
+
   if (!hasAccess) {
     showPaywall(
       context,
@@ -230,6 +234,6 @@ bool checkFeatureAccessOrShowPaywall(
     );
     return false;
   }
-  
+
   return true;
 }

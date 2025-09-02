@@ -13,11 +13,11 @@ import 'package:silence_score/providers/subscription_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Optimize for performance
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   // RevenueCat configuration deferred to SubscriptionService.initialize()
-  
+
   runApp(const ProviderScope(child: SilenceScoreApp()));
 }
 
@@ -28,17 +28,28 @@ class SilenceScoreApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeProvider);
     final enableHighContrast = ref.watch(enableHighContrastProvider);
-  final textScaleFactor = ref.watch(textScaleFactorProvider);
-  // Kick off subscription initialization (non-blocking)
-  ref.watch(startupSubscriptionInitProvider);
-    
+    final textScaleFactor = ref.watch(textScaleFactorProvider);
+    // Kick off subscription initialization (non-blocking)
+    ref.watch(startupSubscriptionInitProvider);
+
     return MaterialApp(
-  onGenerateTitle: (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Silence Score',
+      onGenerateTitle:
+          (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Silence Score',
       navigatorKey: NavigationService.navigatorKey,
-      theme: AppTheme.getThemeForMode(currentTheme, enableHighContrast: enableHighContrast),
-      darkTheme: currentTheme == AppThemeMode.purpleNight 
-          ? AppTheme.getThemeForMode(AppThemeMode.purpleNight, enableHighContrast: enableHighContrast)
-          : AppTheme.getThemeForMode(AppThemeMode.dark, enableHighContrast: enableHighContrast),
+      theme: AppTheme.getThemeForMode(
+        currentTheme,
+        enableHighContrast: enableHighContrast,
+      ),
+      darkTheme:
+          currentTheme == AppThemeMode.purpleNight
+              ? AppTheme.getThemeForMode(
+                AppThemeMode.purpleNight,
+                enableHighContrast: enableHighContrast,
+              )
+              : AppTheme.getThemeForMode(
+                AppThemeMode.dark,
+                enableHighContrast: enableHighContrast,
+              ),
       themeMode: currentTheme.themeMode,
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -51,18 +62,20 @@ class SilenceScoreApp extends ConsumerWidget {
         Locale('es'),
         Locale('fr'),
         Locale('de'),
-        Locale('pt','BR'),
+        Locale('pt', 'BR'),
         Locale('ja'),
       ],
-  // Start with splash screen which transitions to AppInitializer
-  home: const SplashScreen(),
+      // Start with splash screen which transitions to AppInitializer
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScaleFactor)),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScaleFactor)),
           child: child!,
         );
       },
     );
   }
-} 
+}

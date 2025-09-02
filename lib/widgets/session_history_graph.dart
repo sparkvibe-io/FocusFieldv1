@@ -14,7 +14,7 @@ class SessionHistoryGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       height: 100,
       padding: const EdgeInsets.all(12),
@@ -30,11 +30,7 @@ class SessionHistoryGraph extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.analytics,
-                size: 18,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.analytics, size: 18, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 'Session History',
@@ -54,9 +50,10 @@ class SessionHistoryGraph extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: sessions.isEmpty
-                ? _buildEmptyState(context)
-                : _buildSessionGraph(context),
+            child:
+                sessions.isEmpty
+                    ? _buildEmptyState(context)
+                    : _buildSessionGraph(context),
           ),
         ],
       ),
@@ -65,7 +62,7 @@ class SessionHistoryGraph extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -91,13 +88,16 @@ class SessionHistoryGraph extends StatelessWidget {
 
   Widget _buildSessionGraph(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Take last 7 sessions for the graph
     final recentSessions = sessions.take(7).toList().reversed.toList();
-    final maxPoints = recentSessions.isNotEmpty 
-        ? recentSessions.map((s) => s.pointsEarned).reduce((a, b) => a > b ? a : b)
-        : 10;
-    
+    final maxPoints =
+        recentSessions.isNotEmpty
+            ? recentSessions
+                .map((s) => s.pointsEarned)
+                .reduce((a, b) => a > b ? a : b)
+            : 10;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -112,19 +112,25 @@ class SessionHistoryGraph extends StatelessWidget {
     );
   }
 
-  Widget _buildBar(BuildContext context, SessionRecord? session, int maxPoints) {
+  Widget _buildBar(
+    BuildContext context,
+    SessionRecord? session,
+    int maxPoints,
+  ) {
     final theme = Theme.of(context);
     final hasSession = session != null;
-    final height = hasSession 
-        ? (session.pointsEarned / maxPoints * 35).clamp(3.0, 35.0)
-        : 3.0;
-    
-    final color = hasSession
-        ? (session.completed 
-            ? theme.colorScheme.primary
-            : theme.colorScheme.error)
-        : theme.colorScheme.outline.withValues(alpha: 0.3);
-    
+    final height =
+        hasSession
+            ? (session.pointsEarned / maxPoints * 35).clamp(3.0, 35.0)
+            : 3.0;
+
+    final color =
+        hasSession
+            ? (session.completed
+                ? theme.colorScheme.primary
+                : theme.colorScheme.error)
+            : theme.colorScheme.outline.withValues(alpha: 0.3);
+
     return Container(
       width: 6,
       height: height,

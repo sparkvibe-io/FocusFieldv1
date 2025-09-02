@@ -16,9 +16,15 @@ class DebugLog {
     debugPrint(message);
   }
 
-  static void error(String message, Object err, StackTrace st, {bool force = false}) {
+  static void error(
+    String message,
+    Object err,
+    StackTrace st, {
+    bool force = false,
+  }) {
     if (!enabled && !force) return;
-    if (kReleaseMode && !force) return; // Only forced errors in release (currently none)
+    if (kReleaseMode && !force)
+      return; // Only forced errors in release (currently none)
     debugPrint('[ERROR] $message: $err');
     debugPrint(st.toString());
   }
@@ -27,7 +33,10 @@ class DebugLog {
   static void enableTemporarilyForDiagnostics() {
     if (kReleaseMode) {
       enabled = true;
-      d('[DebugLog] Temporarily enabled diagnostics in release build', force: true);
+      d(
+        '[DebugLog] Temporarily enabled diagnostics in release build',
+        force: true,
+      );
     }
   }
 }

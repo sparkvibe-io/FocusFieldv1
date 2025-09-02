@@ -10,7 +10,8 @@ class RealTimeNoiseController {
   final Duration aggregationInterval;
   final bool enabled;
 
-  final StreamController<double> _controller = StreamController<double>.broadcast();
+  final StreamController<double> _controller =
+      StreamController<double>.broadcast();
   late final StreamSubscription<double> _subscription;
   Timer? _timer;
   bool _disposed = false;
@@ -34,14 +35,17 @@ class RealTimeNoiseController {
       return;
     }
 
-    _subscription = _detector.realtimeStream.listen((d) {
-      if (_disposed) return;
-      if (!_isValid(d)) return;
-      _buffer.add(d);
-    }, onError: (e) {
-      sensorLogger.log('DEBUG: NoiseController stream error: $e');
-      DebugLog.d('DEBUG: NoiseController stream error: $e');
-    });
+    _subscription = _detector.realtimeStream.listen(
+      (d) {
+        if (_disposed) return;
+        if (!_isValid(d)) return;
+        _buffer.add(d);
+      },
+      onError: (e) {
+        sensorLogger.log('DEBUG: NoiseController stream error: $e');
+        DebugLog.d('DEBUG: NoiseController stream error: $e');
+      },
+    );
 
     _timer = Timer.periodic(aggregationInterval, (_) => _flush());
   }

@@ -5,7 +5,9 @@ class PermissionConstants {
   static const permissionRequestTimeoutSec = 10;
 
   static const microphoneDialogTitle = 'Microphone Permission';
-  static const microphoneDialogBody = 'Silence Score measures ambient sound levels to help you maintain quiet environments.\n\nThe app needs microphone access to detect silence, but does not record any audio.';
+  static const microphoneDialogBody =
+      'Silence Score measures ambient sound levels to help you maintain quiet environments.\n\nThe app needs microphone access to detect silence, but does not record any audio.';
   static const microphoneSettingsDialogTitle = 'Settings Required';
-  static const microphoneSettingsDialogBody = 'To enable silence detection, manually grant microphone permission:\n\n• iOS: Settings > Privacy & Security > Microphone > Silence Score\n• Android: Settings > Apps > Silence Score > Permissions > Microphone';
+  static const microphoneSettingsDialogBody =
+      'To enable silence detection, manually grant microphone permission:\n\n• iOS: Settings > Privacy & Security > Microphone > Silence Score\n• Android: Settings > Apps > Silence Score > Permissions > Microphone';
 }

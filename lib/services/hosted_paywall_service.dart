@@ -16,14 +16,22 @@ class HostedPaywallService {
 
   Map<String, dynamic>? _cachedPaywall; // In-memory parsed JSON
 
-  Future<Map<String, dynamic>?> getHostedPaywall({bool forceRefresh = false}) async {
+  Future<Map<String, dynamic>?> getHostedPaywall({
+    bool forceRefresh = false,
+  }) async {
     if (AppConstants.enableMockSubscriptions) {
       // Helpful diagnostic so devs know why hosted paywall is absent.
-  if (!kReleaseMode) debugPrint('HostedPaywallService: returning null (mock subscriptions enabled)');
+      if (!kReleaseMode)
+        debugPrint(
+          'HostedPaywallService: returning null (mock subscriptions enabled)',
+        );
       return null; // skip in mock mode
     }
     if (!AppConstants.isValidRevenueCatKey) {
-  if (!kReleaseMode) debugPrint('HostedPaywallService: returning null (RevenueCat API key not set)');
+      if (!kReleaseMode)
+        debugPrint(
+          'HostedPaywallService: returning null (RevenueCat API key not set)',
+        );
       return null; // API key missing
     }
 
@@ -33,7 +41,10 @@ class HostedPaywallService {
     if (!forceRefresh) {
       final ts = prefs.getInt(_cacheTimestampKey);
       if (ts != null) {
-        final ageMinutes = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(ts)).inMinutes;
+        final ageMinutes =
+            DateTime.now()
+                .difference(DateTime.fromMillisecondsSinceEpoch(ts))
+                .inMinutes;
         if (ageMinutes < AppConstants.hostedPaywallCacheMinutes) {
           final cachedJson = prefs.getString(_cacheKey);
           if (cachedJson != null) {
@@ -52,28 +63,45 @@ class HostedPaywallService {
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
       if (current == null) {
-  if (!kReleaseMode) debugPrint('HostedPaywallService: current offering is null. Offerings all keys: ${offerings.all.keys.toList()}');
+        if (!kReleaseMode)
+          debugPrint(
+            'HostedPaywallService: current offering is null. Offerings all keys: ${offerings.all.keys.toList()}',
+          );
         return null;
       }
 
       // Attempt to read attached paywall data if exposed via package metadata (future-proofing)
       final Map<String, dynamic> paywallMap = {
         'identifier': AppConstants.hostedPaywallIdentifier,
-        'packages': current.availablePackages.map((p) => {
-          'identifier': p.identifier,
-          'productIdentifier': p.storeProduct.identifier,
-          'price': p.storeProduct.price,
-          'priceString': p.storeProduct.priceString,
-          'currencyCode': p.storeProduct.currencyCode,
-        }).toList(),
+        'packages':
+            current.availablePackages
+                .map(
+                  (p) => {
+                    'identifier': p.identifier,
+                    'productIdentifier': p.storeProduct.identifier,
+                    'price': p.storeProduct.price,
+                    'priceString': p.storeProduct.priceString,
+                    'currencyCode': p.storeProduct.currencyCode,
+                  },
+                )
+                .toList(),
       };
-  if (!kReleaseMode) debugPrint('HostedPaywallService: constructed pseudo-hosted paywall with ${current.availablePackages.length} packages');
+      if (!kReleaseMode)
+        debugPrint(
+          'HostedPaywallService: constructed pseudo-hosted paywall with ${current.availablePackages.length} packages',
+        );
       _cachedPaywall = paywallMap;
       await prefs.setString(_cacheKey, json.encode(_cachedPaywall));
-      await prefs.setInt(_cacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
+      await prefs.setInt(
+        _cacheTimestampKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
       return _cachedPaywall;
     } catch (e) {
-  if (!kReleaseMode) debugPrint('HostedPaywallService: failed to fetch offerings/paywall: $e');
+      if (!kReleaseMode)
+        debugPrint(
+          'HostedPaywallService: failed to fetch offerings/paywall: $e',
+        );
       return null; // graceful fallback
     }
   }

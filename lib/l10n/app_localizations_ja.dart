@@ -158,7 +158,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get microphonePermissionTitle => 'マイク権限';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。';
+  String get microphonePermissionMessage =>
+      'Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。';
 
   @override
   String get permissionDeniedMessage => '測定にはマイク権限が必要です。設定で有効にしてください。';
@@ -676,7 +677,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get achievementHalfCenturyDesc => '50 points milestone';
 
   @override
-  String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
+  String get achievementLockedPrompt =>
+      'Complete sessions to unlock achievements';
 
   @override
   String get ratingPromptTitle => 'Silence Score を気に入っていますか?';

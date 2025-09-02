@@ -26,13 +26,19 @@ class NotificationPermissionHandler {
         final status = await Permission.notification.status;
         _hasPermission = status.isGranted;
       } else {
-        final granted = await _plugin
-            .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions();
+        final granted =
+            await _plugin
+                .resolvePlatformSpecificImplementation<
+                  IOSFlutterLocalNotificationsPlugin
+                >()
+                ?.checkPermissions();
         _hasPermission = granted?.isEnabled ?? false;
       }
     } catch (e) {
-      if (!kReleaseMode) debugPrint('NotificationPermissionHandler: error checking permission: $e');
+      if (!kReleaseMode)
+        debugPrint(
+          'NotificationPermissionHandler: error checking permission: $e',
+        );
       _hasPermission = false;
     }
   }
@@ -43,20 +49,28 @@ class NotificationPermissionHandler {
         final status = await Permission.notification.request();
         _hasPermission = status.isGranted;
         if (status.isGranted) {
-          final granted = await _plugin
-              .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-              ?.requestNotificationsPermission();
+          final granted =
+              await _plugin
+                  .resolvePlatformSpecificImplementation<
+                    AndroidFlutterLocalNotificationsPlugin
+                  >()
+                  ?.requestNotificationsPermission();
           _hasPermission = granted ?? false;
         }
       } else {
         final granted = await _plugin
-            .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()
             ?.requestPermissions(alert: true, badge: true, sound: true);
         _hasPermission = granted ?? false;
       }
       return _hasPermission;
     } catch (e) {
-      if (!kReleaseMode) debugPrint('NotificationPermissionHandler: error requesting permission: $e');
+      if (!kReleaseMode)
+        debugPrint(
+          'NotificationPermissionHandler: error requesting permission: $e',
+        );
       return false;
     }
   }

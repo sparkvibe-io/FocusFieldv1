@@ -31,7 +31,7 @@ class SupportService {
 
   static const String supportEmail = 'silencescore@sparkvibe.io';
   static const String premiumSupportEmail = 'silencescore@sparkvibe.io';
-  
+
   // Web URLs
   static const String faqUrl = 'https://sparkvibe.io';
   static const String documentationUrl = 'https://sparkvibe.io';
@@ -40,8 +40,8 @@ class SupportService {
   Future<Map<String, dynamic>> getDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
     final DateTime now = DateTime.now();
-    
-  String version = '0.0.0'; // fallback if PackageInfo fails
+
+    String version = '0.0.0'; // fallback if PackageInfo fails
     String buildNumber = '';
     String packageName = '';
     try {
@@ -89,7 +89,7 @@ class SupportService {
         };
       }
     } catch (e) {
-  if (!kReleaseMode) debugPrint('Error getting device info: $e');
+      if (!kReleaseMode) debugPrint('Error getting device info: $e');
     }
 
     return appInfo;
@@ -98,81 +98,93 @@ class SupportService {
   /// Open email client with pre-filled support information
   Future<void> openEmailSupport(SupportTicket ticket) async {
     const String email = supportEmail;
-    
-  final String priority = ticket.priority == SupportPriority.premium 
-            ? '[PREMIUM]' 
-            : '[STANDARD]';
-    
+
+    final String priority =
+        ticket.priority == SupportPriority.premium ? '[PREMIUM]' : '[STANDARD]';
+
     final String subject = Uri.encodeComponent('$priority ${ticket.subject}');
     final String body = Uri.encodeComponent(_buildEmailBody(ticket));
-    
+
     // Try approach 1: Full email with subject and body
-    final Uri fullEmailUri = Uri.parse('mailto:$email?subject=$subject&body=$body');
-  if (!kReleaseMode) debugPrint('Trying full email: subject="${ticket.subject}", body length=${body.length}');
-    
+    final Uri fullEmailUri = Uri.parse(
+      'mailto:$email?subject=$subject&body=$body',
+    );
+    if (!kReleaseMode)
+      debugPrint(
+        'Trying full email: subject="${ticket.subject}", body length=${body.length}',
+      );
+
     try {
       await launchUrl(fullEmailUri, mode: LaunchMode.externalApplication);
-  if (!kReleaseMode) debugPrint('Full email launch successful');
+      if (!kReleaseMode) debugPrint('Full email launch successful');
       return;
     } catch (e) {
-  if (!kReleaseMode) debugPrint('Full email failed: $e');
+      if (!kReleaseMode) debugPrint('Full email failed: $e');
     }
-    
+
     // Try approach 2: Just subject, no body
     final Uri subjectOnlyUri = Uri.parse('mailto:$email?subject=$subject');
-  if (!kReleaseMode) debugPrint('Trying subject only');
-    
+    if (!kReleaseMode) debugPrint('Trying subject only');
+
     try {
       await launchUrl(subjectOnlyUri, mode: LaunchMode.externalApplication);
-  if (!kReleaseMode) debugPrint('Subject-only email launch successful');
+      if (!kReleaseMode) debugPrint('Subject-only email launch successful');
       return;
     } catch (e) {
-  if (!kReleaseMode) debugPrint('Subject-only failed: $e');
+      if (!kReleaseMode) debugPrint('Subject-only failed: $e');
     }
-    
+
     // Try approach 3: Basic mailto
     final Uri basicEmailUri = Uri.parse('mailto:$email');
-  if (!kReleaseMode) debugPrint('Trying basic mailto');
-    
+    if (!kReleaseMode) debugPrint('Trying basic mailto');
+
     try {
       await launchUrl(basicEmailUri, mode: LaunchMode.externalApplication);
-  if (!kReleaseMode) debugPrint('Basic email launch successful');
+      if (!kReleaseMode) debugPrint('Basic email launch successful');
       return;
     } catch (e) {
-  if (!kReleaseMode) debugPrint('Basic launch failed: $e');
+      if (!kReleaseMode) debugPrint('Basic launch failed: $e');
     }
-    
+
     // If all fail, throw an exception
-    throw Exception('No email client available. Please install Gmail, Outlook, or another email app.');
+    throw Exception(
+      'No email client available. Please install Gmail, Outlook, or another email app.',
+    );
   }
 
   /// Build email body with essential information
   String _buildEmailBody(SupportTicket ticket) {
     final deviceInfo = ticket.deviceInfo;
     final buffer = StringBuffer();
-    
+
     // User's issue description
     buffer.writeln('ISSUE DESCRIPTION:');
     buffer.writeln(ticket.description);
     buffer.writeln();
-    
+
     // Essential system information
     buffer.writeln('SYSTEM INFO:');
     buffer.writeln('User: ${ticket.userTier}');
-    buffer.writeln('App: ${deviceInfo['app_version']} (${deviceInfo['app_environment']})');
+    buffer.writeln(
+      'App: ${deviceInfo['app_version']} (${deviceInfo['app_environment']})',
+    );
     buffer.writeln('Platform: ${deviceInfo['platform']}');
-    
+
     if (deviceInfo['platform'] == 'Android') {
-      buffer.writeln('Device: ${deviceInfo['device_brand']} ${deviceInfo['device_model']}');
-      buffer.writeln('Android: ${deviceInfo['android_version']} API${deviceInfo['sdk_version']}');
+      buffer.writeln(
+        'Device: ${deviceInfo['device_brand']} ${deviceInfo['device_model']}',
+      );
+      buffer.writeln(
+        'Android: ${deviceInfo['android_version']} API${deviceInfo['sdk_version']}',
+      );
     } else if (deviceInfo['platform'] == 'iOS') {
       buffer.writeln('Device: ${deviceInfo['device_model']}');
       buffer.writeln('iOS: ${deviceInfo['ios_version']}');
     }
-    
+
     buffer.writeln('Locale: ${deviceInfo['locale']}');
     buffer.writeln('Time: ${deviceInfo['timestamp']}');
-    
+
     return buffer.toString();
   }
 
@@ -188,19 +200,19 @@ class SupportService {
         return SupportPriority.standard;
       case SubscriptionTier.premium:
         return SupportPriority.premium;
-  // No higher tier yet
+      // No higher tier yet
     }
   }
 
   /// Launch FAQ website
   Future<void> openFAQ() async {
     final Uri faqUri = Uri.parse(faqUrl);
-  debugPrint('Launching FAQ: $faqUri');
+    debugPrint('Launching FAQ: $faqUri');
     try {
       await launchUrl(faqUri, mode: LaunchMode.externalApplication);
-  debugPrint('FAQ launched successfully');
+      debugPrint('FAQ launched successfully');
     } catch (e) {
-  debugPrint('FAQ launch failed: $e');
+      debugPrint('FAQ launch failed: $e');
       throw Exception('Could not open browser. Please visit $faqUrl manually.');
     }
   }
@@ -208,13 +220,15 @@ class SupportService {
   /// Launch documentation website
   Future<void> openDocumentation() async {
     final Uri docUri = Uri.parse(documentationUrl);
-  debugPrint('Launching Documentation: $docUri');
+    debugPrint('Launching Documentation: $docUri');
     try {
       await launchUrl(docUri, mode: LaunchMode.externalApplication);
-  debugPrint('Documentation launched successfully');
+      debugPrint('Documentation launched successfully');
     } catch (e) {
-  debugPrint('Documentation launch failed: $e');
-      throw Exception('Could not open browser. Please visit $documentationUrl manually.');
+      debugPrint('Documentation launch failed: $e');
+      throw Exception(
+        'Could not open browser. Please visit $documentationUrl manually.',
+      );
     }
   }
-} 
+}

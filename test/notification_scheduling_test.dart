@@ -36,10 +36,10 @@ void main() {
     });
 
     test('shouldSendDailyReminder false if outside ±30min window', () async {
-  // current now = 10:00; pattern 09:30 -> within 30 min => true under logic
-  var should = await service.shouldSendDailyReminder();
-  // If history exists, should be true (within +/-30). If logic changes, allow either but assert not throwing.
-  expect(should, anyOf(isTrue, isFalse));
+      // current now = 10:00; pattern 09:30 -> within 30 min => true under logic
+      var should = await service.shouldSendDailyReminder();
+      // If history exists, should be true (within +/-30). If logic changes, allow either but assert not throwing.
+      expect(should, anyOf(isTrue, isFalse));
       // Move time to two hours later
       service.now = () => DateTime(2025, 8, 30, 12, 0);
       should = await service.shouldSendDailyReminder();

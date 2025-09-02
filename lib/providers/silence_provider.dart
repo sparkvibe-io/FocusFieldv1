@@ -41,9 +41,12 @@ final sessionDurationProvider = Provider<int>((ref) {
 // Use AppConstants.sampleIntervalMs and AppConstants.pointsPerMinute directly
 
 // Settings notifier for managing settings changes
-final settingsNotifierProvider = StateNotifierProvider<SettingsNotifier, AsyncValue<Map<String, dynamic>>>((ref) {
-  return SettingsNotifier(ref);
-});
+final settingsNotifierProvider =
+    StateNotifierProvider<SettingsNotifier, AsyncValue<Map<String, dynamic>>>((
+      ref,
+    ) {
+      return SettingsNotifier(ref);
+    });
 
 class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
   final Ref _ref;
@@ -68,20 +71,20 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
 
   Future<void> updateSetting(String key, dynamic value) async {
     if (!state.hasValue) return;
-    
+
     try {
       final storageService = await _ref.read(storageServiceProvider.future);
       final currentSettings = state.value!;
       final updatedSettings = {...currentSettings, key: value};
-      
+
       // Save individual setting
       await storageService.saveAllSettings({key: value});
-      
+
       // Update state
       if (mounted) {
         state = AsyncValue.data(updatedSettings);
       }
-      
+
       // Invalidate the app settings provider to refresh dependent providers
       _ref.invalidate(appSettingsProvider);
     } catch (error, stackTrace) {
@@ -109,14 +112,13 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
 final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
   final threshold = ref.watch(decibelThresholdProvider);
   final duration = ref.watch(sessionDurationProvider);
-  return SilenceDetector(
-    threshold: threshold,
-    durationSeconds: duration,
-  );
+  return SilenceDetector(threshold: threshold, durationSeconds: duration);
 });
 
 /// Aggregated real-time noise controller provider (1Hz updates)
-final realTimeNoiseControllerProvider = Provider<RealTimeNoiseController>((ref) {
+final realTimeNoiseControllerProvider = Provider<RealTimeNoiseController>((
+  ref,
+) {
   final detector = ref.watch(silenceDetectorProvider);
   final controller = RealTimeNoiseController(detector);
   ref.onDispose(controller.dispose);
@@ -130,14 +132,16 @@ final silenceDataProvider = FutureProvider<SilenceData>((ref) async {
 });
 
 // Silence data notifier provider
-final silenceDataNotifierProvider = StateNotifierProvider<SilenceDataNotifier, AsyncValue<SilenceData>>((ref) {
-  return SilenceDataNotifier(ref);
-});
+final silenceDataNotifierProvider =
+    StateNotifierProvider<SilenceDataNotifier, AsyncValue<SilenceData>>((ref) {
+      return SilenceDataNotifier(ref);
+    });
 
 // Silence state provider
-final silenceStateProvider = StateNotifierProvider<SilenceStateNotifier, SilenceState>((ref) {
-  return SilenceStateNotifier();
-});
+final silenceStateProvider =
+    StateNotifierProvider<SilenceStateNotifier, SilenceState>((ref) {
+      return SilenceStateNotifier();
+    });
 
 // Silence state notifier
 class SilenceStateNotifier extends StateNotifier<SilenceState> {
@@ -202,27 +206,28 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
 
   Future<void> addSessionRecord(SessionRecord session) async {
     if (!state.hasValue) return;
-    
+
     try {
       final storageService = await _ref.read(storageServiceProvider.future);
       final currentData = state.value!;
-      
+
       // Update data with new session
       final updatedData = await storageService.updateStreak(currentData);
-      final recentSessions = [...updatedData.recentSessions, session]
-          .take(10) // Keep only last 10 sessions
-          .toList();
-      
+      final recentSessions =
+          [...updatedData.recentSessions, session]
+              .take(10) // Keep only last 10 sessions
+              .toList();
+
       final newData = updatedData.copyWith(
         totalPoints: updatedData.totalPoints + session.pointsEarned,
         totalSessions: updatedData.totalSessions + 1,
         recentSessions: recentSessions,
       );
-      
+
       // Save data
       await storageService.saveSilenceData(newData);
       await storageService.saveLastSessionDate(session.date);
-      
+
       if (mounted) {
         state = AsyncValue.data(newData);
       }
@@ -235,18 +240,18 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
 
   Future<void> addPoint() async {
     if (!state.hasValue) return;
-    
+
     try {
       final storageService = await _ref.read(storageServiceProvider.future);
-      
+
       // Update streak first
       final updatedData = await storageService.updateStreak(state.value!);
-      
+
       // Add points using the new system constant
       final newData = updatedData.copyWith(
         totalPoints: updatedData.totalPoints + AppConstants.pointsPerMinute,
       );
-      
+
       // Save and update state
       await storageService.saveSilenceData(newData);
       if (mounted) {
@@ -304,4 +309,4 @@ class SilenceState {
       canStop: canStop ?? this.canStop,
     );
   }
-} 
+}

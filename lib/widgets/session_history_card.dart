@@ -26,7 +26,7 @@ class SessionHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -35,10 +35,7 @@ class SessionHistoryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.history,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.history, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   AppLocalizations.of(context)!.sessionHistoryTitle,
@@ -49,21 +46,21 @@ class SessionHistoryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Achievement badges
             _buildAchievementBadges(context),
-            
+
             const SizedBox(height: 16),
-            
+
             // Recent sessions
             if (recentSessions.isNotEmpty) ...[
               Divider(color: theme.colorScheme.outline),
               const SizedBox(height: 8),
               _buildRecentSessions(context),
             ],
-            
+
             const SizedBox(height: 16),
-            
+
             // Quick stats
             _buildQuickStats(context),
           ],
@@ -75,65 +72,77 @@ class SessionHistoryCard extends StatelessWidget {
   Widget _buildAchievementBadges(BuildContext context) {
     final theme = Theme.of(context);
     final achievements = <Widget>[];
-    
+
     // First session achievement
     if (totalPoints >= 1) {
-      achievements.add(_buildAchievementBadge(
-        context,
-  AppLocalizations.of(context)!.achievementFirstStepTitle,
-  AppLocalizations.of(context)!.achievementFirstStepDesc,
-        Icons.star,
-        theme.colorScheme.primary,
-      ));
+      achievements.add(
+        _buildAchievementBadge(
+          context,
+          AppLocalizations.of(context)!.achievementFirstStepTitle,
+          AppLocalizations.of(context)!.achievementFirstStepDesc,
+          Icons.star,
+          theme.colorScheme.primary,
+        ),
+      );
     }
-    
+
     // Streak achievements
     if (currentStreak >= 3) {
-      achievements.add(_buildAchievementBadge(
-        context,
-  AppLocalizations.of(context)!.achievementOnFireTitle,
-  AppLocalizations.of(context)!.achievementOnFireDesc,
-        Icons.local_fire_department,
-        theme.colorScheme.secondary,
-      ));
+      achievements.add(
+        _buildAchievementBadge(
+          context,
+          AppLocalizations.of(context)!.achievementOnFireTitle,
+          AppLocalizations.of(context)!.achievementOnFireDesc,
+          Icons.local_fire_department,
+          theme.colorScheme.secondary,
+        ),
+      );
     }
-    
+
     if (currentStreak >= 7) {
-      achievements.add(_buildAchievementBadge(
-        context,
-  AppLocalizations.of(context)!.achievementWeekWarriorTitle,
-  AppLocalizations.of(context)!.achievementWeekWarriorDesc,
-        Icons.emoji_events,
-        theme.colorScheme.tertiary,
-      ));
+      achievements.add(
+        _buildAchievementBadge(
+          context,
+          AppLocalizations.of(context)!.achievementWeekWarriorTitle,
+          AppLocalizations.of(context)!.achievementWeekWarriorDesc,
+          Icons.emoji_events,
+          theme.colorScheme.tertiary,
+        ),
+      );
     }
-    
+
     // Points achievements
     if (totalPoints >= 10) {
-      achievements.add(_buildAchievementBadge(
-        context,
-  AppLocalizations.of(context)!.achievementDecadeTitle,
-  AppLocalizations.of(context)!.achievementDecadeDesc,
-        Icons.diamond,
-        Colors.purple,
-      ));
+      achievements.add(
+        _buildAchievementBadge(
+          context,
+          AppLocalizations.of(context)!.achievementDecadeTitle,
+          AppLocalizations.of(context)!.achievementDecadeDesc,
+          Icons.diamond,
+          Colors.purple,
+        ),
+      );
     }
-    
+
     if (totalPoints >= 50) {
-      achievements.add(_buildAchievementBadge(
-        context,
-  AppLocalizations.of(context)!.achievementHalfCenturyTitle,
-  AppLocalizations.of(context)!.achievementHalfCenturyDesc,
-        Icons.workspace_premium,
-        Colors.amber,
-      ));
+      achievements.add(
+        _buildAchievementBadge(
+          context,
+          AppLocalizations.of(context)!.achievementHalfCenturyTitle,
+          AppLocalizations.of(context)!.achievementHalfCenturyDesc,
+          Icons.workspace_premium,
+          Colors.amber,
+        ),
+      );
     }
-    
+
     if (achievements.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.5,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -154,12 +163,8 @@ class SessionHistoryCard extends StatelessWidget {
         ),
       );
     }
-    
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: achievements,
-    );
+
+    return Wrap(spacing: 8, runSpacing: 8, children: achievements);
   }
 
   Widget _buildAchievementBadge(
@@ -170,26 +175,19 @@ class SessionHistoryCard extends StatelessWidget {
     Color color,
   ) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 100, // Fixed width to prevent overflow
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 24,
-            color: color,
-          ),
+          Icon(icon, size: 24, color: color),
           const SizedBox(height: 4),
           Text(
             title,
@@ -218,7 +216,7 @@ class SessionHistoryCard extends StatelessWidget {
 
   Widget _buildRecentSessions(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -251,14 +249,20 @@ class SessionHistoryCard extends StatelessWidget {
                 margin: const EdgeInsets.only(right: 8),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: session.completed 
-                      ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-                      : theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+                  color:
+                      session.completed
+                          ? theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.3,
+                          )
+                          : theme.colorScheme.errorContainer.withValues(
+                            alpha: 0.3,
+                          ),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: session.completed 
-                        ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                        : theme.colorScheme.error.withValues(alpha: 0.3),
+                    color:
+                        session.completed
+                            ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                            : theme.colorScheme.error.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -270,9 +274,10 @@ class SessionHistoryCard extends StatelessWidget {
                         Icon(
                           session.completed ? Icons.check_circle : Icons.cancel,
                           size: 16,
-                          color: session.completed 
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.error,
+                          color:
+                              session.completed
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.error,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -355,14 +360,10 @@ class SessionHistoryCard extends StatelessWidget {
     IconData icon,
   ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: theme.colorScheme.primary,
-        ),
+        Icon(icon, size: 20, color: theme.colorScheme.primary),
         const SizedBox(height: 4),
         Text(
           value,
@@ -388,7 +389,7 @@ class SessionHistoryCard extends StatelessWidget {
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final dateOnly = DateTime(date.year, date.month, date.day);
-    
+
     if (dateOnly.isAtSameMomentAs(today)) {
       return 'Today at ${_formatTime(date)}';
     } else if (dateOnly.isAtSameMomentAs(yesterday)) {
@@ -401,4 +402,4 @@ class SessionHistoryCard extends StatelessWidget {
   String _formatTime(DateTime date) {
     return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
-} 
+}

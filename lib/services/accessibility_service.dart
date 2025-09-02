@@ -3,7 +3,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
 
 class AccessibilityService {
-  static final AccessibilityService _instance = AccessibilityService._internal();
+  static final AccessibilityService _instance =
+      AccessibilityService._internal();
   factory AccessibilityService() => _instance;
   AccessibilityService._internal();
 
@@ -18,17 +19,17 @@ class AccessibilityService {
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       _flutterTts = FlutterTts();
-      
+
       if (_flutterTts != null) {
         await _flutterTts!.setLanguage('en-US');
         await _flutterTts!.setPitch(1.0);
         await _flutterTts!.setSpeechRate(0.5);
         await _flutterTts!.setVolume(0.8);
       }
-      
+
       _isInitialized = true;
     } catch (e) {
       debugPrint('Error initializing AccessibilityService: $e');
@@ -50,7 +51,7 @@ class AccessibilityService {
   // Vibration feedback
   Future<void> vibrateOnEvent(AccessibilityEvent event) async {
     if (!enableVibration) return;
-    
+
     try {
       final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator != true) return;
@@ -80,7 +81,7 @@ class AccessibilityService {
   // Voice announcements
   Future<void> announce(String message) async {
     if (!enableVoiceOver || !_isInitialized || _flutterTts == null) return;
-    
+
     try {
       await _flutterTts!.speak(message);
     } catch (e) {
@@ -91,7 +92,7 @@ class AccessibilityService {
   // Session progress announcements
   Future<void> announceSessionProgress(double progress) async {
     if (!enableVoiceOver) return;
-    
+
     final percentage = (progress * 100).round();
     if (percentage % 25 == 0 && percentage > 0) {
       await announce('$percentage percent complete');
@@ -125,10 +126,10 @@ class AccessibilityService {
   // High contrast theme adjustments
   ColorScheme adjustColorSchemeForContrast(ColorScheme original) {
     if (!enableHighContrast) return original;
-    
+
     // Determine if the original theme is dark
     final isDark = original.brightness == Brightness.dark;
-    
+
     if (isDark) {
       // High contrast dark theme
       return original.copyWith(
