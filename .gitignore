@@ -56,3 +56,4 @@ config/secrets/
 lib/config/secrets.dart
 android/app/src/main/res/values/secrets.xml
 ios/Runner/Secrets.plist
+android/key.properties
