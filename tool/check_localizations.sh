@@ -46,21 +46,34 @@ extract_keys() {
 
 ref_keys=()
 while IFS= read -r k; do ref_keys+=("$k"); done < <(extract_keys "$ref_file")
+
+# Helper: membership test without pipelines (avoids broken pipe noise under pipefail)
+contains() { # usage: contains needle list...
+  local needle="$1"; shift || true
+  for _item in "$@"; do
+    if [ "$_item" = "$needle" ]; then return 0; fi
+  done
+  return 1
+}
+
 missing_report=()
 for f in "${arb_files[@]}"; do
   keys=()
   while IFS= read -r k; do keys+=("$k"); done < <(extract_keys "$f")
+
+  # Check for missing keys relative to reference
   for k in "${ref_keys[@]}"; do
-    if ! printf '%s\n' "${keys[@]}" | grep -qx "$k"; then
-        # Double-check directly in file to avoid false positives due to parsing edge cases
-        if ! grep -q '"'"$k"'"[[:space:]]*:' "$f"; then
-          missing_report+=("$f -> missing key: $k")
-        fi
+    if ! contains "$k" "${keys[@]}"; then
+      # Double-check directly in file to guard against parsing edge cases
+      if ! grep -q '"'"$k"'"[[:space:]]*:' "$f"; then
+        missing_report+=("$f -> missing key: $k")
+      fi
     fi
   done
-  # Also ensure no extra keys (excluding metadata) compared to ref
+
+  # Check for extra keys (excluding metadata) not present in reference
   for k in "${keys[@]}"; do
-    if ! printf '%s\n' "${ref_keys[@]}" | grep -qx "$k"; then
+    if ! contains "$k" "${ref_keys[@]}"; then
       missing_report+=("$f -> extra key (not in reference): $k")
     fi
   done
