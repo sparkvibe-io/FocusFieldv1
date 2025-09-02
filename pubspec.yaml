@@ -1,7 +1,7 @@
 name: silence_score
 description: A Flutter app that measures silence and awards points for maintaining quiet environments.
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+1
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
@@ -36,6 +36,7 @@ dependencies:
   flutter_tts: ^4.2.3
   flutter_local_notifications: ^19.4.0
   timezone: ^0.10.1
+  google_mobile_ads: ^5.1.0
 
 dev_dependencies:
   flutter_test:
