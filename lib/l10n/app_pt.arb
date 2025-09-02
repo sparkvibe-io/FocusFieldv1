@@ -2,7 +2,7 @@
   "appTitle": "Silence Score",
   "splashLoading": "Preparando motor de foco…",
   "paywallTitle": "Treine foco mais profundo com Premium",
-  "featureExtendSessions": "Estenda sessões de 5 min para 120 min",
+  "featureExtendSessions": "Estenda sessões de 30 min para 120 min",
   "featureHistory": "Acesse 90 dias de histórico",
   "featureMetrics": "Desbloqueie métricas e gráficos de tendência",
   "featureExport": "Baixe seus dados (CSV / PDF)",
@@ -148,6 +148,12 @@
   ,"performanceMetrics": "Métricas de desempenho"
   ,"advancedAnalytics": "Análises avançadas"
   ,"premiumBadge": "PREMIUM"
+  ,"bucket1to2": "1-2 min"
+  ,"bucket3to5": "3-5 min"
+  ,"bucket6to10": "6-10 min"
+  ,"bucket11to20": "11-20 min"
+  ,"bucket21to30": "21-30 min"
+  ,"bucket30plus": "30+ min"
   ,"sessionHistoryTitle": "Histórico de sessões"
   ,"recentSessionHistory": "Histórico recente"
   ,"achievementFirstStepTitle": "Primeiro passo"
@@ -248,4 +254,10 @@
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
+  ,"ratingPromptTitle": "Está gostando do Silence Score?"
+  ,"ratingPromptBody": "Uma avaliação 5★ rápida ajuda outros a encontrar mais calma."
+  ,"ratingPromptRateNow": "Avaliar agora"
+  ,"ratingPromptLater": "Depois"
+  ,"ratingPromptNoThanks": "Não, obrigado"
+  ,"ratingThankYou": "Obrigado pelo apoio!"
 }

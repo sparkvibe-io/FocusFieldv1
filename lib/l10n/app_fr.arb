@@ -2,7 +2,7 @@
   "appTitle": "Silence Score",
   "splashLoading": "Préparation du moteur de focus…",
   "paywallTitle": "Entraînez une concentration plus profonde avec Premium",
-  "featureExtendSessions": "Étendez les sessions de 5 min à 120 min",
+  "featureExtendSessions": "Étendez les sessions de 30 min à 120 min",
   "featureHistory": "Accédez à 90 jours d'historique",
   "featureMetrics": "Débloquez métriques et graphiques de tendance",
   "featureExport": "Exportez vos données (CSV / PDF)",
@@ -188,6 +188,12 @@
   ,"performanceMetrics": "Métriques de performance"
   ,"advancedAnalytics": "Analytique avancée"
   ,"premiumBadge": "PREMIUM"
+  ,"bucket1to2": "1-2 min"
+  ,"bucket3to5": "3-5 min"
+  ,"bucket6to10": "6-10 min"
+  ,"bucket11to20": "11-20 min"
+  ,"bucket21to30": "21-30 min"
+  ,"bucket30plus": "30+ min"
   ,"sessionHistoryTitle": "Historique de sessions"
   ,"recentSessionHistory": "Historique récent"
   ,"achievementFirstStepTitle": "Premier pas"
@@ -248,4 +254,10 @@
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
+  ,"ratingPromptTitle": "Vous appréciez Silence Score ?"
+  ,"ratingPromptBody": "Une note 5★ rapide aide d'autres à trouver le calme."
+  ,"ratingPromptRateNow": "Noter maintenant"
+  ,"ratingPromptLater": "Plus tard"
+  ,"ratingPromptNoThanks": "Non merci"
+  ,"ratingThankYou": "Merci pour votre soutien !"
 }

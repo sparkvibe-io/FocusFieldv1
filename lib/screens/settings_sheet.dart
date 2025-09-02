@@ -16,6 +16,7 @@ import 'package:silence_score/widgets/feature_gate.dart';
 import 'package:silence_score/widgets/notification_settings_widget.dart';
 import 'package:silence_score/widgets/theme_selector_widget.dart';
 import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -572,8 +573,22 @@ class SettingsSheet extends ConsumerWidget {
     );
   }
 
-  void _openPrivacy(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.privacyComingSoon)));
+  Future<void> _openPrivacy(BuildContext context) async {
+    final uri = Uri.parse(AppConstants.privacyPolicyUrl);
+    try {
+      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to open privacy policy')),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to open privacy policy')),
+        );
+      }
+    }
   }
 
   void _rateApp(BuildContext context) {

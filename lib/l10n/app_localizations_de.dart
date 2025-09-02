@@ -18,7 +18,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get paywallTitle => 'Trainiere tiefere Fokussierung mit Premium';
 
   @override
-  String get featureExtendSessions => 'Verlängere Sitzungen von 5 auf 120 Minuten';
+  String get featureExtendSessions => 'Verlängere Sitzungen von 30 auf 120 Minuten';
 
   @override
   String get featureHistory => 'Greife auf 90 Tage Verlauf zu';
@@ -622,6 +622,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premiumBadge => 'PREMIUM';
 
   @override
+  String get bucket1to2 => '1-2 Min';
+
+  @override
+  String get bucket3to5 => '3-5 Min';
+
+  @override
+  String get bucket6to10 => '6-10 Min';
+
+  @override
+  String get bucket11to20 => '11-20 Min';
+
+  @override
+  String get bucket21to30 => '21-30 Min';
+
+  @override
+  String get bucket30plus => '30+ Min';
+
+  @override
   String get sessionHistoryTitle => 'Sitzungsverlauf';
 
   @override
@@ -659,6 +677,24 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Sitzungen abschließen zum Freischalten';
+
+  @override
+  String get ratingPromptTitle => 'Gefällt dir Silence Score?';
+
+  @override
+  String get ratingPromptBody => 'Eine kurze 5-Sterne-Bewertung hilft anderen, mehr Ruhe zu finden.';
+
+  @override
+  String get ratingPromptRateNow => 'Jetzt bewerten';
+
+  @override
+  String get ratingPromptLater => 'Später';
+
+  @override
+  String get ratingPromptNoThanks => 'Nein danke';
+
+  @override
+  String get ratingThankYou => 'Danke für deine Unterstützung!';
 
   @override
   String get notificationSettingsTitle => 'Benachrichtigungseinstellungen';

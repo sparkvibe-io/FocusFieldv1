@@ -18,7 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallTitle => 'Train Deeper Focus with Premium';
 
   @override
-  String get featureExtendSessions => 'Extend focus sessions from 5 min to 120 min';
+  String get featureExtendSessions => 'Extend focus sessions from 30 min to 120 min';
 
   @override
   String get featureHistory => 'Access 90 days of past sessions';
@@ -622,6 +622,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumBadge => 'PREMIUM';
 
   @override
+  String get bucket1to2 => '1-2 min';
+
+  @override
+  String get bucket3to5 => '3-5 min';
+
+  @override
+  String get bucket6to10 => '6-10 min';
+
+  @override
+  String get bucket11to20 => '11-20 min';
+
+  @override
+  String get bucket21to30 => '21-30 min';
+
+  @override
+  String get bucket30plus => '30+ min';
+
+  @override
   String get sessionHistoryTitle => 'Session History';
 
   @override
@@ -659,6 +677,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
+
+  @override
+  String get ratingPromptTitle => 'Enjoying Silence Score?';
+
+  @override
+  String get ratingPromptBody => 'A quick 5-star rating helps others discover calmer focus time.';
+
+  @override
+  String get ratingPromptRateNow => 'Rate Now';
+
+  @override
+  String get ratingPromptLater => 'Later';
+
+  @override
+  String get ratingPromptNoThanks => 'No Thanks';
+
+  @override
+  String get ratingThankYou => 'Thanks for your support!';
 
   @override
   String get notificationSettingsTitle => 'Notification Settings';

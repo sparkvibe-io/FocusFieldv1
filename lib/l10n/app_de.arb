@@ -2,7 +2,7 @@
   "appTitle": "Silence Score",
   "splashLoading": "Fokus-Engine wird vorbereitet…",
   "paywallTitle": "Trainiere tiefere Fokussierung mit Premium",
-  "featureExtendSessions": "Verlängere Sitzungen von 5 auf 120 Minuten",
+  "featureExtendSessions": "Verlängere Sitzungen von 30 auf 120 Minuten",
   "featureHistory": "Greife auf 90 Tage Verlauf zu",
   "featureMetrics": "Schalte Leistungsmetriken und Trenddiagramme frei",
   "featureExport": "Exportiere Sitzungsdaten (CSV / PDF)",
@@ -188,6 +188,12 @@
   ,"performanceMetrics": "Leistungsmetriken"
   ,"advancedAnalytics": "Erweiterte Analytik"
   ,"premiumBadge": "PREMIUM"
+  ,"bucket1to2": "1-2 Min"
+  ,"bucket3to5": "3-5 Min"
+  ,"bucket6to10": "6-10 Min"
+  ,"bucket11to20": "11-20 Min"
+  ,"bucket21to30": "21-30 Min"
+  ,"bucket30plus": "30+ Min"
   ,"sessionHistoryTitle": "Sitzungsverlauf"
   ,"recentSessionHistory": "Letzte Sitzungen"
   ,"achievementFirstStepTitle": "Erster Schritt"
@@ -248,4 +254,10 @@
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
+  ,"ratingPromptTitle": "Gefällt dir Silence Score?"
+  ,"ratingPromptBody": "Eine kurze 5-Sterne-Bewertung hilft anderen, mehr Ruhe zu finden."
+  ,"ratingPromptRateNow": "Jetzt bewerten"
+  ,"ratingPromptLater": "Später"
+  ,"ratingPromptNoThanks": "Nein danke"
+  ,"ratingThankYou": "Danke für deine Unterstützung!"
 }

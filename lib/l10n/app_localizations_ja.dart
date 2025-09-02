@@ -18,7 +18,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get paywallTitle => 'プレミアムでより深い集中を';
 
   @override
-  String get featureExtendSessions => 'セッションを5分から120分へ拡張';
+  String get featureExtendSessions => 'セッションを30分から120分へ拡張';
 
   @override
   String get featureHistory => '過去90日間の履歴にアクセス';
@@ -622,6 +622,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get premiumBadge => 'PREMIUM';
 
   @override
+  String get bucket1to2 => '1-2分';
+
+  @override
+  String get bucket3to5 => '3-5分';
+
+  @override
+  String get bucket6to10 => '6-10分';
+
+  @override
+  String get bucket11to20 => '11-20分';
+
+  @override
+  String get bucket21to30 => '21-30分';
+
+  @override
+  String get bucket30plus => '30分以上';
+
+  @override
   String get sessionHistoryTitle => 'Session History';
 
   @override
@@ -659,6 +677,24 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
+
+  @override
+  String get ratingPromptTitle => 'Silence Score を気に入っていますか?';
+
+  @override
+  String get ratingPromptBody => '5つ星の評価は他の人が静かな集中を見つける助けになります。';
+
+  @override
+  String get ratingPromptRateNow => '今すぐ評価';
+
+  @override
+  String get ratingPromptLater => '後で';
+
+  @override
+  String get ratingPromptNoThanks => '結構です';
+
+  @override
+  String get ratingThankYou => 'ご支援ありがとうございます！';
 
   @override
   String get notificationSettingsTitle => '通知設定';
@@ -792,6 +828,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String weeklyProgressPerfect(int count) {
-    return '� 今週 $count 回でパーフェクト！素晴らしい継続。';
+    return '🎯 今週は $count セッションでパーフェクト！素晴らしい継続です。';
   }
 }

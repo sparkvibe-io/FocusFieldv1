@@ -2,7 +2,7 @@
   "appTitle": "Silence Score",
   "splashLoading": "集中エンジンを準備中…",
   "paywallTitle": "プレミアムでより深い集中を",
-  "featureExtendSessions": "セッションを5分から120分へ拡張",
+  "featureExtendSessions": "セッションを30分から120分へ拡張",
   "featureHistory": "過去90日間の履歴にアクセス",
   "featureMetrics": "パフォーマンス指標とトレンドを解放",
   "featureExport": "セッションデータをエクスポート (CSV / PDF)",
@@ -148,6 +148,12 @@
   ,"performanceMetrics": "Performance Metrics"
   ,"advancedAnalytics": "Advanced Analytics"
   ,"premiumBadge": "PREMIUM"
+  ,"bucket1to2": "1-2分"
+  ,"bucket3to5": "3-5分"
+  ,"bucket6to10": "6-10分"
+  ,"bucket11to20": "11-20分"
+  ,"bucket21to30": "21-30分"
+  ,"bucket30plus": "30分以上"
   ,"sessionHistoryTitle": "Session History"
   ,"recentSessionHistory": "Recent Session History"
   ,"achievementFirstStepTitle": "First Step"
@@ -241,9 +247,15 @@
   ,"weeklyProgressNone": "💭 今週は静寂が少なめ。穏やかな時間を取りませんか？"
   ,"weeklyProgressFew": "🌿 今週 {count} 回。毎回が心を静めます。"
   ,"weeklyProgressSome": "🌊 今週 {count} 回！リズムができています。"
-  ,"weeklyProgressPerfect": "� 今週 {count} 回でパーフェクト！素晴らしい継続。"
+    ,"weeklyProgressPerfect": "🎯 今週は {count} セッションでパーフェクト！素晴らしい継続です。"
   ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
   ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
+    ,"ratingPromptTitle": "Silence Score を気に入っていますか?"
+    ,"ratingPromptBody": "5つ星の評価は他の人が静かな集中を見つける助けになります。"
+    ,"ratingPromptRateNow": "今すぐ評価"
+    ,"ratingPromptLater": "後で"
+    ,"ratingPromptNoThanks": "結構です"
+    ,"ratingThankYou": "ご支援ありがとうございます！"
   ,"@reminderStreakLong": {"placeholders": {"streak": {"type": "int"}}}
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
