@@ -54,8 +54,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get manageSubscription => 'Gerenciar';
 
   @override
-  String get legalDisclaimer =>
-      'Assinatura com renovação automática. Cancele a qualquer momento.';
+  String get legalDisclaimer => 'Assinatura com renovação automática. Cancele a qualquer momento.';
 
   @override
   String minutesOfSilenceCongrats(int minutes) {
@@ -144,8 +143,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resetAllData => 'Redefinir todos os dados';
 
   @override
-  String get resetDataConfirmation =>
-      'Tem certeza que deseja redefinir o progresso?';
+  String get resetDataConfirmation => 'Tem certeza que deseja redefinir o progresso?';
 
   @override
   String get resetDataSuccess => 'Dados redefinidos';
@@ -160,12 +158,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage =>
-      'Silence Score precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Silence Score precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
 
   @override
-  String get permissionDeniedMessage =>
-      'Permissão de microfone necessária. Ative nas configurações.';
+  String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
 
   @override
   String get noiseMeterError => 'Não foi possível acessar o microfone';
@@ -174,8 +170,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get premiumFeaturesTitle => 'Recursos Premium';
 
   @override
-  String get premiumDescription =>
-      'Desbloqueie sessões longas, análises e exportação';
+  String get premiumDescription => 'Desbloqueie sessões longas, análises e exportação';
 
   @override
   String get premiumRequiredMessage => 'Requer Premium';
@@ -184,8 +179,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get subscriptionSuccessMessage => 'Assinatura concluída!';
 
   @override
-  String get subscriptionErrorMessage =>
-      'Não foi possível processar a assinatura';
+  String get subscriptionErrorMessage => 'Não foi possível processar a assinatura';
 
   @override
   String get restoreSuccessMessage => 'Compras restauradas';
@@ -236,8 +230,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resetAllSettings => 'Redefinir todas as configurações';
 
   @override
-  String get resetAllSettingsDescription =>
-      'Isto redefinirá todas as configurações e dados. Irreversível.';
+  String get resetAllSettingsDescription => 'Isto redefinirá todas as configurações e dados. Irreversível.';
 
   @override
   String get cancel => 'Cancelar';
@@ -246,19 +239,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get reset => 'Redefinir';
 
   @override
-  String get allSettingsReset =>
-      'Todas as configurações e dados foram redefinidos';
+  String get allSettingsReset => 'Todas as configurações e dados foram redefinidos';
 
   @override
   String get decibelThresholdMaxNoise => 'Limite de decibéis (ruído máx)';
 
   @override
-  String get highThresholdWarningText =>
-      'Limite alto pode ignorar ruídos importantes.';
+  String get highThresholdWarningText => 'Limite alto pode ignorar ruídos importantes.';
 
   @override
-  String get decibelThresholdTooltip =>
-      'Ambientes silenciosos: 30–40 dB. Calibre; aumente só se o zumbido contar.';
+  String get decibelThresholdTooltip => 'Ambientes silenciosos: 30–40 dB. Calibre; aumente só se o zumbido contar.';
 
   @override
   String get sessionDuration => 'Duração da sessão';
@@ -377,15 +367,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get faqHowWorksQ => 'Como o Silence Score funciona?';
 
   @override
-  String get faqHowWorksA =>
-      'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
+  String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
 
   @override
   String get faqAudioRecordedQ => 'Áudio é gravado?';
 
   @override
-  String get faqAudioRecordedA =>
-      'Não. Apenas níveis de dB; áudio nunca é salvo.';
+  String get faqAudioRecordedA => 'Não. Apenas níveis de dB; áudio nunca é salvo.';
 
   @override
   String get faqAdjustSensitivityQ => 'Ajustar sensibilidade?';
@@ -399,15 +387,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get faqPremiumFeaturesQ => 'Recursos Premium?';
 
   @override
-  String get faqPremiumFeaturesA =>
-      'Sessões estendidas (até 120m), análises, exportação, temas.';
+  String get faqPremiumFeaturesA => 'Sessões estendidas (até 120m), análises, exportação, temas.';
 
   @override
   String get faqNotificationsQ => 'Notificações?';
 
   @override
-  String get faqNotificationsA =>
-      'Lembretes inteligentes aprendem hábitos e celebram marcos.';
+  String get faqNotificationsA => 'Lembretes inteligentes aprendem hábitos e celebram marcos.';
 
   @override
   String get close => 'Fechar';
@@ -427,8 +413,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get contactSupport => 'Contatar suporte';
 
   @override
-  String get emailOpenDescription =>
-      'Abre seu e-mail com info do sistema pré-preenchida';
+  String get emailOpenDescription => 'Abre seu e-mail com info do sistema pré-preenchida';
 
   @override
   String get subject => 'Assunto';
@@ -508,8 +493,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get save => 'Salvar';
 
   @override
-  String get accessibilitySettingsSaved =>
-      'Configurações de acessibilidade salvas';
+  String get accessibilitySettingsSaved => 'Configurações de acessibilidade salvas';
 
   @override
   String get noiseFloorCalibration => 'Calibração de ruído base';
@@ -692,15 +676,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get achievementHalfCenturyDesc => 'Marco de 50 pontos';
 
   @override
-  String get achievementLockedPrompt =>
-      'Complete sessões para desbloquear conquistas';
+  String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
 
   @override
   String get ratingPromptTitle => 'Está gostando do Silence Score?';
 
   @override
-  String get ratingPromptBody =>
-      'Uma avaliação 5★ rápida ajuda outros a encontrar mais calma.';
+  String get ratingPromptBody => 'Uma avaliação 5★ rápida ajuda outros a encontrar mais calma.';
 
   @override
   String get ratingPromptRateNow => 'Avaliar agora';
@@ -721,8 +703,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationPermissionRequired => 'Permissão necessária';
 
   @override
-  String get notificationPermissionRationale =>
-      'Ative notificações para lembretes suaves e celebrar conquistas.';
+  String get notificationPermissionRationale => 'Ative notificações para lembretes suaves e celebrar conquistas.';
 
   @override
   String get requesting => 'Solicitando...';
@@ -734,8 +715,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get enableNotificationsTitle => 'Ativar notificações';
 
   @override
-  String get enableNotificationsSubtitle =>
-      'Permitir que o SilenceScore envie notificações';
+  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
 
   @override
   String get dailyReminderTitle => 'Lembrete diário inteligente';
@@ -747,8 +727,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get dailyTimeLabel => 'Horário diário';
 
   @override
-  String get dailyTimeHint =>
-      'Escolha horário fixo ou deixe o app aprender seu padrão.';
+  String get dailyTimeHint => 'Escolha horário fixo ou deixe o app aprender seu padrão.';
 
   @override
   String get useSmartCta => 'Usar inteligente';
@@ -793,15 +772,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get sessionCompleteEndedTitle => 'Sessão encerrada';
 
   @override
-  String get reminderStartJourney =>
-      '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre calma.';
+  String get reminderStartJourney => '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre calma.';
 
   @override
   String get reminderRestart => '🌱 Recomeçar? Cada momento é um novo início.';
 
   @override
-  String get reminderDayTwo =>
-      '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
+  String get reminderDayTwo => '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
 
   @override
   String reminderStreakShort(int streak) {
@@ -819,31 +796,25 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get achievementFirstSession =>
-      '🎉 Primeira sessão concluída! Bem-vindo.';
+  String get achievementFirstSession => '🎉 Primeira sessão concluída! Bem-vindo.';
 
   @override
-  String get achievementWeekStreak =>
-      '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
+  String get achievementWeekStreak => '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
 
   @override
-  String get achievementMonthStreak =>
-      '🏆 Sequência de 30 dias desbloqueada! Imparável.';
+  String get achievementMonthStreak => '🏆 Sequência de 30 dias desbloqueada! Imparável.';
 
   @override
-  String get achievementPerfectSession =>
-      '✨ Sessão perfeita de silêncio. Nada interrompeu sua paz.';
+  String get achievementPerfectSession => '✨ Sessão perfeita de silêncio. Nada interrompeu sua paz.';
 
   @override
-  String get achievementLongSession =>
-      '⏰ Sessão longa dominada. Foco crescendo.';
+  String get achievementLongSession => '⏰ Sessão longa dominada. Foco crescendo.';
 
   @override
   String get achievementGeneric => '🎊 Conquista desbloqueada! Continue!';
 
   @override
-  String get weeklyProgressNone =>
-      '💭 Semana leve de prática. Pronto para uma sessão?';
+  String get weeklyProgressNone => '💭 Semana leve de prática. Pronto para uma sessão?';
 
   @override
   String weeklyProgressFew(int count) {
@@ -863,7 +834,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
 class AppLocalizationsPtBr extends AppLocalizationsPt {
-  AppLocalizationsPtBr() : super('pt_BR');
+  AppLocalizationsPtBr(): super('pt_BR');
 
   @override
   String get appTitle => 'Silence Score';
@@ -911,8 +882,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get manageSubscription => 'Gerenciar';
 
   @override
-  String get legalDisclaimer =>
-      'Assinatura com renovação automática. Cancele a qualquer momento nas configurações da loja.';
+  String get legalDisclaimer => 'Assinatura com renovação automática. Cancele a qualquer momento nas configurações da loja.';
 
   @override
   String minutesOfSilenceCongrats(int minutes) {
@@ -1001,8 +971,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get resetAllData => 'Redefinir todos os dados';
 
   @override
-  String get resetDataConfirmation =>
-      'Tem certeza que deseja redefinir seu progresso?';
+  String get resetDataConfirmation => 'Tem certeza que deseja redefinir seu progresso?';
 
   @override
   String get resetDataSuccess => 'Dados redefinidos';
@@ -1017,12 +986,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage =>
-      'Silence Score precisa de acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Silence Score precisa de acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
 
   @override
-  String get permissionDeniedMessage =>
-      'Permissão de microfone necessária. Ative nas configurações.';
+  String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
 
   @override
   String get noiseMeterError => 'Não foi possível acessar o microfone';
@@ -1031,8 +998,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get premiumFeaturesTitle => 'Recursos Premium';
 
   @override
-  String get premiumDescription =>
-      'Desbloqueie sessões longas, análises e exportação';
+  String get premiumDescription => 'Desbloqueie sessões longas, análises e exportação';
 
   @override
   String get premiumRequiredMessage => 'Requer assinatura Premium';
@@ -1041,8 +1007,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get subscriptionSuccessMessage => 'Assinatura concluída!';
 
   @override
-  String get subscriptionErrorMessage =>
-      'Não foi possível concluir a assinatura';
+  String get subscriptionErrorMessage => 'Não foi possível concluir a assinatura';
 
   @override
   String get restoreSuccessMessage => 'Compras restauradas';
@@ -1093,8 +1058,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get resetAllSettings => 'Redefinir todas as configurações';
 
   @override
-  String get resetAllSettingsDescription =>
-      'Isto redefinirá todas as configurações e dados. Irreversível.';
+  String get resetAllSettingsDescription => 'Isto redefinirá todas as configurações e dados. Irreversível.';
 
   @override
   String get cancel => 'Cancelar';
@@ -1103,19 +1067,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get reset => 'Redefinir';
 
   @override
-  String get allSettingsReset =>
-      'Todas as configurações e dados foram redefinidos';
+  String get allSettingsReset => 'Todas as configurações e dados foram redefinidos';
 
   @override
   String get decibelThresholdMaxNoise => 'Limite de decibéis (ruído máx)';
 
   @override
-  String get highThresholdWarningText =>
-      'Limite alto pode ignorar ruídos importantes.';
+  String get highThresholdWarningText => 'Limite alto pode ignorar ruídos importantes.';
 
   @override
-  String get decibelThresholdTooltip =>
-      'Ambientes silenciosos: 30–40 dB. Calibre; aumente só se o zumbido contar.';
+  String get decibelThresholdTooltip => 'Ambientes silenciosos: 30–40 dB. Calibre; aumente só se o zumbido contar.';
 
   @override
   String get sessionDuration => 'Duração da sessão';
@@ -1234,15 +1195,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get faqHowWorksQ => 'Como o Silence Score funciona?';
 
   @override
-  String get faqHowWorksA =>
-      'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
+  String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
 
   @override
   String get faqAudioRecordedQ => 'Áudio é gravado?';
 
   @override
-  String get faqAudioRecordedA =>
-      'Não. Apenas níveis de dB; áudio nunca é salvo.';
+  String get faqAudioRecordedA => 'Não. Apenas níveis de dB; áudio nunca é salvo.';
 
   @override
   String get faqAdjustSensitivityQ => 'Ajustar sensibilidade?';
@@ -1256,15 +1215,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get faqPremiumFeaturesQ => 'Recursos Premium?';
 
   @override
-  String get faqPremiumFeaturesA =>
-      'Sessões estendidas (até 120m), análises, exportação, temas.';
+  String get faqPremiumFeaturesA => 'Sessões estendidas (até 120m), análises, exportação, temas.';
 
   @override
   String get faqNotificationsQ => 'Notificações?';
 
   @override
-  String get faqNotificationsA =>
-      'Lembretes inteligentes aprendem hábitos e celebram marcos.';
+  String get faqNotificationsA => 'Lembretes inteligentes aprendem hábitos e celebram marcos.';
 
   @override
   String get close => 'Fechar';
@@ -1284,8 +1241,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get contactSupport => 'Contatar suporte';
 
   @override
-  String get emailOpenDescription =>
-      'Abre seu e-mail com info do sistema pré-preenchida';
+  String get emailOpenDescription => 'Abre seu e-mail com info do sistema pré-preenchida';
 
   @override
   String get subject => 'Assunto';
@@ -1365,8 +1321,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get save => 'Salvar';
 
   @override
-  String get accessibilitySettingsSaved =>
-      'Configurações de acessibilidade salvas';
+  String get accessibilitySettingsSaved => 'Configurações de acessibilidade salvas';
 
   @override
   String get noiseFloorCalibration => 'Calibração de ruído base';
@@ -1549,15 +1504,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get achievementHalfCenturyDesc => 'Marco de 50 pontos';
 
   @override
-  String get achievementLockedPrompt =>
-      'Complete sessões para desbloquear conquistas';
+  String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
 
   @override
   String get ratingPromptTitle => 'Está gostando do Silence Score?';
 
   @override
-  String get ratingPromptBody =>
-      'Uma avaliação 5★ rápida ajuda outros a encontrar foco calmo.';
+  String get ratingPromptBody => 'Uma avaliação 5★ rápida ajuda outros a encontrar foco calmo.';
 
   @override
   String get ratingPromptRateNow => 'Avaliar agora';
@@ -1578,8 +1531,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get notificationPermissionRequired => 'Permissão necessária';
 
   @override
-  String get notificationPermissionRationale =>
-      'Ative notificações para receber lembretes e celebrar conquistas.';
+  String get notificationPermissionRationale => 'Ative notificações para receber lembretes e celebrar conquistas.';
 
   @override
   String get requesting => 'Solicitando...';
@@ -1591,8 +1543,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get enableNotificationsTitle => 'Ativar notificações';
 
   @override
-  String get enableNotificationsSubtitle =>
-      'Permitir que o SilenceScore envie notificações';
+  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
 
   @override
   String get dailyReminderTitle => 'Lembrete diário inteligente';
@@ -1604,8 +1555,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get dailyTimeLabel => 'Horário diário';
 
   @override
-  String get dailyTimeHint =>
-      'Escolha um horário fixo ou deixe o app aprender seu padrão.';
+  String get dailyTimeHint => 'Escolha um horário fixo ou deixe o app aprender seu padrão.';
 
   @override
   String get useSmartCta => 'Usar inteligente';
@@ -1650,16 +1600,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get sessionCompleteEndedTitle => 'Sessão finalizada';
 
   @override
-  String get reminderStartJourney =>
-      '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre sua paz.';
+  String get reminderStartJourney => '🧘‍♂️ Comece hoje sua jornada de silêncio e encontre sua paz.';
 
   @override
-  String get reminderRestart =>
-      '🌱 Recomeçar a prática? Cada momento é um novo começo.';
+  String get reminderRestart => '🌱 Recomeçar a prática? Cada momento é um novo começo.';
 
   @override
-  String get reminderDayTwo =>
-      '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
+  String get reminderDayTwo => '⭐ Dia 2 da sua sequência! Consistência gera tranquilidade.';
 
   @override
   String reminderStreakShort(int streak) {
@@ -1677,31 +1624,25 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
-  String get achievementFirstSession =>
-      '🎉 Primeira sessão concluída! Bem-vindo(a).';
+  String get achievementFirstSession => '🎉 Primeira sessão concluída! Bem-vindo(a).';
 
   @override
-  String get achievementWeekStreak =>
-      '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
+  String get achievementWeekStreak => '🌟 Sequência de 7 dias! Consistência é seu superpoder.';
 
   @override
-  String get achievementMonthStreak =>
-      '🏆 Sequência de 30 dias desbloqueada! Imparável.';
+  String get achievementMonthStreak => '🏆 Sequência de 30 dias desbloqueada! Imparável.';
 
   @override
-  String get achievementPerfectSession =>
-      '✨ Sessão perfeita. Nada perturbou sua paz.';
+  String get achievementPerfectSession => '✨ Sessão perfeita. Nada perturbou sua paz.';
 
   @override
-  String get achievementLongSession =>
-      '⏰ Sessão longa dominada. Foco crescente.';
+  String get achievementLongSession => '⏰ Sessão longa dominada. Foco crescente.';
 
   @override
   String get achievementGeneric => '🎊 Conquista desbloqueada! Continue assim!';
 
   @override
-  String get weeklyProgressNone =>
-      '💭 Semana tranquila de prática. Pronto(a) para uma sessão?';
+  String get weeklyProgressNone => '💭 Semana tranquila de prática. Pronto(a) para uma sessão?';
 
   @override
   String weeklyProgressFew(int count) {
