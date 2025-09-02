@@ -52,7 +52,10 @@ for f in "${arb_files[@]}"; do
   while IFS= read -r k; do keys+=("$k"); done < <(extract_keys "$f")
   for k in "${ref_keys[@]}"; do
     if ! printf '%s\n' "${keys[@]}" | grep -qx "$k"; then
-      missing_report+=("$f -> missing key: $k")
+        # Double-check directly in file to avoid false positives due to parsing edge cases
+        if ! grep -q '"'"$k"'"[[:space:]]*:' "$f"; then
+          missing_report+=("$f -> missing key: $k")
+        fi
     fi
   done
   # Also ensure no extra keys (excluding metadata) compared to ref
@@ -64,8 +67,8 @@ for f in "${arb_files[@]}"; do
 done
 
 if (( ${#missing_report[@]} > 0 )); then
-  printf '::error::Localization key parity failure:\n' >&2
-  printf '%s\n' "${missing_report[@]}" >&2
+  echo '::error::Localization key parity failure:' >&2
+  for line in "${missing_report[@]}"; do echo "$line" >&2; done
   exit 1
 fi
 
