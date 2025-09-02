@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @featureExtendSessions.
   ///
   /// In en, this message translates to:
-  /// **'Extend focus sessions from 5 min to 120 min'**
+  /// **'Extend focus sessions from 30 min to 120 min'**
   String get featureExtendSessions;
 
   /// No description provided for @featureHistory.
@@ -1238,6 +1238,42 @@ abstract class AppLocalizations {
   /// **'PREMIUM'**
   String get premiumBadge;
 
+  /// No description provided for @bucket1to2.
+  ///
+  /// In en, this message translates to:
+  /// **'1-2 min'**
+  String get bucket1to2;
+
+  /// No description provided for @bucket3to5.
+  ///
+  /// In en, this message translates to:
+  /// **'3-5 min'**
+  String get bucket3to5;
+
+  /// No description provided for @bucket6to10.
+  ///
+  /// In en, this message translates to:
+  /// **'6-10 min'**
+  String get bucket6to10;
+
+  /// No description provided for @bucket11to20.
+  ///
+  /// In en, this message translates to:
+  /// **'11-20 min'**
+  String get bucket11to20;
+
+  /// No description provided for @bucket21to30.
+  ///
+  /// In en, this message translates to:
+  /// **'21-30 min'**
+  String get bucket21to30;
+
+  /// No description provided for @bucket30plus.
+  ///
+  /// In en, this message translates to:
+  /// **'30+ min'**
+  String get bucket30plus;
+
   /// No description provided for @sessionHistoryTitle.
   ///
   /// In en, this message translates to:
@@ -1315,6 +1351,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete sessions to unlock achievements'**
   String get achievementLockedPrompt;
+
+  /// No description provided for @ratingPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoying Silence Score?'**
+  String get ratingPromptTitle;
+
+  /// No description provided for @ratingPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick 5-star rating helps others discover calmer focus time.'**
+  String get ratingPromptBody;
+
+  /// No description provided for @ratingPromptRateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Now'**
+  String get ratingPromptRateNow;
+
+  /// No description provided for @ratingPromptLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get ratingPromptLater;
+
+  /// No description provided for @ratingPromptNoThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'No Thanks'**
+  String get ratingPromptNoThanks;
+
+  /// No description provided for @ratingThankYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for your support!'**
+  String get ratingThankYou;
 
   /// No description provided for @notificationSettingsTitle.
   ///

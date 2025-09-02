@@ -473,7 +473,8 @@ class NotificationService {
     final sessions = _sessionTimes.where((t) => t.isAfter(DateTime(start.year, start.month, start.day)) && t.isBefore(nowDt.add(const Duration(days:1)))).toList();
     final sessionsThisWeek = sessions.map((e) => DateTime(e.year, e.month, e.day)).toSet().length; // unique days
     // Simple average score placeholder: minutes per session * 1 (point per min). In absence of full scoring, approximate.
-    final avg = sessions.isEmpty ? 0 : (sessions.length * 5) ~/ sessions.length; // placeholder 5 min per session assumption
+    // Average score placeholder removed to avoid misleading fixed 5 min assumption.
+    final avg = 0; // TODO: compute real average session duration once durations are tracked here.
   await showWeeklyProgress(context, sessionsThisWeek, avg);
   }
 

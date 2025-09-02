@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:silence_score/models/silence_data.dart';
+import 'package:silence_score/theme/theme_extensions.dart';
 
 class PracticeOverviewWidget extends StatelessWidget {
   final SilenceData silenceData;
@@ -12,16 +13,32 @@ class PracticeOverviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  final theme = Theme.of(context);
+  final dramatic = theme.extension<DramaticThemeStyling>();
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        gradient: dramatic?.cardBackgroundGradient,
+        color: dramatic?.cardBackgroundGradient == null
+            ? theme.colorScheme.surface
+            : null,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+          color: dramatic != null
+              ? theme.colorScheme.primary.withValues(alpha: 0.55)
+              : theme.colorScheme.primary.withValues(alpha: 0.18),
+          width: 1.2,
         ),
+        boxShadow: dramatic != null
+            ? [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                  blurRadius: 20,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,36 +73,46 @@ class PracticeOverviewWidget extends StatelessWidget {
   Widget _buildCompactStatsAndChart(BuildContext context) {
     // Always place the chart to the right of the stats to conserve vertical space.
     final theme = Theme.of(context);
+  final dramatic = theme.extension<DramaticThemeStyling>();
     final statsRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Flexible(
-          child: _buildCompactStat(
-            context,
+        for (final entry in [
+          (
             silenceData.totalPoints.toString(),
             'Points',
             Icons.stars,
-            theme.colorScheme.primary,
+            (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.isNotEmpty)
+                ? dramatic.statAccentColors![0]
+                : theme.colorScheme.primary,
           ),
-        ),
-        Flexible(
-          child: _buildCompactStat(
-            context,
+          (
             silenceData.currentStreak.toString(),
             'Streak',
             Icons.local_fire_department,
-            theme.colorScheme.secondary,
+            (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length > 1)
+                ? dramatic.statAccentColors![1]
+                : theme.colorScheme.secondary,
           ),
-        ),
-        Flexible(
-          child: _buildCompactStat(
-            context,
+          (
             silenceData.totalSessions.toString(),
             'Sessions',
             Icons.play_circle,
-            theme.colorScheme.tertiary,
+            (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length > 2)
+                ? dramatic.statAccentColors![2]
+                : theme.colorScheme.tertiary,
           ),
-        ),
+        ]) ...[
+          Flexible(
+            child: _buildCompactStat(
+              context,
+              entry.$1,
+              entry.$2,
+              entry.$3,
+              entry.$4,
+            ),
+          ),
+        ],
       ],
     );
 

@@ -23,6 +23,10 @@ import 'package:silence_score/services/accessibility_service.dart';
 import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/l10n/app_localizations.dart';
 import 'package:silence_score/utils/debug_log.dart';
+import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:flutter/services.dart';
+import 'package:silence_score/widgets/banner_ad_footer.dart';
+import 'package:silence_score/widgets/theme_overlays.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -84,10 +88,68 @@ class HomePage extends HookConsumerWidget {
       return null;
     }, [silenceState.success]);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(loc?.appTitle ?? 'Silence Score'),
-        actions: [
+  final dramatic = Theme.of(context).extension<DramaticThemeStyling>();
+  final themeMode = ref.watch(themeProvider);
+  final isCyberNeon = themeMode == AppThemeMode.cyberNeon;
+  final isMidnightTeal = themeMode == AppThemeMode.midnightTeal;
+    final brightness = Theme.of(context).brightness;
+    final gradient = dramatic?.appBackgroundGradient;
+
+    return Stack(
+      children: [
+        // Base gradient / surface
+        Container(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            color: gradient == null ? Theme.of(context).colorScheme.surface : null,
+          ),
+        ),
+        // Cyber Neon dynamic layer: radial pulse + faint scanlines
+        if (isCyberNeon) ...[
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedPulseOverlay(
+                color: const Color(0xFF00FFF0).withOpacity(0.12),
+                secondary: const Color(0xFFFF2EC4).withOpacity(0.10),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ScanlineOverlay(opacity: 0.07)),
+          ),
+        ],
+        // Midnight Teal: drifting vertical mist + micro particles
+        if (isMidnightTeal) ...[
+          Positioned.fill(
+            child: IgnorePointer(
+              child: MistOverlay(
+                baseColor: const Color(0xFF00D295).withOpacity(0.12),
+                highlightColor: const Color(0xFF43F56A).withOpacity(0.10),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: IgnorePointer(child: ParticleDriftOverlay(color: const Color(0xFF43F56A).withOpacity(0.30))),
+          ),
+        ],
+        Scaffold(
+  extendBody: true,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+            statusBarBrightness: brightness == Brightness.dark ? Brightness.dark : Brightness.light,
+          ),
+          title: Text(
+            loc?.appTitle ?? 'Silence Score',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          actions: [
           IconButton(
             icon: Icon(_getThemeIcon(ref)),
             onPressed: () {
@@ -108,10 +170,10 @@ class HomePage extends HookConsumerWidget {
               );
             },
           ),
-        ],
-      ),
-      body: _SubscriptionInitializer(
-        child: silenceDataAsyncValue.when(
+          ],
+        ),
+        body: _SubscriptionInitializer(
+          child: silenceDataAsyncValue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
@@ -140,8 +202,10 @@ class HomePage extends HookConsumerWidget {
               ref,
             );
           },
+          ),
         ),
-      ),
+        ),
+      ],
     );
   }
 
@@ -155,7 +219,7 @@ class HomePage extends HookConsumerWidget {
     ConfettiController confettiController,
     WidgetRef ref,
   ) {
-    return Stack(
+  return Stack(
       children: [
         SafeArea(
           child: Padding(
@@ -271,6 +335,8 @@ class HomePage extends HookConsumerWidget {
                   );
                 }
 
+                final showAds = !ref.watch(premiumAccessProvider);
+
                 final content = isLarge
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +344,13 @@ class HomePage extends HookConsumerWidget {
                           Expanded(
                             flex: 5,
                             child: Column(
-                              children: [buildRingSection()],
+                              children: [
+                                buildRingSection(),
+                                if (showAds) ...[
+                                  const SizedBox(height: 28),
+                                  const FooterBannerAd(),
+                                ],
+                              ],
                             ),
                           ),
                           const SizedBox(width: 24),
@@ -294,6 +366,10 @@ class HomePage extends HookConsumerWidget {
                           const SizedBox(height: 16),
                           buildInfoColumn(),
                           buildRingSection(),
+                          if (showAds) ...[
+                            const SizedBox(height: 28),
+                            const FooterBannerAd(),
+                          ],
                           SizedBox(height: isSmallScreen ? LayoutConstants.bottomPaddingSmall : LayoutConstants.bottomPaddingRegular),
                         ],
                       );

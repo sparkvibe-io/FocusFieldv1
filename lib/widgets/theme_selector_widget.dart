@@ -128,8 +128,9 @@ class ThemeSelectorWidget extends ConsumerWidget {
   ) {
     final isSelected = currentTheme == themeMode;
     final isAccessible = !isPremium || hasPremiumAccess;
+  final isCyberNeon = themeMode == AppThemeMode.cyberNeon;
     
-    return GestureDetector(
+  Widget tile = GestureDetector(
       onTap: () {
         if (isAccessible) {
           themeNotifier.setTheme(themeMode);
@@ -148,7 +149,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
           border: Border.all(
             color: isSelected 
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+                : Theme.of(context).colorScheme.outline.withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -178,7 +179,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
+                      color: Colors.black.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
@@ -193,7 +194,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: Colors.black.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
@@ -216,6 +217,32 @@ class ThemeSelectorWidget extends ConsumerWidget {
         ),
       ),
     );
+
+    // Animated neon glow for selected Cyber Neon
+    if (isCyberNeon) {
+      tile = AnimatedContainer(
+        duration: const Duration(milliseconds: 650),
+        curve: Curves.easeInOut,
+        decoration: isSelected
+            ? BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00FFF0).withOpacity(0.55),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFFFF2EC4).withOpacity(0.35),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                ],
+              )
+            : null,
+        child: tile,
+      );
+    }
+    return tile;
   }
 
   Widget _buildThemeName(
@@ -233,7 +260,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           color: isAccessible 
               ? Theme.of(context).colorScheme.onSurface
-              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
         ),
         textAlign: TextAlign.center,
         maxLines: 1,
@@ -249,7 +276,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             color: isAccessible 
                 ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -261,7 +288,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             color: isAccessible 
                 ? Theme.of(context).colorScheme.onSurface
-                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             height: 1.0,
             fontSize: 11,
           ),

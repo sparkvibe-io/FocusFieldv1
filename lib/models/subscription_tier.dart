@@ -15,7 +15,7 @@ enum SubscriptionTier {
   String get description {
     switch (this) {
       case SubscriptionTier.free:
-        return 'Basic silence tracking with 5-minute sessions';
+  return 'Basic silence tracking with sessions up to 30 minutes';
       case SubscriptionTier.premium:
         return 'Extended sessions, analytics, and data export';
   // Future higher tier description placeholder removed
@@ -47,7 +47,7 @@ enum SubscriptionTier {
   int get maxSessionMinutes {
     switch (this) {
       case SubscriptionTier.free:
-        return 5;
+  return 30; // Increased from 5 now that ads are enabled
       case SubscriptionTier.premium:
   return 120; // Increased to 2 hours
   // No higher tier

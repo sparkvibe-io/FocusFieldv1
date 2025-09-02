@@ -21,12 +21,13 @@ class AnalyticsInsight {
 }
 
 class WeeklyTrend {
-  final DateTime weekStart; // Normalized week start (Mon)
+  final DateTime weekStart; // Normalized week start (Mon) or day (for fallback daily mode)
   final int totalSessions;
   final int completedSessions;
   final double averagePoints;
   final double successRate; // 0-100
   final double averageNoise;
+  final bool isMissing; // inserted placeholder week (no sessions)
 
   const WeeklyTrend({
     required this.weekStart,
@@ -35,6 +36,7 @@ class WeeklyTrend {
     required this.averagePoints,
     required this.successRate,
     required this.averageNoise,
+    this.isMissing = false,
   });
 }
 
@@ -64,27 +66,74 @@ class AdvancedAnalyticsService {
   List<WeeklyTrend> generateWeeklyTrends(SilenceData data) {
     final sessions = data.recentSessions;
     if (sessions.isEmpty) return [];
+
+    // Group actual sessions by week
     final Map<DateTime, List<SessionRecord>> grouped = {};
     for (final s in sessions) {
-      final weekStart = _weekStart(s.date);
-      grouped.putIfAbsent(weekStart, () => []).add(s);
+      final ws = _weekStart(s.date);
+      grouped.putIfAbsent(ws, () => []).add(s);
     }
-    final trends = grouped.entries.map((e) {
-      final list = e.value;
+
+    if (grouped.isEmpty) return [];
+
+    final allWeeks = grouped.keys.toList()..sort();
+    final first = allWeeks.first;
+    final last = allWeeks.last;
+
+    // DAILY FALLBACK: If data spans only a single week, return 7 daily entries (Mon-Sun)
+    if (first == last) {
+      final weekStart = first;
+      final Map<DateTime, List<SessionRecord>> byDay = {};
+      for (final s in sessions) {
+        final d = DateTime(s.date.year, s.date.month, s.date.day);
+        byDay.putIfAbsent(d, () => []).add(s);
+      }
+      final List<WeeklyTrend> days = [];
+      for (int i = 0; i < 7; i++) {
+        final day = weekStart.add(Duration(days: i));
+        final list = byDay[day] ?? const <SessionRecord>[];
+        final completed = list.where((s) => s.completed).length;
+        final avgPts = list.isEmpty ? 0.0 : list.map((s) => s.pointsEarned).reduce((a, b) => a + b) / list.length;
+        final successRate = list.isEmpty ? 0.0 : (completed / list.length) * 100;
+        final avgNoise = list.isEmpty ? 0.0 : list.map((s) => s.averageNoise).reduce((a, b) => a + b) / list.length;
+        days.add(WeeklyTrend(
+          weekStart: day,
+          totalSessions: list.length,
+          completedSessions: completed,
+          averagePoints: avgPts,
+          successRate: successRate,
+          averageNoise: avgNoise,
+          isMissing: list.isEmpty,
+        ));
+      }
+      return days;
+    }
+
+    // Build continuous week sequence
+    final List<DateTime> sequence = [];
+    DateTime cursor = first;
+    while (!cursor.isAfter(last)) {
+      sequence.add(cursor);
+      cursor = cursor.add(const Duration(days: 7));
+    }
+
+    final List<WeeklyTrend> trends = [];
+    for (final weekStart in sequence) {
+      final list = grouped[weekStart] ?? const <SessionRecord>[];
       final completed = list.where((s) => s.completed).length;
-      final avgPts = list.isEmpty ? 0.0 : list.map((s) => s.pointsEarned).reduce((a,b)=>a+b) / list.length;
+      final avgPts = list.isEmpty ? 0.0 : list.map((s) => s.pointsEarned).reduce((a, b) => a + b) / list.length;
       final successRate = list.isEmpty ? 0.0 : (completed / list.length) * 100;
-      final avgNoise = list.isEmpty ? 0.0 : list.map((s)=>s.averageNoise).reduce((a,b)=>a+b)/list.length;
-      return WeeklyTrend(
-        weekStart: e.key,
+      final avgNoise = list.isEmpty ? 0.0 : list.map((s) => s.averageNoise).reduce((a, b) => a + b) / list.length;
+      trends.add(WeeklyTrend(
+        weekStart: weekStart,
         totalSessions: list.length,
         completedSessions: completed,
         averagePoints: avgPts,
         successRate: successRate,
         averageNoise: avgNoise,
-      );
-    }).toList();
-    trends.sort((a,b)=>a.weekStart.compareTo(b.weekStart));
+        isMissing: list.isEmpty,
+      ));
+    }
     return trends;
   }
 
@@ -97,7 +146,7 @@ class AdvancedAnalyticsService {
         consistencyScore: 0,
         improvementTrend: 0,
         bestTimeOfDay: 12,
-        preferredDuration: '5 minutes',
+  preferredDuration: '10 minutes',
       );
     }
 
@@ -159,6 +208,15 @@ class AdvancedAnalyticsService {
         confidence: .85,
       ));
     }
+    if (metrics.improvementTrend < -10) {
+      insights.add(AnalyticsInsight(
+        title: 'Declining Trend',
+        description: 'Performance has dipped recently compared to earlier sessions.',
+        value: '${metrics.improvementTrend.toStringAsFixed(1)} pts',
+        type: InsightType.warning,
+        confidence: .8,
+      ));
+    }
     if (data.currentStreak >= 5) {
       insights.add(AnalyticsInsight(
         title: 'Streak Strength',
@@ -167,6 +225,36 @@ class AdvancedAnalyticsService {
         type: InsightType.achievement,
         confidence: 1.0,
       ));
+    }
+
+    // Environment / noise stability insight (aggregate over all sessions)
+    if (sessions.isNotEmpty) {
+      final avgNoise = sessions.map((s) => s.averageNoise).reduce((a, b) => a + b) / sessions.length;
+      if (avgNoise < 35) {
+        insights.add(AnalyticsInsight(
+          title: 'Quiet Environment',
+          description: 'Low ambient noise is supporting higher focus potential.',
+          value: '${avgNoise.toStringAsFixed(1)} dB',
+          type: InsightType.achievement,
+          confidence: 0.7,
+        ));
+      } else if (avgNoise > 55) {
+        insights.add(AnalyticsInsight(
+          title: 'High Ambient Noise',
+          description: 'Consider a quieter space or adjusting threshold for better results.',
+          value: '${avgNoise.toStringAsFixed(1)} dB',
+          type: InsightType.recommendation,
+          confidence: 0.75,
+        ));
+      } else {
+        insights.add(AnalyticsInsight(
+          title: 'Environment Stability',
+          description: 'Ambient noise is within a moderate, manageable range.',
+          value: '${avgNoise.toStringAsFixed(1)} dB',
+          type: InsightType.trend,
+          confidence: 0.5,
+        ));
+      }
     }
     return insights;
   }
@@ -211,17 +299,26 @@ class AdvancedAnalyticsService {
   }
 
   String _preferredDuration(List<SessionRecord> sessions) {
+    // Use stable bucket keys; UI layer can translate via AppLocalizations.
+    String bucketKey(int minutes) {
+      if (minutes <= 2) return 'bucket1to2';
+      if (minutes <= 5) return 'bucket3to5';
+      if (minutes <= 10) return 'bucket6to10';
+      if (minutes <= 20) return 'bucket11to20';
+      if (minutes <= 30) return 'bucket21to30';
+      return 'bucket30plus';
+    }
     final buckets = <String,List<bool>>{};
     for (final s in sessions) {
       final minutes = (s.duration/60).round();
-      final label = minutes <=2 ? '1-2 min' : minutes<=5 ? '3-5 min' : minutes<=10 ? '6-10 min' : minutes<=20 ? '11-20 min' : '20+ min';
-      buckets.putIfAbsent(label, ()=>[]).add(s.completed);
+      final key = bucketKey(minutes);
+      buckets.putIfAbsent(key, ()=>[]).add(s.completed);
     }
-    String best='5 min'; double bestRate=-1;
+    String best=''; double bestRate=-1;
     buckets.forEach((k,v){
       final r = v.where((c)=>c).length / v.length;
       if (r>bestRate){bestRate=r;best=k;}
     });
-    return best;
+    return best; // returns localization key, not raw label
   }
 }

@@ -276,4 +276,12 @@ class SubscriptionService {
     _tierController.close();
   // purchases_flutter currently lacks explicit listener removal API; if added, dispose here.
   }
+
+  // DEBUG / DEV UTILITIES -------------------------------------------------
+  /// Force a subscription tier in mock mode for fast UI validation.
+  /// No-op outside mock mode to avoid accidental misuse.
+  Future<void> debugForceTier(SubscriptionTier tier) async {
+    if (!AppConstants.enableMockSubscriptions) return; // safety guard
+    await _setCurrentTier(tier);
+  }
 }

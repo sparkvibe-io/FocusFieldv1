@@ -105,7 +105,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
 
     final now = DateTime.now();
     
-    // Reset error count if enough time has passed (5 minutes)
+  // Reset error count if enough time has passed (5 minutes window – unchanged despite longer free sessions)
     if (_lastError != null && now.difference(_lastError!).inMinutes > 5) {
       _errorCount = 0;
     }

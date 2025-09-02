@@ -26,7 +26,7 @@ class SplashScreen extends HookWidget {
     final fade = useAnimation(Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: fadeController, curve: Curves.easeInOut)));
 
     useEffect(() {
-      final navDelay = Future.delayed(const Duration(milliseconds: 1800), () {
+      Future.delayed(const Duration(milliseconds: 1800), () {
         if (context.mounted) {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
@@ -38,9 +38,9 @@ class SplashScreen extends HookWidget {
         }
       });
       return () {
-        breatheController.dispose();
-        fadeController.dispose();
-        navDelay.ignore();
+  // Controllers from useAnimationController are disposed automatically by the hook.
+  // No manual dispose to prevent double-dispose assertion.
+  // Navigation future is harmless if it fires after unmount due to context.mounted guard.
       };
     }, []);
 

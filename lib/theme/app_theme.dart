@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:silence_score/providers/theme_provider.dart';
 import 'package:silence_score/services/accessibility_service.dart';
+import 'package:silence_score/theme/theme_extensions.dart';
 
 class AppTheme {
   static ThemeData get lightTheme => _buildTheme(AppThemeMode.light);
@@ -22,36 +23,112 @@ class AppTheme {
       colorScheme = accessibilityService.adjustColorSchemeForContrast(colorScheme);
     }
     
-    return ThemeData(
+    // Dramatic extension (default neutral)
+    DramaticThemeStyling dramatic = DramaticThemeStyling.neutral();
+
+    if (mode == AppThemeMode.cyberNeon) {
+      dramatic = DramaticThemeStyling(
+        appBackgroundGradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF05010C), // deep void
+            Color(0xFF140033), // violet core
+            Color(0xFF001F2A), // teal shadow
+            Color(0xFF002F4F), // cyan edge
+          ],
+          stops: [0.0, 0.35, 0.65, 1.0],
+        ),
+        cardBackgroundGradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF0E1233),
+            const Color(0xFF050B1F),
+          ],
+        ),
+        statAccentColors: const [
+          Color(0xFF00F5FF), // cyan
+          Color(0xFFFF1FAE), // magenta
+          Color(0xFFB347FF), // purple
+        ],
+      );
+    } else if (mode == AppThemeMode.midnightTeal) {
+      dramatic = DramaticThemeStyling(
+        appBackgroundGradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF001916), // deep abyss
+            Color(0xFF002B28), // teal core
+            Color(0xFF004139), // emerald rise
+          ],
+          stops: [0.0, 0.55, 1.0],
+        ),
+        cardBackgroundGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF002C29),
+            Color(0xFF001E1D).withOpacity(0.85),
+          ],
+        ),
+        statAccentColors: const [
+          Color(0xFF00C9A5), // primary teal
+          Color(0xFF008FA6), // blue‑teal
+          Color(0xFF5DF27C), // green accent
+        ],
+      );
+    }
+
+  final highContrast = enableHighContrast;
+  return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      extensions: [dramatic],
+      // Make scaffold transparent for dramatic premium themes so gradient shows through
+      scaffoldBackgroundColor: (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
+          ? Colors.transparent
+          : colorScheme.surface,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
+            ? Colors.transparent
+            : colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
+        toolbarHeight: 56,
       ),
-      cardTheme: CardThemeData(
-        elevation: 2,
+  cardTheme: _cardThemeFor(mode, colorScheme).copyWith(
+        elevation: highContrast ? 2 : null,
+        shadowColor: highContrast ? colorScheme.onSurface.withOpacity(0.4) : null,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        color: colorScheme.surfaceContainer,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(12),
+          side: highContrast ? BorderSide(color: colorScheme.primary, width: 1.2) : BorderSide.none,
         ),
       ),
+  elevatedButtonTheme: _elevatedButtonThemeFor(mode, colorScheme),
+  outlinedButtonTheme: _outlinedButtonThemeFor(mode, colorScheme),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
+  textTheme: _textThemeFor(mode, colorScheme).apply(
+        bodyColor: highContrast ? colorScheme.onSurface : null,
+        displayColor: highContrast ? colorScheme.onSurface : null,
+      ),
+      dividerTheme: DividerThemeData(
+        thickness: highContrast ? 1.2 : null,
+        color: highContrast ? colorScheme.onSurface : null,
+      ),
+      listTileTheme: highContrast
+          ? ListTileThemeData(
+              iconColor: colorScheme.onSurface,
+              textColor: colorScheme.onSurface,
+              tileColor: colorScheme.surface,
+              selectedColor: colorScheme.primary,
+            )
+          : null,
     );
   }
 
@@ -175,18 +252,18 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseNeon.copyWith(
-          // Deep techno purple/blue base distinct from generic dark
-          surface: const Color(0xFF070013),
-          surfaceContainer: const Color(0xFF100026),
-          surfaceContainerHighest: const Color(0xFF1E0040),
-          onSurface: const Color(0xFFF5E8FF), // lavender white
-          primary: const Color(0xFF00F5FF), // neon cyan
-          onPrimary: const Color(0xFF001C1F),
-          primaryContainer: const Color(0xFF003F47),
-          onPrimaryContainer: const Color(0xFF8CF9FF),
-          secondary: const Color(0xFFFF1FAE), // hot magenta
-          tertiary: const Color(0xFFB347FF), // vivid purple
-          outline: const Color(0xFF5A2F7A),
+          // Reworked to be extremely high contrast neon on near-black with violet + magenta depths
+          surface: const Color(0xFF01060F), // almost black with blue hint
+          surfaceContainer: const Color(0xFF050B1F),
+          surfaceContainerHighest: const Color(0xFF0E1233),
+          onSurface: const Color(0xFFE7F8FF), // icy white
+          primary: const Color(0xFF00FFF0), // electric aqua
+          onPrimary: const Color(0xFF001F1C),
+          primaryContainer: const Color(0xFF003E5A),
+          onPrimaryContainer: const Color(0xFF8CFFF6),
+          secondary: const Color(0xFFFF2EC4), // hotter magenta
+          tertiary: const Color(0xFF7B5BFF), // violet
+          outline: const Color(0xFF3F4F9A),
         );
       case AppThemeMode.midnightTeal:
         final baseTeal = ColorScheme.fromSeed(
@@ -194,19 +271,163 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseTeal.copyWith(
-          // Teal/green base distinct from system dark or neon
-          surface: const Color(0xFF001F1C),
-          surfaceContainer: const Color(0xFF002B28),
-          surfaceContainerHighest: const Color(0xFF003A36),
-          onSurface: const Color(0xFFD1FFF5), // soft mint white
-          primary: const Color(0xFF00C9A5), // saturated teal-green
-          onPrimary: const Color(0xFF00201A),
-          primaryContainer: const Color(0xFF005047),
-          onPrimaryContainer: const Color(0xFF8CF6E4),
-          secondary: const Color(0xFF008FA6), // blue-teal contrast
-          tertiary: const Color(0xFF5DF27C), // bright green accent
-          outline: const Color(0xFF2E6059),
+          // Deeper green-cyan abyss with bio-luminescent mints
+          surface: const Color(0xFF001312), // darker than before
+          surfaceContainer: const Color(0xFF001E1D),
+          surfaceContainerHighest: const Color(0xFF002C29),
+          onSurface: const Color(0xFFCCFFEF), // pale mint
+          primary: const Color(0xFF00D295), // vivid emerald teal
+          onPrimary: const Color(0xFF00261A),
+          primaryContainer: const Color(0xFF004D39),
+          onPrimaryContainer: const Color(0xFF92FFDE),
+          secondary: const Color(0xFF00A7C4), // aqua teal
+          tertiary: const Color(0xFF43F56A), // bio green
+          outline: const Color(0xFF1E5E55),
         );
+    }
+  }
+
+  static CardThemeData _cardThemeFor(AppThemeMode mode, ColorScheme scheme) {
+    // Base card style
+    final baseShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
+    switch (mode) {
+      case AppThemeMode.cyberNeon:
+  return CardThemeData(
+          color: scheme.surfaceContainer.withOpacity(0.55),
+          elevation: 6,
+          shadowColor: const Color(0xFF00FFF0).withOpacity(0.35),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+            side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
+          ),
+          margin: const EdgeInsets.all(8),
+        );
+      case AppThemeMode.midnightTeal:
+  return CardThemeData(
+          color: scheme.surfaceContainer.withOpacity(0.60),
+          elevation: 4,
+          shadowColor: const Color(0xFF00D295).withOpacity(0.25),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+            side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
+          ),
+          margin: const EdgeInsets.all(8),
+        );
+      default:
+  return CardThemeData(
+          elevation: 2,
+          shape: baseShape,
+          color: scheme.surfaceContainer,
+          margin: const EdgeInsets.all(8),
+        );
+    }
+  }
+
+  static ElevatedButtonThemeData _elevatedButtonThemeFor(AppThemeMode mode, ColorScheme scheme) {
+    final base = ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+    switch (mode) {
+      case AppThemeMode.cyberNeon:
+        return ElevatedButtonThemeData(
+          style: base.merge(
+            ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary.withOpacity(0.08),
+              foregroundColor: scheme.primary,
+              shadowColor: scheme.primary.withOpacity(0.4),
+              elevation: 6,
+              side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
+              overlayColor: scheme.secondary.withOpacity(0.18),
+            ),
+          ),
+        );
+      case AppThemeMode.midnightTeal:
+        return ElevatedButtonThemeData(
+          style: base.merge(
+            ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary.withOpacity(0.10),
+              foregroundColor: scheme.primary,
+              shadowColor: scheme.primary.withOpacity(0.25),
+              elevation: 4,
+              side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
+              overlayColor: scheme.secondary.withOpacity(0.14),
+            ),
+          ),
+        );
+      default:
+        return ElevatedButtonThemeData(
+          style: base.merge(
+            ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+              elevation: 2,
+            ),
+          ),
+        );
+    }
+  }
+
+  static OutlinedButtonThemeData _outlinedButtonThemeFor(AppThemeMode mode, ColorScheme scheme) {
+    final base = OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+    switch (mode) {
+      case AppThemeMode.cyberNeon:
+        return OutlinedButtonThemeData(
+          style: base.merge(
+            OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
+              foregroundColor: scheme.primary,
+              overlayColor: scheme.secondary.withOpacity(0.16),
+            ),
+          ),
+        );
+      case AppThemeMode.midnightTeal:
+        return OutlinedButtonThemeData(
+          style: base.merge(
+            OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
+              foregroundColor: scheme.primary,
+              overlayColor: scheme.secondary.withOpacity(0.12),
+            ),
+          ),
+        );
+      default:
+        return OutlinedButtonThemeData(
+          style: base.merge(
+            OutlinedButton.styleFrom(
+              side: BorderSide(color: scheme.outline.withOpacity(0.6), width: 1.0),
+              foregroundColor: scheme.primary,
+            ),
+          ),
+        );
+    }
+  }
+
+  static TextTheme _textThemeFor(AppThemeMode mode, ColorScheme scheme) {
+    final base = ThemeData(brightness: scheme.brightness).textTheme.apply(
+          displayColor: scheme.onSurface,
+          bodyColor: scheme.onSurface,
+        );
+    switch (mode) {
+      case AppThemeMode.cyberNeon:
+        return base.copyWith(
+          titleLarge: base.titleLarge?.copyWith(color: const Color(0xFFE4FBFF), fontWeight: FontWeight.w600),
+          titleMedium: base.titleMedium?.copyWith(color: const Color(0xFF8ADFFF)),
+          bodySmall: base.bodySmall?.copyWith(color: scheme.onSurface.withOpacity(0.72)),
+          labelSmall: base.labelSmall?.copyWith(color: const Color(0xFFFF2EC4)),
+        );
+      case AppThemeMode.midnightTeal:
+        return base.copyWith(
+          titleLarge: base.titleLarge?.copyWith(color: const Color(0xFFC2FFE9), fontWeight: FontWeight.w600),
+          titleMedium: base.titleMedium?.copyWith(color: const Color(0xFF6BD9B7)),
+          bodySmall: base.bodySmall?.copyWith(color: scheme.onSurface.withOpacity(0.68)),
+          labelSmall: base.labelSmall?.copyWith(color: const Color(0xFF43F56A)),
+        );
+      default:
+        return base;
     }
   }
 }

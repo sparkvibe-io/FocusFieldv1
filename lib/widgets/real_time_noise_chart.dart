@@ -8,6 +8,7 @@ import 'package:silence_score/providers/silence_provider.dart';
 import 'dart:math' as math;
 import 'package:silence_score/utils/throttled_logger.dart';
 import 'package:silence_score/utils/debug_log.dart';
+import 'package:silence_score/theme/theme_extensions.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -22,6 +23,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+  final dramatic = theme.extension<DramaticThemeStyling>();
   final silenceDetector = ref.read(silenceDetectorProvider);
   final noiseController = ref.watch(realTimeNoiseControllerProvider);
     
@@ -141,8 +143,27 @@ class RealTimeNoiseChart extends HookConsumerWidget {
   return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
+        gradient: dramatic?.cardBackgroundGradient,
+        color: dramatic?.cardBackgroundGradient == null
+            ? theme.colorScheme.surfaceContainer
+            : null,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: dramatic != null
+              ? theme.colorScheme.primary.withValues(alpha: 0.5)
+              : theme.colorScheme.outline.withValues(alpha: 0.12),
+          width: 1,
+        ),
+        boxShadow: dramatic != null
+            ? [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 18,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 6),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         children: [
@@ -353,7 +374,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       
       // Clamp values to safe ranges
       final clampedDecibel = decibel.clamp(0.0, 120.0);
-      final clampedTime = totalTimeInSeconds.clamp(0.0, 300.0); // Max 5 minutes
+  final clampedTime = totalTimeInSeconds.clamp(0.0, 1800.0); // Max 30 minutes
       
       // Create new data point with validation
       final newPoint = FlSpot(clampedTime, clampedDecibel);
@@ -366,8 +387,8 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       
       // Get current data and validate
       var currentData = chartData.value;
-      if (currentData.length > 300) { // Limit total data points to prevent memory issues
-        currentData = currentData.sublist(currentData.length - 250); // Keep last 250 points
+      if (currentData.length > 1800) { // Limit total data points to prevent memory issues (approx 1 point/sec)
+        currentData = currentData.sublist(currentData.length - 1200); // Keep last 20 minutes
       }
       
       var newData = [...currentData, newPoint];

@@ -1,7 +1,6 @@
 class AppConstants {
   // App metadata
   static const String appTitle = 'Silence Score';
-  static const String appVersion = '0.1.0';
   
   // Silence detection settings
   static const double defaultDecibelThreshold = 38.0; // dB
@@ -18,8 +17,15 @@ class AppConstants {
   static const int pointsPerSuccess = 1; // Deprecated - use pointsPerMinute instead
   
   // Development & Testing
+  // IMPORTANT:
+  //  - isDevelopmentMode defaults to true for local builds (can be flipped with --dart-define IS_DEVELOPMENT=false for prod flavor testing)
+  //  - enableMockSubscriptions previously defaulted to true which caused PREMIUM FEATURES TO APPEAR UNLOCKED WITHOUT PURCHASE.
+  //    This led to confusion and potential policy risk. It now defaults to false so that, unless explicitly opted-in, the
+  //    app behaves like production regarding entitlements. To simulate purchases locally without hitting RevenueCat:
+  //      flutter run --dart-define ENABLE_MOCK_SUBSCRIPTIONS=true
+  //    In mock mode the last persisted tier (SharedPreferences) is loaded and can be toggled via an internal debug action.
   static const bool isDevelopmentMode = bool.fromEnvironment('IS_DEVELOPMENT', defaultValue: true);
-  static const bool enableMockSubscriptions = bool.fromEnvironment('ENABLE_MOCK_SUBSCRIPTIONS', defaultValue: true);
+  static const bool enableMockSubscriptions = bool.fromEnvironment('ENABLE_MOCK_SUBSCRIPTIONS', defaultValue: false);
   
   // Subscription & Premium Features - Using dart-define for security
   static const String revenueCatApiKey = String.fromEnvironment(
@@ -52,11 +58,13 @@ class AppConstants {
   static const int hostedPaywallCacheMinutes = 30;
   
   // Feature limits
-  static const int freeSessionMaxMinutes = 5;
-  static const int premiumSessionMaxMinutes = 60; // legacy cap (kept for backward compatibility only)
-  // Premium actual limit now 120 minutes (see SubscriptionTier.premium.maxSessionMinutes)
+  static const int freeSessionMaxMinutes = 30; // Increased due to ads monetization
+  static const int premiumSessionMaxMinutes = 120; // Premium cap aligned with SubscriptionTier
   static const int freeHistoryDays = 7;
   static const int premiumHistoryDays = 90;
+
+  // Ads (test/demo unit IDs; replace with production IDs before release)
+  static const String testBannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
   
   // Storage keys
   static const String totalPointsKey = 'total_points';

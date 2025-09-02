@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:silence_score/theme/theme_extensions.dart';
 
 class ProgressRing extends StatelessWidget {
   final double progress;
@@ -26,8 +27,10 @@ class ProgressRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = color ?? theme.colorScheme.primary;
+  final primaryColor = color ?? theme.colorScheme.primary;
+  final dramatic = theme.extension<DramaticThemeStyling>();
     final bgColor = backgroundColor ?? theme.colorScheme.surfaceContainerHighest;
+  final isNeon = dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length >=3 && dramatic.statAccentColors![0].value == 0xFF00F5FF;
 
     // Ensure progress is within valid bounds
     final clampedProgress = progress.clamp(0.0, 1.0);
@@ -69,6 +72,36 @@ class ProgressRing extends StatelessWidget {
                     progress: clampedProgress,
                     color: primaryColor,
                     strokeWidth: strokeWidth,
+                    gradient: dramatic?.statAccentColors != null
+                        ? (isNeon
+                            ? SweepGradient(
+                                startAngle: -math.pi / 2,
+                                endAngle: 3 * math.pi / 2,
+                                colors: [
+                                  dramatic.statAccentColors![0],
+                                  dramatic.statAccentColors![1],
+                                  dramatic.statAccentColors![2],
+                                  dramatic.statAccentColors![0],
+                                ],
+                                stops: const [0, 0.33, 0.66, 1.0],
+                              )
+                            : LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  dramatic!.statAccentColors![0].withOpacity(0.9),
+                                  dramatic.statAccentColors!.last.withOpacity(0.9),
+                                ],
+                              ))
+                        : null,
+                    glow: isNeon
+                        ? [
+                            BoxShadow(color: primaryColor.withOpacity(0.45), blurRadius: 24, spreadRadius: 2),
+                            BoxShadow(color: primaryColor.withOpacity(0.25), blurRadius: 48, spreadRadius: 12),
+                          ]
+                        : [
+                            BoxShadow(color: primaryColor.withOpacity(0.22), blurRadius: 36, spreadRadius: 6),
+                          ],
                   ),
                 ),
               
@@ -144,11 +177,15 @@ class _ProgressPainter extends CustomPainter {
   final double progress;
   final Color color;
   final double strokeWidth;
+  final Gradient? gradient;
+  final List<BoxShadow>? glow;
 
   _ProgressPainter({
     required this.progress,
     required this.color,
     required this.strokeWidth,
+    this.gradient,
+    this.glow,
   });
 
   @override
@@ -156,11 +193,35 @@ class _ProgressPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
 
+    // Draw glow if provided
+    if (glow != null && glow!.isNotEmpty) {
+      for (final g in glow!) {
+        final glowPaint = Paint()
+          ..color = g.color
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, g.blurRadius)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth;
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          -math.pi / 2,
+          progress * 2 * math.pi,
+          false,
+          glowPaint,
+        );
+      }
+    }
+
     final paint = Paint()
-      ..color = color
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
+    if (gradient != null) {
+      paint.shader = gradient!.createShader(
+        Rect.fromCircle(center: center, radius: radius),
+      );
+    } else {
+      paint.color = color;
+    }
 
     // Draw arc
     canvas.drawArc(
