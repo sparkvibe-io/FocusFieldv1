@@ -4,6 +4,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:silence_score/utils/debug_log.dart';
 
 /// Handles rating prompt logic with conservative, session-based gating.
 class RatingService {
@@ -74,10 +75,12 @@ class RatingService {
 
     final status = _prefs!.getString(_kStatus) ?? 'none';
     if (status == 'rated' || status == 'declined') return; // terminal states
+  DebugLog.d('[Rating] Evaluating prompt: status=$status sessions=$totalSessions');
 
     // Basic session & duration gates
     if (totalSessions < minSessions) return;
     if ((lastSessionDurationSeconds ?? 0) < minShortSessionSeconds) return;
+  DebugLog.d('[Rating] Passed sessions & duration gates');
 
     // Date gates
     final now = DateTime.now();
@@ -91,6 +94,7 @@ class RatingService {
     final timesPrompted = _prefs!.getInt(_kTimesPrompted) ?? 0;
     if (timesPrompted >= maxPrompts && status != 'later') return;
     if (lastPrompt != null && now.difference(lastPrompt).inDays < minDaysBetweenPrompts) return;
+  DebugLog.d('[Rating] Passed date & frequency gates');
 
     // Version re-prompt logic
     final pkg = await PackageInfo.fromPlatform();
@@ -98,11 +102,13 @@ class RatingService {
     final lastVersionPrompted = _prefs!.getString(_kLastVersionPrompted);
     final allowByVersion = _allowVersionRePrompt(status, lastVersionPrompted, currentVersion, lastPrompt);
     if (!allowByVersion) return;
+  DebugLog.d('[Rating] Version gate passed (current=$currentVersion last=$lastVersionPrompted)');
 
     // Probability heuristic
     final p = _probability(totalSessions);
     final r = Random().nextDouble();
     if (r > p) return; // not this time
+  DebugLog.d('[Rating] Random pass r=$r <= p=$p -> showing prompt');
 
     // All gates passed -> show prompt sheet
     if (!context.mounted) return;
@@ -197,16 +203,20 @@ class RatingService {
 
     switch (result) {
       case 'rate':
+  DebugLog.d('[Rating] User selected Rate Now');
         await _recordPrompt(version, totalSessions);
         await forceRate(context);
         break;
       case 'later':
+  DebugLog.d('[Rating] User selected Later');
         await _recordPrompt(version, totalSessions, status: 'later');
         break;
       case 'no':
+  DebugLog.d('[Rating] User selected No Thanks');
         await _recordPrompt(version, totalSessions, status: 'declined');
         break;
       default:
+  DebugLog.d('[Rating] User dismissed (treated as Later)');
         // Treat dismiss as later so we respect cool-down
         await _recordPrompt(version, totalSessions, status: 'later');
     }
@@ -220,6 +230,7 @@ class RatingService {
     _prefs!.setString(_kLastVersionPrompted, version);
     _prefs!.setInt(_kLastSessionCountPrompted, totalSessions);
     if (status != null) await _setStatus(status);
+  DebugLog.d('[Rating] Recorded prompt: version=$version sessions=$totalSessions status=${status ?? '(unchanged)'} times=${times + 1}');
   }
 
   Future<void> _setStatus(String status) async {
