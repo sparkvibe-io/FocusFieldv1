@@ -56,6 +56,23 @@ done
 
 echo "🚀 Building SilenceScore for Production..."
 
+# Ensure version sync (pubspec.yaml -> local.properties). If mismatch, regenerate.
+PUBSPEC_VERSION_LINE=$(grep -E '^version:' pubspec.yaml || true)
+PUBSPEC_BUILD_NUMBER=$(echo "$PUBSPEC_VERSION_LINE" | awk -F'[+]' '{print $2}')
+LP_FILE=android/local.properties
+if [ -n "$PUBSPEC_BUILD_NUMBER" ] && [ -f "$LP_FILE" ]; then
+    LP_VERSION_CODE=$(grep '^flutter.versionCode=' "$LP_FILE" | cut -d'=' -f2)
+    if [ "$LP_VERSION_CODE" != "$PUBSPEC_BUILD_NUMBER" ]; then
+        echo "🔄 Version code mismatch (pubspec +$PUBSPEC_BUILD_NUMBER vs local.properties $LP_VERSION_CODE). Running flutter pub get to refresh.";
+        flutter pub get >/dev/null 2>&1 || true
+        # Re-read after pub get
+        if [ -f "$LP_FILE" ]; then
+            LP_VERSION_CODE=$(grep '^flutter.versionCode=' "$LP_FILE" | cut -d'=' -f2)
+            echo "   Updated local.properties flutter.versionCode=$LP_VERSION_CODE"
+        fi
+    fi
+fi
+
 # Validate required environment variables
 if [ -z "${REVENUECAT_API_KEY:-}" ] || [ "$REVENUECAT_API_KEY" = "your_revenuecat_public_sdk_key" ]; then
     echo "❌ Error: REVENUECAT_API_KEY is required for production builds"
