@@ -4,6 +4,15 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Load Flutter-generated version info from local.properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.newDataInputStream())
+}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
+
 android {
     namespace "io.sparkvibe.silencescore"
     compileSdkVersion 35
@@ -39,7 +48,9 @@ android {
         // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
         minSdkVersion 24
         targetSdkVersion 35
-        // versionCode / versionName now sourced from pubspec via Flutter tooling
+    // Set explicitly to satisfy bundle packaging; values originate from pubspec.yaml -> local.properties
+    versionCode flutterVersionCode.toInteger()
+    versionName flutterVersionName
     }
 
     if (!keystorePropertiesFile.exists()) {
