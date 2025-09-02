@@ -2,7 +2,7 @@
   "appTitle": "Silence Score",
   "splashLoading": "Preparing focus engine…",
   "paywallTitle": "Train Deeper Focus with Premium",
-  "featureExtendSessions": "Extend focus sessions from 5 min to 120 min",
+  "featureExtendSessions": "Extend focus sessions from 30 min to 120 min",
   "featureHistory": "Access 90 days of past sessions",
   "featureMetrics": "Unlock performance metrics and trend charts",
   "featureExport": "Download your session data (CSV / PDF)",
@@ -200,6 +200,12 @@
   ,"performanceMetrics": "Performance Metrics"
   ,"advancedAnalytics": "Advanced Analytics"
   ,"premiumBadge": "PREMIUM"
+  ,"bucket1to2": "1-2 min"
+  ,"bucket3to5": "3-5 min"
+  ,"bucket6to10": "6-10 min"
+  ,"bucket11to20": "11-20 min"
+  ,"bucket21to30": "21-30 min"
+  ,"bucket30plus": "30+ min"
   ,"sessionHistoryTitle": "Session History"
   ,"recentSessionHistory": "Recent Session History"
   ,"achievementFirstStepTitle": "First Step"
@@ -213,6 +219,12 @@
   ,"achievementHalfCenturyTitle": "Half Century"
   ,"achievementHalfCenturyDesc": "50 points milestone"
   ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
+    ,"ratingPromptTitle": "Enjoying Silence Score?"
+    ,"ratingPromptBody": "A quick 5-star rating helps others discover calmer focus time."
+    ,"ratingPromptRateNow": "Rate Now"
+    ,"ratingPromptLater": "Later"
+    ,"ratingPromptNoThanks": "No Thanks"
+    ,"ratingThankYou": "Thanks for your support!"
   ,"@achievementFirstStepTitle": {"description": "Achievement title for completing the very first session"}
   ,"@achievementFirstStepDesc": {"description": "Achievement description: user completed their first session"}
   ,"@achievementOnFireTitle": {"description": "Achievement title for achieving a 3 day streak"}

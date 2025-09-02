@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/providers/silence_provider.dart';
 import 'package:silence_score/screens/home_page.dart';
 import 'package:silence_score/widgets/error_boundary.dart';
+import 'package:silence_score/services/rating_service.dart';
 import 'package:silence_score/constants/permission_constants.dart';
 import 'package:silence_score/widgets/permission_dialogs.dart';
 
@@ -30,7 +31,18 @@ class AppInitializer extends ConsumerWidget {
               loading: () => _buildLoadingScreen(context, 'Loading user data...'),
               error: (error, stack) => _buildErrorScreen(context, 'Data loading failed: $error', ref),
               data: (silenceData) {
-                // All data loaded successfully, show main app with permission check
+                // Trigger rating prompt logic (non-blocking)
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  try {
+                    await RatingService.instance.initLaunch();
+                    // silenceData is a SilenceData model
+                    await RatingService.instance.maybePrompt(
+                      context,
+                      totalSessions: silenceData.totalSessions,
+                      lastSessionDurationSeconds: silenceData.recentSessions.isNotEmpty ? silenceData.recentSessions.first.duration : null,
+                    );
+                  } catch (_) {/* ignore rating errors */}
+                });
                 return const SafeWidget(
                   context: 'app_initialization',
                   child: _PermissionChecker(child: HomePage()),

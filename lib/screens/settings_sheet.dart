@@ -10,6 +10,7 @@ import 'package:silence_score/providers/subscription_provider.dart';
 import 'package:silence_score/services/export_service.dart';
 import 'package:silence_score/services/noise_calibration_service.dart';
 import 'package:silence_score/services/support_service.dart';
+import 'package:silence_score/services/rating_service.dart';
 // TODO: remove if not existing in project or adjust paths
 import 'package:silence_score/widgets/feature_gate.dart';
 import 'package:silence_score/widgets/notification_settings_widget.dart';
@@ -576,7 +577,7 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   void _rateApp(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.ratingFeatureComingSoon)));
+  RatingService.instance.forceRate(context);
   }
 
   Widget _errorState(BuildContext context, Object e, WidgetRef ref) => Center(
