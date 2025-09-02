@@ -15,10 +15,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="${SCRIPT_DIR%/scripts}"
 
-# Auto-source .env (if exists) to pick up keys (don't override pre-set REVENUECAT_API_KEY)
+# Auto-source .env (if exists) to pick up keys (preserve pre-exported REVENUECAT_API_KEY)
 if [ -f "$PROJECT_ROOT/.env" ]; then
+    _PRESET_RC_KEY="${REVENUECAT_API_KEY:-}"
     # shellcheck disable=SC2046,SC1090
     set -a; . "$PROJECT_ROOT/.env"; set +a
+    if [ -n "$_PRESET_RC_KEY" ]; then
+        export REVENUECAT_API_KEY="$_PRESET_RC_KEY"
+    fi
 fi
 
 # Parse arguments
@@ -53,7 +57,7 @@ done
 echo "🚀 Building SilenceScore for Production..."
 
 # Validate required environment variables
-if [ "${REVENUECAT_API_KEY:-}" = "" ] || [ "$REVENUECAT_API_KEY" = "goog_OQmcHbcdgUgLCplNGOzHRVwfqVU" ] || [ "$REVENUECAT_API_KEY" = "your_revenuecat_public_sdk_key" ]; then
+if [ -z "${REVENUECAT_API_KEY:-}" ] || [ "$REVENUECAT_API_KEY" = "your_revenuecat_public_sdk_key" ]; then
     echo "❌ Error: REVENUECAT_API_KEY is required for production builds"
     echo "   Set the env var or pass --rc-key=KEY"
     echo "   Example: export REVENUECAT_API_KEY='pub_android_xxx' && bash scripts/build-prod.sh"
