@@ -1,30 +1,55 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+## NOTE: Avoid bash 4+ only features (macOS runner uses bash 3.2). Using portable loops instead of mapfile/readarray.
+
 echo "[check_localizations] Running flutter gen-l10n..."
 flutter gen-l10n
 
-# Detect uncommitted localization diffs after generation
-diff_files=$(git diff --name-only)
+# Detect uncommitted diffs after generation, but only fail if they are l10n related.
+diff_files=$(git diff --name-only || true)
 if [[ -n "$diff_files" ]]; then
-  echo "::error::Localization artifacts are outdated. Run 'flutter gen-l10n' and commit changes. Changed files:" >&2
+  loc_changed=$(echo "$diff_files" | grep -E '^(lib/l10n/.*\.arb$|lib/l10n/.*\.dart$)' || true)
+  if [[ -n "$loc_changed" ]]; then
+    echo "::error::Localization artifacts are outdated. Run 'flutter gen-l10n' and commit changes. Changed l10n files:" >&2
+    echo "$loc_changed" | tr '\n' '\n' >&2
+    exit 1
+  fi
+  # Show ignored non-l10n changes (noise from plugin registrants, lockfiles, etc.)
+  echo "[check_localizations] Ignoring non-localization diffs after gen-l10n:" >&2
   echo "$diff_files" >&2
-  exit 1
 fi
 
 # Validate ARB key parity across locales (ignore metadata keys starting with @)
 ARB_DIR="lib"
-mapfile -t arb_files < <(git ls-files '*.arb')
+arb_files=()
+while IFS= read -r f; do
+  arb_files+=("$f")
+done < <(git ls-files '*.arb')
 if (( ${#arb_files[@]} == 0 )); then
   echo "No ARB files found (skipping parity check)"
   exit 0
 fi
 
-ref_file=${arb_files[0]}
-readarray -t ref_keys < <(grep '".*":' "$ref_file" | sed -E 's/^\s*"([^"]+)":.*/\1/' | grep -v '^@' | sort -u)
+ref_file="lib/l10n/app_en.arb"
+if [[ ! -f "$ref_file" ]]; then ref_file=${arb_files[0]}; fi
+extract_keys() {
+  local file="$1"
+  if command -v jq >/dev/null 2>&1; then
+    # jq prints all top-level keys; filter out metadata starting with @
+    jq -r 'keys[]' "$file" | grep -v '^@' | sort -u
+  else
+    # Fallback grep/sed parsing (format dependent)
+    grep '".*":' "$file" | sed -E 's/^\s*,?\s*"([^"]+)":.*/\1/' | grep -v '^@' | sort -u
+  fi
+}
+
+ref_keys=()
+while IFS= read -r k; do ref_keys+=("$k"); done < <(extract_keys "$ref_file")
 missing_report=()
 for f in "${arb_files[@]}"; do
-  readarray -t keys < <(grep '".*":' "$f" | sed -E 's/^\s*"([^"]+)":.*/\1/' | grep -v '^@' | sort -u)
+  keys=()
+  while IFS= read -r k; do keys+=("$k"); done < <(extract_keys "$f")
   for k in "${ref_keys[@]}"; do
     if ! printf '%s\n' "${keys[@]}" | grep -qx "$k"; then
       missing_report+=("$f -> missing key: $k")
