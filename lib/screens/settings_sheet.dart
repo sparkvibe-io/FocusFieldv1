@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silence_score/constants/app_constants.dart';
+import 'package:silence_score/providers/app_info_provider.dart';
 import 'package:silence_score/models/silence_data.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 import 'package:silence_score/providers/silence_provider.dart';
@@ -256,6 +257,7 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   Widget _aboutTab(BuildContext context, WidgetRef ref) {
+    final appInfoAsync = ref.watch(appInfoProvider);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -269,9 +271,17 @@ class SettingsSheet extends ConsumerWidget {
                 Text(AppLocalizations.of(context)!.appInformation, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               ]),
               const SizedBox(height: 16),
-              _infoRow(context, AppLocalizations.of(context)!.version, AppConstants.appVersion),
+              appInfoAsync.when(
+                data: (info) => _infoRow(context, AppLocalizations.of(context)!.version, '${info.version}+${info.buildNumber}'),
+                loading: () => _infoRow(context, AppLocalizations.of(context)!.version, '...'),
+                error: (e, _) => _infoRow(context, AppLocalizations.of(context)!.version, 'unknown'),
+              ),
               const SizedBox(height: 8),
-              _infoRow(context, AppLocalizations.of(context)!.bundleId, 'io.sparkvibe.silencescore'),
+              appInfoAsync.when(
+                data: (info) => _infoRow(context, AppLocalizations.of(context)!.bundleId, info.packageName),
+                loading: () => _infoRow(context, AppLocalizations.of(context)!.bundleId, '...'),
+                error: (e, _) => _infoRow(context, AppLocalizations.of(context)!.bundleId, 'unknown'),
+              ),
               const SizedBox(height: 8),
               _infoRow(context, AppLocalizations.of(context)!.environment, AppConstants.currentEnvironment),
             ]),
@@ -706,8 +716,8 @@ class _NoiseCalibrationDialogState extends State<_NoiseCalibrationDialog> {
               Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary, size: 48),
               const SizedBox(height: 12),
               if (_previous != null)
-                Text(AppLocalizations.of(context)!.previousThreshold(_previous!), style: Theme.of(context).textTheme.bodySmall),
-              Text(AppLocalizations.of(context)!.newThreshold(_recommended!),
+                Text(AppLocalizations.of(context)!.previousThreshold(double.parse(_previous!.toStringAsFixed(2))), style: Theme.of(context).textTheme.bodySmall),
+              Text(AppLocalizations.of(context)!.newThreshold(double.parse(_recommended!.toStringAsFixed(2))),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               if (_noChange)

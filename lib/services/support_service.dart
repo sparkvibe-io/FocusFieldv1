@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'package:silence_score/constants/app_constants.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:silence_score/models/subscription_tier.dart';
 
 enum SupportPriority { standard, premium }
@@ -40,13 +41,25 @@ class SupportService {
     final deviceInfo = DeviceInfoPlugin();
     final DateTime now = DateTime.now();
     
+    String version = AppConstants.appVersion; // fallback constant (kept for backward compatibility)
+    String buildNumber = '';
+    String packageName = '';
+    try {
+      final pkg = await PackageInfo.fromPlatform();
+      version = pkg.version;
+      buildNumber = pkg.buildNumber;
+      packageName = pkg.packageName;
+    } catch (_) {
+      // ignore, use fallback constant
+    }
     final appInfo = {
-      'app_version': AppConstants.appVersion,
+      'app_version': buildNumber.isNotEmpty ? '$version+$buildNumber' : version,
       'app_environment': AppConstants.currentEnvironment,
       'flutter_version': 'Flutter 3.32.5',
       'dart_version': 'Dart 3.6.0',
       'timestamp': now.toIso8601String(),
       'locale': Platform.localeName,
+      'package_name': packageName,
     };
 
     try {
