@@ -1,14 +1,18 @@
 #!/bin/bash
 
 # SilenceScore Production Build Script
-# This script builds the app for production with proper security validation
+# Simple single-dev variant (Option 1):
+#   Export REVENUECAT_API_KEY to the platform-specific key before running.
+#   For Android build:  export REVENUECAT_API_KEY="$REVENUECAT_ANDROID_API_KEY"
+#   For iOS build:      export REVENUECAT_API_KEY="$REVENUECAT_IOS_API_KEY" (when using flutter build ipa)
+# Keeps only one generic dart-define consumed in Dart code.
 
 set -e
 
 echo "🚀 Building SilenceScore for Production..."
 
 # Validate required environment variables
-if [ -z "$REVENUECAT_API_KEY" ] || [ "$REVENUECAT_API_KEY" = "your_revenuecat_api_key_here" ]; then
+if [ -z "$REVENUECAT_API_KEY" ] || [ "$REVENUECAT_API_KEY" = "goog_OQmcHbcdgUgLCplNGOzHRVwfqVU" ]; then
     echo "❌ Error: REVENUECAT_API_KEY is required for production builds"
     echo "   Set the environment variable or use --dart-define flag"
     echo "   Example: export REVENUECAT_API_KEY='your_actual_key'"
