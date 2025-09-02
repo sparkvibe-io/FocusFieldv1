@@ -37,7 +37,7 @@ jobs:
         run: bash tool/check_localizations.sh
 
       - name: Format check
-        run: flutter format --set-exit-if-changed .
+  run: dart format --output=none --set-exit-if-changed .
 
       - name: Static analysis
         run: flutter analyze
