@@ -33,6 +33,12 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Test coverage artifacts
+coverage/
+
+# Flutter ephemeral build intermediates (should not be committed)
+**/flutter/ephemeral/
+
 # Symbolication related
 app.*.symbols
 
