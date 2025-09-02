@@ -42,25 +42,31 @@ android {
         // versionCode / versionName now sourced from pubspec via Flutter tooling
     }
 
-    signingConfigs {
-        release {
-            if (keystorePropertiesFile.exists()) {
+    if (keystorePropertiesFile.exists()) {
+        signingConfigs {
+            release {
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
-            } else {
-                // Fallback to debug if no release keystore; NOT for Play Store submission.
-                println("WARNING: key.properties not found. Using debug signing for release build.")
             }
         }
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled false
-            shrinkResources false
+        buildTypes {
+            release {
+                signingConfig signingConfigs.release
+                minifyEnabled false
+                shrinkResources false
+            }
+        }
+    } else {
+        // No key.properties: use debug signing so build still succeeds (NOT for Play Store submission)
+        println("WARNING: key.properties not found. Falling back to debug signing for release build.")
+        buildTypes {
+            release {
+                signingConfig signingConfigs.debug
+                minifyEnabled false
+                shrinkResources false
+            }
         }
     }
 }
