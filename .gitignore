@@ -45,8 +45,12 @@ app.*.map.json
 /android/app/release
 
 # Environment and secrets files
+# Keep .env.example (template) but ignore real env files
 .env
+!.env.example
+# Ignore any .env.<something> but not .env.example
 .env.*
+!.env.example
 env/
 config/secrets/
 lib/config/secrets.dart
