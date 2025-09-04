@@ -32,8 +32,8 @@ done
 
 if [[ $have_tools == false ]]; then
   # Attempt common macOS Android SDK locations
-  for candidate in "$ANDROID_HOME" "$ANDROID_SDK_ROOT" "$HOME/Library/Android/sdk" \
-                   "/usr/local/share/android-sdk"; do
+  for candidate in "${ANDROID_HOME:-}" "${ANDROID_SDK_ROOT:-}" "$HOME/Library/Android/sdk" \
+                     "/usr/local/share/android-sdk"; do
     if [[ -n "$candidate" && -d "$candidate" ]]; then
       export ANDROID_HOME="$candidate"
       export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
