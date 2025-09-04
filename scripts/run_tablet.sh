@@ -14,6 +14,36 @@ SYSTEM_IMAGE="system-images;android-34;google_apis;arm64-v8a"
 MODE="dev"
 RC_KEY="${REVENUECAT_API_KEY:-}"
 
+# Detect Java early (required by avdmanager). We'll try common bundled locations if not on PATH.
+ensure_java() {
+  if command -v java >/dev/null 2>&1; then return 0; fi
+  # Try Android Studio bundled JBR (JetBrains Runtime)
+  local candidates=(
+    "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+    "/Applications/Android Studio.app/Contents/jre/Contents/Home"
+    "$HOME/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home"
+    "$HOME/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+  )
+  for c in "${candidates[@]}"; do
+    if [[ -d "$c/bin" && -x "$c/bin/java" ]]; then
+      export JAVA_HOME="$c"
+      export PATH="$JAVA_HOME/bin:$PATH"
+      break
+    fi
+  done
+  if ! command -v java >/dev/null 2>&1; then
+    echo "::error::Java runtime not found. Install an OpenJDK (e.g. Temurin 17) before running." >&2
+    echo "macOS (Homebrew):  brew install --cask temurin17" >&2
+    echo "Or open Android Studio once so its bundled JDK is installed." >&2
+    echo "After install, export JAVA_HOME (example):" >&2
+    echo "  export JAVA_HOME=\"\$(/usr/libexec/java_home -v 17)\"" >&2
+    echo "Then rerun this script." >&2
+    exit 9
+  fi
+}
+
+ensure_java
+
 for arg in "$@"; do
   case "$arg" in
     --prod) MODE="prod" ;;
