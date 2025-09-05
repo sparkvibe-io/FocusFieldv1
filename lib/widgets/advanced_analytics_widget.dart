@@ -180,7 +180,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 value: localizedPreferredDuration(m.preferredDuration),
                 description: 'Most successful session length',
                 icon: isNeon ? Icons.timelapse : Icons.hourglass_bottom,
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.primary,
                 compact: compact,
               ),
             ];
@@ -236,13 +236,13 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     required bool compact,
   }) {
     final textTheme = Theme.of(context).textTheme;
-    return Container(
+  return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 14,
         vertical: compact ? 10 : 12,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.07),
+    color: color.withOpacity(0.09),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
