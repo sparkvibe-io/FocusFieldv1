@@ -18,7 +18,7 @@ pluginManagement {
 
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version '8.12.1' apply false
+    id "com.android.application" version '8.12.2' apply false
     // Upgraded Kotlin plugin to 2.2.10 to align with kotlin-stdlib (2.2.x) pulled in by dependencies
     id "org.jetbrains.kotlin.android" version "2.2.10" apply false
 }

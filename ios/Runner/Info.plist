@@ -49,5 +49,11 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<!-- Google Mobile Ads (AdMob) App ID - Test ID used for development. Replace for production. -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<!-- (Optional) Delay app measurement if you want to perform initialization logic first -->
+	<key>GADDelayAppMeasurementInit</key>
+	<true/>
 </dict>
 </plist>

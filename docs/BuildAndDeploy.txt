@@ -3,7 +3,13 @@ flutter clean && flutter pub get
 
 flutter gen-l10n
 
+Android phone
 flutter run -d ZL8322BT88 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+
+Android tablet
+flutter run -d emulator-5554 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+
+
 
 # RUN FOR IOS
 flutter clean && flutter pub get
@@ -11,8 +17,11 @@ flutter clean && flutter pub get
 flutter gen-l10n
 
 cd ios && pod install
-
-cd /Users/krishna/Development/SilenceScore/ios && rm -rf Pods Podfile.lock && sed -i '' "s/platform :ios, '14.0'/platform :ios, '15.0'/" Podfile && pod install
+flutter devices
+flutter run -d 00008140-000669503E93001C \
+  --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false \
+  --dart-define=IS_DEVELOPMENT=false
 
 
 ## BUILD FOR PRODUCTION
@@ -25,9 +34,10 @@ flutter build ipa --release --dart-define=IS_DEVELOPMENT=false --dart-define=ENA
 
 
 PENDING
-1. Configure Google Ad Key
-2. Create Images
+1. Configure Google Ad Key - Complete
+2. Create Images for tablet
 3. Create application page in SparkVibe.io
+3.1 Create tips that show up occasionally at startup
 4. Create Apple account and test out
 5. Integrate Apple with Revenue Cat
 6. Prepare for deployment

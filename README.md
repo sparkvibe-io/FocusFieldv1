@@ -366,8 +366,8 @@ flutter test --coverage
 ### Code Quality
 The project follows Dart and Flutter best practices:
 ```bash
-# Format code
-flutter format .
+# Format code (CI-safe)
+dart format --output=none --set-exit-if-changed .
 
 # Analyze code
 flutter analyze
@@ -375,6 +375,10 @@ flutter analyze
 # Run linter
 flutter analyze --no-fatal-infos
 ```
+
+### Recent UI Improvements (Notifications)
+- Smart Daily Reminders and Weekly Progress Summary now display their scheduling controls within each tile footer. This prevents horizontal overflows on small screens and makes the selection more discoverable.
+- The Notification Settings bottom sheet now has a solid background with a clearly visible close (X) icon and title.
 
 ## 🎯 Advanced Features
 

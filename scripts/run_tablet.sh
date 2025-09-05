@@ -16,30 +16,42 @@ RC_KEY="${REVENUECAT_API_KEY:-}"
 
 # Detect Java early (required by avdmanager). We'll try common bundled locations if not on PATH.
 ensure_java() {
+  # If user provided JAVA_HOME explicitly, respect it.
+  if [[ -n "${JAVA_HOME:-}" && -x "${JAVA_HOME}/bin/java" ]]; then
+    export PATH="${JAVA_HOME}/bin:$PATH"; return 0; fi
   if command -v java >/dev/null 2>&1; then return 0; fi
-  # Try Android Studio bundled JBR (JetBrains Runtime)
+  # Attempt macOS system helper (works if any JDK installed via pkg or brew)
+  if command -v /usr/libexec/java_home >/dev/null 2>&1; then
+    local sys_home
+    if sys_home=$(/usr/libexec/java_home -v 17 2>/dev/null); then
+      export JAVA_HOME="$sys_home"; export PATH="$JAVA_HOME/bin:$PATH"; return 0
+    elif sys_home=$(/usr/libexec/java_home 2>/dev/null); then
+      export JAVA_HOME="$sys_home"; export PATH="$JAVA_HOME/bin:$PATH"; return 0
+    fi
+  fi
+  # Android Studio bundled JBR
   local candidates=(
     "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
     "/Applications/Android Studio.app/Contents/jre/Contents/Home"
     "$HOME/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home"
     "$HOME/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home"
+    "$HOME/.sdkman/candidates/java/current"
   )
   for c in "${candidates[@]}"; do
-    if [[ -d "$c/bin" && -x "$c/bin/java" ]]; then
-      export JAVA_HOME="$c"
-      export PATH="$JAVA_HOME/bin:$PATH"
-      break
+    if [[ -d "$c" && -x "$c/bin/java" ]]; then
+      export JAVA_HOME="$c"; export PATH="$JAVA_HOME/bin:$PATH"; return 0
     fi
   done
-  if ! command -v java >/dev/null 2>&1; then
-    echo "::error::Java runtime not found. Install an OpenJDK (e.g. Temurin 17) before running." >&2
-    echo "macOS (Homebrew):  brew install --cask temurin17" >&2
-    echo "Or open Android Studio once so its bundled JDK is installed." >&2
-    echo "After install, export JAVA_HOME (example):" >&2
-    echo "  export JAVA_HOME=\"\$(/usr/libexec/java_home -v 17)\"" >&2
-    echo "Then rerun this script." >&2
-    exit 9
+  # Last resort: look for any detected Gradle caches referencing jdk-17 inside Android Studio
+  local as_cache="$HOME/Library/Application Support/Google/AndroidStudio2024.1/jbr"
+  if [[ -d "$as_cache" && -x "$as_cache/bin/java" ]]; then
+    export JAVA_HOME="$as_cache"; export PATH="$JAVA_HOME/bin:$PATH"; return 0
   fi
+  echo "::error::Java runtime not found. Install an OpenJDK (Temurin 17 recommended)." >&2
+  echo "Homebrew:   brew install --cask temurin17" >&2
+  echo "SDKMAN:     curl -s https://get.sdkman.io | bash && source \"$HOME/.sdkman/bin/sdkman-init.sh\" && sdk install java 17-tem" >&2
+  echo "Once installed, re-run this script." >&2
+  exit 9
 }
 
 ensure_java

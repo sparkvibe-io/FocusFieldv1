@@ -100,6 +100,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Refactored paywall launcher to return PaywallAttemptResult (unlocked/dismissed/notShown)
  - Removed unused legacy audio crash protection code paths; consolidated under SafeAudioExecutor
 
+### UI - Notification Settings Redesign (2025-09-05)
+- Moved Smart Daily Reminder and Weekly Progress schedule controls into tile footers to prevent overflow and improve discoverability
+- Added Wrap-based layouts for footer controls to adapt to smaller screens (no more RIGHT OVERFLOW messages)
+- Introduced solid surface background for the settings sheet so the header title is readable over blurred content
+- Ensured close (X) icon uses onSurface color for consistent contrast
+- Minor copy polish: clarified "Daily Time" and "Weekly Time" labels, kept “Use Smart” action when a fixed time is set
+
+### CI & Tooling (2025-09-05)
+- Replaced deprecated `flutter format` with `dart format --output=none --set-exit-if-changed .` in CI
+- Kept localization parity and coverage checks stable; scripts remain unchanged in this change set
+
+### Ads Initialization (Follow-up)
+- Confirmed AdMob test App IDs present in AndroidManifest and iOS Info.plist to avoid SDK init crashes during development
+
 ## [v0.1.0] - 2025-01-XX - Initial Development
 
 ### Added

@@ -11,6 +11,11 @@
         android:icon="@mipmap/ic_launcher"
         android:largeHeap="true"
         android:hardwareAccelerated="true">
+        <!-- AdMob / Google Mobile Ads App ID -->
+        <!-- Replace with real ID in release builds. Test ID used for development. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2086096819226646~1535783144" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
