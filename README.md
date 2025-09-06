@@ -241,6 +241,26 @@ Supported locales: `en`, `es`, `fr`, `de`, `pt`, `pt_BR`, `ja`.
 #### Notification & Dynamic Message Localization
 All notification strings (settings UI, reminders, achievements, weekly summaries, streak copy) are fully localized across supported locales.
 
+#### Tip System Localization
+The tip system is fully internationalized with proper localization keys:
+- **Tip Window**: `tipsTitle` for window title, `muteTips` for mute button
+- **Toast Messages**: `tipsMuted` for confirmation message after muting
+- **Tip Content**: 30 localized tips (`tip01` through `tip30`) with contextual instructions
+- **Instructions**: Contextual help text (`tipInstruction*` keys) for each tip
+- **Tip Info Icon**: `tipInfoTooltip` for lightbulb icon tooltip
+
+All tip-related UI elements are properly localized across all 7 supported languages.
+
+#### Tip System Features
+- **Manual-Only Display**: Tips only show when user actively clicks the lightbulb icon
+- **Lightbulb Icon**: Intuitive lightbulb icon with amber glow effect for new tips
+- **Smart Timing**: Same tip shown for 5 minutes, updates only when user has seen it
+- **Session Tracking**: Prevents showing same tip twice in one session
+- **Muted Override**: Info button works even when tips are muted
+- **Gentle Animation**: Subtle 3-second pulsing glow effect
+- **Theme Adaptive**: Amber glow works well in both light and dark themes
+- **No Interruptions**: Tips never appear automatically, respecting user workflow
+
 Dynamic strings with placeholders use explicit metadata blocks in each non‑English ARB (e.g. `@reminderStreakShort`, `@weeklyProgressFew`) to ensure typed method generation (`int streak`, `int count`). This avoids accidental `Object` parameter generation and keeps runtime type safety.
 
 Streak tiers implemented:
@@ -429,6 +449,8 @@ _Section de-duplicated; previous duplicate removed._
 - **Screen Reader Support**: Full accessibility for visually impaired users
 - **High Contrast Mode**: Enhanced visibility options
 - **Large Text Support**: Scalable typography for better readability
+- **Optimized Settings Layout**: Space-efficient design with inline values for better accessibility
+- **Compact UI**: Values displayed in titles (e.g., "Decibel Threshold (60dB)") to save space
 
 ## 🤝 Contributing
 

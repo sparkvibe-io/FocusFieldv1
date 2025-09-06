@@ -28,7 +28,16 @@ SilenceScore is built using Flutter with a clean, modular architecture that emph
   - `home_page.dart` - Main application interface
   - `app_initializer.dart` - App initialization and setup
   - `splash_screen.dart` - Loading screen
-  - `settings_sheet.dart` - Configuration interface
+  - `settings_sheet.dart` - Configuration interface with optimized layout
+
+### Settings UI Optimizations
+- **Space Efficiency**: Values displayed inline with titles using parentheses format
+- **Accessibility**: Optimized for large text mode with compact layout
+- **Consistency**: Uniform parentheses style across all value displays
+- **Examples**:
+  - "Decibel Threshold (60dB)" instead of separate value display
+  - "Duration (1min)" instead of separate value display
+- **Benefits**: Saves vertical space, improves readability, enhances accessibility
 
 ### Widget Layer (`lib/widgets/`)
 - **Purpose**: Reusable UI components
@@ -38,6 +47,8 @@ SilenceScore is built using Flutter with a clean, modular architecture that emph
   - `SessionHistoryGraph` - Historical performance tracking
   - `CompactPointsDisplay` - Statistics overview
   - `ScoreCard` - Detailed metrics display
+  - `TipOverlay` - Contextual help system with internationalized tips
+  - `TipInfoIcon` - Lightbulb icon with glow effect for tip availability
 
 ### State Management (`lib/providers/`)
 - **Technology**: Riverpod with Hooks
@@ -52,6 +63,7 @@ SilenceScore is built using Flutter with a clean, modular architecture that emph
 - **Key Services**:
   - `SilenceDetector` - Core noise monitoring
   - `StorageService` - Data persistence
+  - `TipService` - Contextual help system with smart scheduling
   - Permission handling and management
 
 ### Platform Layer
@@ -116,6 +128,36 @@ Persistence → StorageService → SharedPreferences
 - **iOS Security**: Follows iOS privacy guidelines
 - **Android Security**: Minimal permission requirements
 - **Data Encryption**: Platform-provided encryption for stored data
+
+## Tip System Architecture
+
+### Overview
+The tip system provides contextual help and guidance to users through an intelligent overlay system that appears at appropriate moments during app usage.
+
+### Components
+- **TipService**: Manages tip scheduling, rotation, and user preferences
+- **TipOverlay**: UI component displaying tips with internationalized content
+- **TipInfoIcon**: Lightbulb icon with glow effect for tip availability
+- **Localization**: 30 tips + instructions in 7 languages (EN, ES, FR, DE, PT, PT-BR, JA)
+
+### Key Features
+- **Manual-Only Display**: Tips only show when user actively clicks the lightbulb icon
+- **Smart Scheduling**: 6-hour cooldown between tips, daily limit of 1 tip
+- **Session Awareness**: Never shows tips during active silence sessions
+- **Premium Integration**: Tips can reference premium features with visual indicators
+- **User Control**: Users can mute tips entirely with persistent preference storage
+- **Contextual Instructions**: Each tip includes specific guidance on how to access related features
+- **Lightbulb Icon**: Intuitive lightbulb metaphor with amber glow effect for new tips
+- **Smart Timing**: Same tip shown for 5 minutes, updates only when user has seen it
+- **Session Tracking**: Prevents showing same tip twice in one session
+- **Muted Override**: Info button works even when tips are muted
+- **No Interruptions**: Tips never appear automatically, respecting user workflow
+
+### Internationalization
+- **Complete Coverage**: All tip content, buttons, and messages are localized
+- **Consistent Keys**: `tipsTitle`, `muteTips`, `tipsMuted` for UI elements
+- **Dynamic Content**: 30 tips (`tip01`-`tip30`) with contextual instructions
+- **Fallback Support**: English fallbacks ensure functionality even with missing translations
 
 ## Testing Strategy
 

@@ -7,6 +7,7 @@ import 'package:silence_score/widgets/error_boundary.dart';
 import 'package:silence_score/services/rating_service.dart';
 import 'package:silence_score/constants/permission_constants.dart';
 import 'package:silence_score/widgets/permission_dialogs.dart';
+import 'package:silence_score/services/tip_service.dart';
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -57,6 +58,10 @@ class AppInitializer extends ConsumerWidget {
                               ? silenceData.recentSessions.first.duration
                               : null,
                     );
+                    // Reset tip session state on app start
+                    try {
+                      await ref.read(tipServiceProvider).resetSessionState();
+                    } catch (_) {}
                   } catch (_) {
                     /* ignore rating errors */
                   }

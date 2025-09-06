@@ -255,6 +255,97 @@ Dark mode toggle state.
 final isDarkModeProvider = StateProvider<bool>((ref) => false);
 ```
 
+### TipService
+
+Contextual help system that provides intelligent tips to users.
+
+**File**: `lib/services/tip_service.dart`
+
+#### Overview
+The TipService manages a collection of 30 contextual tips that help users understand and utilize app features effectively. Tips are shown with smart scheduling and respect user preferences.
+
+#### Key Features
+- **Manual-Only Display**: Tips only show when user actively clicks the lightbulb icon
+- **Smart Scheduling**: 6-hour cooldown between tips, maximum 1 tip per day
+- **Session Awareness**: Never interrupts active silence sessions
+- **Premium Integration**: Tips can reference premium features with visual indicators
+- **User Control**: Users can mute tips entirely
+- **Internationalization**: All content localized in 7 languages
+- **Lightbulb Icon**: Intuitive lightbulb icon with amber glow effect for new tips
+- **Smart Timing**: Same tip shown for 5 minutes, updates only when user has seen it
+- **Session Tracking**: Prevents showing same tip twice in one session
+- **Muted Override**: Info button works even when tips are muted
+- **No Interruptions**: Tips never appear automatically, respecting user workflow
+
+#### Provider
+```dart
+final tipServiceProvider = Provider<TipService>((ref) => TipService(ref));
+```
+
+#### Methods
+
+##### `getEnabled`
+Check if tips are currently enabled.
+
+```dart
+Future<bool> getEnabled() → Future<bool>
+```
+
+##### `setEnabled`
+Enable or disable tips.
+
+```dart
+Future<void> setEnabled(bool value) → Future<void>
+```
+
+##### `maybeShowOnAppStart`
+**DISABLED**: Automatic tip display on app start is disabled. Tips now only show when user actively clicks the lightbulb icon.
+
+```dart
+Future<void> maybeShowOnAppStart(BuildContext context) → Future<void>
+```
+
+##### `maybeShowAfterSession`
+**DISABLED**: Automatic tip display after sessions is disabled. Tips now only show when user actively clicks the lightbulb icon.
+
+```dart
+Future<void> maybeShowAfterSession(BuildContext context, {required bool success}) → Future<void>
+```
+
+##### `showCurrentTip`
+Show the current tip (bypasses mute status, used by info button).
+
+```dart
+Future<void> showCurrentTip(BuildContext context) → Future<void>
+```
+
+##### `markCurrentTipAsSeen`
+Mark the current tip as seen by the user.
+
+```dart
+Future<void> markCurrentTipAsSeen() → Future<void>
+```
+
+##### `hasNewTips`
+Check if there are new tips available that haven't been seen.
+
+```dart
+Future<bool> hasNewTips() → Future<bool>
+```
+
+#### Tip Content
+- **30 Tips**: Covering all major app features and usage patterns
+- **Contextual Instructions**: Each tip includes specific guidance
+- **Premium Integration**: Tips reference premium features when relevant
+- **Localized Content**: All tips available in 7 languages
+
+#### Localization Keys
+- `tipsTitle`: Window title
+- `muteTips`: Mute button text
+- `tipsMuted`: Toast confirmation message
+- `tip01`-`tip30`: Individual tip content
+- `tipInstruction*`: Contextual help text for each tip
+
 ## Widgets
 
 ### ProgressRing
@@ -335,6 +426,126 @@ const ScoreCard({
 | `score` | `double` | required | Current score (0-100) |
 | `isSilent` | `bool` | required | Whether environment is silent |
 | `onTap` | `VoidCallback?` | `null` | Tap handler |
+
+### TipInfoIcon
+
+Lightbulb icon widget with glow effect for displaying tip availability.
+
+**File**: `lib/widgets/tip_info_icon.dart`
+
+#### Constructor
+
+```dart
+const TipInfoIcon({
+  Key? key,
+  required VoidCallback onTap,
+  required bool hasNewTips,
+  required bool isEnabled,
+});
+
+const TipInfoIconWithAnimation({
+  Key? key,
+  required VoidCallback onTap,
+  required bool hasNewTips,
+  required bool isEnabled,
+});
+```
+
+#### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `onTap` | `VoidCallback` | required | Tap handler for showing tip |
+| `hasNewTips` | `bool` | required | Whether new tips are available |
+| `isEnabled` | `bool` | required | Whether tips are enabled |
+
+#### Features
+- **Lightbulb Icon**: Intuitive lightbulb metaphor for tips
+- **Glow Effect**: Subtle amber glow animation for new tips
+- **Theme Adaptive**: Works well in both light and dark themes
+- **Gentle Animation**: 3-second smooth pulsing effect
+- **Accessibility**: Screen reader support and proper tooltips
+
+#### Animation
+- **Duration**: 3 seconds for smooth, gentle pulsing
+- **Effect**: Background glow with main icon color variation
+- **Colors**: Amber shades (shade600 to shade400)
+- **Opacity**: 20% background glow with smooth transitions
+
+### TipOverlay
+
+Contextual help overlay that displays tips with internationalized content.
+
+**File**: `lib/widgets/tip_overlay.dart`
+
+#### Constructor
+
+```dart
+const TipOverlay({
+  Key? key,
+  required String text,
+  String? instructions,
+  bool isPremium = false,
+  required VoidCallback onClose,
+  required VoidCallback onMute,
+});
+```
+
+#### Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `text` | `String` | required | Main tip content |
+| `instructions` | `String?` | `null` | Contextual instructions |
+| `isPremium` | `bool` | `false` | Show premium badge |
+| `onClose` | `VoidCallback` | required | Close button handler |
+| `onMute` | `VoidCallback` | required | Mute button handler |
+
+#### Features
+- **Internationalized UI**: All text elements use localization keys
+- **Premium Integration**: Visual indicator for premium-related tips
+- **Contextual Instructions**: Additional guidance for each tip
+- **User Control**: Close and mute functionality
+- **Responsive Design**: Adapts to different screen sizes
+
+#### Localization
+- Uses `AppLocalizations` for all text content
+- Fallback to English if localization fails
+- Consistent with app-wide localization system
+
+### SettingsSheet
+
+Configuration interface with optimized layout for accessibility.
+
+**File**: `lib/screens/settings_sheet.dart`
+
+#### Constructor
+```dart
+const SettingsSheet({super.key});
+```
+
+#### Features
+- **Space-Efficient Layout**: Values displayed inline with titles using parentheses format
+- **Accessibility Optimized**: Designed for large text mode with compact layout
+- **Consistent UI**: Uniform parentheses style across all value displays
+- **Tabbed Interface**: Basic, Advanced, and About tabs for organized settings
+
+#### Layout Optimizations
+- **Decibel Threshold**: "Decibel Threshold (60dB)" format
+- **Duration**: "Duration (1min)" format
+- **Space Savings**: Removes redundant value displays below sliders
+- **Accessibility**: Better support for large text and screen readers
+
+#### Value Display Format
+```dart
+// Before optimization
+"Decibel Threshold"
+[Slider with value below]
+
+// After optimization  
+"Decibel Threshold (60dB)"
+[Slider only]
+```
 
 ## Constants
 

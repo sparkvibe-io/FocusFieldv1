@@ -82,7 +82,7 @@ void main() {
         }
 
         expect(find.text('Settings'), findsOneWidget);
-        expect(find.text('Decibel Threshold'), findsOneWidget);
+        expect(find.textContaining('Decibel Threshold'), findsOneWidget);
         expect(find.text('Reset All Data'), findsOneWidget);
       },
     );

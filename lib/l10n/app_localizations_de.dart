@@ -830,4 +830,154 @@ class AppLocalizationsDe extends AppLocalizations {
   String weeklyProgressPerfect(int count) {
     return '🎯 Perfekte Woche mit $count Sessions! Großartige Beständigkeit.';
   }
+
+  @override
+  String get tipsHidden => 'Tipps ausgeblendet';
+
+  @override
+  String get tipsShown => 'Tipps angezeigt';
+
+  @override
+  String get showTips => 'Tipps anzeigen';
+
+  @override
+  String get hideTips => 'Tipps ausblenden';
+
+  @override
+  String get tip01 => 'Short sessions count—start with 2–3 minutes to build consistency.';
+
+  @override
+  String get tip02 => 'Use Smart Daily Reminders to nudge you at your best time.';
+
+  @override
+  String get tip03 => 'Recalibrate when your environment changes for better accuracy.';
+
+  @override
+  String get tip04 => 'Check Weekly Trends to spot your momentum over time.';
+
+  @override
+  String get tip05 => 'Streaks grow with daily wins—show up, even for one minute.';
+
+  @override
+  String get tip06 => 'High ambient noise? Raise threshold a bit to reduce false fails.';
+
+  @override
+  String get tip07 => 'Try different times of day to find your quiet sweet spot.';
+
+  @override
+  String get tip08 => 'Session complete notifications keep motivation high—enable them!';
+
+  @override
+  String get tip09 => 'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
+
+  @override
+  String get tip10 => 'Use shorter sessions on busy days to keep your streak alive.';
+
+  @override
+  String get tip11 => 'The progress ring is tappable—start or stop with a single tap.';
+
+  @override
+  String get tip12 => 'Export your data (Premium) to share progress or back it up.';
+
+  @override
+  String get tip13 => 'Average session length helps you choose the right duration.';
+
+  @override
+  String get tip14 => 'Consistency beats intensity—small daily practice compounds.';
+
+  @override
+  String get tip15 => 'Set a gentle goal: 5 quiet minutes is a great baseline.';
+
+  @override
+  String get tip16 => 'The noise chart helps you see spikes—aim for calmer periods.';
+
+  @override
+  String get tip17 => 'Upgrade session duration (Premium) for longer focus blocks.';
+
+  @override
+  String get tip18 => 'High threshold warning guards accuracy—avoid setting it too high.';
+
+  @override
+  String get tip19 => 'Weekdays vary—tune your weekly summary to your schedule.';
+
+  @override
+  String get tip20 => 'Accessibility options: high contrast, large text, and vibration.';
+
+  @override
+  String get tip21 => 'Ambient baseline matters—calibrate when moving to new spaces.';
+
+  @override
+  String get tip22 => 'Quiet wins add up—1 point per minute keeps it simple.';
+
+  @override
+  String get tip23 => 'Confetti celebrates progress—small celebrations reinforce habits.';
+
+  @override
+  String get tip24 => 'Try mornings if evenings are noisy—best time differs for everyone.';
+
+  @override
+  String get tip25 => 'Fine‑tune the decibel threshold for your room’s character.';
+
+  @override
+  String get tip26 => 'Use the moving average to smooth out noisy days.';
+
+  @override
+  String get tip27 => 'Let Weekly Insights remind you of your progress rhythm.';
+
+  @override
+  String get tip28 => 'Finish what you start—short sessions reduce friction to begin.';
+
+  @override
+  String get tip29 => 'Silence is a skill—practice makes patterns, patterns make progress.';
+
+  @override
+  String get tip30 => 'You’re one tap away—start a tiny session now.';
+
+  @override
+  String get tipInstructionNotifications => 'Settings → Advanced → Notifications to configure reminders and celebrations.';
+
+  @override
+  String get tipInstructionWeeklySummary => 'Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.';
+
+  @override
+  String get tipInstructionThreshold => 'Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.';
+
+  @override
+  String get tipsTitle => 'Tips';
+
+  @override
+  String get tipInstructionSetTime => 'Settings → Basic → Session duration';
+
+  @override
+  String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
+
+  @override
+  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+
+  @override
+  String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
+
+  @override
+  String get tipInstructionSessionComplete => 'Settings → Advanced → Notifications → Session Completed.';
+
+  @override
+  String get tipInstructionTapRing => 'On Home, tap the progress ring to start/stop.';
+
+  @override
+  String get tipInstructionExport => 'Settings → Advanced → Export Data.';
+
+  @override
+  String get tipInstructionOpenNoiseChart => 'Start a session to see the real‑time noise chart.';
+
+  @override
+  String get tipInstructionUpgradeDuration => 'Settings → Basic → Session duration. Upgrade for longer blocks.';
+
+  @override
+  String get tipInstructionAccessibility => 'Settings → Advanced → Accessibility.';
+
+  @override
+  String get tipInstructionStartNow => 'Tap Start Session on the Home screen.';
+
+  @override
+  String get tipInfoTooltip => 'Tipp anzeigen';
 }

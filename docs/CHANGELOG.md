@@ -5,6 +5,83 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2025-01-27 - Settings Layout Optimization
+
+### 🎨 Enhanced - Settings UI Layout
+- **IMPROVED**: Optimized Basic tab layout for better space efficiency
+- **IMPROVED**: Moved decibel threshold value to title with parentheses format: "Decibel Threshold (60dB)"
+- **IMPROVED**: Moved duration value to title with parentheses format: "Duration (1min)"
+- **IMPROVED**: Removed redundant value displays below sliders to save vertical space
+- **IMPROVED**: Enhanced accessibility for large text mode with more compact layout
+
+### 🧪 Technical Improvements
+- **IMPROVED**: Updated widget tests to handle new text format with `textContaining`
+- **IMPROVED**: Maintained all existing functionality while reducing UI footprint
+- **IMPROVED**: Consistent parentheses style across all value displays
+
+## [0.1.4] - 2025-01-27 - Manual-Only Tip System
+
+### 🎯 Major - Tip System Redesign
+- **BREAKING**: Disabled automatic tip triggers (app start and session completion)
+- **NEW**: Tips now only show when user actively clicks the lightbulb icon
+- **IMPROVED**: Enhanced user control with manual-only tip display
+- **IMPROVED**: Removed session restrictions for lightbulb clicks (unlimited viewing)
+
+### 🔧 Fixed - Button Text Consistency
+- **CRITICAL**: Fixed "Mute Tips" button to dynamically show "Hide Tips" or "Show Tips"
+- **CRITICAL**: Standardized terminology across settings and tip overlay
+- **IMPROVED**: Updated all localization files for consistent language
+
+### 🧪 Technical Improvements
+- **IMPROVED**: Updated tests to reflect manual-only tip behavior
+- **IMPROVED**: Removed unused session tracking code and methods
+- **IMPROVED**: Enhanced TipService with better state management
+
+## [0.1.3] - 2025-01-27 - Tip System Enhancement
+
+### 💡 Enhanced - Tip Information Icon
+- **IMPROVED**: Replaced information icon with intuitive lightbulb icon
+- **IMPROVED**: Added subtle amber glow effect for new tips with gentle 3-second animation
+- **IMPROVED**: Made glow effect theme-adaptive for both light and dark themes
+- **IMPROVED**: Enhanced visual hierarchy with background glow and main icon layers
+
+### ⏰ Fixed - Tip Timing & Behavior
+- **CRITICAL**: Fixed tip timing to show same tip for 5 minutes instead of new tip on every click
+- **CRITICAL**: Added proper "seen" tracking - tips only update when user has actually seen them
+- **IMPROVED**: Info button now works even when tips are muted (bypasses mute status)
+- **IMPROVED**: Session-based tracking prevents showing same tip twice in one session
+
+### 🎨 Improved - User Experience
+- **IMPROVED**: Lightbulb metaphor creates better user understanding ("lightbulb moment")
+- **IMPROVED**: Gentle pulsing animation draws attention without being distracting
+- **IMPROVED**: Amber color scheme provides warm, encouraging visual feedback
+- **IMPROVED**: Accessibility-friendly animation with proper disposal patterns
+
+### 🔧 Technical Improvements
+- **IMPROVED**: Added proper tip state management with current tip tracking
+- **IMPROVED**: Enhanced animation controller with 3-second duration for smoother effect
+- **IMPROVED**: Added theme-adaptive color scheme for glow effect
+- **IMPROVED**: Optimized animation performance with proper cleanup
+
+## [0.1.4] - 2025-01-27 - Manual-Only Tip System
+
+### 🚫 Disabled - Automatic Tip Triggers
+- **CRITICAL**: Disabled automatic tip display on app start and after sessions
+- **CRITICAL**: Tips now only appear when user actively clicks the lightbulb icon
+- **IMPROVED**: Eliminated unwanted interruptions during user workflow
+
+### 🎯 Enhanced - User Control
+- **IMPROVED**: Users have complete control over when tips are displayed
+- **IMPROVED**: Lightbulb glow provides clear visual indication of available tips
+- **IMPROVED**: No more unexpected popups during important tasks
+- **IMPROVED**: More intentional and respectful user experience
+
+### 🔧 Technical Improvements
+- **IMPROVED**: Added session state tracking to prevent multiple tips per session
+- **IMPROVED**: Simplified tip service logic by removing automatic triggers
+- **IMPROVED**: Enhanced test coverage for manual-only tip behavior
+- **IMPROVED**: Better separation between automatic and manual tip display
+
 ## [0.1.1] - 2025-01-27 - Critical Stability Release
 
 ### 🛡️ Fixed - Critical Crash Issues
@@ -61,6 +138,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Significant reduction in memory usage and app crash rates
 - Better user experience with graceful error handling and recovery
 - All existing features remain fully functional
+
+## [0.1.2] - 2025-01-27 - Tip Window Internationalization Fix
+
+### 🌐 Fixed - Tip Window Localization
+- **CRITICAL**: Fixed tip overlay using wrong localization key (`tipsMuted` instead of `muteTips`)
+- **CRITICAL**: Added missing `muteTips` translation key to all supported languages
+- **IMPROVED**: Tip window now properly displays localized "Mute Tips" button text
+- **IMPROVED**: Toast message "Tips muted" now uses correct localization key
+
+### 🌍 Added - Complete Tip System Internationalization
+- **German**: "Tipps stummschalten" for mute button, "Tipps stummgeschaltet" for toast
+- **Spanish**: "Silenciar consejos" for mute button, "Consejos silenciados" for toast  
+- **French**: "Couper les astuces" for mute button, "Astuces muettes" for toast
+- **Japanese**: "ヒントをミュート" for mute button, "ヒントをミュートしました" for toast
+- **Portuguese**: "Silenciar dicas" for mute button, "Dicas silenciadas" for toast
+- **Portuguese Brazil**: "Silenciar dicas" for mute button, "Dicas silenciadas" for toast
+
+### ✅ Verified - Test Coverage
+- All 32 tests passing including 7 localization tests
+- Tip service tests specifically verified (3/3 passed)
+- No regressions introduced by localization fixes
+- Tip overlay widget maintains 89.66% test coverage
 
 ## [Unreleased] - 2025-01-XX
 

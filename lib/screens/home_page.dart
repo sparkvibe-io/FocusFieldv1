@@ -27,6 +27,9 @@ import 'package:silence_score/theme/theme_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:silence_score/widgets/banner_ad_footer.dart';
 import 'package:silence_score/widgets/theme_overlays.dart';
+import 'package:silence_score/services/tip_service.dart';
+import 'package:silence_score/widgets/tip_info_icon.dart';
+import 'package:silence_score/providers/tip_info_provider.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -81,6 +84,8 @@ class HomePage extends HookConsumerWidget {
         confettiController.play();
         accessibilityService.vibrateOnEvent(AccessibilityEvent.sessionComplete);
         accessibilityService.announceSessionComplete(true);
+        // Tips now only show when user actively clicks the lightbulb icon
+        // This provides better user control and prevents unwanted interruptions
         // Reset success state after showing confetti
         Future.delayed(const Duration(seconds: 2), () {
           silenceStateNotifier.setSuccess(null);
@@ -159,6 +164,22 @@ class HomePage extends HookConsumerWidget {
                   brightness == Brightness.dark
                       ? Brightness.dark
                       : Brightness.light,
+            ),
+            leading: Consumer(
+              builder: (context, ref, child) {
+                final hasNewTipsAsync = ref.watch(hasNewTipsProvider);
+                final isEnabled = ref.watch(tipServiceEnabledProvider);
+                
+                return TipInfoIconWithAnimation(
+                  hasNewTips: hasNewTipsAsync.when(
+                    data: (hasNew) => hasNew,
+                    loading: () => false,
+                    error: (_, __) => false,
+                  ),
+                  isEnabled: isEnabled,
+                  onTap: () => _showSimpleTip(context, ref),
+                );
+              },
             ),
             title: Text(
               loc?.appTitle ?? 'Silence Score',
@@ -698,6 +719,11 @@ class HomePage extends HookConsumerWidget {
         margin: const EdgeInsets.only(bottom: 100, left: 16, right: 16),
       ),
     );
+  }
+
+  void _showSimpleTip(BuildContext context, WidgetRef ref) {
+    // Show the current tip (same tip for 5 minutes, even if muted)
+    ref.read(tipServiceProvider).showCurrentTip(context);
   }
 }
 

@@ -17,6 +17,7 @@ import 'package:silence_score/widgets/notification_settings_widget.dart';
 import 'package:silence_score/widgets/theme_selector_widget.dart';
 import 'package:silence_score/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:silence_score/services/tip_service.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -110,6 +111,7 @@ class SettingsSheet extends ConsumerWidget {
                 error: (e, _) => _errorState(context, e, ref),
                 data:
                     (settings) => TabBarView(
+                      physics: const NeverScrollableScrollPhysics(), // Disable tab swiping
                       children: [
                         _basicTab(context, ref, notifier, settings),
                         _advancedTab(context, ref, notifier, settings),
@@ -385,6 +387,7 @@ class SettingsSheet extends ConsumerWidget {
 
   Widget _aboutTab(BuildContext context, WidgetRef ref) {
     final appInfoAsync = ref.watch(appInfoProvider);
+  final tipService = ref.read(tipServiceProvider);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -466,6 +469,43 @@ class SettingsSheet extends ConsumerWidget {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Show Tips',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text('Show brief, helpful tips after app start or successful sessions.',
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: tipService.enabled,
+                    builder: (ctx, enabled, _) {
+                      return FutureBuilder<bool>(
+                        future: tipService.getEnabled(),
+                        builder: (ctx, _) {
+                          return Switch(
+                            value: enabled,
+                            onChanged: (v) async {
+                              await tipService.setEnabled(v);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -532,7 +572,7 @@ class SettingsSheet extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                label,
+                '$label (${value.toInt()}$unit)',
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -572,22 +612,6 @@ class SettingsSheet extends ConsumerWidget {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
-        ),
-        Center(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              '${value.toInt()}$unit',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
         ),
       ],
     );

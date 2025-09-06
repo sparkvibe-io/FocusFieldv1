@@ -1633,6 +1633,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'🎯 Perfect week with {count} sessions! Your dedication shines.'**
   String weeklyProgressPerfect(int count);
+
+  /// No description provided for @tipsHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips hidden'**
+  String get tipsHidden;
+
+  /// No description provided for @tipsShown.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips shown'**
+  String get tipsShown;
+
+  /// No description provided for @showTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Tips'**
+  String get showTips;
+
+  /// No description provided for @hideTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Tips'**
+  String get hideTips;
+
+  /// No description provided for @tip01.
+  ///
+  /// In en, this message translates to:
+  /// **'Short sessions count—start with 2–3 minutes to build consistency.'**
+  String get tip01;
+
+  /// No description provided for @tip02.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Smart Daily Reminders to nudge you at your best time.'**
+  String get tip02;
+
+  /// No description provided for @tip03.
+  ///
+  /// In en, this message translates to:
+  /// **'Recalibrate when your environment changes for better accuracy.'**
+  String get tip03;
+
+  /// No description provided for @tip04.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Weekly Trends to spot your momentum over time.'**
+  String get tip04;
+
+  /// No description provided for @tip05.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaks grow with daily wins—show up, even for one minute.'**
+  String get tip05;
+
+  /// No description provided for @tip06.
+  ///
+  /// In en, this message translates to:
+  /// **'High ambient noise? Raise threshold a bit to reduce false fails.'**
+  String get tip06;
+
+  /// No description provided for @tip07.
+  ///
+  /// In en, this message translates to:
+  /// **'Try different times of day to find your quiet sweet spot.'**
+  String get tip07;
+
+  /// No description provided for @tip08.
+  ///
+  /// In en, this message translates to:
+  /// **'Session complete notifications keep motivation high—enable them!'**
+  String get tip08;
+
+  /// No description provided for @tip09.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer hands‑off? Auto reminders can schedule themselves (Smart).'**
+  String get tip09;
+
+  /// No description provided for @tip10.
+  ///
+  /// In en, this message translates to:
+  /// **'Use shorter sessions on busy days to keep your streak alive.'**
+  String get tip10;
+
+  /// No description provided for @tip11.
+  ///
+  /// In en, this message translates to:
+  /// **'The progress ring is tappable—start or stop with a single tap.'**
+  String get tip11;
+
+  /// No description provided for @tip12.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data (Premium) to share progress or back it up.'**
+  String get tip12;
+
+  /// No description provided for @tip13.
+  ///
+  /// In en, this message translates to:
+  /// **'Average session length helps you choose the right duration.'**
+  String get tip13;
+
+  /// No description provided for @tip14.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency beats intensity—small daily practice compounds.'**
+  String get tip14;
+
+  /// No description provided for @tip15.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a gentle goal: 5 quiet minutes is a great baseline.'**
+  String get tip15;
+
+  /// No description provided for @tip16.
+  ///
+  /// In en, this message translates to:
+  /// **'The noise chart helps you see spikes—aim for calmer periods.'**
+  String get tip16;
+
+  /// No description provided for @tip17.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade session duration (Premium) for longer focus blocks.'**
+  String get tip17;
+
+  /// No description provided for @tip18.
+  ///
+  /// In en, this message translates to:
+  /// **'High threshold warning guards accuracy—avoid setting it too high.'**
+  String get tip18;
+
+  /// No description provided for @tip19.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekdays vary—tune your weekly summary to your schedule.'**
+  String get tip19;
+
+  /// No description provided for @tip20.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility options: high contrast, large text, and vibration.'**
+  String get tip20;
+
+  /// No description provided for @tip21.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient baseline matters—calibrate when moving to new spaces.'**
+  String get tip21;
+
+  /// No description provided for @tip22.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet wins add up—1 point per minute keeps it simple.'**
+  String get tip22;
+
+  /// No description provided for @tip23.
+  ///
+  /// In en, this message translates to:
+  /// **'Confetti celebrates progress—small celebrations reinforce habits.'**
+  String get tip23;
+
+  /// No description provided for @tip24.
+  ///
+  /// In en, this message translates to:
+  /// **'Try mornings if evenings are noisy—best time differs for everyone.'**
+  String get tip24;
+
+  /// No description provided for @tip25.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine‑tune the decibel threshold for your room’s character.'**
+  String get tip25;
+
+  /// No description provided for @tip26.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the moving average to smooth out noisy days.'**
+  String get tip26;
+
+  /// No description provided for @tip27.
+  ///
+  /// In en, this message translates to:
+  /// **'Let Weekly Insights remind you of your progress rhythm.'**
+  String get tip27;
+
+  /// No description provided for @tip28.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish what you start—short sessions reduce friction to begin.'**
+  String get tip28;
+
+  /// No description provided for @tip29.
+  ///
+  /// In en, this message translates to:
+  /// **'Silence is a skill—practice makes patterns, patterns make progress.'**
+  String get tip29;
+
+  /// No description provided for @tip30.
+  ///
+  /// In en, this message translates to:
+  /// **'You’re one tap away—start a tiny session now.'**
+  String get tip30;
+
+  /// No description provided for @tipInstructionNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Notifications to configure reminders and celebrations.'**
+  String get tipInstructionNotifications;
+
+  /// No description provided for @tipInstructionWeeklySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.'**
+  String get tipInstructionWeeklySummary;
+
+  /// No description provided for @tipInstructionThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.'**
+  String get tipInstructionThreshold;
+
+  /// No description provided for @tipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips'**
+  String get tipsTitle;
+
+  /// No description provided for @tipInstructionSetTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Basic → Session duration'**
+  String get tipInstructionSetTime;
+
+  /// No description provided for @tipInstructionDailyReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Notifications → Smart Daily Reminders.'**
+  String get tipInstructionDailyReminders;
+
+  /// No description provided for @tipInstructionCalibrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Noise Calibration.'**
+  String get tipInstructionCalibrate;
+
+  /// No description provided for @tipInstructionOpenAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Analytics to view trends and averages.'**
+  String get tipInstructionOpenAnalytics;
+
+  /// No description provided for @tipInstructionSessionComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Notifications → Session Completed.'**
+  String get tipInstructionSessionComplete;
+
+  /// No description provided for @tipInstructionTapRing.
+  ///
+  /// In en, this message translates to:
+  /// **'On Home, tap the progress ring to start/stop.'**
+  String get tipInstructionTapRing;
+
+  /// No description provided for @tipInstructionExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Export Data.'**
+  String get tipInstructionExport;
+
+  /// No description provided for @tipInstructionOpenNoiseChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a session to see the real‑time noise chart.'**
+  String get tipInstructionOpenNoiseChart;
+
+  /// No description provided for @tipInstructionUpgradeDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Basic → Session duration. Upgrade for longer blocks.'**
+  String get tipInstructionUpgradeDuration;
+
+  /// No description provided for @tipInstructionAccessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Advanced → Accessibility.'**
+  String get tipInstructionAccessibility;
+
+  /// No description provided for @tipInstructionStartNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Start Session on the Home screen.'**
+  String get tipInstructionStartNow;
+
+  /// No description provided for @tipInfoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show tip'**
+  String get tipInfoTooltip;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
