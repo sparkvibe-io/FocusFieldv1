@@ -22,8 +22,9 @@ fi
 
 echo ""
 echo "🔄 Running Flutter app on Android..."
+# Pass the correct define expected by the app (REVENUECAT_API_KEY)
 flutter run \
-  --dart-define=REVENUECAT_ANDROID_API_KEY=$ANDROID_API_KEY \
+  --dart-define=REVENUECAT_API_KEY=$ANDROID_API_KEY \
   -d ZL8322BT88
 
 echo ""

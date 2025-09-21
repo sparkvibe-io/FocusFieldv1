@@ -22,8 +22,9 @@ fi
 
 echo ""
 echo "🔄 Running Flutter app on iOS..."
+# Pass the correct define expected by the app (REVENUECAT_API_KEY)
 flutter run \
-  --dart-define=REVENUECAT_IOS_API_KEY=$IOS_API_KEY \
+  --dart-define=REVENUECAT_API_KEY=$IOS_API_KEY \
   -d ios
 
 echo ""
