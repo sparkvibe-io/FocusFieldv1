@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SilenceScore is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
+Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
 ## 🚀 **CURRENT STATUS - JULY 27, 2025: MONETIZATION COMPLETE**
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete**
-- **RevenueCat Integration**: ✅ Complete with API key `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
+- **RevenueCat Integration**: ✅ Complete with API key `<REVENUECAT_API_KEY>`
 - **Subscription System**: ✅ Premium ($1.99/month), Premium Plus ($3.99/month)
 - **Feature Gating**: ✅ All premium features properly restricted
 - **Paywall UI**: ✅ Professional subscription interface implemented
-- **Package ID**: ✅ Updated to `io.sparkvibe.silencescore` (iOS & Android)
+- **Package ID**: ✅ Updated to `io.sparkvibe.focusfield` (iOS & Android)
 - **Build Verification**: ✅ Android APK builds successfully with monetization
 - **Development Mode**: ✅ Mock subscriptions enabled for testing
 
@@ -133,12 +133,12 @@ flutter clean && flutter pub get
 
 ### Development Setup ✅ **COMPLETE**
 1. ✅ `.env` file configured with actual API keys
-2. ✅ RevenueCat API key: `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
+2. ✅ RevenueCat API key: `<REVENUECAT_API_KEY>`
 3. ✅ Mock subscriptions enabled for development testing
 4. ✅ Build scripts ready for development and production
 
 ### Current Environment Configuration ✅ **READY**
-- `REVENUECAT_API_KEY`: ✅ `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk` (CONFIGURED)
+- `REVENUECAT_API_KEY`: ✅ `<REVENUECAT_API_KEY>` (CONFIGURED)
 - `FIREBASE_API_KEY`: ✅ Configured for analytics (optional)
 - `IS_DEVELOPMENT`: ✅ `true` (development mode enabled)
 - `ENABLE_MOCK_SUBSCRIPTIONS`: ✅ `true` (mock payments for testing)
@@ -314,12 +314,12 @@ lib/
 - ✅ **Feature Gating**: All premium features properly restricted
 - ✅ **Paywall UI**: Professional subscription purchase interface
 - ✅ **State Management**: Riverpod providers for subscription state
-- ✅ **Package ID**: Updated to `io.sparkvibe.silencescore` (iOS & Android)
+- ✅ **Package ID**: Updated to `io.sparkvibe.focusfield` (iOS & Android)
 - ✅ **Build Verification**: Android APK builds successfully with monetization
 - ✅ **Mock Testing**: Development mode allows testing without real payments
 
 #### Revenue System: Production Ready
-- ✅ **API Configuration**: RevenueCat API key `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
+- ✅ **API Configuration**: RevenueCat API key `<REVENUECAT_API_KEY>`
 - ✅ **Product IDs**: Premium and Premium Plus subscription products defined
 - ✅ **Billing Cycles**: Monthly and yearly options implemented
 - ✅ **Feature Restrictions**: Free tier limited to 5-minute sessions, 7-day history

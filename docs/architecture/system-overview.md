@@ -1,8 +1,8 @@
-# SilenceScore Architecture Overview
+# Focus Field Architecture Overview
 
 ## System Architecture
 
-SilenceScore is built using Flutter with a clean, modular architecture that emphasizes separation of concerns and maintainability.
+Focus Field is built using Flutter with a clean, modular architecture that emphasizes separation of concerns and maintainability.
 
 ### High-Level Architecture
 

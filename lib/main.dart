@@ -18,11 +18,11 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   // RevenueCat configuration deferred to SubscriptionService.initialize()
 
-  runApp(const ProviderScope(child: SilenceScoreApp()));
+  runApp(const ProviderScope(child: FocusFieldApp()));
 }
 
-class SilenceScoreApp extends ConsumerWidget {
-  const SilenceScoreApp({super.key});
+class FocusFieldApp extends ConsumerWidget {
+  const FocusFieldApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,8 +33,8 @@ class SilenceScoreApp extends ConsumerWidget {
     ref.watch(startupSubscriptionInitProvider);
 
     return MaterialApp(
-      onGenerateTitle:
-          (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Silence Score',
+    onGenerateTitle:
+      (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Focus Field',
       navigatorKey: NavigationService.navigatorKey,
       theme: AppTheme.getThemeForMode(
         currentTheme,

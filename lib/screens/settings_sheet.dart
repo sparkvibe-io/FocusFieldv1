@@ -1632,7 +1632,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
               children: [
                 Text(t.noEmailAppFound),
                 SelectableText(
-                  'silencescore@sparkvibe.io',
+                  'focusfield@sparkvibe.io',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,

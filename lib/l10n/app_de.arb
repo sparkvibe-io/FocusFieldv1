@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Fokus-Engine wird vorbereitet…",
   "paywallTitle": "Trainiere tiefere Fokussierung mit Premium",
   "featureExtendSessions": "Verlängere Sitzungen von 30 auf 120 Minuten",
@@ -46,7 +46,7 @@
   "decibelThresholdLabel": "Dezibel-Schwelle",
   "decibelThresholdHint": "Maximale Geräuschpegelgrenze festlegen (dB)",
   "microphonePermissionTitle": "Mikrofonberechtigung",
-  "microphonePermissionMessage": "Silence Score benötigt Mikrofonzugriff zur Messung. Kein Audio wird gespeichert.",
+  "microphonePermissionMessage": "Focus Field benötigt Mikrofonzugriff zur Messung. Kein Audio wird gespeichert.",
   "permissionDeniedMessage": "Mikrofon erforderlich. In den Einstellungen aktivieren.",
   "noiseMeterError": "Mikrofon nicht verfügbar",
   "premiumFeaturesTitle": "Premium-Funktionen",
@@ -130,7 +130,7 @@
   ,"minutesShort": "Min"
   ,"unlockAdvancedCalibration": "Erweiterte Kalibrierung freischalten"
   ,"exportNoData": "Keine Daten zum Export"
-  ,"faqHowWorksQ": "Wie funktioniert Silence Score?"
+  ,"faqHowWorksQ": "Wie funktioniert Focus Field?"
   ,"faqHowWorksA": "Misst Umgebungsgeräusch – Zeit unter Schwelle bringt Punkte."
   ,"faqAudioRecordedQ": "Wird Audio aufgenommen?"
   ,"faqAudioRecordedA": "Nein. Nur Dezibelwerte; kein Audio gespeichert."
@@ -213,7 +213,7 @@
   ,"requesting": "Anfrage..."
   ,"enableNotificationsCta": "Benachrichtigungen aktivieren"
   ,"enableNotificationsTitle": "Benachrichtigungen aktivieren"
-  ,"enableNotificationsSubtitle": "Erlaube SilenceScore Benachrichtigungen zu senden"
+  ,"enableNotificationsSubtitle": "Erlaube Focus Field Benachrichtigungen zu senden"
   ,"dailyReminderTitle": "Intelligente Tageserinnerung"
   ,"dailyReminderSubtitle": "Intelligent oder feste Zeit"
   ,"dailyTimeLabel": "Tägliche Zeit"
@@ -254,7 +254,7 @@
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
-  ,"ratingPromptTitle": "Gefällt dir Silence Score?"
+  ,"ratingPromptTitle": "Gefällt dir Focus Field?"
   ,"ratingPromptBody": "Eine kurze 5-Sterne-Bewertung hilft anderen, mehr Ruhe zu finden."
   ,"ratingPromptRateNow": "Jetzt bewerten"
   ,"ratingPromptLater": "Später"

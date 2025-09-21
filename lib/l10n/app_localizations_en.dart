@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Preparing focus engine…';
@@ -158,7 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get microphonePermissionTitle => 'Microphone Permission';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score needs microphone access to measure ambient noise levels. No audio is stored.';
+  String get microphonePermissionMessage => 'Focus Field needs microphone access to measure ambient noise levels. No audio is stored.';
 
   @override
   String get permissionDeniedMessage => 'Microphone permission is required to measure silence. Please enable it in settings.';
@@ -364,7 +364,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Frequently Asked Questions';
 
   @override
-  String get faqHowWorksQ => 'How does SilenceScore work?';
+  String get faqHowWorksQ => 'How does Focus Field work?';
 
   @override
   String get faqHowWorksA => 'It measures ambient noise – time below threshold earns points.';
@@ -679,7 +679,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
 
   @override
-  String get ratingPromptTitle => 'Enjoying Silence Score?';
+  String get ratingPromptTitle => 'Enjoying Focus Field?';
 
   @override
   String get ratingPromptBody => 'A quick 5-star rating helps others discover calmer focus time.';
@@ -715,7 +715,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enableNotificationsTitle => 'Enable Notifications';
 
   @override
-  String get enableNotificationsSubtitle => 'Allow SilenceScore to send notifications';
+  String get enableNotificationsSubtitle => 'Allow Focus Field to send notifications';
 
   @override
   String get dailyReminderTitle => 'Smart Daily Reminders';
@@ -727,7 +727,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTimeLabel => 'Daily Time';
 
   @override
-  String get dailyTimeHint => 'Choose a fixed time or let SilenceScore learn your pattern.';
+  String get dailyTimeHint => 'Choose a fixed time or let Focus Field learn your pattern.';
 
   @override
   String get useSmartCta => 'Use Smart';

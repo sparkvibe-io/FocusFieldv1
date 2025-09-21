@@ -1,7 +1,7 @@
-# Documentation Standards for SilenceScore
+# Documentation Standards for Focus Field
 
 ## Overview
-This document establishes documentation standards for the SilenceScore project to ensure consistency, clarity, and maintainability across all documentation files.
+This document establishes documentation standards for the Focus Field project to ensure consistency, clarity, and maintainability across all documentation files.
 
 ## Principles
 
@@ -148,7 +148,7 @@ Date of last significant update.
 ```dart
 // Example Dart code
 void main() {
-  print('Hello, SilenceScore!');
+  print('Hello, Focus Field!');
 }
 ```
 

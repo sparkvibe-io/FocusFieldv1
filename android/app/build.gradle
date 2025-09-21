@@ -14,7 +14,7 @@ def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
 
 android {
-    namespace "io.sparkvibe.silencescore"
+    namespace "io.sparkvibe.focusfield"
     compileSdkVersion 35
     ndkVersion "27.0.12077973"
 
@@ -44,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.sparkvibe.silencescore"
+    applicationId "io.sparkvibe.focusfield"
         // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
         minSdkVersion 24
         targetSdkVersion 35

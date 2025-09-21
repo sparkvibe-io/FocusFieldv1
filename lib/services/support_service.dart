@@ -29,8 +29,8 @@ class SupportService {
   static SupportService get instance => _instance ??= SupportService._();
   SupportService._();
 
-  static const String supportEmail = 'silencescore@sparkvibe.io';
-  static const String premiumSupportEmail = 'silencescore@sparkvibe.io';
+  static const String supportEmail = 'focusfield@sparkvibe.io';
+  static const String premiumSupportEmail = 'focusfield@sparkvibe.io';
 
   // Web URLs
   static const String faqUrl = 'https://sparkvibe.io';

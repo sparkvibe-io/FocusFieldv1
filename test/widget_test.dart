@@ -27,11 +27,11 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  group('Silence Score App', () {
+  group('Focus Field App', () {
     testWidgets('should display app title', (WidgetTester tester) async {
       await _pumpApp(tester);
 
-      expect(find.text('Silence Score'), findsOneWidget);
+  expect(find.text('Focus Field'), findsOneWidget);
     });
 
     testWidgets('should display start control (play icon)', (

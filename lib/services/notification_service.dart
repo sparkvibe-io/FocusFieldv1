@@ -358,7 +358,7 @@ class NotificationService {
         AndroidNotificationDetails(
           'silence_score_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -491,7 +491,7 @@ class NotificationService {
         android: AndroidNotificationDetails(
           'silence_score_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -556,7 +556,7 @@ class NotificationService {
         android: AndroidNotificationDetails(
           'silence_score_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',

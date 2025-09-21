@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Preparing focus engine…",
   "paywallTitle": "Train Deeper Focus with Premium",
   "featureExtendSessions": "Extend focus sessions from 30 min to 120 min",
@@ -55,7 +55,7 @@
   "decibelThresholdLabel": "Decibel Threshold",
   "decibelThresholdHint": "Set the maximum allowed noise level (dB)",
   "microphonePermissionTitle": "Microphone Permission",
-  "microphonePermissionMessage": "Silence Score needs microphone access to measure ambient noise levels. No audio is stored.",
+  "microphonePermissionMessage": "Focus Field needs microphone access to measure ambient noise levels. No audio is stored.",
   "permissionDeniedMessage": "Microphone permission is required to measure silence. Please enable it in settings.",
   "noiseMeterError": "Unable to access microphone",
   "premiumFeaturesTitle": "Premium Features",
@@ -120,7 +120,7 @@
   ,"exportCompleted": "{format} export completed!"
   ,"exportFailed": "Export failed: {error}"
   ,"frequentlyAskedQuestions": "Frequently Asked Questions"
-  ,"faqHowWorksQ": "How does SilenceScore work?"
+  ,"faqHowWorksQ": "How does Focus Field work?"
   ,"faqHowWorksA": "It measures ambient noise – time below threshold earns points."
   ,"faqAudioRecordedQ": "Is audio recorded?"
   ,"faqAudioRecordedA": "No. Only decibel levels are sampled; audio is never stored."
@@ -219,7 +219,7 @@
   ,"achievementHalfCenturyTitle": "Half Century"
   ,"achievementHalfCenturyDesc": "50 points milestone"
   ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
-    ,"ratingPromptTitle": "Enjoying Silence Score?"
+  ,"ratingPromptTitle": "Enjoying Focus Field?"
     ,"ratingPromptBody": "A quick 5-star rating helps others discover calmer focus time."
     ,"ratingPromptRateNow": "Rate Now"
     ,"ratingPromptLater": "Later"
@@ -258,11 +258,11 @@
   ,"requesting": "Requesting..."
   ,"enableNotificationsCta": "Enable Notifications"
   ,"enableNotificationsTitle": "Enable Notifications"
-  ,"enableNotificationsSubtitle": "Allow SilenceScore to send notifications"
+  ,"enableNotificationsSubtitle": "Allow Focus Field to send notifications"
   ,"dailyReminderTitle": "Smart Daily Reminders"
   ,"dailyReminderSubtitle": "Smart or chosen time"
   ,"dailyTimeLabel": "Daily Time"
-  ,"dailyTimeHint": "Choose a fixed time or let SilenceScore learn your pattern."
+  ,"dailyTimeHint": "Choose a fixed time or let Focus Field learn your pattern."
   ,"useSmartCta": "Use Smart"
   ,"sessionCompletedTitle": "Session Completed"
   ,"sessionCompletedSubtitle": "Celebrate completed sessions"

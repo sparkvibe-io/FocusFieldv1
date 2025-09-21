@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Preparando motor de enfoque…",
   "paywallTitle": "Entrena un enfoque más profundo con Premium",
   "featureExtendSessions": "Amplía sesiones de enfoque de 30 min a 120 min",
@@ -46,7 +46,7 @@
   "decibelThresholdLabel": "Umbral de decibelios",
   "decibelThresholdHint": "Establece el nivel máximo de ruido (dB)",
   "microphonePermissionTitle": "Permiso de micrófono",
-  "microphonePermissionMessage": "Silence Score necesita acceso al micrófono para medir el ruido. No se almacena audio.",
+  "microphonePermissionMessage": "Focus Field necesita acceso al micrófono para medir el ruido. No se almacena audio.",
   "permissionDeniedMessage": "Se requiere permiso de micrófono. Actívalo en ajustes.",
   "noiseMeterError": "No se puede acceder al micrófono",
   "premiumFeaturesTitle": "Funciones Premium",
@@ -130,7 +130,7 @@
   ,"minutesShort": "min"
   ,"unlockAdvancedCalibration": "Desbloquea calibración avanzada de ruido"
   ,"exportNoData": "No hay datos para exportar"
-  ,"faqHowWorksQ": "¿Cómo funciona Silence Score?"
+  ,"faqHowWorksQ": "¿Cómo funciona Focus Field?"
   ,"faqHowWorksA": "Mide el ruido ambiente: el tiempo por debajo del umbral gana puntos."
   ,"faqAudioRecordedQ": "¿Se graba audio?"
   ,"faqAudioRecordedA": "No. Solo se toman niveles de decibelios; nunca se guarda audio."
@@ -213,7 +213,7 @@
   ,"requesting": "Solicitando..."
   ,"enableNotificationsCta": "Activar notificaciones"
   ,"enableNotificationsTitle": "Activar notificaciones"
-  ,"enableNotificationsSubtitle": "Permite a SilenceScore enviar notificaciones"
+  ,"enableNotificationsSubtitle": "Permite a Focus Field enviar notificaciones"
   ,"dailyReminderTitle": "Recordatorio diario inteligente"
   ,"dailyReminderSubtitle": "Inteligente o hora fija"
   ,"dailyTimeLabel": "Hora diaria"
@@ -254,7 +254,7 @@
   ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
   ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
-  ,"ratingPromptTitle": "¿Disfrutas Silence Score?"
+  ,"ratingPromptTitle": "¿Disfrutas Focus Field?"
   ,"ratingPromptBody": "Una valoración 5★ rápida ayuda a otros a descubrir calma."
   ,"ratingPromptRateNow": "Calificar ahora"
   ,"ratingPromptLater": "Más tarde"

@@ -1,7 +1,7 @@
 # Environment Setup & Secrets Management
 
 ## Overview
-This guide explains how to properly configure API keys and environment variables for SilenceScore development and production builds. The system is designed to keep sensitive information out of version control while providing a smooth developer experience.
+This guide explains how to properly configure API keys and environment variables for Focus Field development and production builds. The system is designed to keep sensitive information out of version control while providing a smooth developer experience.
 
 ## Prerequisites
 - Flutter development environment setup
@@ -75,7 +75,7 @@ flutter build apk --release
 
 1. **Create RevenueCat Account**
    - Go to [RevenueCat Dashboard](https://app.revenuecat.com)
-   - Create new project for SilenceScore
+   - Create new project for Focus Field
 
 2. **Get API Key**
    - Navigate to Project Settings → API Keys
@@ -93,7 +93,7 @@ flutter build apk --release
 
 1. **Create Firebase Project**
    - Go to [Firebase Console](https://console.firebase.google.com)
-   - Create project for SilenceScore
+   - Create project for Focus Field
 
 2. **Get Configuration**
    - Add iOS/Android apps
@@ -241,4 +241,4 @@ January 27, 2025
 
 ---
 
-*This document covers secure environment configuration for SilenceScore. Keep your API keys safe and never commit them to version control.* 
+*This document covers secure environment configuration for Focus Field. Keep your API keys safe and never commit them to version control.* 

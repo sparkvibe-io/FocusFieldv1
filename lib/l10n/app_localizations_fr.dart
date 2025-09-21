@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Préparation du moteur de focus…';
@@ -158,7 +158,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get microphonePermissionTitle => 'Permission micro';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score nécessite l\'accès au micro pour mesurer le bruit. Aucun audio stocké.';
+  String get microphonePermissionMessage => 'Focus Field nécessite l\'accès au micro pour mesurer le bruit. Aucun audio stocké.';
 
   @override
   String get permissionDeniedMessage => 'Le micro est requis. Activez‑le dans les réglages.';
@@ -364,7 +364,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Questions fréquentes';
 
   @override
-  String get faqHowWorksQ => 'Comment fonctionne Silence Score ?';
+  String get faqHowWorksQ => 'Comment fonctionne Focus Field ?';
 
   @override
   String get faqHowWorksA => 'Mesure le bruit ambiant – le temps sous le seuil gagne des points.';
@@ -679,7 +679,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get achievementLockedPrompt => 'Complétez des sessions pour débloquer les succès';
 
   @override
-  String get ratingPromptTitle => 'Vous appréciez Silence Score ?';
+  String get ratingPromptTitle => 'Vous appréciez Focus Field ?';
 
   @override
   String get ratingPromptBody => 'Une note 5★ rapide aide d\'autres à trouver le calme.';
@@ -715,7 +715,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get enableNotificationsTitle => 'Activer les notifications';
 
   @override
-  String get enableNotificationsSubtitle => 'Autoriser SilenceScore à envoyer des notifications';
+  String get enableNotificationsSubtitle => 'Autoriser Focus Field à envoyer des notifications';
 
   @override
   String get dailyReminderTitle => 'Rappel quotidien intelligent';

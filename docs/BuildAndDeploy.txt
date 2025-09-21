@@ -4,7 +4,7 @@ flutter clean && flutter pub get
 flutter gen-l10n
 
 Android phone
-flutter run -d ZL8322BT88 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+flutter run --debug -d ZL8322BT88 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
 
 Android tablet
 flutter run -d emulator-5554 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false

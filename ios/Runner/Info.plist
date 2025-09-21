@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Silence Score</string>
+	<string>Focus Field</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,9 +29,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Silence Score needs microphone access to measure ambient noise levels for silence detection. No audio is recorded or stored.</string>
+	<string>Focus Field needs microphone access to measure ambient noise levels for silence detection. No audio is recorded or stored.</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Silence Score uses notifications to remind you about your silence practice and celebrate your achievements.</string>
+	<string>Focus Field uses notifications to remind you about your focus practice and celebrate your achievements.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

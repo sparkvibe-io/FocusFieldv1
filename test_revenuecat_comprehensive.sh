@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # RevenueCat Comprehensive Testing Script
-echo "🔍 SilenceScore - RevenueCat Comprehensive Testing"
+echo "🔍 Focus Field - RevenueCat Comprehensive Testing"
 echo "=================================================="
 
 # Android Public API Key

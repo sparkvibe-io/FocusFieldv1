@@ -9,7 +9,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Fokus-Engine wird vorbereitet…';
@@ -158,7 +158,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get microphonePermissionTitle => 'Mikrofonberechtigung';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score benötigt Mikrofonzugriff zur Messung. Kein Audio wird gespeichert.';
+  String get microphonePermissionMessage => 'Focus Field benötigt Mikrofonzugriff zur Messung. Kein Audio wird gespeichert.';
 
   @override
   String get permissionDeniedMessage => 'Mikrofon erforderlich. In den Einstellungen aktivieren.';
@@ -364,7 +364,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Häufige Fragen';
 
   @override
-  String get faqHowWorksQ => 'Wie funktioniert Silence Score?';
+  String get faqHowWorksQ => 'Wie funktioniert Focus Field?';
 
   @override
   String get faqHowWorksA => 'Misst Umgebungsgeräusch – Zeit unter Schwelle bringt Punkte.';
@@ -679,7 +679,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get achievementLockedPrompt => 'Sitzungen abschließen zum Freischalten';
 
   @override
-  String get ratingPromptTitle => 'Gefällt dir Silence Score?';
+  String get ratingPromptTitle => 'Gefällt dir Focus Field?';
 
   @override
   String get ratingPromptBody => 'Eine kurze 5-Sterne-Bewertung hilft anderen, mehr Ruhe zu finden.';
@@ -715,7 +715,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get enableNotificationsTitle => 'Benachrichtigungen aktivieren';
 
   @override
-  String get enableNotificationsSubtitle => 'Erlaube SilenceScore Benachrichtigungen zu senden';
+  String get enableNotificationsSubtitle => 'Erlaube Focus Field Benachrichtigungen zu senden';
 
   @override
   String get dailyReminderTitle => 'Intelligente Tageserinnerung';

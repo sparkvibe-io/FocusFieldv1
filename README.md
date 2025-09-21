@@ -1,4 +1,7 @@
-# Silence Score
+# Focus Field
+
+![CI](https://github.com/sparkvibe-io/FocusField/actions/workflows/ci.yml/badge.svg)
+![Release Build](https://github.com/sparkvibe-io/FocusField/actions/workflows/release-build.yml/badge.svg)
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
@@ -57,8 +60,8 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/silence-score.git
-cd silence-score
+git clone https://github.com/sparkvibe-io/FocusField.git
+cd FocusField
 ```
 
 2. Install dependencies:
@@ -143,7 +146,7 @@ The app requires microphone access to measure ambient noise levels:
 
 ## 🔔 Notification System
 
-SilenceScore includes a flexible, privacy‑friendly local notification system designed to reinforce habit formation without being spammy.
+Focus Field includes a flexible, privacy‑friendly local notification system designed to reinforce habit formation without being spammy.
 
 ### Architecture
 | Component | Responsibility |
@@ -594,8 +597,8 @@ Everything else in the premium roadmap is aspirational until moved to the delive
 - **Prevention**: v0.1.1 includes chart stability improvements and error boundaries
 
 #### Microphone Permission Issues
-- **iOS**: Settings > Privacy & Security > Microphone > Silence Score
-- **Android**: Settings > Apps > Silence Score > Permissions > Microphone
+- **iOS**: Settings > Privacy & Security > Microphone > Focus Field
+- **Android**: Settings > Apps > Focus Field > Permissions > Microphone
 - **Note**: App now provides better guidance for permission setup
 
 #### Audio Processing Errors & Native Buffer Crashes
@@ -626,10 +629,10 @@ flutter run
 #### Permission Testing
 ```bash
 # Reset app permissions (iOS Simulator)
-xcrun simctl privacy booted reset all com.sparkvibe.silencescore
+xcrun simctl privacy booted reset all io.sparkvibe.focusfield
 
 # Reset app data (Android)
-adb shell pm clear com.sparkvibe.silencescore
+adb shell pm clear io.sparkvibe.focusfield
 ```
 
 ### Getting Help
@@ -653,13 +656,13 @@ When reporting issues, please include:
 
 ---
 
-**Silence Score** - Transform your environment into a sanctuary of focus and mindfulness. 🧘‍♀️✨ 
+**Focus Field** - Transform your environment into a sanctuary of focus and mindfulness. 🧘‍♀️✨ 
 
 ## 💰 Monetization & Subscription System
 
 ### Status: ⚙️ Implemented (Docs & Dynamic Pricing Update In Progress)
 
-SilenceScore includes a RevenueCat-based subscription system with dynamic product pricing (fetched from live store offerings when available) and a mock mode for local development.
+Focus Field includes a RevenueCat-based subscription system with dynamic product pricing (fetched from live store offerings when available) and a mock mode for local development.
 
 #### Core Infrastructure
 - RevenueCat integration via `purchases_flutter`
@@ -728,7 +731,7 @@ For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to re
 - **Development Testing**: Mock subscription flows working
 
 ### ✅ **Completed Technical Infrastructure**
-- **Package Updates**: Bundle ID changed to `io.sparkvibe.silencescore`
+- **Package Updates**: Bundle ID changed to `io.sparkvibe.focusfield`
 - **Build System**: Production-ready with environment variable management
 - **API Integration**: RevenueCat, Firebase, notification services
 - **Code Quality**: Comprehensive linting, testing, documentation

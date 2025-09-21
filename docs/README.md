@@ -1,6 +1,6 @@
-# SilenceScore Documentation
+# Focus Field Documentation
 
-Welcome to the SilenceScore documentation hub. This directory contains comprehensive documentation for users, developers, and contributors.
+Welcome to the Focus Field documentation hub. This directory contains comprehensive documentation for users, developers, and contributors.
 
 ## 📋 Recent Changes
 **January 2025**: Documentation has been reorganized for better structure. All documentation files (except the main README.md) are now located in the `/docs/` folder. If you have bookmarked links to `CHANGELOG.md` or `MONETIZATION_SETUP.md`, please update them to `docs/CHANGELOG.md` and `docs/MONETIZATION_SETUP.md` respectively.
@@ -151,4 +151,4 @@ January 27, 2025
 
 ---
 
-*This documentation is maintained by the SilenceScore development team. For questions or suggestions, please contact us or open an issue.*
+*This documentation is maintained by the Focus Field development team. For questions or suggestions, please contact us or open an issue.*

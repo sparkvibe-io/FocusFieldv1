@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # RevenueCat iOS Testing Script with Platform-Specific API Keys
-echo "🍎 SilenceScore - RevenueCat iOS Testing"
+echo "🍎 Focus Field - RevenueCat iOS Testing"
 echo "========================================"
 
 # iOS Public API Key (get this from RevenueCat Dashboard > Project Settings > Apps > iOS App)

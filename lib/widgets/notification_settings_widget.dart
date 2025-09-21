@@ -154,7 +154,7 @@ class _NotificationSettingsWidgetState
                       _buildSettingsTile(
                         context: context,
                         title: 'Enable Notifications',
-                        subtitle: 'Allow SilenceScore to send notifications',
+                        subtitle: 'Allow Focus Field to send notifications',
                         icon: Icons.notifications_active,
                         value: enableNotifications,
                         onChanged:
@@ -289,7 +289,7 @@ class _NotificationSettingsWidgetState
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Choose a fixed time or let SilenceScore learn your pattern.',
+                                    'Choose a fixed time or let Focus Field learn your pattern.',
                                     style: theme.textTheme.bodySmall,
                                   ),
                                 ],

@@ -208,7 +208,7 @@ class SilenceDetector {
 
         if (status == PermissionStatus.permanentlyDenied) {
           onError(
-            'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.',
+            'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Focus Field.',
           );
         } else if (status == PermissionStatus.restricted) {
           onError(
@@ -495,7 +495,7 @@ class SilenceDetector {
           );
           if (status == PermissionStatus.permanentlyDenied) {
             onError(
-              'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Silence Score.',
+              'Microphone permission was denied. Please enable it in Settings > Privacy & Security > Microphone > Focus Field.',
             );
             return;
           } else if (status == PermissionStatus.restricted) {

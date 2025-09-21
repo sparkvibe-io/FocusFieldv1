@@ -1,6 +1,6 @@
 class AppConstants {
   // App metadata
-  static const String appTitle = 'Silence Score';
+  static const String appTitle = 'Focus Field';
 
   // Silence detection settings
   static const double defaultDecibelThreshold = 38.0; // dB

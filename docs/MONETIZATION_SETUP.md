@@ -1,7 +1,7 @@
-# SilenceScore Monetization System Setup Guide
+# Focus Field Monetization System Setup Guide
 
 ## Overview
-This guide provides complete setup instructions for SilenceScore's subscription monetization system. The infrastructure is fully implemented with centralized configuration, requiring only platform configuration and API key setup to enable revenue generation.
+This guide provides complete setup instructions for Focus Field's subscription monetization system. The infrastructure is fully implemented with centralized configuration, requiring only platform configuration and API key setup to enable revenue generation.
 
 ## Prerequisites
 - Flutter development environment setup
@@ -47,8 +47,8 @@ Implemented:
 1. Go to [RevenueCat Dashboard](https://app.revenuecat.com)
 2. Create account and new project
 3. Add iOS and Android apps with bundle IDs:
-   - iOS: `io.sparkvibe.silencescore`
-   - Android: `io.sparkvibe.silencescore`
+  - iOS: `io.sparkvibe.focusfield`
+  - Android: `io.sparkvibe.focusfield`
 
 #### Configure Products
 Create the following subscription product identifiers (must match exactly across App Store Connect, Google Play Console, and RevenueCat):
@@ -67,7 +67,7 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create App
 1. Login to [App Store Connect](https://appstoreconnect.apple.com)
-2. Create new app with bundle ID: `io.sparkvibe.silencescore`
+2. Create new app with bundle ID: `io.sparkvibe.focusfield`
 3. Fill app metadata, description, screenshots
 
 #### Configure Subscriptions
@@ -88,7 +88,7 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create App
 1. Login to [Google Play Console](https://play.google.com/console)
-2. Create new app with package name: `io.sparkvibe.silencescore`
+2. Create new app with package name: `io.sparkvibe.focusfield`
 3. Complete store listing
 
 #### Configure Subscriptions
@@ -106,7 +106,7 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create Firebase Project
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create project for `SilenceScore`
+2. Create project for `Focus Field`
 3. Add iOS and Android apps
 
 #### Configure Authentication
@@ -245,4 +245,4 @@ August 29, 2025
 
 ---
 
-*This setup guide covers the technical configuration required to enable SilenceScore's monetization system. Follow all steps in sequence for successful implementation.*
+*This setup guide covers the technical configuration required to enable Focus Field's monetization system. Follow all steps in sequence for successful implementation.*

@@ -1,5 +1,5 @@
 #!/bin/bash
-# RevenueCat Sandbox Testing Guide for SilenceScore
+# RevenueCat Sandbox Testing Guide for Focus Field
 
 echo "🧪 REVENUECAT SANDBOX TESTING GUIDE"
 echo "=================================="

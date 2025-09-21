@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # RevenueCat Android Testing Script with Platform-Specific API Keys
-echo "🚀 SilenceScore - RevenueCat Android Testing"
+echo "🚀 Focus Field - RevenueCat Android Testing"
 echo "============================================"
 
 # Android Public API Key (get this from RevenueCat Dashboard > Project Settings > Apps > Android App)

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# SilenceScore Development Build Script
+# Focus Field Development Build Script
 # This script loads environment variables and builds the app with proper configuration
 
 set -e
 
-echo "🚀 Building SilenceScore for Development..."
+echo "🚀 Building Focus Field for Development..."
 
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then

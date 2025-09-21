@@ -9,7 +9,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => '集中エンジンを準備中…';
@@ -158,7 +158,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get microphonePermissionTitle => 'マイク権限';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。';
+  String get microphonePermissionMessage => 'Focus Field は環境ノイズ測定のためマイクを使用します。音声は保存されません。';
 
   @override
   String get permissionDeniedMessage => '測定にはマイク権限が必要です。設定で有効にしてください。';
@@ -679,7 +679,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
 
   @override
-  String get ratingPromptTitle => 'Silence Score を気に入っていますか?';
+  String get ratingPromptTitle => 'Focus Field を気に入っていますか?';
 
   @override
   String get ratingPromptBody => '5つ星の評価は他の人が静かな集中を見つける助けになります。';
@@ -715,7 +715,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get enableNotificationsTitle => '通知を有効にする';
 
   @override
-  String get enableNotificationsSubtitle => 'SilenceScore の通知を許可';
+  String get enableNotificationsSubtitle => 'Focus Field の通知を許可';
 
   @override
   String get dailyReminderTitle => 'スマートな毎日のリマインダー';

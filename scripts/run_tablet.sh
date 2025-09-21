@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Helper script to run SilenceScore on a tablet AVD.
+# Helper script to run Focus Field on a tablet AVD.
 # Creates / launches an Android tablet emulator if needed, then runs flutter with desired defines.
 # Usage: ./scripts/run_tablet.sh [--prod] [--rc-key=KEY]
 #   --prod              : production mode (requires API key via env or --rc-key)

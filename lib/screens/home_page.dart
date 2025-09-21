@@ -182,7 +182,7 @@ class HomePage extends HookConsumerWidget {
               },
             ),
             title: Text(
-              loc?.appTitle ?? 'Silence Score',
+              loc?.appTitle ?? 'Focus Field',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             actions: [

@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Preparando motor de foco…",
   "paywallTitle": "Treine foco mais profundo com Premium",
   "featureExtendSessions": "Estenda sessões de 30 min para 120 min",
@@ -46,7 +46,7 @@
   ,"decibelThresholdLabel": "Limite de decibéis"
   ,"decibelThresholdHint": "Defina o nível máximo de ruído (dB)"
   ,"microphonePermissionTitle": "Permissão de microfone"
-  ,"microphonePermissionMessage": "Silence Score precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado."
+  ,"microphonePermissionMessage": "Focus Field precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado."
   ,"permissionDeniedMessage": "Permissão de microfone necessária. Ative nas configurações."
   ,"noiseMeterError": "Não foi possível acessar o microfone"
   ,"premiumFeaturesTitle": "Recursos Premium"
@@ -174,7 +174,7 @@
   ,"minutesShort": "min"
   ,"unlockAdvancedCalibration": "Desbloquear calibração avançada"
   ,"exportNoData": "Sem dados para exportar"
-  ,"faqHowWorksQ": "Como o Silence Score funciona?"
+  ,"faqHowWorksQ": "Como o Focus Field funciona?"
   ,"faqHowWorksA": "Mede o ruído ambiente – tempo abaixo do limite gera pontos."
   ,"faqAudioRecordedQ": "Áudio é gravado?"
   ,"faqAudioRecordedA": "Não. Apenas níveis de dB; áudio nunca é salvo."

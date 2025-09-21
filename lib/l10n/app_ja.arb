@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "集中エンジンを準備中…",
   "paywallTitle": "プレミアムでより深い集中を",
   "featureExtendSessions": "セッションを30分から120分へ拡張",
@@ -46,7 +46,7 @@
   "decibelThresholdLabel": "デシベルしきい値",
   "decibelThresholdHint": "許容される最大ノイズレベル (dB) を設定",
   "microphonePermissionTitle": "マイク権限",
-  "microphonePermissionMessage": "Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。",
+  "microphonePermissionMessage": "Focus Field は環境ノイズ測定のためマイクを使用します。音声は保存されません。",
   "permissionDeniedMessage": "測定にはマイク権限が必要です。設定で有効にしてください。",
   "noiseMeterError": "マイクにアクセスできません",
   "premiumFeaturesTitle": "プレミアム機能",
@@ -213,7 +213,7 @@
   ,"requesting": "リクエスト中..."
   ,"enableNotificationsCta": "通知を有効にする"
   ,"enableNotificationsTitle": "通知を有効にする"
-  ,"enableNotificationsSubtitle": "SilenceScore の通知を許可"
+  ,"enableNotificationsSubtitle": "Focus Field の通知を許可"
   ,"dailyReminderTitle": "スマートな毎日のリマインダー"
   ,"dailyReminderSubtitle": "スマートまたは固定時間"
   ,"dailyTimeLabel": "毎日の時間"
@@ -250,7 +250,7 @@
     ,"weeklyProgressPerfect": "🎯 今週は {count} セッションでパーフェクト！素晴らしい継続です。"
   ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
   ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
-    ,"ratingPromptTitle": "Silence Score を気に入っていますか?"
+  ,"ratingPromptTitle": "Focus Field を気に入っていますか?"
     ,"ratingPromptBody": "5つ星の評価は他の人が静かな集中を見つける助けになります。"
     ,"ratingPromptRateNow": "今すぐ評価"
     ,"ratingPromptLater": "後で"

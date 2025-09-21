@@ -32,8 +32,8 @@ Ensure all checkmarks are green for your target platforms.
 
 ### Clone Repository
 ```bash
-git clone https://github.com/watsiznehm/SilenceScore.git
-cd SilenceScore
+git clone https://github.com/sparkvibe-io/FocusField.git
+cd FocusField
 ```
 
 ### Install Dependencies

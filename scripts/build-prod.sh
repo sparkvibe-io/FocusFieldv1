@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SilenceScore Production Build Script
+# Focus Field Production Build Script
 # Simple single-dev variant (Option 1):
 #   Export REVENUECAT_API_KEY to the platform-specific key before running OR pass --rc-key=KEY.
 #   For Android build:  export REVENUECAT_API_KEY="$REVENUECAT_ANDROID_API_KEY" ; bash scripts/build-prod.sh
@@ -54,7 +54,7 @@ EOF
     esac
 done
 
-echo "🚀 Building SilenceScore for Production..."
+echo "🚀 Building Focus Field for Production..."
 
 # Ensure version sync (pubspec.yaml -> local.properties). If mismatch, regenerate.
 PUBSPEC_VERSION_LINE=$(grep -E '^version:' pubspec.yaml || true)

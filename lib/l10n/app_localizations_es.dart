@@ -9,7 +9,7 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Preparando motor de enfoque…';
@@ -158,7 +158,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get microphonePermissionTitle => 'Permiso de micrófono';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score necesita acceso al micrófono para medir el ruido. No se almacena audio.';
+  String get microphonePermissionMessage => 'Focus Field necesita acceso al micrófono para medir el ruido. No se almacena audio.';
 
   @override
   String get permissionDeniedMessage => 'Se requiere permiso de micrófono. Actívalo en ajustes.';
@@ -364,7 +364,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Preguntas frecuentes';
 
   @override
-  String get faqHowWorksQ => '¿Cómo funciona Silence Score?';
+  String get faqHowWorksQ => '¿Cómo funciona Focus Field?';
 
   @override
   String get faqHowWorksA => 'Mide el ruido ambiente: el tiempo por debajo del umbral gana puntos.';
@@ -679,7 +679,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get achievementLockedPrompt => 'Completa sesiones para desbloquear logros';
 
   @override
-  String get ratingPromptTitle => '¿Disfrutas Silence Score?';
+  String get ratingPromptTitle => '¿Disfrutas Focus Field?';
 
   @override
   String get ratingPromptBody => 'Una valoración 5★ rápida ayuda a otros a descubrir calma.';
@@ -715,7 +715,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get enableNotificationsTitle => 'Activar notificaciones';
 
   @override
-  String get enableNotificationsSubtitle => 'Permite a SilenceScore enviar notificaciones';
+  String get enableNotificationsSubtitle => 'Permite a Focus Field enviar notificaciones';
 
   @override
   String get dailyReminderTitle => 'Recordatorio diario inteligente';

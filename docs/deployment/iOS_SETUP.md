@@ -3,7 +3,7 @@
 Relocated from `ios/iOS_SETUP.md` per documentation standards (centralize under `docs/`).
 
 ## Overview
-Guide for configuring and building the iOS version of SilenceScore.
+Guide for configuring and building the iOS version of Focus Field.
 
 ## Prerequisites
 - Xcode (latest stable)
@@ -13,7 +13,7 @@ Guide for configuring and building the iOS version of SilenceScore.
 
 ## Configuration Steps
 1. Open `ios/Runner.xcworkspace` in Xcode.
-2. Set the Bundle Identifier: `io.sparkvibe.silencescore`.
+2. Set the Bundle Identifier: `io.sparkvibe.focusfield`.
 3. Ensure signing team is selected (Automatically manage signing ON).
 4. Verify `Info.plist` contains:
 	- `NSMicrophoneUsageDescription` with clear rationale.
@@ -52,7 +52,7 @@ August 30, 2025
 # 4. Go to "Signing & Capabilities" tab
 # 5. Check "Automatically manage signing"
 # 6. Select your development team from the dropdown
-# 7. Choose appropriate bundle identifier (e.g., com.yourcompany.silencescore)
+# 7. Choose appropriate bundle identifier (e.g., io.sparkvibe.focusfield)
 
 # For App Store distribution:
 # - Ensure you have a valid Apple Developer account

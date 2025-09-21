@@ -9,7 +9,7 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Preparando motor de foco…';
@@ -158,7 +158,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Focus Field precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
 
   @override
   String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
@@ -364,7 +364,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Perguntas frequentes';
 
   @override
-  String get faqHowWorksQ => 'Como o Silence Score funciona?';
+  String get faqHowWorksQ => 'Como o Focus Field funciona?';
 
   @override
   String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
@@ -679,7 +679,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
 
   @override
-  String get ratingPromptTitle => 'Está gostando do Silence Score?';
+  String get ratingPromptTitle => 'Está gostando do Focus Field?';
 
   @override
   String get ratingPromptBody => 'Uma avaliação 5★ rápida ajuda outros a encontrar mais calma.';
@@ -715,7 +715,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get enableNotificationsTitle => 'Ativar notificações';
 
   @override
-  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
+  String get enableNotificationsSubtitle => 'Permitir que o Focus Field envie notificações';
 
   @override
   String get dailyReminderTitle => 'Lembrete diário inteligente';
@@ -987,7 +987,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   AppLocalizationsPtBr(): super('pt_BR');
 
   @override
-  String get appTitle => 'Silence Score';
+  String get appTitle => 'Focus Field';
 
   @override
   String get splashLoading => 'Preparando o motor de foco…';
@@ -1136,7 +1136,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage => 'Silence Score precisa de acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Focus Field precisa de acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
 
   @override
   String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
@@ -1342,7 +1342,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get frequentlyAskedQuestions => 'Perguntas frequentes';
 
   @override
-  String get faqHowWorksQ => 'Como o Silence Score funciona?';
+  String get faqHowWorksQ => 'Como o Focus Field funciona?';
 
   @override
   String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
@@ -1657,7 +1657,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get achievementLockedPrompt => 'Complete sessões para desbloquear conquistas';
 
   @override
-  String get ratingPromptTitle => 'Está gostando do Silence Score?';
+  String get ratingPromptTitle => 'Está gostando do Focus Field?';
 
   @override
   String get ratingPromptBody => 'Uma avaliação 5★ rápida ajuda outros a encontrar foco calmo.';
@@ -1693,7 +1693,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get enableNotificationsTitle => 'Ativar notificações';
 
   @override
-  String get enableNotificationsSubtitle => 'Permitir que o SilenceScore envie notificações';
+  String get enableNotificationsSubtitle => 'Permitir que o Focus Field envie notificações';
 
   @override
   String get dailyReminderTitle => 'Lembrete diário inteligente';

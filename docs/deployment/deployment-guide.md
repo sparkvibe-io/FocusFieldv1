@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers deploying SilenceScore to production app stores and distribution platforms. The deployment process varies by platform and includes build optimization, code signing, and store submission procedures.
+This guide covers deploying Focus Field to production app stores and distribution platforms. The deployment process varies by platform and includes build optimization, code signing, and store submission procedures.
 
 ## Pre-Deployment Checklist
 
@@ -57,7 +57,7 @@ android {
     compileSdkVersion 34
     
     defaultConfig {
-        applicationId "io.sparkvibe.silencescore"
+  applicationId "io.sparkvibe.focusfield"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
@@ -208,7 +208,7 @@ open ios/Runner.xcworkspace
 #### 3. Update Info.plist
 ```xml
 <key>NSMicrophoneUsageDescription</key>
-<string>SilenceScore needs microphone access to measure ambient noise levels for silence scoring.</string>
+<string>Focus Field needs microphone access to measure ambient noise levels for silence scoring.</string>
 
 <key>CFBundleVersion</key>
 <string>1</string>
@@ -295,7 +295,7 @@ Output: `build/web/`
 #### GitHub Pages
 ```bash
 # Deploy to gh-pages branch
-flutter build web --base-href "/SilenceScore/"
+flutter build web --base-href "/FocusField/"
 # Push build/web contents to gh-pages branch
 ```
 
@@ -358,7 +358,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: io.sparkvibe.silencescore
+          packageName: io.sparkvibe.focusfield
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: production
 
