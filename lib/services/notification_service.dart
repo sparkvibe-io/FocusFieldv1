@@ -7,7 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_permissions.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 typedef NowProvider = DateTime Function();
 
@@ -86,10 +86,11 @@ class NotificationService {
         } catch (_) {}
       }
     } else {
-      if (!kReleaseMode)
+      if (!kReleaseMode) {
         debugPrint(
           '[NotificationService] Skipping notification plugin init in test environment',
         );
+      }
       _hasNotificationPermission = false; // treat as no permission in tests
     }
 
@@ -143,8 +144,9 @@ class NotificationService {
     if (notifications != null) enableNotifications = notifications;
     if (dailyReminders != null) enableDailyReminders = dailyReminders;
     if (sessionComplete != null) enableSessionComplete = sessionComplete;
-    if (achievementNotifications != null)
+    if (achievementNotifications != null) {
       enableAchievementNotifications = achievementNotifications;
+    }
     if (weeklyProgress != null) enableWeeklyProgress = weeklyProgress;
     if (dailyHour != null) dailyReminderHour = dailyHour;
     if (dailyMinute != null) dailyReminderMinute = dailyMinute;
@@ -356,7 +358,7 @@ class NotificationService {
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
           channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
@@ -454,8 +456,9 @@ class NotificationService {
   }) async {
     if (!enableNotifications ||
         !enableDailyReminders ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     final optimal = getOptimalReminderTime();
     if (optimal == null) return; // need history
     final nowDt = now();
@@ -489,7 +492,7 @@ class NotificationService {
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
           channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
@@ -516,8 +519,9 @@ class NotificationService {
   }) async {
     if (!enableNotifications ||
         !enableWeeklyProgress ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     // Allow stored overrides to supersede passed parameters
     final effectiveWeekday =
         weeklySummaryWeekday; // already stored default / user setting
@@ -533,8 +537,9 @@ class NotificationService {
       effectiveHour,
       effectiveMinute,
     ).add(Duration(days: daysUntil));
-    if (scheduled.isBefore(nowDt))
+    if (scheduled.isBefore(nowDt)) {
       scheduled = scheduled.add(const Duration(days: 7));
+    }
     if (_isInTestEnvironment()) {
       onZonedSchedule?.call(
         id: weeklySummaryId,
@@ -554,7 +559,7 @@ class NotificationService {
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
           channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
@@ -583,8 +588,9 @@ class NotificationService {
   Future<void> showDynamicWeeklySummary(BuildContext context) async {
     if (!enableNotifications ||
         !enableWeeklyProgress ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     // Compute sessions in last 7 days
     final nowDt = now();
     final start = nowDt.subtract(const Duration(days: 6));
@@ -603,7 +609,7 @@ class NotificationService {
             .length; // unique days
     // Simple average score placeholder: minutes per session * 1 (point per min). In absence of full scoring, approximate.
     // Average score placeholder removed to avoid misleading fixed 5 min assumption.
-    final avg =
+    const avg =
         0; // TODO: compute real average session duration once durations are tracked here.
     await showWeeklyProgress(context, sessionsThisWeek, avg);
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/theme_provider.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/widgets/feature_gate.dart';
+import 'package:focus_field/providers/theme_provider.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/widgets/feature_gate.dart';
 
 class ThemeSelectorWidget extends ConsumerWidget {
   const ThemeSelectorWidget({super.key});
@@ -148,7 +148,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -174,7 +174,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
@@ -189,7 +189,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(
@@ -223,12 +223,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                 ? BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF00FFF0).withOpacity(0.55),
+                      color: const Color(0xFF00FFF0).withValues(alpha: 0.55),
                       blurRadius: 12,
                       spreadRadius: 1,
                     ),
                     BoxShadow(
-                      color: const Color(0xFFFF2EC4).withOpacity(0.35),
+                      color: const Color(0xFFFF2EC4).withValues(alpha: 0.35),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -257,7 +257,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
           color:
               isAccessible
                   ? Theme.of(context).colorScheme.onSurface
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
         ),
         textAlign: TextAlign.center,
         maxLines: 1,
@@ -274,7 +274,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isAccessible
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -287,7 +287,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isAccessible
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             height: 1.0,
             fontSize: 11,
           ),

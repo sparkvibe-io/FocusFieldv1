@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/widgets/paywall_widget.dart';
-import 'package:silence_score/services/paywall_launcher.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/widgets/paywall_widget.dart';
+import 'package:focus_field/services/paywall_launcher.dart';
 
 /// Widget that checks if user has access to a feature and shows paywall if not
 class FeatureGate extends ConsumerWidget {

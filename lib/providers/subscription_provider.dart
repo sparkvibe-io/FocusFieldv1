@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/services/subscription_service.dart';
-import 'package:silence_score/services/hosted_paywall_service.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/services/subscription_service.dart';
+import 'package:focus_field/services/hosted_paywall_service.dart';
 
 // Subscription service provider
 final subscriptionServiceProvider = Provider<SubscriptionService>((ref) {

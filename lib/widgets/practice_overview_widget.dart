@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 class PracticeOverviewWidget extends StatelessWidget {
   final SilenceData silenceData;
@@ -189,7 +189,7 @@ class PracticeOverviewWidget extends StatelessWidget {
         const double spacingBelowBar = 2.0;
         const double safetyBuffer =
             6.0; // accounts for font ascent/descent variance
-        final double barAreaHeight =
+        const double barAreaHeight =
             maxBarVisualHeight +
             labelFontSize +
             spacingBelowBar +

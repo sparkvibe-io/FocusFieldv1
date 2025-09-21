@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/constants/permission_constants.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/constants/permission_constants.dart';
 
 class PermissionDialogs {
   static Future<void> showMicrophoneRationale(

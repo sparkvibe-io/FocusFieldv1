@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/services/notification_service.dart';
-import 'package:silence_score/providers/silence_provider.dart';
+import 'package:focus_field/services/notification_service.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 
 // Notification service provider
 final notificationServiceProvider = Provider<NotificationService>((ref) {

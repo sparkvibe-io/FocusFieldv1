@@ -1,13 +1,13 @@
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/screens/home_page.dart';
-import 'package:silence_score/widgets/error_boundary.dart';
-import 'package:silence_score/services/rating_service.dart';
-import 'package:silence_score/constants/permission_constants.dart';
-import 'package:silence_score/widgets/permission_dialogs.dart';
-import 'package:silence_score/services/tip_service.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/screens/home_page.dart';
+import 'package:focus_field/widgets/error_boundary.dart';
+import 'package:focus_field/services/rating_service.dart';
+import 'package:focus_field/constants/permission_constants.dart';
+import 'package:focus_field/widgets/permission_dialogs.dart';
+import 'package:focus_field/services/tip_service.dart';
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -368,8 +368,9 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
               milliseconds: PermissionConstants.dialogPostRequestDelayMs,
             ),
           );
-          if (mounted)
+          if (mounted) {
             await PermissionDialogs.showMicrophoneRationale(context, ref);
+          }
         }
       } else if (hasPermission) {
         DebugLog.d('DEBUG: Permission already granted');

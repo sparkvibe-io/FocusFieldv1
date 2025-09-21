@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
-import 'package:silence_score/constants/app_constants.dart';
+import 'package:focus_field/constants/app_constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:silence_score/models/subscription_tier.dart';
+import 'package:focus_field/models/subscription_tier.dart';
 
 enum SupportPriority { standard, premium }
 
@@ -109,10 +109,11 @@ class SupportService {
     final Uri fullEmailUri = Uri.parse(
       'mailto:$email?subject=$subject&body=$body',
     );
-    if (!kReleaseMode)
+    if (!kReleaseMode) {
       debugPrint(
         'Trying full email: subject="${ticket.subject}", body length=${body.length}',
       );
+    }
 
     try {
       await launchUrl(fullEmailUri, mode: LaunchMode.externalApplication);

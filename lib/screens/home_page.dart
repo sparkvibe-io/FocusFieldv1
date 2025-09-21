@@ -3,33 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:confetti/confetti.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/providers/theme_provider.dart';
-import 'package:silence_score/screens/settings_sheet.dart';
-import 'package:silence_score/widgets/progress_ring.dart';
-import 'package:silence_score/constants/layout_constants.dart';
-import 'package:silence_score/widgets/practice_overview_widget.dart';
-import 'package:silence_score/widgets/real_time_noise_chart.dart';
-import 'package:silence_score/widgets/advanced_analytics_widget.dart';
-import 'package:silence_score/widgets/feature_gate.dart';
-import 'package:silence_score/widgets/error_boundary.dart';
-import 'package:silence_score/widgets/audio_safe_widget.dart';
-import 'package:silence_score/widgets/permission_dialogs.dart';
-import 'package:silence_score/providers/accessibility_provider.dart';
-import 'package:silence_score/providers/notification_provider.dart';
-import 'package:silence_score/services/accessibility_service.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/utils/debug_log.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/providers/theme_provider.dart';
+import 'package:focus_field/screens/settings_sheet.dart';
+import 'package:focus_field/widgets/progress_ring.dart';
+import 'package:focus_field/constants/layout_constants.dart';
+import 'package:focus_field/widgets/practice_overview_widget.dart';
+import 'package:focus_field/widgets/real_time_noise_chart.dart';
+import 'package:focus_field/widgets/advanced_analytics_widget.dart';
+import 'package:focus_field/widgets/feature_gate.dart';
+import 'package:focus_field/widgets/error_boundary.dart';
+import 'package:focus_field/widgets/audio_safe_widget.dart';
+import 'package:focus_field/widgets/permission_dialogs.dart';
+import 'package:focus_field/providers/accessibility_provider.dart';
+import 'package:focus_field/providers/notification_provider.dart';
+import 'package:focus_field/services/accessibility_service.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:flutter/services.dart';
-import 'package:silence_score/widgets/banner_ad_footer.dart';
-import 'package:silence_score/widgets/theme_overlays.dart';
-import 'package:silence_score/services/tip_service.dart';
-import 'package:silence_score/widgets/tip_info_icon.dart';
-import 'package:silence_score/providers/tip_info_provider.dart';
+import 'package:focus_field/widgets/banner_ad_footer.dart';
+import 'package:focus_field/widgets/theme_overlays.dart';
+import 'package:focus_field/services/tip_service.dart';
+import 'package:focus_field/widgets/tip_info_icon.dart';
+import 'package:focus_field/providers/tip_info_provider.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -69,6 +69,12 @@ class HomePage extends HookConsumerWidget {
         dailyReminders: notificationSettings['enableDailyReminders'],
         sessionComplete: notificationSettings['enableSessionComplete'],
       );
+
+      // Initialize tip service to ensure tips are available
+      ref.read(tipServiceProvider).initializeOnAppStart();
+
+      // Show automatic tips on app start in development mode
+      ref.read(tipServiceProvider).maybeShowOnAppStart(context);
 
       return null;
     }, [accessibilitySettings, notificationSettings]);
@@ -119,12 +125,12 @@ class HomePage extends HookConsumerWidget {
           Positioned.fill(
             child: IgnorePointer(
               child: AnimatedPulseOverlay(
-                color: const Color(0xFF00FFF0).withOpacity(0.12),
-                secondary: const Color(0xFFFF2EC4).withOpacity(0.10),
+                color: const Color(0xFF00FFF0).withValues(alpha: 0.12),
+                secondary: const Color(0xFFFF2EC4).withValues(alpha: 0.10),
               ),
             ),
           ),
-          Positioned.fill(
+          const Positioned.fill(
             child: IgnorePointer(child: ScanlineOverlay(opacity: 0.07)),
           ),
         ],
@@ -133,15 +139,15 @@ class HomePage extends HookConsumerWidget {
           Positioned.fill(
             child: IgnorePointer(
               child: MistOverlay(
-                baseColor: const Color(0xFF00D295).withOpacity(0.12),
-                highlightColor: const Color(0xFF43F56A).withOpacity(0.10),
+                baseColor: const Color(0xFF00D295).withValues(alpha: 0.12),
+                highlightColor: const Color(0xFF43F56A).withValues(alpha: 0.10),
               ),
             ),
           ),
           Positioned.fill(
             child: IgnorePointer(
               child: ParticleDriftOverlay(
-                color: const Color(0xFF43F56A).withOpacity(0.30),
+                color: const Color(0xFF43F56A).withValues(alpha: 0.30),
               ),
             ),
           ),
@@ -168,15 +174,19 @@ class HomePage extends HookConsumerWidget {
             leading: Consumer(
               builder: (context, ref, child) {
                 final hasNewTipsAsync = ref.watch(hasNewTipsProvider);
-                final isEnabled = ref.watch(tipServiceEnabledProvider);
-                
+                final isEnabledAsync = ref.watch(tipServiceEnabledProvider);
+
                 return TipInfoIconWithAnimation(
                   hasNewTips: hasNewTipsAsync.when(
                     data: (hasNew) => hasNew,
                     loading: () => false,
                     error: (_, __) => false,
                   ),
-                  isEnabled: isEnabled,
+                  isEnabled: isEnabledAsync.when(
+                    data: (enabled) => enabled,
+                    loading: () => true, // Default to enabled while loading
+                    error: (_, __) => true,
+                  ),
                   onTap: () => _showSimpleTip(context, ref),
                 );
               },

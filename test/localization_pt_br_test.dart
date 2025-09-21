@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 Future<AppLocalizations> _load(Locale locale) async {
-  final delegate = AppLocalizations.delegate;
+  const delegate = AppLocalizations.delegate;
   assert(delegate.isSupported(locale));
   return delegate.load(locale);
 }

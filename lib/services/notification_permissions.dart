@@ -35,10 +35,11 @@ class NotificationPermissionHandler {
         _hasPermission = granted?.isEnabled ?? false;
       }
     } catch (e) {
-      if (!kReleaseMode)
+      if (!kReleaseMode) {
         debugPrint(
           'NotificationPermissionHandler: error checking permission: $e',
         );
+      }
       _hasPermission = false;
     }
   }
@@ -67,10 +68,11 @@ class NotificationPermissionHandler {
       }
       return _hasPermission;
     } catch (e) {
-      if (!kReleaseMode)
+      if (!kReleaseMode) {
         debugPrint(
           'NotificationPermissionHandler: error requesting permission: $e',
         );
+      }
       return false;
     }
   }

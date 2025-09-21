@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/services/advanced_analytics_service.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/services/advanced_analytics_service.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 class AdvancedAnalyticsWidget extends ConsumerWidget {
   final SilenceData silenceData;
@@ -33,7 +33,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -64,7 +64,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.15),
+                  ).colorScheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -136,7 +136,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           builder: (context, constraints) {
             final w = constraints.maxWidth;
             final twoCol = w < 720;
-            final itemSpacing = 12.0;
+            const itemSpacing = 12.0;
             final items = [
               _metricCard(
                 context,
@@ -190,19 +190,19 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(child: items[0]),
-                      SizedBox(width: itemSpacing),
+                      const SizedBox(width: itemSpacing),
                       Expanded(child: items[1]),
                     ],
                   ),
-                  SizedBox(height: itemSpacing),
+                  const SizedBox(height: itemSpacing),
                   Row(
                     children: [
                       Expanded(child: items[2]),
-                      SizedBox(width: itemSpacing),
+                      const SizedBox(width: itemSpacing),
                       Expanded(child: items[3]),
                     ],
                   ),
-                  SizedBox(height: itemSpacing),
+                  const SizedBox(height: itemSpacing),
                   Row(children: [Expanded(child: items[4])]),
                 ],
               );
@@ -236,15 +236,15 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     required bool compact,
   }) {
     final textTheme = Theme.of(context).textTheme;
-  return Container(
+    return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 14,
         vertical: compact ? 10 : 12,
       ),
       decoration: BoxDecoration(
-    color: color.withOpacity(0.09),
+        color: color.withValues(alpha: 0.09),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +256,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 width: 26,
                 height: 26,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(icon, color: color, size: 16),
@@ -291,7 +291,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
             style: textTheme.labelSmall?.copyWith(
               color: Theme.of(
                 context,
-              ).colorScheme.onSurfaceVariant.withOpacity(0.75),
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
               fontWeight: FontWeight.w400,
               letterSpacing: 0.1,
             ),
@@ -337,7 +337,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.surfaceVariant.withOpacity(0.25),
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(8),
           ),
           child: LineChart(
@@ -350,7 +350,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 horizontalInterval: 25,
                 getDrawingHorizontalLine:
                     (v) => FlLine(
-                      color: Theme.of(context).dividerColor.withOpacity(0.15),
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
                       strokeWidth: 1,
                     ),
               ),
@@ -399,7 +399,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                         '${d.month}/${d.day}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color
-                              ?.withOpacity(trends[i].isMissing ? 0.35 : 1),
+                              ?.withValues(alpha: trends[i].isMissing ? 0.35 : 1),
                         ),
                       );
                     },
@@ -423,9 +423,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                       if (t.isMissing) {
                         return FlDotCirclePainter(
                           radius: 3.5,
-                          color: primary.withOpacity(0.15),
+                          color: primary.withValues(alpha: 0.15),
                           strokeWidth: 1.2,
-                          strokeColor: primary.withOpacity(0.5),
+                          strokeColor: primary.withValues(alpha: 0.5),
                         );
                       }
                       return FlDotCirclePainter(
@@ -437,14 +437,14 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: primary.withOpacity(0.10),
+                    color: primary.withValues(alpha: 0.10),
                   ),
                 ),
                 if (ma.length > 2)
                   LineChartBarData(
                     spots: ma,
                     isCurved: true,
-                    color: primary.withOpacity(0.55),
+                    color: primary.withValues(alpha: 0.55),
                     barWidth: 2,
                     dotData: const FlDotData(show: false),
                     dashArray: [4, 4],
@@ -458,7 +458,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                     isCurved: false,
                     color: Theme.of(
                       context,
-                    ).colorScheme.secondary.withOpacity(0.5),
+                    ).colorScheme.secondary.withValues(alpha: 0.5),
                     barWidth: 1,
                     dotData: const FlDotData(show: false),
                   ),
@@ -474,13 +474,13 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               const SizedBox(width: 4),
               const Text('Rate', style: TextStyle(fontSize: 10)),
               const SizedBox(width: 8),
-              _legendDot(context, primary.withOpacity(0.55), dashed: true),
+              _legendDot(context, primary.withValues(alpha: 0.55), dashed: true),
               const SizedBox(width: 4),
               const Text('MA(3) Moving Avg', style: TextStyle(fontSize: 10)),
               const SizedBox(width: 8),
               _legendDot(
                 context,
-                Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5),
               ),
               const SizedBox(width: 4),
               const Text('Avg (overall)', style: TextStyle(fontSize: 10)),
@@ -524,9 +524,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -628,7 +628,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
       color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.4),
       ),
     ),
     child: Row(

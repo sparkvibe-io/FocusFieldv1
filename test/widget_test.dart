@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/screens/home_page.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/screens/home_page.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _pumpApp(WidgetTester tester) async {
@@ -31,7 +31,7 @@ void main() {
     testWidgets('should display app title', (WidgetTester tester) async {
       await _pumpApp(tester);
 
-  expect(find.text('Focus Field'), findsOneWidget);
+      expect(find.text('Focus Field'), findsOneWidget);
     });
 
     testWidgets('should display start control (play icon)', (

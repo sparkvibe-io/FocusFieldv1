@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/services/accessibility_service.dart';
-import 'package:silence_score/providers/silence_provider.dart';
+import 'package:focus_field/services/accessibility_service.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 
 // Accessibility service provider
 final accessibilityServiceProvider = Provider<AccessibilityService>((ref) {

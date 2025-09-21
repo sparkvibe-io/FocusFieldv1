@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/models/silence_data.dart';
 
 class StorageService {
   static const String _silenceDataKey = 'silence_data';
@@ -14,6 +14,13 @@ class StorageService {
   static const String _lastSessionDateKey = 'last_session_date';
   static const String _totalSessionsKey = 'total_sessions';
   static const String _averageScoreKey = 'average_score';
+  // Notification settings keys
+  static const String _enableNotificationsKey = 'enable_notifications';
+  static const String _enableDailyRemindersKey = 'enable_daily_reminders';
+  static const String _enableSessionCompleteKey = 'enable_session_complete';
+  static const String _enableAchievementNotificationsKey =
+      'enable_achievement_notifications';
+  static const String _enableWeeklyProgressKey = 'enable_weekly_progress';
   // Notification scheduling keys
   static const String _dailyReminderHourKey = 'daily_reminder_hour';
   static const String _dailyReminderMinuteKey = 'daily_reminder_minute';
@@ -60,6 +67,14 @@ class StorageService {
       await _prefs!.setString(_appVersionKey, '1.0.0');
       await _prefs!.setInt(_totalSessionsKey, 0);
       await _prefs!.setDouble(_averageScoreKey, 0.0);
+
+      // Initialize notification settings with defaults
+      await _prefs!.setBool(_enableNotificationsKey, true);
+      await _prefs!.setBool(_enableDailyRemindersKey, false);
+      await _prefs!.setBool(_enableSessionCompleteKey, true);
+      await _prefs!.setBool(_enableAchievementNotificationsKey, true);
+      await _prefs!.setBool(_enableWeeklyProgressKey, false);
+
       await _prefs!.setBool(_firstLaunchKey, false);
 
       // Initialize empty silence data
@@ -85,6 +100,16 @@ class StorageService {
       'averageScore': _prefs!.getDouble(_averageScoreKey) ?? 0.0,
       'appVersion': _prefs!.getString(_appVersionKey) ?? '1.0.0',
       'isFirstLaunch': _prefs!.getBool(_firstLaunchKey) ?? true,
+      // Notification settings (with defaults)
+      'enableNotifications': _prefs!.getBool(_enableNotificationsKey) ?? true,
+      'enableDailyReminders':
+          _prefs!.getBool(_enableDailyRemindersKey) ?? false,
+      'enableSessionComplete':
+          _prefs!.getBool(_enableSessionCompleteKey) ?? true,
+      'enableAchievementNotifications':
+          _prefs!.getBool(_enableAchievementNotificationsKey) ?? true,
+      'enableWeeklyProgress':
+          _prefs!.getBool(_enableWeeklyProgressKey) ?? false,
       // Notification scheduling (nullable defaults)
       'dailyReminderHour': _prefs!.getInt(_dailyReminderHourKey),
       'dailyReminderMinute': _prefs!.getInt(_dailyReminderMinuteKey),
@@ -135,6 +160,24 @@ class StorageService {
           break;
         case 'weeklySummaryMinute':
           await _prefs!.setInt(_weeklySummaryMinuteKey, value as int);
+          break;
+        case 'enableNotifications':
+          await _prefs!.setBool(_enableNotificationsKey, value as bool);
+          break;
+        case 'enableDailyReminders':
+          await _prefs!.setBool(_enableDailyRemindersKey, value as bool);
+          break;
+        case 'enableSessionComplete':
+          await _prefs!.setBool(_enableSessionCompleteKey, value as bool);
+          break;
+        case 'enableAchievementNotifications':
+          await _prefs!.setBool(
+            _enableAchievementNotificationsKey,
+            value as bool,
+          );
+          break;
+        case 'enableWeeklyProgress':
+          await _prefs!.setBool(_enableWeeklyProgressKey, value as bool);
           break;
         default:
           // Generic persistence for any new primitive key

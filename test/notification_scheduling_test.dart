@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:silence_score/services/notification_service.dart';
+import 'package:focus_field/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

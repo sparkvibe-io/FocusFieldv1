@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 class ProgressRing extends StatelessWidget {
   final double progress;
@@ -34,7 +34,7 @@ class ProgressRing extends StatelessWidget {
     final isNeon =
         dramatic?.statAccentColors != null &&
         dramatic!.statAccentColors!.length >= 3 &&
-        dramatic.statAccentColors![0].value == 0xFF00F5FF;
+        dramatic.statAccentColors![0].toARGB32() == 0xFF00F5FF;
 
     // Ensure progress is within valid bounds
     final clampedProgress = progress.clamp(0.0, 1.0);
@@ -94,11 +94,11 @@ class ProgressRing extends StatelessWidget {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    dramatic!.statAccentColors![0].withOpacity(
-                                      0.9,
+                                    dramatic!.statAccentColors![0].withValues(
+                                      alpha: 0.9,
                                     ),
-                                    dramatic.statAccentColors!.last.withOpacity(
-                                      0.9,
+                                    dramatic.statAccentColors!.last.withValues(
+                                      alpha: 0.9,
                                     ),
                                   ],
                                 ))
@@ -107,19 +107,19 @@ class ProgressRing extends StatelessWidget {
                         isNeon
                             ? [
                               BoxShadow(
-                                color: primaryColor.withOpacity(0.45),
+                                color: primaryColor.withValues(alpha: 0.45),
                                 blurRadius: 24,
                                 spreadRadius: 2,
                               ),
                               BoxShadow(
-                                color: primaryColor.withOpacity(0.25),
+                                color: primaryColor.withValues(alpha: 0.25),
                                 blurRadius: 48,
                                 spreadRadius: 12,
                               ),
                             ]
                             : [
                               BoxShadow(
-                                color: primaryColor.withOpacity(0.22),
+                                color: primaryColor.withValues(alpha: 0.22),
                                 blurRadius: 36,
                                 spreadRadius: 6,
                               ),

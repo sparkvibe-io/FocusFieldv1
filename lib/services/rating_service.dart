@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Handles rating prompt logic with conservative, session-based gating.
 class RatingService {
@@ -108,8 +108,9 @@ class RatingService {
     final timesPrompted = _prefs!.getInt(_kTimesPrompted) ?? 0;
     if (timesPrompted >= maxPrompts && status != 'later') return;
     if (lastPrompt != null &&
-        now.difference(lastPrompt).inDays < minDaysBetweenPrompts)
+        now.difference(lastPrompt).inDays < minDaysBetweenPrompts) {
       return;
+    }
     DebugLog.d('[Rating] Passed date & frequency gates');
 
     // Version re-prompt logic

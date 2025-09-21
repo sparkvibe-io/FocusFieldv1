@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 // Session history and achievements widget
 class SessionHistoryCard extends StatelessWidget {

@@ -1,23 +1,23 @@
 // Clean rebuilt SettingsSheet implementation
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/providers/app_info_provider.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/services/export_service.dart';
-import 'package:silence_score/services/noise_calibration_service.dart';
-import 'package:silence_score/services/support_service.dart';
-import 'package:silence_score/services/rating_service.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/providers/app_info_provider.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/services/export_service.dart';
+import 'package:focus_field/services/noise_calibration_service.dart';
+import 'package:focus_field/services/support_service.dart';
+import 'package:focus_field/services/rating_service.dart';
 // TODO: remove if not existing in project or adjust paths
-import 'package:silence_score/widgets/feature_gate.dart';
-import 'package:silence_score/widgets/notification_settings_widget.dart';
-import 'package:silence_score/widgets/theme_selector_widget.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/widgets/feature_gate.dart';
+import 'package:focus_field/widgets/notification_settings_widget.dart';
+import 'package:focus_field/widgets/theme_selector_widget.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:silence_score/services/tip_service.dart';
+import 'package:focus_field/services/tip_service.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -111,7 +111,8 @@ class SettingsSheet extends ConsumerWidget {
                 error: (e, _) => _errorState(context, e, ref),
                 data:
                     (settings) => TabBarView(
-                      physics: const NeverScrollableScrollPhysics(), // Disable tab swiping
+                      physics:
+                          const NeverScrollableScrollPhysics(), // Disable tab swiping
                       children: [
                         _basicTab(context, ref, notifier, settings),
                         _advancedTab(context, ref, notifier, settings),
@@ -262,7 +263,7 @@ class SettingsSheet extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primaryContainer.withOpacity(0.30),
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.30),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
@@ -387,7 +388,7 @@ class SettingsSheet extends ConsumerWidget {
 
   Widget _aboutTab(BuildContext context, WidgetRef ref) {
     final appInfoAsync = ref.watch(appInfoProvider);
-  final tipService = ref.read(tipServiceProvider);
+    final tipService = ref.read(tipServiceProvider);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -475,11 +476,16 @@ class SettingsSheet extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Show Tips',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Show Tips',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 4),
-                        Text('Show brief, helpful tips after app start or successful sessions.',
-                            style: Theme.of(context).textTheme.bodySmall),
+                        Text(
+                          'Show helpful tips on app startup and via the lightbulb icon. Tips appear every 2-3 days.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ],
                     ),
                   ),
@@ -647,7 +653,7 @@ class SettingsSheet extends ConsumerWidget {
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.5),
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                   if (isPremium && !hasAccess)
                     Positioned(
@@ -682,7 +688,7 @@ class SettingsSheet extends ConsumerWidget {
                           ? Theme.of(context).colorScheme.onSurface
                           : Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.5),
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -697,7 +703,7 @@ class SettingsSheet extends ConsumerWidget {
                           ? Theme.of(context).colorScheme.onSurfaceVariant
                           : Theme.of(
                             context,
-                          ).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -1098,13 +1104,13 @@ class SettingsSheet extends ConsumerWidget {
       );
       if (!launched && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to open privacy policy')),
+          const SnackBar(content: Text('Unable to open privacy policy')),
         );
       }
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to open privacy policy')),
+          const SnackBar(content: Text('Unable to open privacy policy')),
         );
       }
     }
@@ -1460,7 +1466,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -1509,10 +1515,10 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
               decoration: BoxDecoration(
                 color: Theme.of(
                   context,
-                ).colorScheme.primaryContainer.withOpacity(0.3),
+                ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -1656,7 +1662,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
     try {
       await SupportService.instance.openFAQ();
     } catch (e) {
-      if (context.mounted)
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -1665,6 +1671,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
           ),
         );
+      }
     }
   }
 
@@ -1672,7 +1679,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
     try {
       await SupportService.instance.openDocumentation();
     } catch (e) {
-      if (context.mounted)
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -1681,6 +1688,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
           ),
         );
+      }
     }
   }
 }

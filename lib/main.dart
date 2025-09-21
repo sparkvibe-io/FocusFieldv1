@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/theme_provider.dart';
-import 'package:silence_score/providers/accessibility_provider.dart';
-import 'package:silence_score/screens/splash_screen.dart';
-import 'package:silence_score/theme/app_theme.dart';
-import 'package:silence_score/services/navigation_service.dart';
+import 'package:focus_field/providers/theme_provider.dart';
+import 'package:focus_field/providers/accessibility_provider.dart';
+import 'package:focus_field/screens/splash_screen.dart';
+import 'package:focus_field/theme/app_theme.dart';
+import 'package:focus_field/services/navigation_service.dart';
 // RevenueCat (purchases_flutter) is configured inside SubscriptionService during provider initialization.
-import 'package:silence_score/providers/subscription_provider.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,8 +33,8 @@ class FocusFieldApp extends ConsumerWidget {
     ref.watch(startupSubscriptionInitProvider);
 
     return MaterialApp(
-    onGenerateTitle:
-      (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Focus Field',
+      onGenerateTitle:
+          (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Focus Field',
       navigatorKey: NavigationService.navigatorKey,
       theme: AppTheme.getThemeForMode(
         currentTheme,
@@ -51,7 +51,7 @@ class FocusFieldApp extends ConsumerWidget {
                 enableHighContrast: enableHighContrast,
               ),
       themeMode: currentTheme.themeMode,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

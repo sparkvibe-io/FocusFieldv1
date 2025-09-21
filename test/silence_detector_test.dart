@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/services/silence_detector.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/services/silence_detector.dart';
 
 void main() {
   group('SilenceDetector', () {
@@ -54,8 +54,8 @@ void main() {
     });
 
     test('should calculate average decibel correctly', () {
-      final detector = SilenceDetector();
-
+      // Removed unused variable: detector
+      
       // Simulate adding readings
       final readings = [30.0, 35.0, 40.0];
       final expectedAverage =

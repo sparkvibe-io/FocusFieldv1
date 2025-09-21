@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:silence_score/providers/notification_provider.dart';
-import 'package:silence_score/providers/silence_provider.dart';
+import 'package:focus_field/providers/notification_provider.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 
 class NotificationSettingsWidget extends ConsumerStatefulWidget {
   const NotificationSettingsWidget({super.key});
@@ -67,7 +67,7 @@ class _NotificationSettingsWidgetState
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-        Padding(
+              Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                 child: Row(
                   children: [
@@ -79,7 +79,10 @@ class _NotificationSettingsWidgetState
                     ),
                     const Spacer(),
                     IconButton(
-          icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
+                      icon: Icon(
+                        Icons.close,
+                        color: theme.colorScheme.onSurface,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -90,7 +93,7 @@ class _NotificationSettingsWidgetState
                   margin: const EdgeInsets.symmetric(horizontal: 24),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                    color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -200,101 +203,110 @@ class _NotificationSettingsWidgetState
                                   }
                                 }
                                 : null,
-                        footer: (enableDailyReminders &&
-                                notificationService
-                                    .hasNotificationPermission)
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 6,
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    children: [
-                                      Text('Daily Time',
-                                          style: theme.textTheme.labelMedium),
-                                      OutlinedButton(
-                                        onPressed: () async {
-                                          final picked = await showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay(
-                                              hour: dailyReminderHour ??
-                                                  TimeOfDay.now().hour,
-                                              minute: dailyReminderMinute ??
-                                                  TimeOfDay.now().minute,
-                                            ),
-                                          );
-                                          if (picked != null) {
-                                            settingsNotifier.updateSetting(
-                                              'dailyReminderHour',
-                                              picked.hour,
+                        footer:
+                            (enableDailyReminders &&
+                                    notificationService
+                                        .hasNotificationPermission)
+                                ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 6,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Daily Time',
+                                          style: theme.textTheme.labelMedium,
+                                        ),
+                                        OutlinedButton(
+                                          onPressed: () async {
+                                            final picked = await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay(
+                                                hour:
+                                                    dailyReminderHour ??
+                                                    TimeOfDay.now().hour,
+                                                minute:
+                                                    dailyReminderMinute ??
+                                                    TimeOfDay.now().minute,
+                                              ),
                                             );
-                                            settingsNotifier.updateSetting(
-                                              'dailyReminderMinute',
-                                              picked.minute,
-                                            );
-                                            notificationService.updateSettings(
-                                              dailyHour: picked.hour,
-                                              dailyMinute: picked.minute,
-                                            );
-                                            await notificationService
-                                                .scheduleDailyReminderNotification(
-                                                  context: context,
-                                                );
-                                            if (mounted) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    'Daily reminder at ${picked.format(context)}',
-                                                  ),
-                                                ),
+                                            if (picked != null) {
+                                              settingsNotifier.updateSetting(
+                                                'dailyReminderHour',
+                                                picked.hour,
                                               );
-                                            }
-                                          }
-                                        },
-                                        child: Text(
-                                          dailyReminderHour != null &&
-                                                  dailyReminderMinute != null
-                                              ? _formatTime(
-                                                dailyReminderHour,
-                                                dailyReminderMinute,
-                                              )
-                                              : 'Smart (${notificationService.getOptimalReminderTime()?.format(context) ?? 'learning'})',
-                                        ),
-                                      ),
-                                      if (dailyReminderHour != null)
-                                        TextButton(
-                                          onPressed: () {
-                                            settingsNotifier.updateSetting(
-                                              'dailyReminderHour',
-                                              null,
-                                            );
-                                            settingsNotifier.updateSetting(
-                                              'dailyReminderMinute',
-                                              null,
-                                            );
-                                            notificationService.updateSettings(
-                                              dailyHour: null,
-                                              dailyMinute: null,
-                                            );
-                                            notificationService
-                                                .scheduleDailyReminderNotification(
-                                                  context: context,
+                                              settingsNotifier.updateSetting(
+                                                'dailyReminderMinute',
+                                                picked.minute,
+                                              );
+                                              notificationService
+                                                  .updateSettings(
+                                                    dailyHour: picked.hour,
+                                                    dailyMinute: picked.minute,
+                                                  );
+                                              await notificationService
+                                                  .scheduleDailyReminderNotification(
+                                                    context: context,
+                                                  );
+                                              if (mounted) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Daily reminder at ${picked.format(context)}',
+                                                    ),
+                                                  ),
                                                 );
+                                              }
+                                            }
                                           },
-                                          child: const Text('Use Smart'),
+                                          child: Text(
+                                            dailyReminderHour != null &&
+                                                    dailyReminderMinute != null
+                                                ? _formatTime(
+                                                  dailyReminderHour,
+                                                  dailyReminderMinute,
+                                                )
+                                                : 'Smart (${notificationService.getOptimalReminderTime()?.format(context) ?? 'learning'})',
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Choose a fixed time or let Focus Field learn your pattern.',
-                                    style: theme.textTheme.bodySmall,
-                                  ),
-                                ],
-                              )
-                            : null,
+                                        if (dailyReminderHour != null)
+                                          TextButton(
+                                            onPressed: () {
+                                              settingsNotifier.updateSetting(
+                                                'dailyReminderHour',
+                                                null,
+                                              );
+                                              settingsNotifier.updateSetting(
+                                                'dailyReminderMinute',
+                                                null,
+                                              );
+                                              notificationService
+                                                  .updateSettings(
+                                                    dailyHour: null,
+                                                    dailyMinute: null,
+                                                  );
+                                              notificationService
+                                                  .scheduleDailyReminderNotification(
+                                                    context: context,
+                                                  );
+                                            },
+                                            child: const Text('Use Smart'),
+                                          ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Choose a fixed time or let Focus Field learn your pattern.',
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                )
+                                : null,
                       ),
                       _buildSettingsTile(
                         context: context,
@@ -368,89 +380,107 @@ class _NotificationSettingsWidgetState
                                 }
                                 : null,
                         isPremium: true,
-                        footer: (enableWeeklyProgress &&
-                                notificationService
-                                    .hasNotificationPermission)
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Wrap(
-                                    spacing: 4,
-                                    runSpacing: 4,
-                                    children: List.generate(7, (index) {
-                                      final day = index + 1;
-                                      const labels = ['M','T','W','T','F','S','S'];
-                                      final selected = weeklyWeekday == day;
-                                      return ChoiceChip(
-                                        label: Text(labels[index]),
-                                        selected: selected,
-                                        onSelected: (sel) async {
-                                          if (!sel) return;
-                                          settingsNotifier.updateSetting(
-                                            'weeklySummaryWeekday',
-                                            day,
-                                          );
-                                          notificationService.updateSettings(
-                                            weeklyWeekday: day,
-                                          );
-                                          await notificationService
-                                              .scheduleWeeklySummaryNotification(
-                                                context: context,
-                                              );
-                                        },
-                                      );
-                                    }),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 6,
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    children: [
-                                      Text('Weekly Time',
-                                          style: theme.textTheme.labelMedium),
-                                      OutlinedButton.icon(
-                                        icon: const Icon(Icons.access_time),
-                                        onPressed: () async {
-                                          final picked = await showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay(
-                                              hour: weeklyHour,
-                                              minute: weeklyMinute,
-                                            ),
-                                          );
-                                          if (picked != null) {
+                        footer:
+                            (enableWeeklyProgress &&
+                                    notificationService
+                                        .hasNotificationPermission)
+                                ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Wrap(
+                                      spacing: 4,
+                                      runSpacing: 4,
+                                      children: List.generate(7, (index) {
+                                        final day = index + 1;
+                                        const labels = [
+                                          'M',
+                                          'T',
+                                          'W',
+                                          'T',
+                                          'F',
+                                          'S',
+                                          'S',
+                                        ];
+                                        final selected = weeklyWeekday == day;
+                                        return ChoiceChip(
+                                          label: Text(labels[index]),
+                                          selected: selected,
+                                          onSelected: (sel) async {
+                                            if (!sel) return;
                                             settingsNotifier.updateSetting(
-                                              'weeklySummaryHour',
-                                              picked.hour,
-                                            );
-                                            settingsNotifier.updateSetting(
-                                              'weeklySummaryMinute',
-                                              picked.minute,
+                                              'weeklySummaryWeekday',
+                                              day,
                                             );
                                             notificationService.updateSettings(
-                                              weeklyHour: picked.hour,
-                                              weeklyMinute: picked.minute,
+                                              weeklyWeekday: day,
                                             );
                                             await notificationService
                                                 .scheduleWeeklySummaryNotification(
                                                   context: context,
                                                 );
-                                          }
-                                        },
-                                        label: Text(_formatTime(weeklyHour, weeklyMinute)),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : null,
+                                          },
+                                        );
+                                      }),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 6,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Weekly Time',
+                                          style: theme.textTheme.labelMedium,
+                                        ),
+                                        OutlinedButton.icon(
+                                          icon: const Icon(Icons.access_time),
+                                          onPressed: () async {
+                                            final picked = await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay(
+                                                hour: weeklyHour,
+                                                minute: weeklyMinute,
+                                              ),
+                                            );
+                                            if (picked != null) {
+                                              settingsNotifier.updateSetting(
+                                                'weeklySummaryHour',
+                                                picked.hour,
+                                              );
+                                              settingsNotifier.updateSetting(
+                                                'weeklySummaryMinute',
+                                                picked.minute,
+                                              );
+                                              notificationService
+                                                  .updateSettings(
+                                                    weeklyHour: picked.hour,
+                                                    weeklyMinute: picked.minute,
+                                                  );
+                                              await notificationService
+                                                  .scheduleWeeklySummaryNotification(
+                                                    context: context,
+                                                  );
+                                            }
+                                          },
+                                          label: Text(
+                                            _formatTime(
+                                              weeklyHour,
+                                              weeklyMinute,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                                : null,
                       ),
                       const SizedBox(height: 16),
                       if (enableNotifications &&
                           notificationService.hasNotificationPermission) ...[
                         Divider(
-                          color: theme.colorScheme.outline.withOpacity(0.2),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -513,8 +543,8 @@ class _NotificationSettingsWidgetState
     required ValueChanged<bool>? onChanged,
     bool isMainToggle = false,
     bool isPremium = false,
-  Widget? trailing,
-  Widget? footer,
+    Widget? trailing,
+    Widget? footer,
   }) {
     final theme = Theme.of(context);
     final isEnabled = onChanged != null;
@@ -546,7 +576,9 @@ class _NotificationSettingsWidgetState
                     color:
                         isEnabled
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            : theme.colorScheme.onSurface.withValues(
+                              alpha: 0.5,
+                            ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -601,17 +633,19 @@ class _NotificationSettingsWidgetState
                 ),
                 if (trailing != null) ...[
                   const SizedBox(width: 8),
-                  Flexible(child: Align(alignment: Alignment.centerRight, child: trailing)),
+                  Flexible(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: trailing,
+                    ),
+                  ),
                 ],
                 const SizedBox(width: 4),
                 Switch(value: value, onChanged: onChanged),
               ],
             ),
             // Optional footer content below the subtitle
-            if (footer != null) ...[
-              const SizedBox(height: 10),
-              footer,
-            ],
+            if (footer != null) ...[const SizedBox(height: 10), footer],
           ],
         ),
       ),
@@ -671,8 +705,6 @@ class _NotificationSettingsWidgetState
       ),
     );
   }
-
-  
 
   Future<void> _requestPermission() async {
     setState(() {

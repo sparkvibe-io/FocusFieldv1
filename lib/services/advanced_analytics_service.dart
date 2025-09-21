@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/models/silence_data.dart';
 
 // Insight categories shown in the advanced analytics widget.
 enum InsightType { achievement, improvement, warning, recommendation, trend }

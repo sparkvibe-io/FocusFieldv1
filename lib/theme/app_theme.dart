@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/providers/theme_provider.dart';
-import 'package:silence_score/services/accessibility_service.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/providers/theme_provider.dart';
+import 'package:focus_field/services/accessibility_service.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 class AppTheme {
   static ThemeData get lightTheme => _buildTheme(AppThemeMode.light);
@@ -35,8 +35,8 @@ class AppTheme {
     DramaticThemeStyling dramatic = DramaticThemeStyling.neutral();
 
     if (mode == AppThemeMode.cyberNeon) {
-      dramatic = DramaticThemeStyling(
-        appBackgroundGradient: const LinearGradient(
+      dramatic = const DramaticThemeStyling(
+        appBackgroundGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -50,9 +50,9 @@ class AppTheme {
         cardBackgroundGradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [const Color(0xFF0E1233), const Color(0xFF050B1F)],
+          colors: [Color(0xFF0E1233), Color(0xFF050B1F)],
         ),
-        statAccentColors: const [
+        statAccentColors: [
           Color(0xFF00F5FF), // cyan
           Color(0xFFFF1FAE), // magenta
           Color(0xFFB347FF), // purple
@@ -75,7 +75,7 @@ class AppTheme {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF002C29),
-            Color(0xFF001E1D).withOpacity(0.85),
+            const Color(0xFF001E1D).withValues(alpha: 0.85),
           ],
         ),
         statAccentColors: const [
@@ -110,7 +110,7 @@ class AppTheme {
       cardTheme: _cardThemeFor(mode, colorScheme).copyWith(
         elevation: highContrast ? 2 : null,
         shadowColor:
-            highContrast ? colorScheme.onSurface.withOpacity(0.4) : null,
+            highContrast ? colorScheme.onSurface.withValues(alpha: 0.4) : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side:
@@ -320,9 +320,9 @@ class AppTheme {
     switch (mode) {
       case AppThemeMode.cyberNeon:
         return CardThemeData(
-          color: scheme.surfaceContainer.withOpacity(0.55),
+          color: scheme.surfaceContainer.withValues(alpha: 0.55),
           elevation: 6,
-          shadowColor: const Color(0xFF00FFF0).withOpacity(0.35),
+          shadowColor: const Color(0xFF00FFF0).withValues(alpha: 0.35),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
             side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
@@ -331,9 +331,9 @@ class AppTheme {
         );
       case AppThemeMode.midnightTeal:
         return CardThemeData(
-          color: scheme.surfaceContainer.withOpacity(0.60),
+          color: scheme.surfaceContainer.withValues(alpha: 0.60),
           elevation: 4,
-          shadowColor: const Color(0xFF00D295).withOpacity(0.25),
+          shadowColor: const Color(0xFF00D295).withValues(alpha: 0.25),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
             side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
@@ -363,12 +363,12 @@ class AppTheme {
         return ElevatedButtonThemeData(
           style: base.merge(
             ElevatedButton.styleFrom(
-              backgroundColor: scheme.primary.withOpacity(0.08),
+              backgroundColor: scheme.primary.withValues(alpha: 0.08),
               foregroundColor: scheme.primary,
-              shadowColor: scheme.primary.withOpacity(0.4),
+              shadowColor: scheme.primary.withValues(alpha: 0.4),
               elevation: 6,
               side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
-              overlayColor: scheme.secondary.withOpacity(0.18),
+              overlayColor: scheme.secondary.withValues(alpha: 0.18),
             ),
           ),
         );
@@ -376,12 +376,12 @@ class AppTheme {
         return ElevatedButtonThemeData(
           style: base.merge(
             ElevatedButton.styleFrom(
-              backgroundColor: scheme.primary.withOpacity(0.10),
+              backgroundColor: scheme.primary.withValues(alpha: 0.10),
               foregroundColor: scheme.primary,
-              shadowColor: scheme.primary.withOpacity(0.25),
+              shadowColor: scheme.primary.withValues(alpha: 0.25),
               elevation: 4,
               side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
-              overlayColor: scheme.secondary.withOpacity(0.14),
+              overlayColor: scheme.secondary.withValues(alpha: 0.14),
             ),
           ),
         );
@@ -413,7 +413,7 @@ class AppTheme {
             OutlinedButton.styleFrom(
               side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
               foregroundColor: scheme.primary,
-              overlayColor: scheme.secondary.withOpacity(0.16),
+              overlayColor: scheme.secondary.withValues(alpha: 0.16),
             ),
           ),
         );
@@ -423,7 +423,7 @@ class AppTheme {
             OutlinedButton.styleFrom(
               side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
               foregroundColor: scheme.primary,
-              overlayColor: scheme.secondary.withOpacity(0.12),
+              overlayColor: scheme.secondary.withValues(alpha: 0.12),
             ),
           ),
         );
@@ -432,7 +432,7 @@ class AppTheme {
           style: base.merge(
             OutlinedButton.styleFrom(
               side: BorderSide(
-                color: scheme.outline.withOpacity(0.6),
+                color: scheme.outline.withValues(alpha: 0.6),
                 width: 1.0,
               ),
               foregroundColor: scheme.primary,
@@ -458,7 +458,7 @@ class AppTheme {
             color: const Color(0xFF8ADFFF),
           ),
           bodySmall: base.bodySmall?.copyWith(
-            color: scheme.onSurface.withOpacity(0.72),
+            color: scheme.onSurface.withValues(alpha: 0.72),
           ),
           labelSmall: base.labelSmall?.copyWith(color: const Color(0xFFFF2EC4)),
         );
@@ -472,7 +472,7 @@ class AppTheme {
             color: const Color(0xFF6BD9B7),
           ),
           bodySmall: base.bodySmall?.copyWith(
-            color: scheme.onSurface.withOpacity(0.68),
+            color: scheme.onSurface.withValues(alpha: 0.68),
           ),
           labelSmall: base.labelSmall?.copyWith(color: const Color(0xFF43F56A)),
         );

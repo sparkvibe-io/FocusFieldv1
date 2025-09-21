@@ -1,8 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:silence_score/services/ad_service.dart';
-import 'package:silence_score/constants/app_constants.dart';
+import 'package:focus_field/services/ad_service.dart';
+import 'package:focus_field/constants/app_constants.dart';
 
 /// Simple reusable banner ad container anchored at the bottom.
 class FooterBannerAd extends StatefulWidget {
@@ -26,7 +25,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
 
   Future<void> _init() async {
     await AdService.instance.initialize();
-    final size = AdSize.banner; // 320x50 on phones typically
+    const size = AdSize.banner; // 320x50 on phones typically
     final ad = BannerAd(
       size: size,
       adUnitId: _testUnitId,
@@ -37,10 +36,11 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
             }),
         onAdFailedToLoad: (ad, err) {
           ad.dispose();
-          if (mounted)
+          if (mounted) {
             setState(() {
               _loading = false;
             });
+          }
         },
       ),
       request: const AdRequest(),

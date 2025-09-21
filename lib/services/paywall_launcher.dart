@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:silence_score/services/subscription_service.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/constants/app_constants.dart';
+import 'package:focus_field/services/subscription_service.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/constants/app_constants.dart';
 
 /// Unified helper for showing RevenueCat native paywalls with graceful fallbacks.
 enum PaywallAttemptResult { unlocked, dismissed, notShown }
@@ -22,8 +22,9 @@ class PaywallLauncher {
   }) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode)
+        if (!kReleaseMode) {
           log('RC PaywallIfNeeded skipped: mock subscriptions enabled');
+        }
         return PaywallAttemptResult.notShown; // trigger fallback custom paywall
       }
       // Ensure Purchases configured
@@ -41,8 +42,9 @@ class PaywallLauncher {
       if (_didUnlock(result)) return PaywallAttemptResult.unlocked;
       return PaywallAttemptResult.dismissed; // shown & closed without unlock
     } catch (e, st) {
-      if (!kReleaseMode)
+      if (!kReleaseMode) {
         log('RC presentPaywallIfNeeded error: $e', stackTrace: st);
+      }
       return PaywallAttemptResult.notShown;
     }
   }
@@ -50,8 +52,9 @@ class PaywallLauncher {
   static Future<bool> present({Offering? offering}) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode)
+        if (!kReleaseMode) {
           log('RC presentPaywall skipped: mock subscriptions enabled');
+        }
         return false;
       }
       final service = SubscriptionService.instance;
@@ -71,8 +74,9 @@ class PaywallLauncher {
   static Future<bool> presentOffering(String offeringId) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
-        if (!kReleaseMode)
+        if (!kReleaseMode) {
           log('RC presentOffering skipped: mock subscriptions enabled');
+        }
         return false;
       }
       final service = SubscriptionService.instance;
@@ -82,10 +86,11 @@ class PaywallLauncher {
       final offerings = await Purchases.getOfferings();
       final off = offerings.all[offeringId];
       if (off == null) {
-        if (!kReleaseMode)
+        if (!kReleaseMode) {
           log(
             'RC presentOffering: offering "$offeringId" not found. Falling back.',
           );
+        }
         return present();
       }
       return present(offering: off);

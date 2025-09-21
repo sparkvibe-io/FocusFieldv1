@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 // Removed explicit HostedPaywallService import (no direct usage after redesign)
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // NOTE: RevenueCat prebuilt UI package not available; maintaining custom paywall.
 
@@ -99,7 +97,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       top: 12,
                       right: 12,
                       child: Material(
-                        color: Colors.white.withOpacity(0.10),
+                        color: Colors.white.withValues(alpha: 0.10),
                         shape: const CircleBorder(),
                         child: IconButton(
                           icon: const Icon(Icons.close, color: Colors.white),
@@ -137,7 +135,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                         padding: const EdgeInsets.all(8),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.2),
+                          color: Colors.amber.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -258,8 +256,8 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
             : AppConstants.premiumMonthlyProductId;
     final dyn = _dynamicPriceStrings[id];
     // Fallback static pricing (update if actual pricing changes)
-    final baseMonthly = 1.99; // monthly price fallback
-    final fallbackYearlyTotal = 9.99; // yearly total fallback
+    const baseMonthly = 1.99; // monthly price fallback
+    const fallbackYearlyTotal = 9.99; // yearly total fallback
     late final String headline; // big number
     late final String subline; // billed at line
 
@@ -300,13 +298,13 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         duration: const Duration(milliseconds: 220),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color:
                 isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).dividerColor.withOpacity(0.4),
+                    : Theme.of(context).dividerColor.withValues(alpha: 0.4),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -335,7 +333,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.65),
+                    ).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
                 ),
               ],
@@ -356,7 +354,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       BoxShadow(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.4),
+                        ).colorScheme.primary.withValues(alpha: 0.4),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -578,7 +576,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           l10n?.legalDisclaimer ??
               'Auto-renewing subscription. Cancel anytime in store settings.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),

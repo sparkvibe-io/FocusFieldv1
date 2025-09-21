@@ -1,9 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/services/silence_detector.dart';
-import 'package:silence_score/services/storage_service.dart';
-import 'package:silence_score/services/real_time_noise_controller.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/services/silence_detector.dart';
+import 'package:focus_field/services/storage_service.dart';
+import 'package:focus_field/services/real_time_noise_controller.dart';
 
 // Storage service provider
 final storageServiceProvider = FutureProvider<StorageService>((ref) async {

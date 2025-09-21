@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:silence_score/providers/silence_provider.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 import 'dart:math' as math;
-import 'package:silence_score/utils/throttled_logger.dart';
-import 'package:silence_score/utils/debug_log.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/utils/throttled_logger.dart';
+import 'package:focus_field/utils/debug_log.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -64,8 +64,9 @@ class RealTimeNoiseChart extends HookConsumerWidget {
             decibel.isInfinite ||
             decibel < 0 ||
             decibel > 150) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log('DEBUG: Chart - Invalid decibel value: $decibel');
+          }
           return;
         }
         final clamped = decibel.clamp(0.0, 120.0);
@@ -81,15 +82,17 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       // Session or ambient: subscribe to aggregated stream (already throttled to 1Hz)
       final sub = noiseController.stream.listen(
         (d) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log(
               'DEBUG: Chart - Aggregated dB: ${d.toStringAsFixed(1)}',
             );
+          }
           safeUpdateDecibel(d);
         },
         onError: (e) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log('DEBUG: Chart - Aggregated stream error: $e');
+          }
         },
       );
 
@@ -98,17 +101,19 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         try {
           silenceDetector.startAmbientMonitoring(
             onError: (error) {
-              if (!kReleaseMode)
+              if (!kReleaseMode) {
                 sensorLogger.log(
                   'DEBUG: Chart - Ambient monitoring error: $error',
                 );
+              }
             },
           );
         } catch (e) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log(
               'DEBUG: Chart - Failed to start ambient monitoring: $e',
             );
+          }
         }
 
         // Lightweight ambient sampling (lower frequency than before)
@@ -120,8 +125,9 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
         // Fallback animation before permission granted
         fallbackTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-          if (isDisposed || hasPermission.value || chartData.value.isNotEmpty)
+          if (isDisposed || hasPermission.value || chartData.value.isNotEmpty) {
             return;
+          }
           final now = DateTime.now();
           final timeSinceStart =
               now.difference(startTime.value ?? now).inSeconds;

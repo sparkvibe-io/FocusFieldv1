@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'dart:io' show Platform;
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/services/audio_circuit_breaker.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import '../constants/app_constants.dart';
+import 'audio_circuit_breaker.dart';
+import '../utils/debug_log.dart';
 
 class SilenceDetector {
   NoiseMeter? _noiseMeter;
