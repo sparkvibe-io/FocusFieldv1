@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Circuit breaker states
 enum CircuitState {
@@ -60,11 +60,9 @@ class AudioCircuitBreaker {
     if (_lastAudioActivity != null && !_immediateBlockActive) {
       final timeSinceActivity = now.difference(_lastAudioActivity!);
       if (timeSinceActivity.compareTo(_immediateBlockTimeout) < 0) {
-        if (!kReleaseMode) {
-          print(
-            'DEBUG: Audio access blocked by immediate protection (${_immediateBlockTimeout.inSeconds - timeSinceActivity.inSeconds}s remaining)',
-          );
-        }
+            DebugLog.d(
+              'DEBUG: Audio access blocked by immediate protection (${_immediateBlockTimeout.inSeconds - timeSinceActivity.inSeconds}s remaining)',
+            );
         return false;
       }
     }
@@ -77,10 +75,9 @@ class AudioCircuitBreaker {
                   .compareTo(_flutterRecoveryTimeout) >
               0) {
         _flutterState = FlutterEngineState.unstable;
-        if (!kReleaseMode)
-          print(
-            'DEBUG: Flutter engine: CRASHED -> UNSTABLE (recovery timeout)',
-          );
+            DebugLog.d(
+              'DEBUG: Flutter engine: CRASHED -> UNSTABLE (recovery timeout)',
+            );
       } else {
         return false;
       }
@@ -92,8 +89,7 @@ class AudioCircuitBreaker {
           now.difference(_lastBufferError!).compareTo(_bufferRecoveryTimeout) >
               0) {
         _bufferState = AudioBufferState.unstable;
-        if (!kReleaseMode)
-          print('DEBUG: Audio buffer: CRASHED -> UNSTABLE (recovery timeout)');
+            DebugLog.d('DEBUG: Audio buffer: CRASHED -> UNSTABLE (recovery timeout)');
       } else {
         return false;
       }
@@ -106,8 +102,7 @@ class AudioCircuitBreaker {
       case CircuitState.open:
         if (_nextResetTime != null && now.isAfter(_nextResetTime!)) {
           _state = CircuitState.halfOpen;
-          if (!kReleaseMode)
-            print('DEBUG: Audio circuit breaker: OPEN -> HALF_OPEN');
+          DebugLog.d('DEBUG: Audio circuit breaker: OPEN -> HALF_OPEN');
           return true;
         }
         return false;
@@ -121,8 +116,7 @@ class AudioCircuitBreaker {
   void recordSuccess() {
     if (_state == CircuitState.halfOpen) {
       reset();
-      if (!kReleaseMode)
-        print('DEBUG: Audio circuit breaker: HALF_OPEN -> CLOSED (success)');
+      DebugLog.d('DEBUG: Audio circuit breaker: HALF_OPEN -> CLOSED (success)');
     } else if (_state == CircuitState.closed) {
       // Gradually reduce failure count on success
       if (_failureCount > 0) {
@@ -134,16 +128,14 @@ class AudioCircuitBreaker {
     if (_bufferState == AudioBufferState.unstable) {
       _bufferState = AudioBufferState.stable;
       _bufferErrorCount = 0;
-      if (!kReleaseMode)
-        print('DEBUG: Audio buffer: UNSTABLE -> STABLE (recovered)');
+      DebugLog.d('DEBUG: Audio buffer: UNSTABLE -> STABLE (recovered)');
     }
 
     // Flutter engine recovery on success
     if (_flutterState == FlutterEngineState.unstable) {
       _flutterState = FlutterEngineState.stable;
       _flutterErrorCount = 0;
-      if (!kReleaseMode)
-        print('DEBUG: Flutter engine: UNSTABLE -> STABLE (recovered)');
+      DebugLog.d('DEBUG: Flutter engine: UNSTABLE -> STABLE (recovered)');
     }
   }
 
@@ -153,22 +145,18 @@ class AudioCircuitBreaker {
     _failureCount++;
     _lastFailureTime = now;
 
-    if (!kReleaseMode) {
-      print('DEBUG: Audio circuit breaker: failure #$_failureCount');
-    }
+    DebugLog.d('DEBUG: Audio circuit breaker: failure #$_failureCount');
 
     if (_state == CircuitState.halfOpen) {
       // Failure during half-open means service is still failing
       _state = CircuitState.open;
       _nextResetTime = now.add(_resetTimeout);
-      if (!kReleaseMode)
-        print('DEBUG: Audio circuit breaker: HALF_OPEN -> OPEN (failed)');
+      DebugLog.d('DEBUG: Audio circuit breaker: HALF_OPEN -> OPEN (failed)');
     } else if (_failureCount >= _maxFailures) {
       // Too many failures, open the circuit
       _state = CircuitState.open;
       _nextResetTime = now.add(_resetTimeout);
-      if (!kReleaseMode)
-        print('DEBUG: Audio circuit breaker: CLOSED -> OPEN (max failures)');
+      DebugLog.d('DEBUG: Audio circuit breaker: CLOSED -> OPEN (max failures)');
     }
   }
 
@@ -178,11 +166,9 @@ class AudioCircuitBreaker {
     _bufferErrorCount++;
     _lastBufferError = now;
 
-    if (!kReleaseMode) {
-      print(
-        'DEBUG: Audio buffer error: $errorType (count: $_bufferErrorCount)',
-      );
-    }
+    DebugLog.d(
+      'DEBUG: Audio buffer error: $errorType (count: $_bufferErrorCount)',
+    );
 
     // Check for buffer synchronization issues
     if (errorType.contains('releaseBuffer') ||
@@ -190,14 +176,10 @@ class AudioCircuitBreaker {
         errorType.contains('BufferSizeInFrames')) {
       if (_bufferErrorCount >= 2) {
         _bufferState = AudioBufferState.crashed;
-        if (!kReleaseMode)
-          print('DEBUG: Audio buffer: STABLE -> CRASHED (buffer sync issues)');
+        DebugLog.d('DEBUG: Audio buffer: STABLE -> CRASHED (buffer sync issues)');
       } else {
         _bufferState = AudioBufferState.unstable;
-        if (!kReleaseMode)
-          print(
-            'DEBUG: Audio buffer: STABLE -> UNSTABLE (buffer issues detected)',
-          );
+        DebugLog.d('DEBUG: Audio buffer: STABLE -> UNSTABLE (buffer issues detected)');
       }
     }
   }
@@ -208,11 +190,9 @@ class AudioCircuitBreaker {
     _flutterErrorCount++;
     _lastFlutterError = now;
 
-    if (!kReleaseMode) {
-      print(
-        'DEBUG: Flutter engine error: $errorType (count: $_flutterErrorCount)',
-      );
-    }
+    DebugLog.d(
+      'DEBUG: Flutter engine error: $errorType (count: $_flutterErrorCount)',
+    );
 
     // Check for Flutter communication issues
     if (errorType.contains('nativeDispatchPlatformMessage') ||
@@ -223,16 +203,10 @@ class AudioCircuitBreaker {
       if (_flutterErrorCount >= 1) {
         // Lower threshold for Flutter crashes
         _flutterState = FlutterEngineState.crashed;
-        if (!kReleaseMode)
-          print(
-            'DEBUG: Flutter engine: STABLE -> CRASHED (communication issues)',
-          );
+        DebugLog.d('DEBUG: Flutter engine: STABLE -> CRASHED (communication issues)');
       } else {
         _flutterState = FlutterEngineState.unstable;
-        if (!kReleaseMode)
-          print(
-            'DEBUG: Flutter engine: STABLE -> UNSTABLE (communication issues detected)',
-          );
+        DebugLog.d('DEBUG: Flutter engine: STABLE -> UNSTABLE (communication issues detected)');
       }
     }
   }
@@ -243,18 +217,12 @@ class AudioCircuitBreaker {
     _lastAudioActivity = now;
     _immediateBlockActive = true;
 
-    if (!kReleaseMode) {
-      print(
-        'DEBUG: Audio activity detected - immediate protection activated for ${_immediateBlockTimeout.inSeconds}s',
-      );
-    }
+    DebugLog.d('DEBUG: Audio activity detected - immediate protection activated for ${_immediateBlockTimeout.inSeconds}s');
 
     // Schedule deactivation of immediate block
     Timer(_immediateBlockTimeout, () {
       _immediateBlockActive = false;
-      if (!kReleaseMode) {
-        print('DEBUG: Immediate audio protection deactivated');
-      }
+      DebugLog.d('DEBUG: Immediate audio protection deactivated');
     });
   }
 
@@ -332,18 +300,12 @@ class SafeAudioExecutor {
     String operation,
   ) async {
     if (!_circuitBreaker.canExecute()) {
-      if (!kReleaseMode) {
-        print(
-          'DEBUG: SafeAudioExecutor: $operation blocked by circuit breaker (state: ${_circuitBreaker._state}, buffer: ${_circuitBreaker._bufferState}, flutter: ${_circuitBreaker._flutterState})',
-        );
-      }
+      DebugLog.d('DEBUG: SafeAudioExecutor: $operation blocked by circuit breaker (state: ${_circuitBreaker._state}, buffer: ${_circuitBreaker._bufferState}, flutter: ${_circuitBreaker._flutterState})');
       return null;
     }
 
     try {
-      if (!kReleaseMode) {
-        print('DEBUG: SafeAudioExecutor: executing $operation');
-      }
+      DebugLog.d('DEBUG: SafeAudioExecutor: executing $operation');
 
       // Record audio activity to trigger immediate protection
       _circuitBreaker.recordAudioActivity();
@@ -351,15 +313,11 @@ class SafeAudioExecutor {
       final result = await audioFunction();
       _circuitBreaker.recordSuccess();
 
-      if (!kReleaseMode) {
-        print('DEBUG: SafeAudioExecutor: $operation completed successfully');
-      }
+      DebugLog.d('DEBUG: SafeAudioExecutor: $operation completed successfully');
 
       return result;
     } catch (e) {
-      if (!kReleaseMode) {
-        print('DEBUG: SafeAudioExecutor: $operation failed: $e');
-      }
+      DebugLog.d('DEBUG: SafeAudioExecutor: $operation failed: $e');
 
       // Check for specific audio buffer errors and handle them appropriately
       final errorString = e.toString();
@@ -392,11 +350,7 @@ class SafeAudioExecutor {
     try {
       return await execute(() => audioFunction().timeout(timeout), operation);
     } on TimeoutException {
-      if (!kReleaseMode) {
-        print(
-          'DEBUG: SafeAudioExecutor: $operation timed out after ${timeout.inMilliseconds}ms',
-        );
-      }
+      DebugLog.d('DEBUG: SafeAudioExecutor: $operation timed out after ${timeout.inMilliseconds}ms');
       _circuitBreaker.recordFailure();
       return null;
     }
@@ -410,9 +364,7 @@ class SafeAudioExecutor {
   /// Reset circuit breaker (for testing or manual recovery)
   void reset() {
     _circuitBreaker.reset();
-    if (!kReleaseMode) {
-      print('DEBUG: SafeAudioExecutor: circuit breaker manually reset');
-    }
+    DebugLog.d('DEBUG: SafeAudioExecutor: circuit breaker manually reset');
   }
 
   /// Check if audio operations are currently blocked

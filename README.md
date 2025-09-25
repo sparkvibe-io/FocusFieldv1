@@ -25,7 +25,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 ### Customization & Settings
 - **Tabbed Settings Interface**: Basic, Advanced, About
 - **Adjustable Decibel Threshold**: 20–80 dB (default 38) with high-threshold warning ≥70 dB
-- **Session Duration**: Free up to 5 minutes; Premium up to 120 minutes
+- **Session Duration**: Free up to 30 minutes; Premium up to 120 minutes
 - **Calibration Dialog**: Previous vs new threshold, ambient warnings
 - **Theme System**: System / Light / Dark
 - **Accessibility Settings**: High contrast, large text, vibration feedback
@@ -82,7 +82,7 @@ vim .env
 4. Run the app:
 ```bash
 # Development build (with mock subscriptions)
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run directly with Flutter
 flutter run --dart-define=REVENUECAT_API_KEY=your_key_here
@@ -107,7 +107,7 @@ The app uses environment variables for secure API key management:
 ```bash
 # Using the secure build script (recommended)
 export REVENUECAT_API_KEY="your_actual_api_key"
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 
 # Or manually with dart-define
 flutter build apk --release --dart-define=REVENUECAT_API_KEY=your_key
@@ -129,7 +129,7 @@ flutter build ios --release \
 #### Development Builds
 ```bash
 # Quick development build with environment file
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run in debug mode
 flutter run
@@ -222,7 +222,7 @@ Unit tests cover smart reminder eligibility (`shouldSendDailyReminder`) with inj
 
 ### Default Settings
 - **Decibel Threshold**: 38 dB (adjustable 20–80)
-- **Session Duration (Free Default)**: 5 minutes (Premium configurable 1–120 minutes)
+- **Session Duration (Free Default)**: 30 minutes (Premium configurable 1–120 minutes)
 - **Sample Interval**: 200ms (system constant)
 - **Points System**: 1 point per quiet minute
 - **Chart Smoothing**: Exponential moving average
@@ -673,10 +673,9 @@ Focus Field includes a RevenueCat-based subscription system with dynamic product
 
 #### Product Identifiers (Current)
 ```
-premium.tier:monthly
-premium.tier:yearly
+premium.tier.monthly
+premium.tier.yearly
 ```
-(Verify colon usage is accepted by both stores; if not, migrate to `premium.tier.monthly` & `premium.tier.yearly`.)
 
 #### Pricing (Live via RevenueCat)
 - Prices and localized currency are pulled dynamically from RevenueCat Paywall/Offerings.
@@ -695,7 +694,7 @@ premium.tier:yearly
 5. Add refund / manage subscription help link (store-specific deep link)
 
 #### Premium (Phase 1 Active)
-- Extended sessions (60m vs 5m free)
+- Extended sessions (120m vs 30m free)
 - Advanced analytics
 - Data export (CSV/PDF)
 - Premium themes

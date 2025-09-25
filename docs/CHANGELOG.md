@@ -84,70 +84,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1] - 2025-01-27 - Critical Stability Release
 
-### 🛡️ Fixed - Critical Crash Issues
-- **CRITICAL**: Fixed app crashes during startup due to chart initialization errors
-- **CRITICAL**: Resolved memory leaks in RealTimeNoiseChart widget causing performance degradation
-- **CRITICAL**: Fixed concurrent stream conflicts in SilenceDetector audio processing
 - **CRITICAL**: Added comprehensive NaN/infinite value validation preventing chart crashes
 - **MAJOR**: Fixed permission handling race conditions during app initialization
-- **MAJOR**: Resolved resource disposal issues causing audio access conflicts
-- **MAJOR**: Fixed timer disposal memory leaks in chart widget
-
 ### ⚡ Added - Stability Infrastructure
 - **ErrorBoundary**: Added error boundary widgets for graceful error handling
-- **SafeWidget**: Created safe wrapper for potentially error-prone components  
-- **State Management**: Added proper disposal patterns and cleanup methods
-- **Data Validation**: Comprehensive input validation for all numeric values
-- **Timeout Handling**: Added timeouts for microphone access and permission requests
-- **Better Logging**: Improved debug logging with proper kReleaseMode checks
-- **Resource Tracking**: Added disposal state tracking to prevent resource leaks
-
 ### 🎯 Improved - Performance & UX
 - **Chart Performance**: Reduced update frequency from 200ms to 2s for ambient monitoring
 - **Memory Management**: Automatic cleanup of old data points (limited to 300 max)
-- **Audio Processing**: Better concurrent operation handling and resource management
-- **Permission Flow**: More user-friendly permission dialogs and guidance
-- **Error Recovery**: Components can recover from temporary failures automatically
-- **App Initialization**: Improved startup sequence with proper error handling and timeouts
 
 ### 🔧 Changed - Technical Improvements
-- **Stream Disposal**: Improved stream subscription cleanup and cancellation patterns
-- **Permission Dialogs**: Made dialogs dismissible and less intrusive for better UX
-- **Data Limits**: Limited chart data points to prevent memory overflow issues
-- **Debug Output**: Wrapped all debug prints with kReleaseMode checks for production
 - **Validation**: Added bounds checking for all time and decibel calculations
 - **State Flags**: Added proper state management flags to prevent concurrent operations
-
-### 🛡️ Added - Native Audio Crash Protection
-- **AudioSafeWidget**: Specialized error boundary for native audio buffer crashes
-- **Audio Error Detection**: Automatic detection of audio-related native errors
 - **Recovery Mechanisms**: Exponential backoff recovery with automatic retry
 - **Error Tracking**: Audio error counting and crash protection activation
-- **Resource Management**: Safe NoiseMeter creation and disposal patterns
-- **Fallback Processing**: Graceful degradation when audio processing fails
-
-### 📚 Documentation
 - **Troubleshooting**: Added comprehensive troubleshooting section to README
 - **Architecture**: Updated documentation with stability improvements and patterns
 - **Error Handling**: Documented error boundary usage and best practices
-- **Performance**: Added guidance for memory management and resource cleanup
-
-### ⚠️ Notes
-- This release focuses entirely on stability and crash prevention
 - No breaking changes to existing functionality
 - Significant reduction in memory usage and app crash rates
-- Better user experience with graceful error handling and recovery
-- All existing features remain fully functional
-
-## [0.1.2] - 2025-01-27 - Tip Window Internationalization Fix
-
-### 🌐 Fixed - Tip Window Localization
 - **CRITICAL**: Fixed tip overlay using wrong localization key (`tipsMuted` instead of `muteTips`)
 - **CRITICAL**: Added missing `muteTips` translation key to all supported languages
-- **IMPROVED**: Tip window now properly displays localized "Mute Tips" button text
-- **IMPROVED**: Toast message "Tips muted" now uses correct localization key
-
-### 🌍 Added - Complete Tip System Internationalization
 - **German**: "Tipps stummschalten" for mute button, "Tipps stummgeschaltet" for toast
 - **Spanish**: "Silenciar consejos" for mute button, "Consejos silenciados" for toast  
 - **French**: "Couper les astuces" for mute button, "Astuces muettes" for toast
@@ -175,7 +131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added - Secure Secrets Management System
 - **NEW**: Environment variable system using `--dart-define` flags
 - **NEW**: `.env` file support for development (added to .gitignore)
-- **NEW**: Build scripts (`scripts/build-dev.sh`, `scripts/build-prod.sh`) for secure builds
+- **NEW**: Build scripts (`scripts/build/build-dev.sh`, `scripts/build/build-prod.sh`) for secure builds
 - **NEW**: API key validation and environment detection
 - **NEW**: Comprehensive environment setup documentation
 - **SECURITY**: RevenueCat API key now loaded from environment variables

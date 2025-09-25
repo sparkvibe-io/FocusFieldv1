@@ -109,13 +109,17 @@ class TipService {
 
       // Show the tip after a brief delay to allow UI to settle
       Future.delayed(const Duration(seconds: 2), () {
-        showCurrentTip(context);
+        if (context.mounted) {
+          showCurrentTip(context);
+        }
       });
       return;
     }
 
     // Production mode: Smart, non-intrusive tip display
+    if (!context.mounted) return;
     await _maybeShowProductionTip(context);
+    if (!context.mounted) return;
   }
 
   Future<void> maybeShowAfterSession(
@@ -136,7 +140,8 @@ class TipService {
     final hasPremiumAccess = _ref.read(premiumAccessProvider);
     final showPremiumChip = isPremiumFeature && !hasPremiumAccess;
     final instruction = _getInstructionsForTip(context, tipId);
-    final isEnabled = await getEnabled();
+  final isEnabled = await getEnabled();
+  if (!context.mounted) return;
 
     final overlay = OverlayEntry(
       builder:
@@ -153,6 +158,7 @@ class TipService {
             onMute: () async {
               await setEnabled(!isEnabled);
               _dismiss();
+              if (!context.mounted) return;
               _showMutedToast(context, !isEnabled);
               // Mark tip as seen when user toggles mute
               markCurrentTipAsSeen();
@@ -160,7 +166,8 @@ class TipService {
           ),
     );
 
-    Overlay.of(context, rootOverlay: true).insert(overlay);
+  if (!context.mounted) return;
+  Overlay.of(context, rootOverlay: true).insert(overlay);
     _current = overlay;
 
     // Auto-dismiss after 10s and mark as seen
@@ -176,14 +183,13 @@ class TipService {
   }
 
   void _showMutedToast(BuildContext context, bool isNowHidden) {
-    final l10n = AppLocalizations.of(context);
+  final l10n = AppLocalizations.of(context);
     final message =
         isNowHidden
             ? (l10n?.tipsHidden ?? 'Tips hidden')
             : (l10n?.tipsShown ?? 'Tips shown');
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _getTipText(BuildContext context, int id) {
@@ -447,12 +453,14 @@ class TipService {
     if (currentTip == null) {
       // No current tip, generate a new one
       await _generateNewTip();
+      if (!context.mounted) return;
       await showCurrentTip(context);
       return;
     }
 
     // Show the current tip (no session restrictions for manual viewing)
-    await _showSpecificTip(context, currentTip);
+  if (!context.mounted) return;
+  await _showSpecificTip(context, currentTip);
   }
 
   Future<void> markCurrentTipAsSeen() async {
@@ -593,6 +601,7 @@ class TipService {
 
     // Show the tip with a longer delay for better UX
     Future.delayed(const Duration(seconds: 4), () async {
+      if (!context.mounted) return;
       await showCurrentTip(context);
       // Record when we showed this tip
       await prefs.setString(

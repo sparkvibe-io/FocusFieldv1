@@ -34,7 +34,7 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 ### Running the App
 ```bash
 # Development build with mock subscriptions
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Run directly with Flutter (requires environment setup)
 flutter run --dart-define=REVENUECAT_API_KEY=your_key_here
@@ -47,7 +47,7 @@ flutter run
 ```bash
 # Production build (requires actual API keys)
 export REVENUECAT_API_KEY="your_actual_api_key"
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 
 # Manual production build
 flutter build apk --release --dart-define=REVENUECAT_API_KEY=your_key
@@ -144,8 +144,8 @@ flutter clean && flutter pub get
 - `ENABLE_MOCK_SUBSCRIPTIONS`: ✅ `true` (mock payments for testing)
 
 ### Build Scripts
-- `./scripts/build-dev.sh`: Development build with mock subscriptions
-- `./scripts/build-prod.sh`: Production build with validation
+- `./scripts/build/build-dev.sh`: Development build with mock subscriptions
+- `./scripts/build/build-prod.sh`: Production build with validation
 
 ## Core Business Logic
 
@@ -231,7 +231,7 @@ flutter clean && flutter pub get
 ## Monetization System
 
 ### Subscription Tiers
-- **Free Tier**: Basic silence detection, 20 session history limit, 5-minute sessions
+- **Free Tier**: Basic silence detection, 20 session history limit, 30-minute sessions
 - **Premium Tier ($1.99/month)**: Unlimited history, 60-minute sessions, advanced analytics, data export, premium themes
 - **Premium Plus Tier ($3.99/month)**: Cloud sync, AI insights, multi-environment profiles, social features (Phase 2)
 

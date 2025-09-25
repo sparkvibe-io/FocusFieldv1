@@ -84,7 +84,7 @@ Last updated: 2025-09-20
   - Acceptance: Local script output reflects the new name consistently.
 
 - [ ] Build scripts sanity
-  - Files: `scripts/build-dev.sh`, `scripts/build-prod.sh`
+  - Files: `scripts/build/build-dev.sh`, `scripts/build/build-prod.sh`
   - Confirm env var usage matches docs; add small hints if needed.
   - Acceptance: One-command dev build works; prod build instructions are accurate (keys via env).
 
@@ -117,8 +117,8 @@ Document decisions here for future reference.
   - `flutter gen-l10n`
 
 - Builds
-  - Dev: `./scripts/build-dev.sh`
-  - Prod (example): `REVENUECAT_API_KEY=your_actual_key ./scripts/build-prod.sh`
+  - Dev: `./scripts/build/build-dev.sh`
+  - Prod (example): `REVENUECAT_API_KEY=your_actual_key ./scripts/build/build-prod.sh`
 
 ---
 

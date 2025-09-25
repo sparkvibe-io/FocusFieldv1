@@ -45,6 +45,7 @@ This document establishes documentation standards for the Focus Field project to
 
 **Allowed in Root:**
 - `README.md` - Primary project overview and getting started guide
+- `CLAUDE.md` - Business/launch context and operational notes (exception to support product management workflow)
 
 **Required to be in /docs/:**
 - `CHANGELOG.md` - Version history and release notes → `/docs/CHANGELOG.md`

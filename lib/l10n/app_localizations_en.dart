@@ -18,8 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallTitle => 'Train Deeper Focus with Premium';
 
   @override
-  String get featureExtendSessions =>
-      'Extend focus sessions from 30 min to 120 min';
+  String get featureExtendSessions => 'Extend focus sessions from 30 min to 120 min';
 
   @override
   String get featureHistory => 'Access 90 days of past sessions';
@@ -55,8 +54,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manageSubscription => 'Manage';
 
   @override
-  String get legalDisclaimer =>
-      'Auto-renewing subscription. Cancel anytime in store settings.';
+  String get legalDisclaimer => 'Auto-renewing subscription. Cancel anytime in store settings.';
 
   @override
   String minutesOfSilenceCongrats(int minutes) {
@@ -145,8 +143,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetAllData => 'Reset All Data';
 
   @override
-  String get resetDataConfirmation =>
-      'Are you sure you want to reset all your progress?';
+  String get resetDataConfirmation => 'Are you sure you want to reset all your progress?';
 
   @override
   String get resetDataSuccess => 'Data reset successfully';
@@ -161,12 +158,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get microphonePermissionTitle => 'Microphone Permission';
 
   @override
-  String get microphonePermissionMessage =>
-      'Focus Field needs microphone access to measure ambient noise levels. No audio is stored.';
+  String get microphonePermissionMessage => 'Focus Field needs microphone access to measure ambient noise levels. No audio is stored.';
 
   @override
-  String get permissionDeniedMessage =>
-      'Microphone permission is required to measure silence. Please enable it in settings.';
+  String get permissionDeniedMessage => 'Microphone permission is required to measure silence. Please enable it in settings.';
 
   @override
   String get noiseMeterError => 'Unable to access microphone';
@@ -175,20 +170,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumFeaturesTitle => 'Premium Features';
 
   @override
-  String get premiumDescription =>
-      'Unlock extended sessions, advanced analytics, and data export';
+  String get premiumDescription => 'Unlock extended sessions, advanced analytics, and data export';
 
   @override
-  String get premiumRequiredMessage =>
-      'This feature requires Premium subscription';
+  String get premiumRequiredMessage => 'This feature requires Premium subscription';
 
   @override
-  String get subscriptionSuccessMessage =>
-      'Successfully subscribed! Enjoy your premium features';
+  String get subscriptionSuccessMessage => 'Successfully subscribed! Enjoy your premium features';
 
   @override
-  String get subscriptionErrorMessage =>
-      'Unable to process subscription. Please try again';
+  String get subscriptionErrorMessage => 'Unable to process subscription. Please try again';
 
   @override
   String get restoreSuccessMessage => 'Purchases restored successfully';
@@ -239,8 +230,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetAllSettings => 'Reset All Settings';
 
   @override
-  String get resetAllSettingsDescription =>
-      'This will reset all settings and data. Cannot be undone.';
+  String get resetAllSettingsDescription => 'This will reset all settings and data. Cannot be undone.';
 
   @override
   String get cancel => 'Cancel';
@@ -255,12 +245,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get decibelThresholdMaxNoise => 'Decibel Threshold (max noise level)';
 
   @override
-  String get highThresholdWarningText =>
-      'High threshold may ignore meaningful noise events.';
+  String get highThresholdWarningText => 'High threshold may ignore meaningful noise events.';
 
   @override
-  String get decibelThresholdTooltip =>
-      'Typical quiet spaces: 30–40 dB. Calibrate; raise only if normal hum counts as noise.';
+  String get decibelThresholdTooltip => 'Typical quiet spaces: 30–40 dB. Calibrate; raise only if normal hum counts as noise.';
 
   @override
   String get sessionDuration => 'Session Duration';
@@ -379,15 +367,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqHowWorksQ => 'How does Focus Field work?';
 
   @override
-  String get faqHowWorksA =>
-      'It measures ambient noise – time below threshold earns points.';
+  String get faqHowWorksA => 'It measures ambient noise – time below threshold earns points.';
 
   @override
   String get faqAudioRecordedQ => 'Is audio recorded?';
 
   @override
-  String get faqAudioRecordedA =>
-      'No. Only decibel levels are sampled; audio is never stored.';
+  String get faqAudioRecordedA => 'No. Only decibel levels are sampled; audio is never stored.';
 
   @override
   String get faqAdjustSensitivityQ => 'Adjust sensitivity?';
@@ -401,15 +387,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqPremiumFeaturesQ => 'Premium features?';
 
   @override
-  String get faqPremiumFeaturesA =>
-      'Extended sessions (up to 120m), advanced analytics, export, themes.';
+  String get faqPremiumFeaturesA => 'Extended sessions (up to 120m), advanced analytics, export, themes.';
 
   @override
   String get faqNotificationsQ => 'Notifications?';
 
   @override
-  String get faqNotificationsA =>
-      'Smart reminders learn habits and celebrate milestones.';
+  String get faqNotificationsA => 'Smart reminders learn habits and celebrate milestones.';
 
   @override
   String get close => 'Close';
@@ -429,8 +413,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactSupport => 'Contact Support';
 
   @override
-  String get emailOpenDescription =>
-      'Opens your email app with system information pre-filled';
+  String get emailOpenDescription => 'Opens your email app with system information pre-filled';
 
   @override
   String get subject => 'Subject';
@@ -541,12 +524,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noSignificantChange => 'No significant change detected.';
 
   @override
-  String get highAmbientDetected =>
-      'High ambient environment detected. Consider a quieter space for more sensitivity.';
+  String get highAmbientDetected => 'High ambient environment detected. Consider a quieter space for more sensitivity.';
 
   @override
-  String get adjustAnytimeSettings =>
-      'You can adjust this anytime in Settings.';
+  String get adjustAnytimeSettings => 'You can adjust this anytime in Settings.';
 
   @override
   String get toggleThemeTooltip => 'Toggle theme';
@@ -582,6 +563,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upgrade => 'Upgrade';
+
+  @override
+  String get upgradeRequired => 'Upgrade Required';
 
   @override
   String get exportCsvSpreadsheet => 'CSV Spreadsheet';
@@ -695,15 +679,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get achievementHalfCenturyDesc => '50 points milestone';
 
   @override
-  String get achievementLockedPrompt =>
-      'Complete sessions to unlock achievements';
+  String get achievementLockedPrompt => 'Complete sessions to unlock achievements';
 
   @override
   String get ratingPromptTitle => 'Enjoying Focus Field?';
 
   @override
-  String get ratingPromptBody =>
-      'A quick 5-star rating helps others discover calmer focus time.';
+  String get ratingPromptBody => 'A quick 5-star rating helps others discover calmer focus time.';
 
   @override
   String get ratingPromptRateNow => 'Rate Now';
@@ -721,12 +703,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationSettingsTitle => 'Notification Settings';
 
   @override
-  String get notificationPermissionRequired =>
-      'Notification Permission Required';
+  String get notificationPermissionRequired => 'Notification Permission Required';
 
   @override
-  String get notificationPermissionRationale =>
-      'Enable notifications to receive gentle reminders and celebrate achievements.';
+  String get notificationPermissionRationale => 'Enable notifications to receive gentle reminders and celebrate achievements.';
 
   @override
   String get requesting => 'Requesting...';
@@ -738,8 +718,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enableNotificationsTitle => 'Enable Notifications';
 
   @override
-  String get enableNotificationsSubtitle =>
-      'Allow Focus Field to send notifications';
+  String get enableNotificationsSubtitle => 'Allow Focus Field to send notifications';
 
   @override
   String get dailyReminderTitle => 'Smart Daily Reminders';
@@ -751,8 +730,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTimeLabel => 'Daily Time';
 
   @override
-  String get dailyTimeHint =>
-      'Choose a fixed time or let Focus Field learn your pattern.';
+  String get dailyTimeHint => 'Choose a fixed time or let Focus Field learn your pattern.';
 
   @override
   String get useSmartCta => 'Use Smart';
@@ -797,16 +775,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionCompleteEndedTitle => 'Session Ended';
 
   @override
-  String get reminderStartJourney =>
-      '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+  String get reminderStartJourney => '🧘‍♂️ Start your silence journey today! Find your inner peace.';
 
   @override
-  String get reminderRestart =>
-      '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+  String get reminderRestart => '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
 
   @override
-  String get reminderDayTwo =>
-      '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+  String get reminderDayTwo => '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
 
   @override
   String reminderStreakShort(int streak) {
@@ -824,32 +799,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get achievementFirstSession =>
-      '🎉 First session completed! Welcome to your silence journey!';
+  String get achievementFirstSession => '🎉 First session completed! Welcome to your silence journey!';
 
   @override
-  String get achievementWeekStreak =>
-      '🌟 7-day streak achieved! Consistency is your superpower!';
+  String get achievementWeekStreak => '🌟 7-day streak achieved! Consistency is your superpower!';
 
   @override
-  String get achievementMonthStreak =>
-      '🏆 30-day streak unlocked! You\'re unstoppable!';
+  String get achievementMonthStreak => '🏆 30-day streak unlocked! You\'re unstoppable!';
 
   @override
-  String get achievementPerfectSession =>
-      '✨ Perfect silence session! Not a sound disturbed your peace.';
+  String get achievementPerfectSession => '✨ Perfect silence session! Not a sound disturbed your peace.';
 
   @override
-  String get achievementLongSession =>
-      '⏰ Extended session master! Your focus grows stronger.';
+  String get achievementLongSession => '⏰ Extended session master! Your focus grows stronger.';
 
   @override
-  String get achievementGeneric =>
-      '🎊 Achievement unlocked! Keep up the great work!';
+  String get achievementGeneric => '🎊 Achievement unlocked! Keep up the great work!';
 
   @override
-  String get weeklyProgressNone =>
-      '💭 This week could use some silence. Ready for a peaceful session?';
+  String get weeklyProgressNone => '💭 This week could use some silence. Ready for a peaceful session?';
 
   @override
   String weeklyProgressFew(int count) {
@@ -879,101 +847,79 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hideTips => 'Hide Tips';
 
   @override
-  String get tip01 =>
-      'Short sessions count—start with 2–3 minutes to build consistency.';
+  String get tip01 => 'Short sessions count—start with 2–3 minutes to build consistency.';
 
   @override
-  String get tip02 =>
-      'Use Smart Daily Reminders to nudge you at your best time.';
+  String get tip02 => 'Use Smart Daily Reminders to nudge you at your best time.';
 
   @override
-  String get tip03 =>
-      'Recalibrate when your environment changes for better accuracy.';
+  String get tip03 => 'Recalibrate when your environment changes for better accuracy.';
 
   @override
   String get tip04 => 'Check Weekly Trends to spot your momentum over time.';
 
   @override
-  String get tip05 =>
-      'Streaks grow with daily wins—show up, even for one minute.';
+  String get tip05 => 'Streaks grow with daily wins—show up, even for one minute.';
 
   @override
-  String get tip06 =>
-      'High ambient noise? Raise threshold a bit to reduce false fails.';
+  String get tip06 => 'High ambient noise? Raise threshold a bit to reduce false fails.';
 
   @override
-  String get tip07 =>
-      'Try different times of day to find your quiet sweet spot.';
+  String get tip07 => 'Try different times of day to find your quiet sweet spot.';
 
   @override
-  String get tip08 =>
-      'Session complete notifications keep motivation high—enable them!';
+  String get tip08 => 'Session complete notifications keep motivation high—enable them!';
 
   @override
-  String get tip09 =>
-      'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
+  String get tip09 => 'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
 
   @override
-  String get tip10 =>
-      'Use shorter sessions on busy days to keep your streak alive.';
+  String get tip10 => 'Use shorter sessions on busy days to keep your streak alive.';
 
   @override
-  String get tip11 =>
-      'The progress ring is tappable—start or stop with a single tap.';
+  String get tip11 => 'The progress ring is tappable—start or stop with a single tap.';
 
   @override
-  String get tip12 =>
-      'Export your data (Premium) to share progress or back it up.';
+  String get tip12 => 'Export your data (Premium) to share progress or back it up.';
 
   @override
-  String get tip13 =>
-      'Average session length helps you choose the right duration.';
+  String get tip13 => 'Average session length helps you choose the right duration.';
 
   @override
-  String get tip14 =>
-      'Consistency beats intensity—small daily practice compounds.';
+  String get tip14 => 'Consistency beats intensity—small daily practice compounds.';
 
   @override
   String get tip15 => 'Set a gentle goal: 5 quiet minutes is a great baseline.';
 
   @override
-  String get tip16 =>
-      'The noise chart helps you see spikes—aim for calmer periods.';
+  String get tip16 => 'The noise chart helps you see spikes—aim for calmer periods.';
 
   @override
-  String get tip17 =>
-      'Upgrade session duration (Premium) for longer focus blocks.';
+  String get tip17 => 'Upgrade session duration (Premium) for longer focus blocks.';
 
   @override
-  String get tip18 =>
-      'High threshold warning guards accuracy—avoid setting it too high.';
+  String get tip18 => 'High threshold warning guards accuracy—avoid setting it too high.';
 
   @override
-  String get tip19 =>
-      'Weekdays vary—tune your weekly summary to your schedule.';
+  String get tip19 => 'Weekdays vary—tune your weekly summary to your schedule.';
 
   @override
-  String get tip20 =>
-      'Accessibility options: high contrast, large text, and vibration.';
+  String get tip20 => 'Accessibility options: high contrast, large text, and vibration.';
 
   @override
-  String get tip21 =>
-      'Ambient baseline matters—calibrate when moving to new spaces.';
+  String get tip21 => 'Ambient baseline matters—calibrate when moving to new spaces.';
 
   @override
   String get tip22 => 'Quiet wins add up—1 point per minute keeps it simple.';
 
   @override
-  String get tip23 =>
-      'Confetti celebrates progress—small celebrations reinforce habits.';
+  String get tip23 => 'Confetti celebrates progress—small celebrations reinforce habits.';
 
   @override
-  String get tip24 =>
-      'Try mornings if evenings are noisy—best time differs for everyone.';
+  String get tip24 => 'Try mornings if evenings are noisy—best time differs for everyone.';
 
   @override
-  String get tip25 =>
-      'Fine‑tune the decibel threshold for your room’s character.';
+  String get tip25 => 'Fine‑tune the decibel threshold for your room’s character.';
 
   @override
   String get tip26 => 'Use the moving average to smooth out noisy days.';
@@ -982,27 +928,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip27 => 'Let Weekly Insights remind you of your progress rhythm.';
 
   @override
-  String get tip28 =>
-      'Finish what you start—short sessions reduce friction to begin.';
+  String get tip28 => 'Finish what you start—short sessions reduce friction to begin.';
 
   @override
-  String get tip29 =>
-      'Silence is a skill—practice makes patterns, patterns make progress.';
+  String get tip29 => 'Silence is a skill—practice makes patterns, patterns make progress.';
 
   @override
   String get tip30 => 'You’re one tap away—start a tiny session now.';
 
   @override
-  String get tipInstructionNotifications =>
-      'Settings → Advanced → Notifications to configure reminders and celebrations.';
+  String get tipInstructionNotifications => 'Settings → Advanced → Notifications to configure reminders and celebrations.';
 
   @override
-  String get tipInstructionWeeklySummary =>
-      'Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.';
+  String get tipInstructionWeeklySummary => 'Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.';
 
   @override
-  String get tipInstructionThreshold =>
-      'Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.';
+  String get tipInstructionThreshold => 'Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.';
 
   @override
   String get tipsTitle => 'Tips';
@@ -1011,39 +952,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tipInstructionSetTime => 'Settings → Basic → Session duration';
 
   @override
-  String get tipInstructionDailyReminders =>
-      'Settings → Advanced → Notifications → Smart Daily Reminders.';
+  String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate =>
-      'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
 
   @override
-  String get tipInstructionOpenAnalytics =>
-      'Open Analytics to view trends and averages.';
+  String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
 
   @override
-  String get tipInstructionSessionComplete =>
-      'Settings → Advanced → Notifications → Session Completed.';
+  String get tipInstructionSessionComplete => 'Settings → Advanced → Notifications → Session Completed.';
 
   @override
-  String get tipInstructionTapRing =>
-      'On Home, tap the progress ring to start/stop.';
+  String get tipInstructionTapRing => 'On Home, tap the progress ring to start/stop.';
 
   @override
   String get tipInstructionExport => 'Settings → Advanced → Export Data.';
 
   @override
-  String get tipInstructionOpenNoiseChart =>
-      'Start a session to see the real‑time noise chart.';
+  String get tipInstructionOpenNoiseChart => 'Start a session to see the real‑time noise chart.';
 
   @override
-  String get tipInstructionUpgradeDuration =>
-      'Settings → Basic → Session duration. Upgrade for longer blocks.';
+  String get tipInstructionUpgradeDuration => 'Settings → Basic → Session duration. Upgrade for longer blocks.';
 
   @override
-  String get tipInstructionAccessibility =>
-      'Settings → Advanced → Accessibility.';
+  String get tipInstructionAccessibility => 'Settings → Advanced → Accessibility.';
 
   @override
   String get tipInstructionStartNow => 'Tap Start Session on the Home screen.';

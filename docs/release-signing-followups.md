@@ -25,5 +25,5 @@ Short notes to prep signed store builds after moving identifiers to `io.sparkvib
 ## Quick local checks
 
 - `flutter pub get && flutter analyze && flutter test`
-- Android release: `./scripts/build-prod.sh` (ensure env secrets are set)
+- Android release: `./scripts/build/build-prod.sh` (ensure env secrets are set)
 - iOS archive: Open `ios/Runner.xcworkspace` and Archive with correct team & profiles.

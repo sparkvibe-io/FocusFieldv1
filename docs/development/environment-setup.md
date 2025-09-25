@@ -34,7 +34,7 @@ SENTRY_DSN=https://xxxxx@sentry.io/xxxxx
 #### 3. Run Development Build
 ```bash
 # Automatically loads .env file
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run directly
 flutter run
@@ -56,7 +56,7 @@ export REVENUECAT_API_KEY="your_actual_key"
 export IS_DEVELOPMENT="false"
 
 # Build for production
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 ### Method 3: System Environment Variables
@@ -140,7 +140,7 @@ export IS_DEVELOPMENT=false
 export ENABLE_MOCK_SUBSCRIPTIONS=false
 
 # Or use production build script
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 #### 3. Environment file not loading
@@ -216,7 +216,7 @@ vim .env  # Add your API keys
 ### 2. Daily Development
 ```bash
 # Quick development build
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run in development mode
 flutter run
@@ -228,7 +228,7 @@ flutter run
 export REVENUECAT_API_KEY="prod_key_here"
 
 # Build for production
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 ## Related Documents

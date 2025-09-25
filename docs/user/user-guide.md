@@ -123,7 +123,7 @@ A session counts “quiet time” when ambient noise stays below your configured
 - Use Calibration first, then fine-tune manually if needed
 
 #### Session Duration
-- **Free Tier**: Up to 5 minutes
+- **Free Tier**: Up to 30 minutes
 - **Premium**: Up to 120 minutes
 - Adjustable in whole minutes via slider
 

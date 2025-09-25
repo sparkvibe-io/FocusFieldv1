@@ -9,6 +9,7 @@ import 'dart:math' as math;
 import 'package:focus_field/utils/throttled_logger.dart';
 import 'package:focus_field/utils/debug_log.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/widgets/quick_decibel_selector.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -201,16 +202,37 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       ),
       child: Column(
         children: [
-          // Header
+          // Header with quick decibel selector
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Left: Title
               Text(
                 'Noise Level',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              const SizedBox(width: 8),
+
+              // Center: Quick decibel selector (only when not listening for cleaner UI)
+              if (!isListening)
+                Expanded(
+                  child: Center(
+                    child: QuickDecibelSelector(
+                      thresholds: const [20, 40, 60, 80],
+                      selectedThreshold: ref.watch(activeDecibelThresholdProvider),
+                      onThresholdSelected: (threshold) {
+                        ref.read(activeDecibelThresholdProvider.notifier)
+                           .state = threshold;
+                      },
+                      enabled: !isListening,
+                    ),
+                  ),
+                )
+              else
+                const Expanded(child: SizedBox()), // Spacer when listening
+
+              // Right: Status indicator and dB reading
               Row(
                 children: [
                   Container(

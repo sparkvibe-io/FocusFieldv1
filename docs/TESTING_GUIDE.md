@@ -63,15 +63,15 @@ test/
 
 ### 3. Manual Testing Scripts
 
-**Comprehensive Testing**: `scripts/test-comprehensive.sh`
+**Comprehensive Testing**: `scripts/testing/test-comprehensive.sh`
 ```bash
-./scripts/test-comprehensive.sh
+./scripts/testing/test-comprehensive.sh
 ```
 *Complete application testing including tip system, notifications, core functionality*
 
-**Tip System Specific**: `scripts/test-tip-system.sh`
+**Tip System Specific**: `scripts/testing/test-tip-system.sh`
 ```bash
-./scripts/test-tip-system.sh
+./scripts/testing/test-tip-system.sh
 ```
 *Focused testing of tip system functionality only*
 
@@ -157,10 +157,10 @@ flutter test --coverage
 flutter test test/tip_service_test.dart
 
 # Run tip system test script
-./scripts/test-tip-system.sh
+./scripts/testing/test-tip-system.sh
 
 # Run verification script
-./scripts/verify-functionality.sh
+./scripts/testing/verify-functionality.sh
 ```
 
 ### Coverage Analysis
@@ -255,7 +255,7 @@ The existing test suite runs in CI/CD with:
 ### For Tip System Features
 1. Add tests to `test/tip_service_test.dart`
 2. Include both automated and manual test scenarios
-3. Update `scripts/test-tip-system.sh` if needed
+3. Update `scripts/testing/test-tip-system.sh` if needed
 4. Verify production and development mode behavior
 
 ## 🎯 Testing Best Practices

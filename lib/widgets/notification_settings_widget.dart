@@ -247,31 +247,36 @@ class _NotificationSettingsWidgetState
                                                     dailyHour: picked.hour,
                                                     dailyMinute: picked.minute,
                                                   );
-                                              await notificationService
-                                                  .scheduleDailyReminderNotification(
-                                                    context: context,
-                                                  );
-                                              if (mounted) {
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
+                                              final ctx = context;
+                                              if (ctx.mounted) {
+                                                final pickedText = picked.format(ctx);
+                                                await notificationService
+                                                    .scheduleDailyReminderNotification(
+                                                      context: ctx,
+                                                    );
+                                                if (!ctx.mounted) return;
+                                                ScaffoldMessenger.of(ctx).showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                      'Daily reminder at ${picked.format(context)}',
+                                                      'Daily reminder at $pickedText',
                                                     ),
                                                   ),
                                                 );
                                               }
                                             }
                                           },
-                                          child: Text(
-                                            dailyReminderHour != null &&
-                                                    dailyReminderMinute != null
-                                                ? _formatTime(
-                                                  dailyReminderHour,
-                                                  dailyReminderMinute,
-                                                )
-                                                : 'Smart (${notificationService.getOptimalReminderTime()?.format(context) ?? 'learning'})',
+                                          child: Builder(
+                                            builder: (ctx) {
+                                              final smart = notificationService.getOptimalReminderTime();
+                                              final smartText = (smart != null && mounted)
+                                                  ? smart.format(ctx)
+                                                  : 'learning';
+                                              return Text(
+                                                dailyReminderHour != null && dailyReminderMinute != null
+                                                    ? _formatTime(dailyReminderHour, dailyReminderMinute)
+                                                    : 'Smart ($smartText)',
+                                              );
+                                            },
                                           ),
                                         ),
                                         if (dailyReminderHour != null)
@@ -457,16 +462,21 @@ class _NotificationSettingsWidgetState
                                                     weeklyHour: picked.hour,
                                                     weeklyMinute: picked.minute,
                                                   );
-                                              await notificationService
-                                                  .scheduleWeeklySummaryNotification(
-                                                    context: context,
-                                                  );
+                                              final ctx = context;
+                                              if (ctx.mounted) {
+                                                await notificationService
+                                                    .scheduleWeeklySummaryNotification(
+                                                      context: ctx,
+                                                    );
+                                              }
                                             }
                                           },
-                                          label: Text(
-                                            _formatTime(
-                                              weeklyHour,
-                                              weeklyMinute,
+                                          label: Builder(
+                                            builder: (ctx) => Text(
+                                              _formatTime(
+                                                weeklyHour,
+                                                weeklyMinute,
+                                              ),
                                             ),
                                           ),
                                         ),

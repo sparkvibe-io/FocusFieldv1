@@ -26,7 +26,7 @@ flutter run -d 00008140-000669503E93001C \
 
 ## BUILD FOR PRODUCTION
 Android release: 
-scripts/build-prod.sh --rc-key=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU
+scripts/build/build-prod.sh --rc-key=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU
 
 iOS release: 
 export REVENUECAT_API_KEY=$REVENUECAT_IOS_API_KEY 

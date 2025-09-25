@@ -273,6 +273,7 @@ class RatingService {
       case 'rate':
         DebugLog.d('[Rating] User selected Rate Now');
         await _recordPrompt(version, totalSessions);
+        if (!context.mounted) return;
         await forceRate(context);
         break;
       case 'later':

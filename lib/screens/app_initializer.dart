@@ -50,6 +50,7 @@ class AppInitializer extends ConsumerWidget {
                   try {
                     await RatingService.instance.initLaunch();
                     // silenceData is a SilenceData model
+                    if (!context.mounted) return;
                     await RatingService.instance.maybePrompt(
                       context,
                       totalSessions: silenceData.totalSessions,

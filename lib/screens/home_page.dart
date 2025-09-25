@@ -30,6 +30,7 @@ import 'package:focus_field/widgets/theme_overlays.dart';
 import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/widgets/tip_info_icon.dart';
 import 'package:focus_field/providers/tip_info_provider.dart';
+import 'package:focus_field/widgets/quick_duration_selector.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -301,6 +302,20 @@ class HomePage extends HookConsumerWidget {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Quick Duration Selector above the ring
+                          if (!silenceState.isListening)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: QuickDurationSelector(
+                                durations: const [1, 5, 10, 15, 30, 60, 90, 120], // Removed 20 for single-line layout
+                                selectedDurationSeconds: ref.watch(activeSessionDurationProvider),
+                                onDurationSelected: (durationSeconds) {
+                                  ref.read(activeSessionDurationProvider.notifier)
+                                     .state = durationSeconds;
+                                },
+                                enabled: !silenceState.isListening,
+                              ),
+                            ),
                           SizedBox(
                             width: ringSize,
                             height: ringSize,
@@ -323,10 +338,11 @@ class HomePage extends HookConsumerWidget {
                               child: ProgressRing(
                                 progress: silenceState.progress,
                                 isListening: silenceState.isListening,
-                                sessionDurationSeconds: ref.read(
-                                  sessionDurationProvider,
+                                sessionDurationSeconds: ref.watch(
+                                  activeSessionDurationProvider,
                                 ),
                                 size: ringSize,
+                                showSetDuration: true,
                                 onTap: () {
                                   ref
                                       .read(accessibilityServiceProvider)
@@ -622,6 +638,7 @@ class HomePage extends HookConsumerWidget {
 
           // System notification + in-app feedback
           if (notificationService.enableSessionComplete) {
+            if (!context.mounted) return;
             notificationService.showSessionComplete(
               context,
               success,
@@ -667,7 +684,9 @@ class HomePage extends HookConsumerWidget {
 
           // Show dialog with option to open settings if permission is permanently denied
           if (error.contains('Settings > Privacy & Security')) {
-            PermissionDialogs.showMicrophoneSettings(context, ref);
+            if (context.mounted) {
+              PermissionDialogs.showMicrophoneSettings(context, ref);
+            }
           }
         }
       },

@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
+# Wrapper for backward compatibility. New location: scripts/testing/test.sh
 set -euo pipefail
-
-# Focus Field test wrapper: formats, analyzes, then runs tests compactly.
-
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT_DIR/scripts/testing/test.sh" "$@"
 echo "🔧 Formatting (check only)..."
-dart format --set-exit-if-changed . || { echo "::error::Formatting issues found"; exit 2; }
-
-echo "🔎 Analyzing..."
-flutter analyze
-
-echo "🧪 Running tests..."
-flutter test -r compact
-
-echo "✅ All checks passed"

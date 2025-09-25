@@ -532,15 +532,18 @@ class SilenceDetector {
                 }
               }
             } catch (e) {
-              if (!kReleaseMode)
-                print('DEBUG: Error processing ambient reading: $e');
+              if (!kReleaseMode) {
+                DebugLog.d('DEBUG: Error processing ambient reading: $e');
+              }
               _handleAudioError('Ambient reading processing error: $e');
             }
           }
         },
         onError: (error) {
           if (!_isDisposed && _isAmbientMonitoring) {
-            if (!kReleaseMode) print('DEBUG: Ambient monitoring error: $error');
+            if (!kReleaseMode) {
+              DebugLog.d('DEBUG: Ambient monitoring error: $error');
+            }
 
             // Check for specific audio buffer errors
             final errorString = error.toString();

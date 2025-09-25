@@ -19,7 +19,8 @@ final appSettingsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
 });
 
 // Individual setting providers that depend on the app settings
-final decibelThresholdProvider = Provider<double>((ref) {
+// Active decibel threshold provider - used for quick threshold selector temporary overrides
+final activeDecibelThresholdProvider = StateProvider<double>((ref) {
   final settings = ref.watch(appSettingsProvider);
   return settings.when(
     data: (data) => data['decibelThreshold'] as double,
@@ -28,13 +29,24 @@ final decibelThresholdProvider = Provider<double>((ref) {
   );
 });
 
-final sessionDurationProvider = Provider<int>((ref) {
+// Decibel threshold provider - now uses active threshold for actual detection
+final decibelThresholdProvider = Provider<double>((ref) {
+  return ref.watch(activeDecibelThresholdProvider);
+});
+
+// Active session duration provider - used for quick duration selector temporary overrides
+final activeSessionDurationProvider = StateProvider<int>((ref) {
   final settings = ref.watch(appSettingsProvider);
   return settings.when(
     data: (data) => data['sessionDuration'] as int,
     loading: () => AppConstants.silenceDurationSeconds,
     error: (_, __) => AppConstants.silenceDurationSeconds,
   );
+});
+
+// Session duration provider - now uses active duration for actual sessions
+final sessionDurationProvider = Provider<int>((ref) {
+  return ref.watch(activeSessionDurationProvider);
 });
 
 // Sample interval and points per success are now system constants

@@ -54,10 +54,9 @@ class AppConstants {
   );
 
   // Product IDs (these can be public)
-  // Product identifiers (current live offering). NOTE: Colons in product IDs may not be accepted by all stores;
-  // verify with App Store / Play Console. If invalid, prefer dots/underscores (e.g. premium.tier.monthly).
-  static const String premiumMonthlyProductId = 'premium.tier:monthly';
-  static const String premiumYearlyProductId = 'premium.tier:yearly';
+  // Normalized product identifiers (store-safe). Use dot notation for broadest compatibility.
+  static const String premiumMonthlyProductId = 'premium.tier.monthly';
+  static const String premiumYearlyProductId = 'premium.tier.yearly';
   // Premium Plus postponed (future expansion) – identifiers removed for now.
 
   // RevenueCat Hosted Paywall Identifiers

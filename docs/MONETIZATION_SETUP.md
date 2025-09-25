@@ -53,8 +53,8 @@ Implemented:
 #### Configure Products
 Create the following subscription product identifiers (must match exactly across App Store Connect, Google Play Console, and RevenueCat):
 ```
-premium.tier:monthly  # Monthly (rename to premium.tier.monthly if stores reject colon)
-premium.tier:yearly   # Yearly (rename to premium.tier.yearly if needed)
+premium.tier.monthly  # Monthly
+premium.tier.yearly   # Yearly
 ```
 
 #### Update API Key
@@ -72,11 +72,9 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Configure Subscriptions
 1. Go to **Features** → **In-App Purchases**
-2. Create Auto-Renewable Subscriptions:
-   - Premium Monthly: `silence_score_premium_monthly` ($1.99/month)
-   - Premium Yearly: `silence_score_premium_yearly` ($19.99/year)
-   - Premium Plus Monthly: `silence_score_premium_plus_monthly` ($3.99/month)
-   - Premium Plus Yearly: `silence_score_premium_plus_yearly` ($39.99/year)
+2. Create Auto-Renewable Subscriptions (use these exact product IDs):
+  - Premium Monthly: `premium.tier.monthly` ($1.99/month)
+  - Premium Yearly: `premium.tier.yearly` ($19.99/year)
 3. Create subscription groups and configure pricing
 
 #### Test in Sandbox
