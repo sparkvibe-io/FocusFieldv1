@@ -30,14 +30,19 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
       size: size,
       adUnitId: _testUnitId,
       listener: BannerAdListener(
-        onAdLoaded:
-            (ad) => setState(() {
-              _loading = false;
-            }),
+        onAdLoaded: (ad) {
+          if (!mounted) return;
+          setState(() {
+            _banner = ad as BannerAd;
+            _loading = false;
+          });
+        },
         onAdFailedToLoad: (ad, err) {
           ad.dispose();
           if (mounted) {
             setState(() {
+              // Ensure we don't try to render an unloaded/failed ad.
+              _banner = null;
               _loading = false;
             });
           }
@@ -45,14 +50,12 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
       ),
       request: const AdRequest(),
     );
-    await ad.load();
-    if (mounted) {
-      setState(() {
-        _banner = ad;
-      });
-    } else {
-      ad.dispose();
-    }
+    // Start loading; actual assignment occurs in onAdLoaded above to
+    // guarantee AdWidget only receives a loaded ad.
+    // It's safe to ignore the returned Future here.
+    // ignore: discarded_futures
+    ad.load();
+    if (!mounted) ad.dispose();
   }
 
   @override
