@@ -6,22 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 **CURRENT STATUS - JULY 27, 2025: MONETIZATION COMPLETE**
+## 🚀 **CURRENT STATUS - SEPT 28, 2025: MONETIZATION + ADS WIRED**
 
-### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete**
-- **RevenueCat Integration**: ✅ Complete with API key `<REVENUECAT_API_KEY>`
+### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
+- **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
+- **iOS API Key**: ✅ `appl_qoFokYDCMBFZLyKXTulaPFkjdME` (configured)
+- **Android API Key**: ✅ `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf` (configured)
 - **Subscription System**: ✅ Premium ($1.99/month), Premium Plus ($3.99/month)
 - **Feature Gating**: ✅ All premium features properly restricted
 - **Paywall UI**: ✅ Professional subscription interface implemented
 - **Package ID**: ✅ Updated to `io.sparkvibe.focusfield` (iOS & Android)
-- **Build Verification**: ✅ Android APK builds successfully with monetization
-- **Development Mode**: ✅ Mock subscriptions enabled for testing
+- **Build Verification**: ✅ iOS & Android builds successfully with monetization
+- **Ads (AdMob)**: ✅ Banner wired, dev uses test units, release uses production units; optional QA fallback to test on failure
+- **Development Mode**: ✅ Mock subscriptions available for testing
 
 ### 📋 **IMMEDIATE NEXT STEPS (This Week)**
 1. **App Store Connect**: Configure subscription products
 2. **Google Play Console**: Configure subscription products  
 3. **Visual Assets**: Create app icons and store screenshots
 4. **Legal Documents**: Finalize privacy policy and terms of service
+5. **Ad Serving**: Allow time for new iOS banner unit to begin serving; validate fill; consider anchored adaptive size
 
 ### 🎯 **Launch Timeline: 6 Weeks Total (Week 1 Complete)**
 - **Week 1**: ✅ Monetization infrastructure (COMPLETE - AHEAD OF SCHEDULE)
@@ -91,6 +95,15 @@ flutter pub upgrade
 flutter clean && flutter pub get
 ```
 
+## AdMob Quick Reference
+
+- Android App ID: `ca-app-pub-2086096819226646~6517708516`
+- iOS App ID: `ca-app-pub-2086096819226646~9627636327`
+- Android Banner Unit (default): `ca-app-pub-2086096819226646/3553182566`
+- iOS Banner Unit (default): `ca-app-pub-2086096819226646/9050063581`
+- Dev Mode: test ad unit always; Release: production unit; Optional fallback (QA): `ADS_FALLBACK_TEST_ON_FAIL=true`
+
+
 ## Architecture Overview
 
 ### State Management
@@ -110,6 +123,8 @@ flutter clean && flutter pub get
 ### Key Providers
 - **SilenceDataNotifier** (`lib/providers/silence_provider.dart`): Session data and statistics ✅
 - **SubscriptionProvider** (`lib/providers/subscription_provider.dart`): ✅ **COMPLETE** Premium feature management
+- **activeSessionDurationProvider** (`lib/providers/silence_provider.dart`): ✅ **NEW** Temporary session duration overrides for quick selectors
+- **activeDecibelThresholdProvider** (`lib/providers/silence_provider.dart`): ✅ **NEW** Temporary threshold overrides for quick selectors
 - **ThemeProvider** (`lib/providers/theme_provider.dart`): App theming with System/Light/Dark modes ✅
 - **NotificationProvider** (`lib/providers/notification_provider.dart`): Smart reminder state management ✅
 - **AccessibilityProvider** (`lib/providers/accessibility_provider.dart`): Accessibility features ✅
@@ -121,8 +136,11 @@ flutter clean && flutter pub get
 
 ### Key Widgets
 - **ProgressRing** (`lib/widgets/progress_ring.dart`): Interactive session control with countdown timer ✅
-- **RealTimeNoiseChart** (`lib/widgets/real_time_noise_chart.dart`): Live decibel visualization using fl_chart ✅
+- **RealTimeNoiseChart** (`lib/widgets/real_time_noise_chart.dart`): Live decibel visualization with quick threshold selectors ✅
 - **SessionHistoryGraph** (`lib/widgets/session_history_graph.dart`): Historical performance tracking ✅
+- **TabbedOverviewWidget** (`lib/widgets/tabbed_overview_widget.dart`): ✅ **NEW** Space-optimized tabbed container combining Practice Overview + Advanced Analytics
+- **QuickDurationSelector** (`lib/widgets/quick_duration_selector.dart`): ✅ **NEW** Compact session duration buttons with premium integration
+- **QuickDecibelSelector** (`lib/widgets/quick_decibel_selector.dart`): ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - **FeatureGate** (`lib/widgets/feature_gate.dart`): ✅ **COMPLETE** Premium feature access control
 - **PaywallWidget** (`lib/widgets/paywall_widget.dart`): ✅ **COMPLETE** Subscription management UI
 - **AdvancedAnalyticsWidget** (`lib/widgets/advanced_analytics_widget.dart`): Premium analytics dashboard ✅
@@ -138,10 +156,12 @@ flutter clean && flutter pub get
 4. ✅ Build scripts ready for development and production
 
 ### Current Environment Configuration ✅ **READY**
-- `REVENUECAT_API_KEY`: ✅ `<REVENUECAT_API_KEY>` (CONFIGURED)
+- `REVENUECAT_API_KEY`: ✅ Platform-specific keys configured
+  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
 - `FIREBASE_API_KEY`: ✅ Configured for analytics (optional)
-- `IS_DEVELOPMENT`: ✅ `true` (development mode enabled)
-- `ENABLE_MOCK_SUBSCRIPTIONS`: ✅ `true` (mock payments for testing)
+- `IS_DEVELOPMENT`: ✅ `false` (production mode enabled)
+- `ENABLE_MOCK_SUBSCRIPTIONS`: ✅ `false` (real payments for production)
 
 ### Build Scripts
 - `./scripts/build/build-dev.sh`: Development build with mock subscriptions
@@ -163,9 +183,34 @@ flutter clean && flutter pub get
 - Achievement system with confetti celebrations
 
 ### Premium Features (RevenueCat Integration)
-- **Premium ($1.99/month)**: Extended sessions, advanced analytics, data export
+- **Premium ($1.99/month)**: Extended sessions (1h, 1.5h, 2h), advanced analytics, data export
 - **Premium Plus ($3.99/month)**: Cloud sync, AI insights, multi-environment profiles
 - Mock subscriptions available for development/testing
+
+## Recent UI/UX Enhancements ✅ **LATEST UPDATES**
+
+### Quick Selector System
+- **Duration Selectors**: Instant access buttons (1, 5, 10, 15, 30 min + premium 1h, 1.5h, 2h) above progress ring
+- **Decibel Selectors**: Quick threshold adjustment buttons (20, 40, 60, 80 dB) integrated in noise level widget header
+- **Premium Integration**: Premium duration buttons show professional paywall for free users
+- **Temporary Override Pattern**: Uses `activeSessionDurationProvider` and `activeDecibelThresholdProvider` for real-time adjustments without affecting persistent settings
+- **Responsive Design**: Single-line layout that adapts to different screen sizes
+
+### Tabbed Overview Widget - Space Optimization
+- **Combined Layout**: Merges Practice Overview and Advanced Analytics into tabbed interface
+- **Space Savings**: ~80px vertical space freed for advertisement placement
+- **Overview Tab**: Compact stats (Points, Streak, Sessions) + 7-day activity chart with side-by-side layout
+- **Analytics Tab**: Full premium analytics experience (6 performance metrics, trends chart with moving averages, AI insights)
+- **Dynamic Height**: Automatically adjusts container size (80px for Overview, 500px for Analytics)
+- **Premium Gating**: Analytics tab shows paywall for free users, full content for premium subscribers
+- **Tab Controller**: Smooth animations and state management with proper lifecycle handling
+
+### Enhanced User Experience
+- **No Advertisement Interference**: Premium users get full screen real estate without ad space constraints
+- **Professional Paywall Integration**: Consistent upgrade flow using existing `showPaywall()` system
+- **Real-time Feedback**: Immediate visual response to threshold and duration changes
+- **Data-driven Charts**: 7-day activity chart shows actual session data with bar heights based on points earned
+- **Accessibility**: All components follow Material 3 design guidelines with proper contrast and touch targets
 
 ## Data Models
 
@@ -319,11 +364,13 @@ lib/
 - ✅ **Mock Testing**: Development mode allows testing without real payments
 
 #### Revenue System: Production Ready
-- ✅ **API Configuration**: RevenueCat API key `<REVENUECAT_API_KEY>`
+- ✅ **API Configuration**: Platform-specific RevenueCat API keys configured
+  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
 - ✅ **Product IDs**: Premium and Premium Plus subscription products defined
 - ✅ **Billing Cycles**: Monthly and yearly options implemented
-- ✅ **Feature Restrictions**: Free tier limited to 5-minute sessions, 7-day history
-- ✅ **Premium Benefits**: 60-minute sessions, unlimited history, advanced analytics, export
+- ✅ **Feature Restrictions**: Free tier limited to 30-minute sessions, 7-day history
+- ✅ **Premium Benefits**: 120-minute sessions, 90-day history, advanced analytics, export
 
 #### Implementation Timeline: Ahead of Schedule
 - **Week 1**: ✅ **COMPLETE** - Monetization infrastructure (planned for Days 1-4)

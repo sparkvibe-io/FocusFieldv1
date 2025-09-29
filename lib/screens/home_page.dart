@@ -10,10 +10,7 @@ import 'package:focus_field/providers/theme_provider.dart';
 import 'package:focus_field/screens/settings_sheet.dart';
 import 'package:focus_field/widgets/progress_ring.dart';
 import 'package:focus_field/constants/layout_constants.dart';
-import 'package:focus_field/widgets/practice_overview_widget.dart';
 import 'package:focus_field/widgets/real_time_noise_chart.dart';
-import 'package:focus_field/widgets/advanced_analytics_widget.dart';
-import 'package:focus_field/widgets/feature_gate.dart';
 import 'package:focus_field/widgets/error_boundary.dart';
 import 'package:focus_field/widgets/audio_safe_widget.dart';
 import 'package:focus_field/widgets/permission_dialogs.dart';
@@ -31,6 +28,7 @@ import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/widgets/tip_info_icon.dart';
 import 'package:focus_field/providers/tip_info_provider.dart';
 import 'package:focus_field/widgets/quick_duration_selector.dart';
+import 'package:focus_field/widgets/tabbed_overview_widget.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -385,18 +383,8 @@ class HomePage extends HookConsumerWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Combined Practice Overview
-                      PracticeOverviewWidget(silenceData: silenceData),
-                      const SizedBox(height: 12),
-                      FeatureGate(
-                        featureId: 'advanced_analytics',
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: AdvancedAnalyticsWidget(
-                            silenceData: silenceData,
-                          ),
-                        ),
-                      ),
+                      // NEW: Tabbed Overview Widget (combines Practice Overview + Advanced Analytics)
+                      TabbedOverviewWidget(silenceData: silenceData),
                       SizedBox(
                         height:
                             isSmallScreen

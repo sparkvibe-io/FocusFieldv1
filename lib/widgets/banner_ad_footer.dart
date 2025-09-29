@@ -14,8 +14,9 @@ class FooterBannerAd extends StatefulWidget {
 class _FooterBannerAdState extends State<FooterBannerAd> {
   BannerAd? _banner;
   bool _loading = true;
+  bool _triedFallbackTest = false;
 
-  static const String _testUnitId = AppConstants.testBannerAdUnitId;
+  static final String _unitId = AppConstants.effectiveBannerAdUnitId;
 
   @override
   void initState() {
@@ -28,9 +29,12 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
     const size = AdSize.banner; // 320x50 on phones typically
     final ad = BannerAd(
       size: size,
-      adUnitId: _testUnitId,
+      adUnitId: _unitId,
       listener: BannerAdListener(
         onAdLoaded: (ad) {
+          // Debug logging
+          // ignore: avoid_print
+          print('[Ads] Banner loaded with unit: $_unitId, size: ${ad is BannerAd ? ad.size : size}');
           if (!mounted) return;
           setState(() {
             _banner = ad as BannerAd;
@@ -38,6 +42,8 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
           });
         },
         onAdFailedToLoad: (ad, err) {
+          // ignore: avoid_print
+          print('[Ads] Banner failed to load (unit: $_unitId): ${err.message} (code ${err.code})');
           ad.dispose();
           if (mounted) {
             setState(() {
@@ -45,6 +51,12 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
               _banner = null;
               _loading = false;
             });
+          }
+
+          // If in production mode and fallback is enabled, try once with the Google test unit to verify integration
+          if (!AppConstants.isDevelopmentMode && AppConstants.fallbackTestAdOnFail && !_triedFallbackTest) {
+            _triedFallbackTest = true;
+            _loadTestFallback();
           }
         },
       ),
@@ -56,6 +68,35 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
     // ignore: discarded_futures
     ad.load();
     if (!mounted) ad.dispose();
+  }
+
+  Future<void> _loadTestFallback() async {
+    // ignore: avoid_print
+    print('[Ads] Retrying with Google test banner unit to verify integration');
+    const size = AdSize.banner;
+    final testAd = BannerAd(
+      size: size,
+      adUnitId: AppConstants.testBannerAdUnitId,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          // ignore: avoid_print
+          print('[Ads] Test banner loaded (fallback). Integration verified.');
+          if (!mounted) return;
+          setState(() {
+            _banner = ad as BannerAd;
+            _loading = false;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          // ignore: avoid_print
+          print('[Ads] Test banner also failed: ${err.message} (code ${err.code})');
+          ad.dispose();
+        },
+      ),
+      request: const AdRequest(),
+    );
+    // ignore: discarded_futures
+    testAd.load();
   }
 
   @override

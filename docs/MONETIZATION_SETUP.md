@@ -244,3 +244,40 @@ August 29, 2025
 ---
 
 *This setup guide covers the technical configuration required to enable Focus Field's monetization system. Follow all steps in sequence for successful implementation.*
+
+## 📣 AdMob Ads Setup (Banners)
+
+This app uses Google Mobile Ads (AdMob) for a single bottom banner. Integration is centralized and follows Google’s guidelines.
+
+### What’s wired
+- Android App ID (Manifest): `ca-app-pub-2086096819226646~6517708516`
+- Android Banner Unit (Dart): `ca-app-pub-2086096819226646/3553182566`
+- iOS: The `GADApplicationIdentifier` is currently the Google test App ID. Replace with your real iOS App ID before release.
+
+### Where to configure
+- Android App ID: `android/app/src/main/AndroidManifest.xml`
+  - `<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="YOUR_ANDROID_APP_ID" />`
+- iOS App ID: `ios/Runner/Info.plist`
+  - `<key>GADApplicationIdentifier</key><string>YOUR_IOS_APP_ID</string>`
+- Banner Unit IDs (Dart): `lib/constants/app_constants.dart`
+  - Test unit is always used in development (safe default)
+  - Production units can be supplied via `--dart-define` or defaults in constants
+    - ANDROID_BANNER_AD_UNIT_ID (default: `ca-app-pub-2086096819226646/3553182566`)
+    - IOS_BANNER_AD_UNIT_ID (default: empty, set from AdMob console)
+
+### Dev vs Prod behavior
+- Development builds use the official test banner unit (`ca-app-pub-3940256099942544/6300978111`) regardless of platform to avoid policy issues.
+- Production builds use platform-specific production unit IDs via `AppConstants.effectiveBannerAdUnitId`.
+- Toggle with `--dart-define IS_DEVELOPMENT=false` for production-like runs.
+
+### Policy checklist
+- Do not encourage accidental clicks (no buttons directly above the banner).
+- Avoid sticky overlapping content; banner sits in a dedicated footer.
+- No prohibited content and no personal data collection tied to ads.
+- Use Google’s test IDs during development. Only use real IDs in production/test tracks.
+
+### Quick verification
+1. Android: Install a build with `IS_DEVELOPMENT=false` on a physical device connected to Play services.
+2. Confirm the banner loads without crashing and respects safe area.
+3. iOS: Set your real iOS App ID in `Info.plist` and a real banner unit in `IOS_BANNER_AD_UNIT_ID`, then test on device.
+4. Optional QA: If a new production unit shows "no fill" initially, set `ADS_FALLBACK_TEST_ON_FAIL=true` for a one-time retry with Google's test unit to verify integration.

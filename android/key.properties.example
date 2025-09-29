@@ -1,0 +1,11 @@
+# Example release keystore configuration for Focus Field
+# 1) Generate a keystore (one-time):
+#    keytool -genkey -v -keystore focusfield-release.keystore -alias focusfield -keyalg RSA -keysize 2048 -validity 10000
+# 2) Move the keystore into android/ (or a secured path you reference below)
+# 3) Copy this file to android/key.properties and fill in the actual values (DO NOT COMMIT key.properties)
+# 4) Build with: flutter build apk --release
+
+storeFile=focusfield-release.keystore
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=focusfield
+keyPassword=YOUR_KEY_PASSWORD

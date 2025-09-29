@@ -11,16 +11,20 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - **Real-Time Silence Detection**: Ambient noise monitoring using device microphone
 - **Interactive Session Progress Ring**: Large countdown control with MM:SS timer
 - **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing (1Hz aggregated controller)
+- **Quick Duration Selectors**: ✅ **NEW** Instant session length buttons (1, 5, 10, 15, 30 min + premium 1h, 1.5h, 2h)
+- **Quick Threshold Selectors**: ✅ **NEW** One-tap decibel adjustment buttons (20, 40, 60, 80 dB)
 - **Smart Point System**: Earn 1 point per minute of successful quiet time
 - **Streak Analytics**: Track daily streaks, best performances, and session history
 - **Noise Floor Calibration**: Quick ambient baseline measurement (clamped 20–80 dB)
 - **Achievement System**: Visual feedback with confetti celebrations
 
 ### Advanced Analytics
-- **Weekly Trends & Moving Average**: Recent performance insight
+- **Tabbed Overview Widget**: ✅ **NEW** Space-optimized interface combining Practice Overview + Advanced Analytics
+- **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
+- **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
+- **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
 - **Session History Graph**: Visual representation of quiet progress
-- **Compact Statistics Display**: Points, streaks, sessions
-- **Performance Metrics**: Success rates & averages
+- **7-Day Activity Chart**: Real-time bar chart showing daily points with actual session data
 
 ### Customization & Settings
 - **Tabbed Settings Interface**: Basic, Advanced, About
@@ -84,8 +88,11 @@ vim .env
 # Development build (with mock subscriptions)
 ./scripts/build/build-dev.sh
 
-# Or run directly with Flutter
-flutter run --dart-define=REVENUECAT_API_KEY=your_key_here
+# Or run directly with Flutter (iOS)
+flutter run --dart-define=REVENUECAT_API_KEY=appl_qoFokYDCMBFZLyKXTulaPFkjdME
+
+# Or run directly with Flutter (Android)
+flutter run --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
 ```
 
 ### Environment Configuration
@@ -96,7 +103,9 @@ The app uses environment variables for secure API key management:
 - **Production**: Requires actual API keys and disables mocks
 
 **Environment Variables:**
-- `REVENUECAT_API_KEY`: RevenueCat subscription management
+- `REVENUECAT_API_KEY`: RevenueCat subscription management (platform-specific)
+  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
 - `FIREBASE_API_KEY`: Firebase services (optional)
 - `IS_DEVELOPMENT`: Enable/disable development mode
 - `ENABLE_MOCK_SUBSCRIPTIONS`: Use mock payments for testing
@@ -106,18 +115,18 @@ The app uses environment variables for secure API key management:
 #### Android
 ```bash
 # Using the secure build script (recommended)
-export REVENUECAT_API_KEY="your_actual_api_key"
+export REVENUECAT_API_KEY="goog_HNKHzGPIWgDdqihvtZrmgTdMSzf"
 ./scripts/build/build-prod.sh
 
 # Or manually with dart-define
-flutter build apk --release --dart-define=REVENUECAT_API_KEY=your_key
-flutter build appbundle --release --dart-define=REVENUECAT_API_KEY=your_key
+flutter build apk --release --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
+flutter build appbundle --release --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
 ```
 
 #### iOS
 ```bash
 # Set environment variables
-export REVENUECAT_API_KEY="your_actual_api_key"
+export REVENUECAT_API_KEY="appl_qoFokYDCMBFZLyKXTulaPFkjdME"
 
 # Build for iOS
 flutter build ios --release \
@@ -339,6 +348,47 @@ Notes:
 
 Translation backlog (if any) is tracked via `untranslated_messages.txt` when running `flutter gen-l10n`.
 
+## 📣 Ads (AdMob) Integration
+
+Focus Field uses a single bottom banner via Google Mobile Ads. Integration follows Google’s guidelines and is wired for safe development defaults.
+
+### Dev vs Release behavior
+- Development (debug/profile or `IS_DEVELOPMENT=true`): always uses Google’s official test banner ad unit.
+- Release (`IS_DEVELOPMENT=false`): uses production ad unit per platform. If you set `ADS_FALLBACK_TEST_ON_FAIL=true`, the app retries once with the Google test unit when a production request fails to help verify integration.
+
+### Platform configuration
+- Android App ID (AndroidManifest): `ca-app-pub-2086096819226646~6517708516`
+- iOS App ID (Info.plist): `ca-app-pub-2086096819226646~9627636327`
+
+### Default production banner units (override-able)
+- Android: `ca-app-pub-2086096819226646/3553182566`
+- iOS: `ca-app-pub-2086096819226646/9050063581`
+
+Override at runtime using dart-defines:
+- `ANDROID_BANNER_AD_UNIT_ID=<your_android_banner_id>`
+- `IOS_BANNER_AD_UNIT_ID=<your_ios_banner_id>`
+- `ADS_FALLBACK_TEST_ON_FAIL=true` (optional, release QA)
+
+### Quick runs
+```bash
+# Android (dev-safe test ads)
+./run_android_revenuecat.sh --debug -d <device_id>
+
+# Android (release with prod ads)
+./run_android_revenuecat.sh --release -d <device_id>
+
+# iOS (dev-safe test ads)
+./run_ios_revenuecat.sh --debug -d <device_id_or_ios>
+
+# iOS (release with prod ads)
+./run_ios_revenuecat.sh --release -d <device_id_or_ios>
+
+# iOS (release with one-time fallback to test if prod fails)
+ADS_FALLBACK_TEST_ON_FAIL=true ./run_ios_revenuecat.sh --release -d <device_id>
+```
+
+Banner rendering is deferred until `onAdLoaded` to prevent crashes; if a request fails or returns no fill, the banner area collapses.
+
 
 ### Project Structure
 ```
@@ -357,7 +407,10 @@ lib/
 
 #### Widgets
 - `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
-- `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates
+- `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates + integrated quick threshold selectors
+- `TabbedOverviewWidget`: ✅ **NEW** Space-optimized tabbed container combining Practice Overview + Advanced Analytics
+- `QuickDurationSelector`: ✅ **NEW** Compact session duration buttons with premium integration and paywall
+- `QuickDecibelSelector`: ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - `SessionHistoryGraph`: Historical performance tracking with visual trends
 - `CompactPointsDisplay`: Streamlined statistics overview with points, streaks, and totals
 - `SessionHistoryCard`: Detailed session records with achievements (legacy)
@@ -371,6 +424,8 @@ lib/
 #### Providers
 - `SilenceDataNotifier`: Session data and statistics management
 - `SilenceStateProvider`: Real-time session state and progress tracking
+- `activeSessionDurationProvider`: ✅ **NEW** Temporary session duration overrides for quick selectors
+- `activeDecibelThresholdProvider`: ✅ **NEW** Temporary threshold overrides for quick selectors
 - `SettingsNotifier`: Configuration and preferences with tabbed interface
 - `ThemeProvider`: Dynamic theme switching (System/Light/Dark modes)
 
@@ -402,6 +457,45 @@ flutter analyze --no-fatal-infos
 ### Recent UI Improvements (Notifications)
 - Smart Daily Reminders and Weekly Progress Summary now display their scheduling controls within each tile footer. This prevents horizontal overflows on small screens and makes the selection more discoverable.
 - The Notification Settings bottom sheet now has a solid background with a clearly visible close (X) icon and title.
+
+## ✨ Latest UI/UX Enhancements
+
+### Quick Selector System ✅ **NEW**
+- **Duration Selectors**: Instant access buttons positioned above the progress ring
+  - Free durations: 1, 5, 10, 15, 30 minutes (single-line responsive layout)
+  - Premium durations: 1h, 1.5h, 2h (show professional paywall for free users)
+  - Temporary override pattern: Uses `activeSessionDurationProvider` for real-time changes without affecting persistent settings
+  - Premium integration: Seamlessly integrated with existing paywall system
+
+- **Decibel Selectors**: Quick threshold adjustment buttons integrated in noise level widget header
+  - One-tap presets: 20, 40, 60, 80 dB for instant environment adaptation
+  - Visual feedback: Selected threshold highlighted with primary color styling
+  - Real-time updates: Immediately affects silence detection without settings navigation
+  - Responsive design: Compact layout that works across all screen sizes
+
+### Tabbed Overview Widget - Space Optimization ✅ **NEW**
+- **Combined Interface**: Merges Practice Overview and Advanced Analytics into elegant tabbed container
+- **Space Savings**: Frees ~80px of vertical space for advertisement placement (free users)
+- **Overview Tab**:
+  - Horizontal layout with compact stats (Points, Streak, Sessions) alongside 7-day activity chart
+  - Real-time bar chart showing actual daily points from session data
+  - Efficient 80px height for overview content
+- **Analytics Tab (Premium)**:
+  - Complete advanced analytics experience for premium subscribers
+  - 6 comprehensive performance metrics in 2x3 grid layout
+  - Full trends chart with moving averages, overall average lines, and interactive tooltips
+  - AI insights with color-coded achievement, improvement, warning, and recommendation types
+  - Dynamic 500px height to accommodate rich analytics content
+- **Premium Integration**: Analytics tab shows upgrade prompt for free users, full content for premium subscribers
+- **Smooth Transitions**: TabController with proper state management and automatic height adjustment
+
+### Enhanced User Experience
+- **Professional Paywall Integration**: Consistent upgrade flow using existing `showPaywall()` system across all premium features
+- **Real-time Visual Feedback**: Immediate response to threshold and duration changes with highlighted selection states
+- **No Advertisement Interference**: Premium users get full screen real estate without space constraints for ads
+- **Responsive Design**: All components adapt to different screen sizes while maintaining single-line layouts
+- **Accessibility Compliant**: Follows Material 3 design guidelines with proper contrast ratios and touch targets
+- **Data-driven Visualizations**: Charts and metrics show actual user data instead of placeholder content
 
 ## 🎯 Advanced Features
 
@@ -665,10 +759,12 @@ When reporting issues, please include:
 Focus Field includes a RevenueCat-based subscription system with dynamic product pricing (fetched from live store offerings when available) and a mock mode for local development.
 
 #### Core Infrastructure
-- RevenueCat integration via `purchases_flutter`
+- RevenueCat integration via `purchases_flutter` with platform-specific API keys
+- **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+- **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
 - Tiered access: Free, Premium, Premium Plus (future expansion)
 - Feature gating with `FeatureGate` + Riverpod providers
-- Custom paywall (`PaywallWidget`) currently showing dynamic prices when offerings load; will evolve to remote-config / A/B capable layout
+- Custom paywall (`PaywallWidget`) currently showing dynamic prices when offerings load
 - Mock mode (`ENABLE_MOCK_SUBSCRIPTIONS=true`) for development without store connections
 
 #### Product Identifiers (Current)
@@ -682,9 +778,11 @@ premium.tier.yearly
 - Legacy fallback values (1.99 / 19.99) remain in code only if offerings fail to load.
 
 #### Key Environment Flags
-- `REVENUECAT_API_KEY` (required for production builds)
-- `IS_DEVELOPMENT` (default true locally)
-- `ENABLE_MOCK_SUBSCRIPTIONS` (set false for real purchases)
+- `REVENUECAT_API_KEY` (platform-specific, required for production builds)
+  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
+- `IS_DEVELOPMENT` (default false for production)
+- `ENABLE_MOCK_SUBSCRIPTIONS` (default false for real purchases)
 
 #### Launch Readiness Checklist (Remaining)
 1. Add legal links (Privacy Policy, Terms) to paywall footer

@@ -5,7 +5,7 @@ echo "🔍 Focus Field - RevenueCat Comprehensive Testing"
 echo "=================================================="
 
 # Android Public API Key
-ANDROID_API_KEY="goog_OQmcHbcdgUgLCplNGOzHRVwfqVU"
+ANDROID_API_KEY="goog_HNKHzGPIWgDdqihvtZrmgTdMSzf"
 
 echo "📱 Running comprehensive RevenueCat test..."
 echo "   Using Android API Key: ${ANDROID_API_KEY:0:20}..."

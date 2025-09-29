@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/models/subscription_tier.dart';
 import 'package:focus_field/services/subscription_service.dart';
 import 'package:focus_field/services/hosted_paywall_service.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 // Subscription service provider
 final subscriptionServiceProvider = Provider<SubscriptionService>((ref) {
@@ -148,4 +149,17 @@ final hostedPaywallProvider = FutureProvider<Map<String, dynamic>?>((
     }
   }
   return HostedPaywallService.instance.getHostedPaywall();
+});
+
+// RevenueCat offerings provider (null if unavailable)
+final offeringsProvider = FutureProvider<Offerings?>((ref) async {
+  final service = ref.read(subscriptionServiceProvider);
+  if (!service.isInitialized) {
+    try {
+      await service.initialize();
+    } catch (_) {
+      return null; // initialization failed, surface as null
+    }
+  }
+  return await service.getOfferings();
 });

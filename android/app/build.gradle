@@ -55,6 +55,16 @@ android {
 
     if (!keystorePropertiesFile.exists()) {
         throw new GradleException("Release keystore config missing: create android/key.properties (see key.properties.example) before building release.")
+    } else {
+        // Validate keystore file path from properties
+        def storeFilePath = keystoreProperties['storeFile']
+        if (storeFilePath == null || storeFilePath.trim().isEmpty()) {
+            throw new GradleException("key.properties is missing 'storeFile' entry. See android/key.properties.example")
+        }
+        def storeFileResolved = file(storeFilePath)
+        if (!storeFileResolved.exists()) {
+            throw new GradleException("Keystore file not found: '${storeFilePath}'. Place your keystore under android/ and update android/key.properties. See android/key.properties.example")
+        }
     }
 
     signingConfigs {

@@ -18,7 +18,7 @@ class PaywallLauncher {
   /// dismissed -> paywall was shown but user closed it without purchase
   /// notShown  -> paywall not shown (mock mode, already unlocked, error)
   static Future<PaywallAttemptResult> presentIfNeeded({
-    String entitlementKey = SubscriptionService.premiumEntitlementKey,
+    String entitlementKey = AppConstants.premiumEntitlementKey,
   }) async {
     try {
       if (AppConstants.enableMockSubscriptions) {
@@ -37,14 +37,53 @@ class PaywallLauncher {
         // Already unlocked, nothing to show
         return PaywallAttemptResult.notShown;
       }
+      print('🚀 RevenueCat: Attempting to present paywall for entitlement: $entitlementKey');
+      // Snapshot offerings for context before showing the paywall
+      try {
+        final offerings = await Purchases.getOfferings();
+        if (offerings.current == null) {
+          print('🧪 RC Paywall: offerings.current is null; keys=${offerings.all.keys.toList()}');
+        } else {
+          final pkgIds = offerings.current!.availablePackages
+              .map((p) => p.storeProduct.identifier)
+              .toList();
+          print('🧪 RC Paywall: current=${offerings.current!.identifier} packages=${pkgIds}');
+        }
+      } catch (e) {
+        print('🧪 RC Paywall: offerings snapshot failed: $e');
+      }
+
       final result = await RevenueCatUI.presentPaywallIfNeeded(entitlementKey);
-      if (!kReleaseMode) log('RC PaywallIfNeeded result: $result');
-      if (_didUnlock(result)) return PaywallAttemptResult.unlocked;
+      print('📱 RevenueCat: PaywallIfNeeded result: $result');
+      if (_didUnlock(result)) {
+        print('✅ RevenueCat: User unlocked via paywall');
+        return PaywallAttemptResult.unlocked;
+      }
+      // Post-dismiss diagnostics to help explain why no unlock
+      try {
+        final info = await Purchases.getCustomerInfo();
+        print('🧪 RC Paywall: post-dismiss active entitlements: ${info.entitlements.active.keys.toList()}');
+      } catch (_) {}
+      try {
+        final appUserId = await Purchases.appUserID;
+        print('🧪 RC Paywall: appUserId=$appUserId');
+      } catch (_) {}
+      try {
+        final offerings = await Purchases.getOfferings();
+        if (offerings.current == null) {
+          print('👋 RevenueCat: User dismissed paywall (hint: no current offering)');
+        } else if (offerings.current!.availablePackages.isEmpty) {
+          print('👋 RevenueCat: User dismissed paywall (hint: offering has 0 packages)');
+        } else {
+          print('👋 RevenueCat: User dismissed paywall');
+        }
+      } catch (_) {
+        print('👋 RevenueCat: User dismissed paywall');
+      }
       return PaywallAttemptResult.dismissed; // shown & closed without unlock
     } catch (e, st) {
-      if (!kReleaseMode) {
-        log('RC presentPaywallIfNeeded error: $e', stackTrace: st);
-      }
+      print('❌ RevenueCat: presentPaywallIfNeeded error: $e');
+      print('❌ RevenueCat: Stack trace: $st');
       return PaywallAttemptResult.notShown;
     }
   }

@@ -6,6 +6,7 @@ import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:focus_field/models/subscription_tier.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 // NOTE: RevenueCat prebuilt UI package not available; maintaining custom paywall.
 
 // Restored custom paywall (will later be enhanced with dynamic offerings display).
@@ -67,6 +68,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     final subscriptionActions = ref.watch(subscriptionActionsProvider.notifier);
     final subscriptionState = ref.watch(subscriptionActionsProvider);
     final hostedPaywallAsync = ref.watch(hostedPaywallProvider);
+  final offeringsAsync = ref.watch(offeringsProvider);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -146,15 +148,33 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                     // Feature bullets
                     ..._buildFeatureList(context),
                     const SizedBox(height: 32),
-                    hostedPaywallAsync.when(
-                      data: (data) {
-                        if (data != null) {
-                          return _buildHostedPaywallPackages(context, data);
+                    // Prefer live offerings from RevenueCat when available.
+                    offeringsAsync.when(
+                      data: (offerings) {
+                        final current = offerings?.current;
+                        if (current != null && current.availablePackages.isNotEmpty) {
+                          return _buildRcOfferingPackages(context, current);
                         }
-                        return _buildPlanCards(context);
+                        // Fallback to hosted paywall JSON if provided
+                        return hostedPaywallAsync.when(
+                          data: (data) {
+                            if (data != null) {
+                              return _buildHostedPaywallPackages(context, data);
+                            }
+                            return _buildPlanCards(context);
+                          },
+                          loading: () => _buildPlanCards(context),
+                          error: (_, __) => _buildPlanCards(context),
+                        );
                       },
                       loading: () => _buildPlanCards(context),
-                      error: (_, __) => _buildPlanCards(context),
+                      error: (_, __) => hostedPaywallAsync.when(
+                        data: (data) => data != null
+                            ? _buildHostedPaywallPackages(context, data)
+                            : _buildPlanCards(context),
+                        loading: () => _buildPlanCards(context),
+                        error: (_, __) => _buildPlanCards(context),
+                      ),
                     ),
                     const SizedBox(height: 28),
                     _buildPurchaseButtons(
@@ -529,6 +549,56 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
               _isYearly
                   ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan')
                   : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _isYearly ? '$priceString / year' : '$priceString / month',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRcOfferingPackages(BuildContext context, Offering offering) {
+    final l10n = AppLocalizations.of(context);
+    // Choose packages based on monthly/yearly toggle when possible.
+    Package? monthly;
+    Package? yearly;
+    for (final pkg in offering.availablePackages) {
+      final id = pkg.storeProduct.identifier.toLowerCase();
+      if (id.contains('month')) monthly ??= pkg;
+      if (id.contains('year')) yearly ??= pkg;
+    }
+    final selected = _isYearly ? (yearly ?? monthly ?? offering.availablePackages.first) : (monthly ?? yearly ?? offering.availablePackages.first);
+
+    // Debug surface what we're showing
+    // ignore: avoid_print
+    print('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
+
+    final priceString = selected.storeProduct.priceString;
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n?.paywallTitle ?? 'Current Offer',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _isYearly ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan') : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,

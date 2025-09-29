@@ -1398,21 +1398,21 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
-  - purchases_flutter (9.2.1):
+  - purchases_flutter (9.6.2):
     - Flutter
-    - PurchasesHybridCommon (= 16.2.2)
-  - purchases_ui_flutter (9.2.1):
+    - PurchasesHybridCommon (= 17.7.0)
+  - purchases_ui_flutter (9.6.2):
     - Flutter
-    - PurchasesHybridCommonUI (= 16.2.2)
-  - PurchasesHybridCommon (16.2.2):
-    - RevenueCat (= 5.34.0)
-  - PurchasesHybridCommonUI (16.2.2):
-    - PurchasesHybridCommon (= 16.2.2)
-    - RevenueCatUI (= 5.34.0)
+    - PurchasesHybridCommonUI (= 17.7.0)
+  - PurchasesHybridCommon (17.7.0):
+    - RevenueCat (= 5.39.0)
+  - PurchasesHybridCommonUI (17.7.0):
+    - PurchasesHybridCommon (= 17.7.0)
+    - RevenueCatUI (= 5.39.0)
   - RecaptchaInterop (101.0.0)
-  - RevenueCat (5.34.0)
-  - RevenueCatUI (5.34.0):
-    - RevenueCat (= 5.34.0)
+  - RevenueCat (5.39.0)
+  - RevenueCatUI (5.39.0):
+    - RevenueCat (= 5.39.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -1552,13 +1552,13 @@ SPEC CHECKSUMS:
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  purchases_flutter: 0d71a9620d3ba19ffd97f27b66d74ba39ca5d28f
-  purchases_ui_flutter: 5f9880c4f1591b15253d66b2b9f2d068bdee6e12
-  PurchasesHybridCommon: 62f852419aae7041792217593998f7ac3f8b567d
-  PurchasesHybridCommonUI: 365fd90992bd91e6d330f5a91dcc8459a5a6ba14
+  purchases_flutter: 0b5c70044173dfe068865233be41db78723481b2
+  purchases_ui_flutter: 64789d1999eaeb4b0c519629c9acfa1de120c58f
+  PurchasesHybridCommon: 6bc96162fb0c061e1980f474be618c088cfd1428
+  PurchasesHybridCommonUI: 6026c0e1583deb09e9eac4250592562fbf966ec3
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
-  RevenueCat: eb2aa042789d9c99ad5172bd96e28b96286d6ada
-  RevenueCatUI: 03025a80b64ce8ff8e43f47a7eb9dbbb6b4f486e
+  RevenueCat: 4743a5eee0004e1c03eabeb3498818f902a5d622
+  RevenueCatUI: d7ead994884d8eaa23efaf9a0e13a7757af2c3f7
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe

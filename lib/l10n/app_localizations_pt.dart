@@ -1546,6 +1546,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get upgrade => 'Upgrade';
 
   @override
+  String get upgradeRequired => 'Atualização Necessária';
+
+  @override
   String get exportCsvSpreadsheet => 'Planilha CSV';
 
   @override

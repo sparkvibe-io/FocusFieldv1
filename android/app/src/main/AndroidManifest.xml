@@ -15,7 +15,7 @@
         <!-- Replace with real ID in release builds. Test ID used for development. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2086096819226646~1535783144" />
+            android:value="ca-app-pub-2086096819226646~6517708516" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
