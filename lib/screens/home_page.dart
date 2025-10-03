@@ -31,6 +31,7 @@ import 'package:focus_field/widgets/quick_duration_selector.dart';
 import 'package:focus_field/widgets/tabbed_overview_widget.dart';
 import 'package:focus_field/widgets/mission_capsule.dart';
 import 'package:focus_field/widgets/compact_noise_tile.dart';
+import 'package:focus_field/providers/activity_provider.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -391,6 +392,28 @@ class HomePage extends HookConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           child: MissionCapsule(),
                         ),
+                        const SizedBox(height: 8),
+                        // Activity chips row
+                        Consumer(builder: (context, ref, _) {
+                          final selected = ref.watch(selectedActivityProvider);
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              children: [
+                                for (final a in activityTypes)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                    child: ChoiceChip(
+                                      label: Text(a),
+                                      selected: a == selected,
+                                      onSelected: (_) => ref.read(selectedActivityProvider.notifier).set(a),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 12),
                       ],
                       // NEW: Tabbed Overview Widget (combines Practice Overview + Advanced Analytics)
@@ -688,6 +711,18 @@ class HomePage extends HookConsumerWidget {
           // Add session record to data
           await silenceDataNotifier.addSessionRecord(sessionRecord);
 
+          // Phase 1: mark first micro-goal celebration per day (1 minute)
+          if (success && actualDuration >= 60) {
+            final missionDayKey = _missionDayKey(DateTime.now());
+            final celebrated = await ref.read(firstMicroCelebratedProvider(missionDayKey).future);
+            if (!celebrated) {
+              // trigger existing confetti
+              ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.sessionComplete);
+              // store flag
+              await ref.read(firstMicroCelebratedControllerProvider).markCelebrated(missionDayKey);
+            }
+          }
+
           // System notification + in-app feedback
           if (notificationService.enableSessionComplete) {
             if (!context.mounted) return;
@@ -805,6 +840,11 @@ class HomePage extends HookConsumerWidget {
   void _showSimpleTip(BuildContext context, WidgetRef ref) {
     // Show the current tip (same tip for 5 minutes, even if muted)
     ref.read(tipServiceProvider).showCurrentTip(context);
+  }
+
+  String _missionDayKey(DateTime date) {
+    final d = DateTime(date.year, date.month, date.day);
+    return 'mission_${d.toIso8601String().split('T').first}';
   }
 }
 

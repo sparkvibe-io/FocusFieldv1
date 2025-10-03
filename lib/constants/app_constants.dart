@@ -152,6 +152,8 @@ class AppConstants {
   static const String decibelThresholdKey = 'decibel_threshold';
   static const String subscriptionTierKey = 'subscription_tier';
   static const String lastSyncDateKey = 'last_sync_date';
+  static const String selectedActivityKey = 'selected_activity';
+  static const String firstMicroCelebratedPrefix = 'first_micro_celebrated_';
 
   // UI string constants removed after full localization migration.
   // Minimal placeholders retained for legacy tests referencing successMessage/failureMessage.

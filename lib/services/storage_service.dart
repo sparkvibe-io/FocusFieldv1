@@ -351,6 +351,27 @@ class StorageService {
     await initializeApp();
   }
 
+  // Generic helpers for simple key/value storage
+  Future<String?> getString(String key) async {
+    await _init();
+    return _prefs!.getString(key);
+  }
+
+  Future<void> setString(String key, String value) async {
+    await _init();
+    await _prefs!.setString(key, value);
+  }
+
+  Future<bool?> getBool(String key) async {
+    await _init();
+    return _prefs!.getBool(key);
+  }
+
+  Future<void> setBool(String key, bool value) async {
+    await _init();
+    await _prefs!.setBool(key, value);
+  }
+
   /// Update streak based on current date
   Future<SilenceData> updateStreak(SilenceData currentData) async {
     final now = DateTime.now();
