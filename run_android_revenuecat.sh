@@ -39,13 +39,18 @@ if [[ -n "${ANDROID_BANNER_AD_UNIT_ID:-}" ]]; then
   DART_DEFINE_BANNER_UNIT="--dart-define=ANDROID_BANNER_AD_UNIT_ID=${ANDROID_BANNER_AD_UNIT_ID}"
 fi
 
+# Extra optional feature flags passed as dart-defines
+EXTRA_DART_DEFINES=""
+
 # Args: --debug/--profile/--release, -d <device_id>, --prod (sets IS_DEVELOPMENT=false)
+#       --missions (enables FEATURE_MISSIONS_UI)
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --debug) RUN_MODE="--debug"; shift ;;
     --profile) RUN_MODE="--profile"; shift ;;
   --release) RUN_MODE="--release"; IS_DEVELOPMENT=false; shift ;;
     --prod) IS_DEVELOPMENT=false; shift ;;
+    --missions) EXTRA_DART_DEFINES+=" --dart-define=FEATURE_MISSIONS_UI=true"; shift ;;
     -d) DEVICE_TARGET="$2"; shift 2 ;;
     *) echo "Unknown arg: $1"; exit 2 ;;
   esac
@@ -79,6 +84,7 @@ flutter run \
   --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false \
   --dart-define=REVENUECAT_API_KEY="${ANDROID_API_KEY}" \
   ${DART_DEFINE_BANNER_UNIT} \
+  ${EXTRA_DART_DEFINES} \
   ${DART_DEFINE_ENTITLEMENT_KEY} \
   -d "${DEVICE_TARGET}"
 

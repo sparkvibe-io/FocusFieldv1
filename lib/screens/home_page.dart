@@ -29,6 +29,8 @@ import 'package:focus_field/widgets/tip_info_icon.dart';
 import 'package:focus_field/providers/tip_info_provider.dart';
 import 'package:focus_field/widgets/quick_duration_selector.dart';
 import 'package:focus_field/widgets/tabbed_overview_widget.dart';
+import 'package:focus_field/widgets/mission_capsule.dart';
+import 'package:focus_field/widgets/compact_noise_tile.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -383,6 +385,14 @@ class HomePage extends HookConsumerWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (AppConstants.featureMissionsUi) ...[
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: MissionCapsule(),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                       // NEW: Tabbed Overview Widget (combines Practice Overview + Advanced Analytics)
                       TabbedOverviewWidget(silenceData: silenceData),
                       SizedBox(
@@ -391,53 +401,107 @@ class HomePage extends HookConsumerWidget {
                                 ? LayoutConstants.spacingSmall
                                 : LayoutConstants.spacingRegular,
                       ),
-                      SizedBox(
-                        height:
-                            isSmallScreen
-                                ? LayoutConstants.noiseChartSmallHeight
-                                : (isLarge
-                                    ? 160
-                                    : LayoutConstants.noiseChartRegularHeight),
-                        child: AudioSafeWidget(
-                          debugContext: 'real_time_noise_chart',
-                          fallback: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.surfaceContainer,
-                              borderRadius: BorderRadius.circular(12),
+                      if (AppConstants.featureMissionsUi && !silenceState.isListening)
+                        // Compact tile when not listening: no ambient monitoring; tap to expand modal chart.
+                        CompactNoiseTile(
+                          threshold: decibelThreshold,
+                          isListening: silenceState.isListening,
+                          onExpand: () {
+                            showModalBottomSheet(
+                              context: context,
+                              useSafeArea: true,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) {
+                                return DraggableScrollableSheet(
+                                  initialChildSize: 0.6,
+                                  minChildSize: 0.4,
+                                  maxChildSize: 0.95,
+                                  expand: false,
+                                  builder: (context, controller) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Material(
+                                        color: Theme.of(context).colorScheme.surface,
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'Noise Level',
+                                                    style: Theme.of(context).textTheme.titleMedium,
+                                                  ),
+                                                  IconButton(
+                                                    tooltip: 'Close',
+                                                    icon: const Icon(Icons.close),
+                                                    onPressed: () => Navigator.of(context).pop(),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Expanded(
+                                                child: AudioSafeWidget(
+                                                  debugContext: 'real_time_noise_chart_modal',
+                                                  fallback: const SizedBox.shrink(),
+                                                  child: RealTimeNoiseChart(
+                                                    threshold: decibelThreshold,
+                                                    isListening: silenceState.isListening,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        )
+                      else
+                        SizedBox(
+                          height:
+                              isSmallScreen
+                                  ? LayoutConstants.noiseChartSmallHeight
+                                  : (isLarge ? 160 : LayoutConstants.noiseChartRegularHeight),
+                          child: AudioSafeWidget(
+                            debugContext: 'real_time_noise_chart',
+                            fallback: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surfaceContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.volume_off,
+                                    size: isSmallScreen ? 24 : 32,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    AppLocalizations.of(context)?.audioChartRecovering ?? 'Audio chart recovering…',
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.volume_off,
-                                  size: isSmallScreen ? 24 : 32,
-                                  color:
-                                      Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppLocalizations.of(
-                                        context,
-                                      )?.audioChartRecovering ??
-                                      'Audio chart recovering…',
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                            child: RealTimeNoiseChart(
+                              threshold: decibelThreshold,
+                              isListening: silenceState.isListening,
                             ),
-                          ),
-                          child: RealTimeNoiseChart(
-                            threshold: decibelThreshold,
-                            isListening: silenceState.isListening,
                           ),
                         ),
-                      ),
                       SizedBox(
                         height:
                             isSmallScreen

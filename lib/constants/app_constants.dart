@@ -176,6 +176,12 @@ class AppConstants {
     return 'production';
   }
 
+  // Feature flags
+  static const bool featureMissionsUi = bool.fromEnvironment(
+    'FEATURE_MISSIONS_UI',
+    defaultValue: false,
+  );
+
   // API Key validation method
   static void validateConfiguration() {
     if (isProduction && !isValidRevenueCatKey) {
