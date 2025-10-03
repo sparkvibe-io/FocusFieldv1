@@ -5,6 +5,19 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
+## 🚀 New Direction (October 2025): Month‑Scale Missions
+
+We’re evolving from “weekly stats” to a month‑long habit mission. The home screen stays calm, while a simple “Mission capsule” shows a rocket progressing through stages (Ignition → Lift‑off → Stage Separation → Orbit) based on tiny daily goals (default 1 minute/activity). The noise widget becomes activity‑aware and compact by default.
+
+Phase 1 (behind a feature flag):
+- Activity chips (Studying, Fitness, Meditation, Family, Reading, Work, Noise Monitor, Custom)
+- Mission capsule with stage markers and days remaining
+- Daily goal ring per selected activity (e.g., 0/1m)
+- Compact noise widget (sparkline + dB badge) with expand to full chart when relevant
+- First 1‑minute session celebration (balloons/confetti)
+
+See `docs/development/habit-tracking-plan.md` for the complete plan.
+
 ## 🌟 Features
 
 ### Core Functionality
@@ -20,6 +33,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 ### Advanced Analytics
 - **Tabbed Overview Widget**: ✅ **NEW** Space-optimized interface combining Practice Overview + Advanced Analytics
+- **Mission Capsule (Feature-flagged)**: Month-scale progress visualization with tiny daily goals (Phase 1)
 - **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
 - **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
 - **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
@@ -40,6 +54,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - **Confetti Celebrations**: Successful session reward
 - **Permission Guidance**: Microphone access onboarding
 - **Compact Layout**: Key controls on one screen
+- **Calm Home**: Activity‑aware noise widget (compact by default), mission capsule as a simple focal point
 
 ### Data & Privacy
 - **Local Storage Only**: No audio recorded or transmitted

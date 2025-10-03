@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 **CURRENT STATUS - SEPT 28, 2025: MONETIZATION + ADS WIRED**
+## 🚀 **CURRENT STATUS - OCT 3, 2025: MONETIZATION + ADS + MISSION DIRECTION**
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
 - **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
@@ -18,6 +18,19 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 - **Package ID**: ✅ Updated to `io.sparkvibe.focusfield` (iOS & Android)
 - **Build Verification**: ✅ iOS & Android builds successfully with monetization
 - **Ads (AdMob)**: ✅ Banner wired, dev uses test units, release uses production units; optional QA fallback to test on failure
+
+### 🌙 Mission-Based Habit Builder (Month Scale)
+- Direction: Move beyond weekly stats into a month-long "Mission" with stages (Ignition → Lift-off → Stage Separation → Orbit) driven by tiny daily goals (default 1 minute/activity).
+- Home must remain calm and uncluttered. Noise widget becomes activity-aware (compact by default; full chart only when relevant or expanded).
+- Phase 1 has been APPROVED (see docs/development/habit-tracking-plan.md) and should be gated behind a feature flag.
+
+Feature flag (proposed):
+- `FEATURE_MISSIONS_UI` (default: false). When true, show: Activity chips, Mission capsule (rocket with stages), Daily goal ring, Compact noise card with expand.
+
+Developer constraints:
+- Keep primary surface simple; avoid crowding the home page.
+- Compact noise chart by default; full chart via explicit expand or when activity requires silence (e.g., Meditation, Study, Noise Monitor).
+- Respect accessibility (reduced motion), ad safety spacing, and localization length.
 - **Development Mode**: ✅ Mock subscriptions available for testing
 
 ### 📋 **IMMEDIATE NEXT STEPS (This Week)**
@@ -102,6 +115,26 @@ flutter clean && flutter pub get
 - Android Banner Unit (default): `ca-app-pub-2086096819226646/3553182566`
 - iOS Banner Unit (default): `ca-app-pub-2086096819226646/9050063581`
 - Dev Mode: test ad unit always; Release: production unit; Optional fallback (QA): `ADS_FALLBACK_TEST_ON_FAIL=true`
+
+## Phase 1 Implementation Notes (Developers)
+
+Scope (behind `FEATURE_MISSIONS_UI`):
+- Activity chips + provider, persistence of last selection
+- Mission model with fixed 30-day window, default per-activity goal 1 minute/day
+- Mission capsule (rocket stages): Pre‑flight, Ignition, Lift‑off, Stage Separation, Orbit
+- Daily goal ring for selected activity
+- Noise widget modes: off/compact/full; compact = sparkline + dB badge; full = existing chart
+- First 1-minute session celebration (balloons/confetti)
+
+Non-goals (Phase 1):
+- No multi-mission Programs, no heatmap yet, no export
+- No complex notification scheduler changes; reuse existing daily reminder with adjusted copy
+
+Acceptance Criteria:
+- Home stays visually calm, no vertical crowding
+- Users can complete a 1-minute session immediately after onboarding and see a brief celebration
+- Mission stage transitions are deterministic and recorded locally
+
 
 
 ## Architecture Overview
