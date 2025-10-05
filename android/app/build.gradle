@@ -15,7 +15,7 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '
 
 android {
     namespace "io.sparkvibe.focusfield"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion "27.0.12077973"
 
     compileOptions {
@@ -47,7 +47,7 @@ android {
     applicationId "io.sparkvibe.focusfield"
         // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
         minSdkVersion 24
-        targetSdkVersion 35
+        targetSdkVersion 36
     // Set explicitly to satisfy bundle packaging; values originate from pubspec.yaml -> local.properties
     versionCode flutterVersionCode.toInteger()
     versionName flutterVersionName

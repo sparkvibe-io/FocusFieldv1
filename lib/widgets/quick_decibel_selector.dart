@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:focus_field/providers/silence_provider.dart';
 
 /// Compact decibel threshold selector for the noise level widget
 class QuickDecibelSelector extends ConsumerWidget {

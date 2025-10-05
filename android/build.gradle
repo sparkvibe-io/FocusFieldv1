@@ -9,6 +9,7 @@ rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+// Note: Module-level compileSdk/targetSdk are set in app/build.gradle (compileSdkVersion 36, targetSdkVersion 36)
 subprojects {
     project.evaluationDependsOn(':app')
 }

@@ -79,6 +79,7 @@ class SessionRecord {
   final double averageNoise;
   final int duration; // in seconds
   final bool completed;
+  final String? activity; // optional activity/category tag
 
   const SessionRecord({
     required this.date,
@@ -86,6 +87,7 @@ class SessionRecord {
     required this.averageNoise,
     required this.duration,
     required this.completed,
+    this.activity,
   });
 
   Map<String, dynamic> toJson() {
@@ -95,6 +97,7 @@ class SessionRecord {
       'averageNoise': averageNoise,
       'duration': duration,
       'completed': completed,
+      'activity': activity,
     };
   }
 
@@ -105,6 +108,7 @@ class SessionRecord {
       averageNoise: (json['averageNoise'] ?? 0.0).toDouble(),
       duration: json['duration'] ?? 0,
       completed: json['completed'] ?? false,
+      activity: json['activity'] as String?,
     );
   }
 }

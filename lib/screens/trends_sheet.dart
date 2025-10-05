@@ -1,0 +1,446 @@
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/providers/activity_provider.dart';
+
+/// Bottom sheet that mirrors Settings sheet style for consistency.
+/// Tabs: Basic, Advanced. Basic includes 7-day trend; Advanced reserved for future.
+class TrendsSheet extends ConsumerStatefulWidget {
+  const TrendsSheet({super.key});
+
+  @override
+  ConsumerState<TrendsSheet> createState() => _TrendsSheetState();
+}
+
+class _TrendsSheetState extends ConsumerState<TrendsSheet>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final maxHeight = MediaQuery.of(context).size.height * 0.85;
+
+    return Container(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onSurfaceVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header row
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+            child: Row(
+              children: [
+                Icon(Icons.trending_up, color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
+                Text(
+                  'Trends',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          ),
+          // Tabs with icons (match Settings style)
+          TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(icon: Icon(Icons.tune), text: 'Basic'),
+              Tab(icon: Icon(Icons.engineering), text: 'Advanced'),
+            ],
+          ),
+          // Content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [
+                _TrendsBasicTab(),
+                _TrendsAdvancedTab(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TrendsBasicTab extends ConsumerWidget {
+  const _TrendsBasicTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final dataAsync = ref.watch(silenceDataNotifierProvider);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          // 7-day stacked bars card (fixed height, minimal)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Last 7 Days',
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Minutes by activity',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 140,
+                  child: dataAsync.when(
+                    data: (d) => _SevenDayStackedBars(sessions: d.recentSessions),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (_, __) => Center(
+                      child: Text(
+                        'No data',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Summary stats
+          Row(
+            children: [
+              _statChip(context, Icons.stacked_line_chart, 'Weekly Total',
+                  _weeklyTotalMinutes(dataAsync)),
+              const SizedBox(width: 12),
+              _statChip(context, Icons.today, 'Best Day',
+                  _bestDayLabel(context, dataAsync)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _bestDayLabel(BuildContext context, AsyncValue<dynamic> async) {
+    if (!async.hasValue) return '—';
+  final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
+    if (sessions.isEmpty) return '—';
+    // Aggregate minutes per weekday (0..6)
+    final Map<int, int> mins = {for (var i = 0; i < 7; i++) i: 0};
+    for (final s in sessions) {
+      final w = s.date.weekday % 7; // 1..7 -> 1..0 mapping
+  mins[w] = mins[w]! + ((s.duration) ~/ 60);
+    }
+    int bestIdx = 0;
+    int bestVal = -1;
+    mins.forEach((k, v) {
+      if (v > bestVal) {
+        bestVal = v;
+        bestIdx = k;
+      }
+    });
+    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return '${names[(bestIdx) % 7]} (${bestVal}m)';
+  }
+
+  String _weeklyTotalMinutes(AsyncValue<dynamic> async) {
+    if (!async.hasValue) return '—';
+    final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
+  int total = 0;
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day).subtract(
+      const Duration(days: 6),
+    );
+    for (final s in sessions) {
+      if (!s.completed) continue;
+      final d = DateTime(s.date.year, s.date.month, s.date.day);
+  if (!d.isBefore(start)) total += s.duration;
+    }
+    return '${total ~/ 60}m';
+  }
+
+  Widget _statChip(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
+    final theme = Theme.of(context);
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest
+              .withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: theme.colorScheme.primary, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: theme.textTheme.labelSmall),
+                  Text(
+                    value,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SevenDayStackedBars extends ConsumerWidget {
+  final List<SessionRecord> sessions;
+  const _SevenDayStackedBars({required this.sessions});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final today = DateTime.now();
+    // Prepare last 7 days normalized to midnight
+    final days = List.generate(7, (i) {
+      final d = today.subtract(Duration(days: 6 - i));
+      return DateTime(d.year, d.month, d.day);
+    });
+
+    // Aggregate minutes per day per activity
+    final List<Map<String, int>> perDay = List.generate(7, (_) => {});
+    for (final s in sessions) {
+      if (!s.completed) continue;
+      final d = DateTime(s.date.year, s.date.month, s.date.day);
+      final idx = days.indexOf(d);
+      if (idx == -1) continue;
+      final mins = (s.duration ~/ 60);
+      if (mins <= 0) continue;
+      final key = s.activity ?? 'focus';
+      perDay[idx][key] = (perDay[idx][key] ?? 0) + mins;
+    }
+
+    // Determine max total minutes in any day for scaling
+    int maxDay = 1;
+    for (final m in perDay) {
+      final total = m.values.fold<int>(0, (a, b) => a + b);
+      if (total > maxDay) maxDay = total;
+    }
+
+    // Build bars
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: List.generate(7, (i) {
+        final map = perDay[i];
+        final total = map.values.fold<int>(0, (a, b) => a + b);
+        final label = _shortDay(days[i].weekday);
+        return Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final barMax = constraints.maxHeight - 22; // reserve space for label
+              final barHeight = total == 0 ? 0.0 : (total / maxDay) * barMax;
+              // Stable ordering of segments by activity id
+              final entries = map.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Bar area
+                  SizedBox(
+                    height: barMax,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        // Baseline tick for empty days
+                        if (total == 0)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: 3,
+                              margin: const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          )
+                        else
+                          _buildStackedSegments(
+                            context,
+                            ref,
+                            entries,
+                            total,
+                            barHeight,
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    label,
+                    style: theme.textTheme.labelSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildStackedSegments(
+    BuildContext context,
+    WidgetRef ref,
+    List<MapEntry<String, int>> entries,
+    int total,
+    double targetHeight,
+  ) {
+    final theme = Theme.of(context);
+    // Convert to positioned segments stacked from bottom
+    double accumulated = 0.0;
+    final children = <Widget>[];
+    for (final e in entries) {
+      final h = (e.value / total) * targetHeight;
+      final color = _activityColor(context, ref, e.key) ?? theme.colorScheme.primary;
+      children.add(Positioned(
+        left: 10,
+        right: 10,
+        bottom: accumulated,
+        height: h,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+      ));
+      accumulated += h;
+    }
+    return Stack(children: children);
+  }
+
+  Color? _activityColor(BuildContext context, WidgetRef ref, String activityId) {
+    // Try custom activity color from provider
+    final activities = ref.read(activityTrackingProvider).trackedActivities;
+    final match = activities.where((a) => a.activityId == activityId).toList();
+    if (match.isNotEmpty) {
+      final a = match.first;
+      if (a.isCustom) return a.customActivity?.color;
+      // built-in
+      return _builtInColor(a.type.key);
+    }
+    // If not found, assume built-in key
+    return _builtInColor(activityId);
+  }
+
+  Color _builtInColor(String key) {
+    switch (key.toLowerCase()) {
+      case 'work':
+        return const Color(0xFFED7D31);
+      case 'studying':
+        return const Color(0xFF7F6BB0);
+      case 'reading':
+        return const Color(0xFF5B9BD5);
+      case 'meditation':
+        return const Color(0xFF70AD47);
+      case 'fitness':
+        return const Color(0xFFFA114F);
+      case 'family':
+        return const Color(0xFFFFC000);
+      case 'noise':
+      case 'focus':
+        return const Color(0xFF00D9FF);
+      default:
+        return const Color(0xFF5B9BD5);
+    }
+  }
+
+  String _shortDay(int weekday) {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return days[(weekday - 1) % 7];
+  }
+}
+
+class _TrendsAdvancedTab extends StatelessWidget {
+  const _TrendsAdvancedTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        ),
+        child: Text('Advanced analysis coming soon…', style: theme.textTheme.bodyMedium),
+      ),
+    );
+  }
+}

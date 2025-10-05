@@ -17,7 +17,7 @@ class MissionCapsule extends ConsumerWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () => _showMissionDetails(context, mission, progress, totalTarget),
+  onTap: () => _showMissionDetails(context, mission, progress, totalTarget),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -62,7 +62,7 @@ class MissionCapsule extends ConsumerWidget {
                   const SizedBox(height: 4),
                   // Helper line with remaining days and explicit count
                   Text(
-                    'Days remaining: ${mission.daysRemaining} · ${progress}/${totalTarget} micro‑sessions',
+                    'Days remaining: ${mission.daysRemaining} · $progress/$totalTarget micro‑focus sessions',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -111,7 +111,7 @@ class MissionCapsule extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Mission Progress',
+                        'Focus Progress',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       IconButton(
@@ -123,7 +123,7 @@ class MissionCapsule extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'You\'re on a 30‑day mission. Each completed 1–5 minute session counts as a micro‑session. Hit milestones to advance rocket stages.',
+                    'You\'re on a 30‑day focus journey. Each completed 1–5 minute session counts as a micro‑focus session. Hit milestones to advance rocket stages.',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 12),
@@ -131,7 +131,7 @@ class MissionCapsule extends ConsumerWidget {
                   const SizedBox(height: 6),
                   const Text('• Pre‑flight: 0\n• Ignition: 1+\n• Lift‑off: 5+\n• Stage separation: 12+\n• Orbit: 20+'),
                   const SizedBox(height: 12),
-                  Text('Current: $progress/$totalTarget micro‑sessions', style: Theme.of(context).textTheme.bodyMedium),
+                  Text('Current: $progress/$totalTarget micro‑focus sessions', style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 16),
                 ],
               ),

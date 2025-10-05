@@ -37,53 +37,56 @@ class PaywallLauncher {
         // Already unlocked, nothing to show
         return PaywallAttemptResult.notShown;
       }
-      print('🚀 RevenueCat: Attempting to present paywall for entitlement: $entitlementKey');
+      if (!kReleaseMode) {
+        log('🚀 RevenueCat: Attempting to present paywall for entitlement: $entitlementKey');
+      }
       // Snapshot offerings for context before showing the paywall
       try {
         final offerings = await Purchases.getOfferings();
         if (offerings.current == null) {
-          print('🧪 RC Paywall: offerings.current is null; keys=${offerings.all.keys.toList()}');
+          if (!kReleaseMode) log('🧪 RC Paywall: offerings.current is null; keys=${offerings.all.keys.toList()}');
         } else {
           final pkgIds = offerings.current!.availablePackages
               .map((p) => p.storeProduct.identifier)
               .toList();
-          print('🧪 RC Paywall: current=${offerings.current!.identifier} packages=${pkgIds}');
+          if (!kReleaseMode) log('🧪 RC Paywall: current=${offerings.current!.identifier} packages=$pkgIds');
         }
       } catch (e) {
-        print('🧪 RC Paywall: offerings snapshot failed: $e');
+        if (!kReleaseMode) log('🧪 RC Paywall: offerings snapshot failed: $e');
       }
 
       final result = await RevenueCatUI.presentPaywallIfNeeded(entitlementKey);
-      print('📱 RevenueCat: PaywallIfNeeded result: $result');
+      if (!kReleaseMode) log('📱 RevenueCat: PaywallIfNeeded result: $result');
       if (_didUnlock(result)) {
-        print('✅ RevenueCat: User unlocked via paywall');
+        if (!kReleaseMode) log('✅ RevenueCat: User unlocked via paywall');
         return PaywallAttemptResult.unlocked;
       }
       // Post-dismiss diagnostics to help explain why no unlock
       try {
         final info = await Purchases.getCustomerInfo();
-        print('🧪 RC Paywall: post-dismiss active entitlements: ${info.entitlements.active.keys.toList()}');
+        if (!kReleaseMode) log('🧪 RC Paywall: post-dismiss active entitlements: ${info.entitlements.active.keys.toList()}');
       } catch (_) {}
       try {
         final appUserId = await Purchases.appUserID;
-        print('🧪 RC Paywall: appUserId=$appUserId');
+        if (!kReleaseMode) log('🧪 RC Paywall: appUserId=$appUserId');
       } catch (_) {}
       try {
         final offerings = await Purchases.getOfferings();
         if (offerings.current == null) {
-          print('👋 RevenueCat: User dismissed paywall (hint: no current offering)');
+          if (!kReleaseMode) log('👋 RevenueCat: User dismissed paywall (hint: no current offering)');
         } else if (offerings.current!.availablePackages.isEmpty) {
-          print('👋 RevenueCat: User dismissed paywall (hint: offering has 0 packages)');
+          if (!kReleaseMode) log('👋 RevenueCat: User dismissed paywall (hint: offering has 0 packages)');
         } else {
-          print('👋 RevenueCat: User dismissed paywall');
+          if (!kReleaseMode) log('👋 RevenueCat: User dismissed paywall');
         }
       } catch (_) {
-        print('👋 RevenueCat: User dismissed paywall');
+        if (!kReleaseMode) log('👋 RevenueCat: User dismissed paywall');
       }
       return PaywallAttemptResult.dismissed; // shown & closed without unlock
     } catch (e, st) {
-      print('❌ RevenueCat: presentPaywallIfNeeded error: $e');
-      print('❌ RevenueCat: Stack trace: $st');
+      if (!kReleaseMode) {
+        log('❌ RevenueCat: presentPaywallIfNeeded error: $e', stackTrace: st);
+      }
       return PaywallAttemptResult.notShown;
     }
   }

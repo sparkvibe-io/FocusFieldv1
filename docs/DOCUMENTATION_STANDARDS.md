@@ -5,6 +5,11 @@ This document establishes documentation standards for the Focus Field project to
 
 ## Principles
 
+### 0. Product Design Policies (Enforced)
+- No scrolling on main pages (Home/Summary/Activity). Prefer compact, tabbed, or carousel layouts over long lists.
+- Advertisements remain visible at all times; reserve banner space and prevent overlap with tappable controls.
+- Follow Material 3 with minimal, non‑repeatable content; avoid duplicating information across widgets.
+
 ### 1. Clarity and Accessibility
 - Write for both technical and non-technical audiences
 - Use clear, concise language avoiding jargon when possible
@@ -224,6 +229,7 @@ void main() {
 - Technical accuracy verification
 - Style and formatting consistency check
 - Link validation and testing
+ - UI conformance checklist: no-scroll on main tabs, ad visible, M3 minimalism
 
 ### Update Schedule
 - Review documentation quarterly

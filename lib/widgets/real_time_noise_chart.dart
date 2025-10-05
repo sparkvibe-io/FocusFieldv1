@@ -173,7 +173,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
     }, []);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         gradient: dramatic?.cardBackgroundGradient,
         color:
@@ -205,14 +205,17 @@ class RealTimeNoiseChart extends HookConsumerWidget {
           // Header with quick decibel selector
           Row(
             children: [
-              // Left: Title
+              // Left: Decibel (replaces duplicate title)
               Text(
-                'Noise Level',
+                '${smoothedDecibel.value.toStringAsFixed(1)} dB',
                 style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
+                  color: smoothedDecibel.value > threshold
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.primary,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
 
               // Center: Quick decibel selector (only when not listening for cleaner UI)
               if (!isListening)
@@ -232,36 +235,20 @@ class RealTimeNoiseChart extends HookConsumerWidget {
               else
                 const Expanded(child: SizedBox()), // Spacer when listening
 
-              // Right: Status indicator and dB reading
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color:
-                          smoothedDecibel.value > threshold
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${smoothedDecibel.value.toStringAsFixed(1)} dB',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color:
-                          smoothedDecibel.value > threshold
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
+              // Right: small status dot
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: smoothedDecibel.value > threshold
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 2),
 
           // Chart
           Expanded(
@@ -285,9 +272,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
                                       alpha: 0.7,
                                     ),
                           ),
-                          const SizedBox(
-                            height: 4,
-                          ), // Reduced from 8 to save space
+                          const SizedBox(height: 2),
                           Flexible(
                             child: Text(
                               hasPermission.value
@@ -309,9 +294,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
                             ),
                           ),
                           if (!hasPermission.value) ...[
-                            const SizedBox(
-                              height: 2,
-                            ), // Reduced from 4 to save space
+                            const SizedBox(height: 2),
                             Flexible(
                               child: Text(
                                 'Tap "Start" to grant permission',

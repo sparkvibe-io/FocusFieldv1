@@ -186,16 +186,16 @@ void showPaywall(
   SubscriptionTier requiredTier = SubscriptionTier.premium,
   String? featureDescription,
 }) {
-  print('🚀 showPaywall called with description: $featureDescription');
+  debugPrint('🚀 showPaywall called with description: $featureDescription');
   PaywallLauncher.presentIfNeeded().then((result) {
-    print('📱 PaywallLauncher result: $result');
+    debugPrint('📱 PaywallLauncher result: $result');
     switch (result) {
       case PaywallAttemptResult.unlocked:
         return;
       case PaywallAttemptResult.dismissed:
         return; // do nothing
       case PaywallAttemptResult.notShown:
-        print('💡 Showing custom paywall fallback');
+        debugPrint('💡 Showing custom paywall fallback');
         if (context.mounted) {
           showModalBottomSheet(
             context: context,

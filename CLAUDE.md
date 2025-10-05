@@ -6,7 +6,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 **CURRENT STATUS - OCT 3, 2025: MONETIZATION + ADS + MISSION DIRECTION**
+## 🚀 CURRENT STATUS — Oct 5, 2025: Today Goal Bar, Activity Chips, Inline Noise Panel, Ads
+### Product Principles (Always)
+- No scrolling on main pages (Home/Summary/Activity). Use compact components, tabs, and carousels to fit without vertical scroll.
+- Advertisements are always visible (anchored adaptive banner), never obscured by overlays or long content.
+- Material 3 with minimal, non‑repeatable content. Prefer concise, unique information over duplicated elements.
+
+
+Highlights since last update:
+- New Home: `HomePageElegant` with Summary and Activity tabs is live (Legacy home retained).
+- Activity tab: duration chips (1–120m; premium-gated), glowing progress ring with Start/Stop, compact status line.
+- Today compact goal bar: Per‑activity X/Y minutes with slim progress and percent chip appears under the activity chips; uses activity color and adds a subtle glow at 5 minutes (micro‑win). Progress updates automatically after each successful session.
+- Inline Noise Visualization: `InlineNoisePanel` toggles Text ↔ Chart inline; `RealTimeNoiseChart` header shows current dB instead of a duplicate title; padding reduced to preserve ad visibility.
+- Ads: Footer banner is consistently visible on Activity after compaction passes.
+- Deprecations: Color API modernized (withValues), RevenueCat purchase API upgraded to `Purchases.purchase(PurchaseParams.package(...))`.
+- Accessibility: Confetti and accessibility feedback on session success; status announcements wired.
+
+Ignition Capsule integration (Mission):
+- A compact rocket “Mission capsule” with stages (Pre‑flight → Ignition → Lift‑off → Stage Separation → Orbit) is implemented as `MissionCapsule` and can be merged visually with Today’s Mission.
+- The attached “Ignition” mock aligns with our capsule; plan is to render Today’s Mission as the upper row (title + CTA) and host the capsule body below: stage label on the left, slim progress bar across, and a mini ring at top‑right showing percent.
+- Wire: `Feature flag` controls visibility via `AppConstants.featureMissionsUi` (Dart define FEATURE_MISSIONS_UI=true).
+
+Developer notes (compactness and ad safety):
+- Duration chips hide while a session is running; inter-chip spacing and paddings reduced.
+- Chart height trimmed (approx 110–116 px) and container paddings tightened; threshold quick chips remain available when not listening.
+- Right stats rail for Points/Streak/Sessions nests in a darker card to declutter the main list.
+
+Open items:
+- Finish merging Today’s Mission card and Mission Capsule into a single cohesive “Mission” card on Summary.
+- Optional: shrink inline chart a few more pixels on compact devices; convert Chart/Text toggles to icon‑only below a width threshold.
+- Lint polish (const hints, minor style) — non‑functional.
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
 - **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
@@ -24,8 +53,8 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 - Home must remain calm and uncluttered. Noise widget becomes activity-aware (compact by default; full chart only when relevant or expanded).
 - Phase 1 has been APPROVED (see docs/development/habit-tracking-plan.md) and should be gated behind a feature flag.
 
-Feature flag (proposed):
-- `FEATURE_MISSIONS_UI` (default: false). When true, show: Activity chips, Mission capsule (rocket with stages), Daily goal ring, Compact noise card with expand.
+Feature flag:
+- `FEATURE_MISSIONS_UI` (default false; already wired as `AppConstants.featureMissionsUi`). When true, show: Activity chips, Mission capsule (rocket with stages), Daily goal ring, compact noise panel with expand.
 
 Developer constraints:
 - Keep primary surface simple; avoid crowding the home page.
@@ -33,12 +62,14 @@ Developer constraints:
 - Respect accessibility (reduced motion), ad safety spacing, and localization length.
 - **Development Mode**: ✅ Mock subscriptions available for testing
 
-### 📋 **IMMEDIATE NEXT STEPS (This Week)**
+### 📋 Immediate Next Steps
 1. **App Store Connect**: Configure subscription products
 2. **Google Play Console**: Configure subscription products  
 3. **Visual Assets**: Create app icons and store screenshots
 4. **Legal Documents**: Finalize privacy policy and terms of service
 5. **Ad Serving**: Allow time for new iOS banner unit to begin serving; validate fill; consider anchored adaptive size
+6. Mission UI: Merge Today’s Mission + Mission Capsule; align to attached “Ignition” look (stage label left, slim bar, mini ring percent top‑right).
+7. Home Migration: Implement habit‑forming dashboard elements per `docs/development/home_migration_plan.md` (activity chips, per‑activity daily goal compact bar ✅, 7‑day stacked bars, today timeline, compliments strip, heatmap entry, weekly recap) while enforcing: no-scroll main tabs, always-visible ads, and M3 minimalism.
 
 ### 🎯 **Launch Timeline: 6 Weeks Total (Week 1 Complete)**
 - **Week 1**: ✅ Monetization infrastructure (COMPLETE - AHEAD OF SCHEDULE)
@@ -134,6 +165,17 @@ Acceptance Criteria:
 - Home stays visually calm, no vertical crowding
 - Users can complete a 1-minute session immediately after onboarding and see a brief celebration
 - Mission stage transitions are deterministic and recorded locally
+
+---
+
+## Habit‑Forming Dashboard Migration Plan (Oct 5, 2025)
+
+See `docs/development/home_migration_plan.md` for a living plan. Summary:
+
+- What’s live now: Two‑tab Home (Summary/Activity), Quick Duration chips, ProgressRing with Start/Stop, InlineNoisePanel with live dB header, anchored banner ad, Mission capsule behind feature flag, confetti/a11y, updated purchases API.
+- To migrate from legacy Home: settings entry, theme selector access, tips/compliments surface, activity selector chips, per‑activity daily goal ring, 7‑day stacked bars by activity, today timeline strip, heatmap entry, weekly recap. Free vs Premium gating preserved.
+- Phases: 0) instrumentation, 1) overview upgrades (chips/ring/stacked bars/timeline), 2) compliments & nudges, 3) heatmap + weekly recap, 4) premium insights (already implemented) & A/B tests.
+- Quality gates: analyzer clean, ad safety (no overlap), 44px touch targets, reduced motion honored, localization length.
 
 
 

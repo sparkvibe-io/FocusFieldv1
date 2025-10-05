@@ -69,8 +69,8 @@ class SubscriptionService {
 
       await Purchases.configure(configuration);
       // Enable logging in release mode for debugging
-      print('🔧 RevenueCat: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})');
-      print('🔧 RevenueCat: API Key: ${AppConstants.revenueCatApiKey.substring(0, 10)}...');
+  debugPrint('🔧 RevenueCat: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})');
+  debugPrint('🔧 RevenueCat: API Key: ${AppConstants.revenueCatApiKey.substring(0, 10)}...');
 
       // Set up listener for purchase updates
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfoUpdate);
@@ -147,9 +147,9 @@ class SubscriptionService {
       }
 
       _isInitialized = true;
-      print('✅ RevenueCat: Initialized successfully');
+  debugPrint('✅ RevenueCat: Initialized successfully');
     } catch (e) {
-      print('❌ RevenueCat: Failed to initialize: $e');
+  debugPrint('❌ RevenueCat: Failed to initialize: $e');
       // Continue with free tier if initialization fails
       await _setCurrentTier(SubscriptionTier.free);
       _isInitialized = true;
@@ -162,16 +162,16 @@ class SubscriptionService {
       final customerInfo = await Purchases.getCustomerInfo();
       try {
         final active = customerInfo.entitlements.active.keys.toList();
-        print('📊 RevenueCat: Active entitlements: $active');
-        print('📊 RevenueCat: Active subscriptions: ${customerInfo.activeSubscriptions}');
-        print('📊 RevenueCat: All entitlements: ${customerInfo.entitlements.all.keys}');
+  debugPrint('📊 RevenueCat: Active entitlements: $active');
+  debugPrint('📊 RevenueCat: Active subscriptions: ${customerInfo.activeSubscriptions}');
+  debugPrint('📊 RevenueCat: All entitlements: ${customerInfo.entitlements.all.keys}');
       } catch (e) {
-        print('⚠️ RevenueCat: Error reading entitlements: $e');
+        debugPrint('⚠️ RevenueCat: Error reading entitlements: $e');
       }
       final tier = _getTierFromCustomerInfo(customerInfo);
       await _setCurrentTier(tier);
     } catch (e) {
-      print('❌ RevenueCat: Failed to refresh customer info: $e');
+  debugPrint('❌ RevenueCat: Failed to refresh customer info: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -198,7 +198,7 @@ class SubscriptionService {
       final configured = _entitlementKeyConfigured;
       for (final key in entitlementKeys) {
         if (key.toLowerCase() == configured.toLowerCase()) {
-          print('✅ RevenueCat: Found premium entitlement: $key');
+          debugPrint('✅ RevenueCat: Found premium entitlement: $key');
           return SubscriptionTier.premium;
         }
       }
@@ -206,12 +206,12 @@ class SubscriptionService {
       // Fallback heuristic: any entitlement containing premium (case-insensitive)
       for (final k in entitlementKeys) {
         if (k.toLowerCase().contains('premium')) {
-          print('✅ RevenueCat: Found premium entitlement via fallback: $k');
+          debugPrint('✅ RevenueCat: Found premium entitlement via fallback: $k');
           return SubscriptionTier.premium;
         }
       }
       
-  print('ℹ️ RevenueCat: No premium entitlements found. Expected key="${_entitlementKeyConfigured}". Available: $entitlementKeys');
+  debugPrint('ℹ️ RevenueCat: No premium entitlements found. Expected key="$_entitlementKeyConfigured". Available: $entitlementKeys');
       // As last resort, if active subscriptions exist but no entitlements matched, stay free (avoid over-granting).
     } catch (e) {
       if (!kReleaseMode) {
@@ -280,7 +280,7 @@ class SubscriptionService {
           final ids = offerings.current!.availablePackages
               .map((p) => p.storeProduct.identifier)
               .toList();
-          debugPrint('🧪 RC purchase: current=${offerings.current!.identifier} packages=${ids}');
+          debugPrint('🧪 RC purchase: current=${offerings.current!.identifier} packages=$ids');
         }
       }
       final offering = offerings.current;
@@ -298,7 +298,10 @@ class SubscriptionService {
       }
       debugPrint('🧪 RC purchase: selected package id=${package.storeProduct.identifier} price=${package.storeProduct.priceString}');
 
-      final purchaseResult = await Purchases.purchasePackage(package);
+      // Updated to new API: use PurchaseParams with Purchases.purchase
+      final purchaseResult = await Purchases.purchase(
+        PurchaseParams.package(package),
+      );
       final tier = _getTierFromCustomerInfo(purchaseResult.customerInfo);
       try {
         final appUserId = await Purchases.appUserID;

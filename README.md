@@ -5,9 +5,9 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
-## 🚀 New Direction (October 2025): Month‑Scale Missions
+## 🚀 Current Direction (October 2025): Month‑Scale Missions + Mission Capsule
 
-We’re evolving from “weekly stats” to a month‑long habit mission. The home screen stays calm, while a simple “Mission capsule” shows a rocket progressing through stages (Ignition → Lift‑off → Stage Separation → Orbit) based on tiny daily goals (default 1 minute/activity). The noise widget becomes activity‑aware and compact by default.
+We’ve evolved from weekly stats to a month‑long habit mission. The home screen stays calm, while a compact “Mission capsule” shows a rocket progressing through stages (Pre‑flight → Ignition → Lift‑off → Stage Separation → Orbit) based on tiny daily goals (default 1 minute/activity). The noise widget is activity‑aware and compact by default, with an inline chart toggle.
 
 Phase 1 (behind a feature flag):
 - Activity chips (Studying, Fitness, Meditation, Family, Reading, Work, Noise Monitor, Custom)
@@ -16,7 +16,23 @@ Phase 1 (behind a feature flag):
 - Compact noise widget (sparkline + dB badge) with expand to full chart when relevant
 - First 1‑minute session celebration (balloons/confetti)
 
+Enable Missions UI:
+
+```bash
+flutter run --dart-define=FEATURE_MISSIONS_UI=true \
+  --dart-define=REVENUECAT_API_KEY=REVENUECAT_API_KEY_NOT_SET \
+  --dart-define=IS_DEVELOPMENT=true \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=true
+```
+
 See `docs/development/habit-tracking-plan.md` for the complete plan.
+
+Mission Capsule + Today’s Mission Merge (Design Note):
+- We will merge the “Ignition” capsule visual with Today’s Mission into a single card on the Summary tab:
+  - Top row: “Today’s Mission” title and a Start CTA
+  - Body: Capsule content with stage label on the left, a slim horizontal progress bar spanning the card, and a mini circular ring at the top‑right showing percent (matching the attached Ignition mock)
+  - Footer line: “Days remaining: N · X/20 micro‑sessions”
+  - Feature‑flagged under `FEATURE_MISSIONS_UI` and sourced from `mission_provider`
 
 ## 🌟 Features
 
@@ -690,6 +706,7 @@ Everything else in the premium roadmap is aspirational until moved to the delive
 - [ ] Performance optimizations for older devices
 - [ ] Enhanced accessibility features
 - [ ] Comprehensive integration testing
+ - [ ] Naming migration: Replace legacy "Silence*" prefixes (files, classes, providers, and docs) with "Focus*" to reflect the app rename from SilenceScore → Focus Field (e.g., SilenceDetector → FocusDetector, SilenceDataNotifier → FocusDataNotifier, file names like silence_*.dart → focus_*.dart).
 
 ## 🔧 Troubleshooting
 

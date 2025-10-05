@@ -547,6 +547,30 @@ const SettingsSheet({super.key});
 [Slider only]
 ```
 
+### TrendsSheet
+
+Trends and analytics presented as a modal bottom sheet (consistent with Settings).
+
+**File**: `lib/screens/trends_sheet.dart`
+
+#### Constructor
+```dart
+const TrendsSheet({super.key});
+```
+
+#### Features
+- Bottom sheet with drag handle, capped height (~85% viewport)
+- Tabbed interface (icons): Basic (tune), Advanced (engineering)
+- Basic tab: 7‑Day stacked bars (fixed 140px) aggregated from recent sessions
+- Summary chips: Weekly Total and Best Day
+- Advanced tab: reserved for deeper analytics
+
+#### 7‑Day Stacked Bars
+- Aggregates per‑day minutes per activity from `SilenceData.recentSessions`
+- Bars scale to the week’s maximum total; empty days show a subtle baseline tick
+- Activity colors mapped for built‑in and custom activities
+- Labels use weekday short names; compact and minimal styling
+
 ## Constants
 
 ### AppConstants

@@ -10,9 +10,9 @@ import 'package:focus_field/providers/theme_provider.dart';
 import 'package:focus_field/screens/settings_sheet.dart';
 import 'package:focus_field/widgets/progress_ring.dart';
 import 'package:focus_field/constants/layout_constants.dart';
-import 'package:focus_field/widgets/real_time_noise_chart.dart';
+// import removed: real_time_noise_chart now embedded via InlineNoisePeek inside tabbed overview
 import 'package:focus_field/widgets/error_boundary.dart';
-import 'package:focus_field/widgets/audio_safe_widget.dart';
+// import removed: audio_safe_widget not needed for inline peek
 import 'package:focus_field/widgets/permission_dialogs.dart';
 import 'package:focus_field/providers/accessibility_provider.dart';
 import 'package:focus_field/providers/notification_provider.dart';
@@ -29,12 +29,12 @@ import 'package:focus_field/widgets/tip_info_icon.dart';
 import 'package:focus_field/providers/tip_info_provider.dart';
 import 'package:focus_field/widgets/quick_duration_selector.dart';
 import 'package:focus_field/widgets/tabbed_overview_widget.dart';
-import 'package:focus_field/widgets/mission_capsule.dart';
-import 'package:focus_field/widgets/compact_noise_tile.dart';
+// import removed: mission capsule now rendered inside TabbedOverviewWidget
+// import removed: compact noise tile replaced by InlineNoisePeek
 import 'package:focus_field/providers/activity_provider.dart';
 
-class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
+class LegacyHomePage extends HookConsumerWidget {
+  const LegacyHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -387,13 +387,7 @@ class HomePage extends HookConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (AppConstants.featureMissionsUi) ...[
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: MissionCapsule(),
-                        ),
-                        const SizedBox(height: 8),
-                        // Activity chips row
+                        // Activity chips row (mission capsule now lives inside the overview)
                         Consumer(builder: (context, ref, _) {
                           final selected = ref.watch(selectedActivityProvider);
                           return SingleChildScrollView(
@@ -414,123 +408,11 @@ class HomePage extends HookConsumerWidget {
                             ),
                           );
                         }),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                       ],
-                      // NEW: Tabbed Overview Widget (combines Practice Overview + Advanced Analytics)
+                      // Tabbed Overview Widget now includes Mission + Overview + Noise Peek
                       TabbedOverviewWidget(silenceData: silenceData),
-                      SizedBox(
-                        height:
-                            isSmallScreen
-                                ? LayoutConstants.spacingSmall
-                                : LayoutConstants.spacingRegular,
-                      ),
-                      if (AppConstants.featureMissionsUi && !silenceState.isListening)
-                        // Compact tile when not listening: no ambient monitoring; tap to expand modal chart.
-                        CompactNoiseTile(
-                          threshold: decibelThreshold,
-                          isListening: silenceState.isListening,
-                          onExpand: () {
-                            showModalBottomSheet(
-                              context: context,
-                              useSafeArea: true,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) {
-                                return DraggableScrollableSheet(
-                                  initialChildSize: 0.6,
-                                  minChildSize: 0.4,
-                                  maxChildSize: 0.95,
-                                  expand: false,
-                                  builder: (context, controller) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Material(
-                                        color: Theme.of(context).colorScheme.surface,
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Noise Level',
-                                                    style: Theme.of(context).textTheme.titleMedium,
-                                                  ),
-                                                  IconButton(
-                                                    tooltip: 'Close',
-                                                    icon: const Icon(Icons.close),
-                                                    onPressed: () => Navigator.of(context).pop(),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Expanded(
-                                                child: AudioSafeWidget(
-                                                  debugContext: 'real_time_noise_chart_modal',
-                                                  fallback: const SizedBox.shrink(),
-                                                  child: RealTimeNoiseChart(
-                                                    threshold: decibelThreshold,
-                                                    isListening: silenceState.isListening,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                        )
-                      else
-                        SizedBox(
-                          height:
-                              isSmallScreen
-                                  ? LayoutConstants.noiseChartSmallHeight
-                                  : (isLarge ? 160 : LayoutConstants.noiseChartRegularHeight),
-                          child: AudioSafeWidget(
-                            debugContext: 'real_time_noise_chart',
-                            fallback: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surfaceContainer,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.volume_off,
-                                    size: isSmallScreen ? 24 : 32,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    AppLocalizations.of(context)?.audioChartRecovering ?? 'Audio chart recovering…',
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            child: RealTimeNoiseChart(
-                              threshold: decibelThreshold,
-                              isListening: silenceState.isListening,
-                            ),
-                          ),
-                        ),
-                      SizedBox(
-                        height:
-                            isSmallScreen
-                                ? LayoutConstants.spacingAfterChartSmall
-                                : LayoutConstants.spacingAfterChartRegular,
-                      ),
+                      const SizedBox(height: 12),
                     ],
                   );
                 }
@@ -706,6 +588,7 @@ class HomePage extends HookConsumerWidget {
             averageNoise: sessionStats.averageNoise,
             duration: actualDuration,
             completed: success,
+            activity: ref.read(selectedActivityProvider),
           );
 
           // Add session record to data
@@ -765,6 +648,7 @@ class HomePage extends HookConsumerWidget {
             averageNoise: sessionStats.averageNoise,
             duration: actualDuration,
             completed: false,
+            activity: ref.read(selectedActivityProvider),
           );
 
           silenceDataNotifier.addSessionRecord(sessionRecord);

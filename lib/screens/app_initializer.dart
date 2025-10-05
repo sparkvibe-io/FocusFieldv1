@@ -2,7 +2,7 @@ import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/silence_provider.dart';
-import 'package:focus_field/screens/home_page.dart';
+import 'package:focus_field/screens/home_page_elegant.dart';
 import 'package:focus_field/widgets/error_boundary.dart';
 import 'package:focus_field/services/rating_service.dart';
 import 'package:focus_field/constants/permission_constants.dart';
@@ -67,9 +67,10 @@ class AppInitializer extends ConsumerWidget {
                     /* ignore rating errors */
                   }
                 });
+                // Using HomePageElegant - Refined with rocket theme and bottom tabs
                 return const SafeWidget(
                   context: 'app_initialization',
-                  child: _PermissionChecker(child: HomePage()),
+                  child: _PermissionChecker(child: HomePageElegant()),
                 );
               },
             );

@@ -7,6 +7,10 @@ import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:focus_field/services/advanced_analytics_service.dart';
 import 'package:focus_field/utils/debug_log.dart';
+import 'package:focus_field/widgets/mission_capsule.dart';
+// Removed silence provider import: overview no longer renders noise elements
+import 'package:focus_field/constants/app_constants.dart';
+// import removed: today_rings not used in compact overview
 
 /// Tabbed widget combining Practice Overview and Advanced Analytics
 /// Saves significant vertical space while maintaining full functionality
@@ -235,69 +239,97 @@ class _TabbedOverviewWidgetState extends ConsumerState<TabbedOverviewWidget>
   }
 
   Widget _buildOverviewContent(BuildContext context) {
-    // Use the same layout as PracticeOverviewWidget: stats and chart side by side
+    // Overview stays compact: Mission capsule + three compact stats (no noise tile/chart)
     final theme = Theme.of(context);
     final dramatic = theme.extension<DramaticThemeStyling>();
 
-    final statsRow = Row(
+    // Derive lightweight metrics from recent sessions (last 10 stored)
+    final sessions = widget.silenceData.recentSessions;
+    final completed = sessions.where((s) => s.completed).length;
+    final successRate = sessions.isEmpty ? 0.0 : (completed * 100.0 / sessions.length);
+    final avgDurationSec = sessions.isEmpty
+        ? 0.0
+        : sessions
+                .map((s) => s.duration)
+                .fold<int>(0, (a, b) => a + b)
+                .toDouble() /
+            sessions.length;
+    final avgDurationMin = avgDurationSec / 60.0;
+
+    final items = <(String, String, IconData, Color)>[
+      (
+        widget.silenceData.totalPoints.toString(),
+        'Points',
+        Icons.stars,
+        (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.isNotEmpty)
+            ? dramatic.statAccentColors![0]
+            : theme.colorScheme.primary,
+      ),
+      (
+        widget.silenceData.currentStreak.toString(),
+        'Streak',
+        Icons.local_fire_department,
+        (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length > 1)
+            ? dramatic.statAccentColors![1]
+            : theme.colorScheme.secondary,
+      ),
+      (
+        widget.silenceData.totalSessions.toString(),
+        'Sessions',
+        Icons.play_circle,
+        (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length > 2)
+            ? dramatic.statAccentColors![2]
+            : theme.colorScheme.tertiary,
+      ),
+      (
+        widget.silenceData.bestStreak.toString(),
+        'Best Streak',
+        Icons.emoji_events,
+        (dramatic?.statAccentColors != null && dramatic!.statAccentColors!.length > 3)
+            ? dramatic.statAccentColors![3]
+            : theme.colorScheme.primaryContainer,
+      ),
+      (
+        '${successRate.toStringAsFixed(0)}%',
+        'Success',
+        Icons.check_circle,
+        _successRateColor(successRate),
+      ),
+      (
+        sessions.isEmpty ? '—' : '${avgDurationMin.toStringAsFixed(1)}m',
+        'Avg Session',
+        Icons.timer,
+        theme.colorScheme.secondary,
+      ),
+    ];
+
+    final statsRow1 = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        for (final entry in [
-          (
-            widget.silenceData.totalPoints.toString(),
-            'Points',
-            Icons.stars,
-            (dramatic?.statAccentColors != null &&
-                    dramatic!.statAccentColors!.isNotEmpty)
-                ? dramatic.statAccentColors![0]
-                : theme.colorScheme.primary,
-          ),
-          (
-            widget.silenceData.currentStreak.toString(),
-            'Streak',
-            Icons.local_fire_department,
-            (dramatic?.statAccentColors != null &&
-                    dramatic!.statAccentColors!.length > 1)
-                ? dramatic.statAccentColors![1]
-                : theme.colorScheme.secondary,
-          ),
-          (
-            widget.silenceData.totalSessions.toString(),
-            'Sessions',
-            Icons.play_circle,
-            (dramatic?.statAccentColors != null &&
-                    dramatic!.statAccentColors!.length > 2)
-                ? dramatic.statAccentColors![2]
-                : theme.colorScheme.tertiary,
-          ),
-        ]) ...[
-          Flexible(
-            child: _buildCompactStat(
-              context,
-              entry.$1,
-              entry.$2,
-              entry.$3,
-              entry.$4,
-            ),
-          ),
-        ],
+        for (final e in items.take(3))
+          Flexible(child: _buildCompactStat(context, e.$1, e.$2, e.$3, e.$4)),
       ],
     );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final statsRow2 = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Stats take remaining width
-        Expanded(flex: 5, child: statsRow),
-        const SizedBox(width: 12),
-        // Chart given a fixed min width suitable for seven bars
-        Flexible(
-          flex: 3,
-          child: Align(
-            alignment: Alignment.topRight,
-            child: _build7DayChart(context),
-          ),
-        ),
+        for (final e in items.skip(3).take(3))
+          Flexible(child: _buildCompactStat(context, e.$1, e.$2, e.$3, e.$4)),
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (AppConstants.featureMissionsUi) ...[
+          const MissionCapsule(),
+          const SizedBox(height: 8),
+        ],
+        statsRow1,
+        const SizedBox(height: 8),
+        statsRow2,
       ],
     );
   }
@@ -409,102 +441,7 @@ class _TabbedOverviewWidgetState extends ConsumerState<TabbedOverviewWidget>
     );
   }
 
-  Widget _build7DayChart(BuildContext context) {
-    final theme = Theme.of(context);
-    final last7Days = _getLast7DaysActivity();
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const double maxBarVisualHeight = 20;
-        const double labelFontSize = 10.0;
-        const double spacingBelowBar = 2.0;
-        const double safetyBuffer = 6.0;
-        const double barAreaHeight =
-            maxBarVisualHeight + labelFontSize + spacingBelowBar + safetyBuffer;
-        final maxPoints = _getMaxDayPoints();
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Last 7 Days',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
-              ),
-            ),
-            const SizedBox(height: 2),
-            SizedBox(
-              height: barAreaHeight,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    for (final dayData in last7Days) ...[
-                      _DayBar(
-                        label: dayData.dayLabel,
-                        points: dayData.points,
-                        maxPoints: maxPoints,
-                        maxBarHeight: maxBarVisualHeight,
-                        theme: theme,
-                      ),
-                      if (dayData != last7Days.last) const SizedBox(width: 6),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  List<DayActivity> _getLast7DaysActivity() {
-    final now = DateTime.now();
-    final last7Days = <DayActivity>[];
-
-    const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-    for (int i = 6; i >= 0; i--) {
-      final date = now.subtract(Duration(days: i));
-      final dayOfWeek = date.weekday % 7;
-
-      final dayStart = DateTime(date.year, date.month, date.day);
-      final dayEnd = dayStart.add(const Duration(days: 1));
-
-      final dayPoints = widget.silenceData.recentSessions
-          .where(
-            (session) =>
-                session.date.isAfter(dayStart) &&
-                session.date.isBefore(dayEnd) &&
-                session.completed,
-          )
-          .fold(0, (sum, session) => sum + session.pointsEarned);
-
-      last7Days.add(
-        DayActivity(
-          date: date,
-          points: dayPoints,
-          dayLabel: dayLabels[dayOfWeek],
-        ),
-      );
-    }
-
-    return last7Days;
-  }
-
-  int _getMaxDayPoints() {
-    final last7Days = _getLast7DaysActivity();
-    final maxPoints = last7Days
-        .map((day) => day.points)
-        .reduce((a, b) => a > b ? a : b);
-    return maxPoints > 0 ? maxPoints : 1;
-  }
+  // Removed old 7-day mini-bar chart (replaced by TodayRings)
 
   double _getContentHeight() {
     // Return appropriate height based on current tab
@@ -512,8 +449,11 @@ class _TabbedOverviewWidgetState extends ConsumerState<TabbedOverviewWidget>
       // Analytics tab needs much more height for full content
       return 500.0; // Much taller for full analytics content
     }
-    return 80.0; // Compact height for overview tab
+    // Overview: Capsule (optional) + two stats rows
+    // Use a slightly taller height to avoid clipping on small devices
+    return AppConstants.featureMissionsUi ? 210.0 : 190.0;
   }
+
 
   Widget _buildPerformanceMetrics(BuildContext context, PerformanceMetrics m) {
     final theme = Theme.of(context);
@@ -968,67 +908,4 @@ class _TabbedOverviewWidgetState extends ConsumerState<TabbedOverviewWidget>
           border: dashed ? Border.all(color: color, width: 1) : null,
         ),
       );
-}
-
-class DayActivity {
-  final DateTime date;
-  final int points;
-  final String dayLabel;
-
-  DayActivity({
-    required this.date,
-    required this.points,
-    required this.dayLabel,
-  });
-}
-
-class _DayBar extends StatelessWidget {
-  final String label;
-  final int points;
-  final int maxPoints;
-  final double maxBarHeight;
-  final ThemeData theme;
-
-  const _DayBar({
-    required this.label,
-    required this.points,
-    required this.maxPoints,
-    required this.maxBarHeight,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final ratio = maxPoints == 0 ? 0.0 : (points / maxPoints).clamp(0.0, 1.0);
-    final barHeight = (ratio * maxBarHeight).clamp(2, maxBarHeight);
-    final active = points > 0;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 8,
-          height: barHeight.toDouble(),
-          decoration: BoxDecoration(
-            color: active
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(height: 2),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              fontSize: 10,
-              height: 1.0,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
