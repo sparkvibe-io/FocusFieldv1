@@ -27,6 +27,10 @@ class NotificationService {
   // IDs
   static const int dailyReminderId = 1001;
   static const int weeklySummaryId = 1002;
+  static const int ongoingSessionId = 2001;
+
+  // Optional action handler for notification taps/actions
+  Future<void> Function(String actionId, String? payload)? actionHandler;
 
   // Time provider (injectable for tests)
   NowProvider now = DateTime.now;
@@ -126,6 +130,14 @@ class NotificationService {
   void _onNotificationTapped(NotificationResponse notificationResponse) {
     if (!kReleaseMode) {
       debugPrint('Notification tapped: ${notificationResponse.payload}');
+    }
+    // Dispatch action callbacks for interactive notifications
+    final actionId = notificationResponse.actionId;
+    if (actionId != null && actionId.isNotEmpty) {
+      final handler = actionHandler;
+      if (handler != null) {
+        handler(actionId, notificationResponse.payload);
+      }
     }
   }
 
@@ -395,6 +407,80 @@ class NotificationService {
       body: getSmartReminderMessage(context),
       payload: 'daily_reminder',
     );
+  }
+
+  // Ongoing session notification APIs (Android primary; iOS shows a regular notification as fallback)
+  Future<void> showOngoingSession({
+    required String title,
+    required String body,
+    int progress = 0, // 0..100
+  }) async {
+    if (!enableNotifications || !_hasNotificationPermission) return;
+
+    final android = AndroidNotificationDetails(
+      'focus_field_session',
+      'Session',
+      channelDescription: 'Ongoing focus session',
+      importance: Importance.low,
+      priority: Priority.low,
+      category: AndroidNotificationCategory.service,
+      ongoing: true,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: 100,
+      progress: progress.clamp(0, 100),
+      actions: const <AndroidNotificationAction>[
+        AndroidNotificationAction('STOP_SESSION', 'Stop', showsUserInterface: true),
+      ],
+      icon: '@mipmap/ic_launcher',
+    );
+    const ios = DarwinNotificationDetails(presentAlert: false, presentBadge: false, presentSound: false);
+    final details = NotificationDetails(android: android, iOS: ios);
+    await _flutterLocalNotificationsPlugin.show(
+      ongoingSessionId,
+      title,
+      body,
+      details,
+      payload: 'ongoing_session',
+    );
+  }
+
+  Future<void> updateOngoingSession({
+    String? title,
+    String? body,
+    int? progress,
+  }) async {
+    if (!enableNotifications || !_hasNotificationPermission) return;
+    final android = AndroidNotificationDetails(
+      'focus_field_session',
+      'Session',
+      channelDescription: 'Ongoing focus session',
+      importance: Importance.low,
+      priority: Priority.low,
+      category: AndroidNotificationCategory.service,
+      ongoing: true,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: 100,
+      progress: (progress ?? 0).clamp(0, 100),
+      actions: const <AndroidNotificationAction>[
+        AndroidNotificationAction('STOP_SESSION', 'Stop', showsUserInterface: true),
+      ],
+      icon: '@mipmap/ic_launcher',
+    );
+    const ios = DarwinNotificationDetails(presentAlert: false, presentBadge: false, presentSound: false);
+    final details = NotificationDetails(android: android, iOS: ios);
+    await _flutterLocalNotificationsPlugin.show(
+      ongoingSessionId,
+      title ?? 'Session in progress',
+      body ?? 'Stay in the app to maintain Deep Focus',
+      details,
+      payload: 'ongoing_session',
+    );
+  }
+
+  Future<void> cancelOngoingSession() async {
+    await _flutterLocalNotificationsPlugin.cancel(ongoingSessionId);
   }
 
   Future<void> showSessionComplete(

@@ -14,6 +14,9 @@ class StorageService {
   static const String _lastSessionDateKey = 'last_session_date';
   static const String _totalSessionsKey = 'total_sessions';
   static const String _averageScoreKey = 'average_score';
+  // Deep Focus settings
+  static const String _deepFocusEnabledKey = 'deep_focus_enabled';
+  static const String _deepFocusGraceSecondsKey = 'deep_focus_grace_seconds';
   // Notification settings keys
   static const String _enableNotificationsKey = 'enable_notifications';
   static const String _enableDailyRemindersKey = 'enable_daily_reminders';
@@ -110,6 +113,10 @@ class StorageService {
           _prefs!.getBool(_enableAchievementNotificationsKey) ?? true,
       'enableWeeklyProgress':
           _prefs!.getBool(_enableWeeklyProgressKey) ?? false,
+    // Deep Focus (defaults)
+    'deepFocusEnabled': _prefs!.getBool(_deepFocusEnabledKey) ?? false,
+    'deepFocusGraceSeconds':
+      _prefs!.getInt(_deepFocusGraceSecondsKey) ?? 10,
       // Notification scheduling (nullable defaults)
       'dailyReminderHour': _prefs!.getInt(_dailyReminderHourKey),
       'dailyReminderMinute': _prefs!.getInt(_dailyReminderMinuteKey),
@@ -178,6 +185,12 @@ class StorageService {
           break;
         case 'enableWeeklyProgress':
           await _prefs!.setBool(_enableWeeklyProgressKey, value as bool);
+          break;
+        case 'deepFocusEnabled':
+          await _prefs!.setBool(_deepFocusEnabledKey, value as bool);
+          break;
+        case 'deepFocusGraceSeconds':
+          await _prefs!.setInt(_deepFocusGraceSecondsKey, value as int);
           break;
         default:
           // Generic persistence for any new primitive key

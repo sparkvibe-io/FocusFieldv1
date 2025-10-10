@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 CURRENT STATUS — Oct 5, 2025: Today Goal Bar, Activity Chips, Inline Noise Panel, Ads
+## 🚀 CURRENT STATUS — Oct 6, 2025: Ambient Quests (Final Direction)
 ### Product Principles (Always)
 - No scrolling on main pages (Home/Summary/Activity). Use compact components, tabs, and carousels to fit without vertical scroll.
 - Advertisements are always visible (anchored adaptive banner), never obscured by overlays or long content.
@@ -14,18 +14,11 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 
 
 Highlights since last update:
-- New Home: `HomePageElegant` with Summary and Activity tabs is live (Legacy home retained).
-- Activity tab: duration chips (1–120m; premium-gated), glowing progress ring with Start/Stop, compact status line.
-- Today compact goal bar: Per‑activity X/Y minutes with slim progress and percent chip appears under the activity chips; uses activity color and adds a subtle glow at 5 minutes (micro‑win). Progress updates automatically after each successful session.
-- Inline Noise Visualization: `InlineNoisePanel` toggles Text ↔ Chart inline; `RealTimeNoiseChart` header shows current dB instead of a duplicate title; padding reduced to preserve ad visibility.
-- Ads: Footer banner is consistently visible on Activity after compaction passes.
-- Deprecations: Color API modernized (withValues), RevenueCat purchase API upgraded to `Purchases.purchase(PurchaseParams.package(...))`.
-- Accessibility: Confetti and accessibility feedback on session success; status announcements wired.
-
-Ignition Capsule integration (Mission):
-- A compact rocket “Mission capsule” with stages (Pre‑flight → Ignition → Lift‑off → Stage Separation → Orbit) is implemented as `MissionCapsule` and can be merged visually with Today’s Mission.
-- The attached “Ignition” mock aligns with our capsule; plan is to render Today’s Mission as the upper row (title + CTA) and host the capsule body below: stage label on the left, slim progress bar across, and a mini ring at top‑right showing percent.
-- Wire: `Feature flag` controls visibility via `AppConstants.featureMissionsUi` (Dart define FEATURE_MISSIONS_UI=true).
+- Ambient Quests docs and scaffolding added: feature flags, models, providers
+- Activity tab: duration chips, progress ring, inline noise panel remain
+- Quest Capsule: to be wired above Today’s Goals (small card)
+- Adaptive Threshold Chip: to be shown after 3 qualifying sessions
+- Ads: anchored banner remains; ensure safe spacing
 
 Developer notes (compactness and ad safety):
 - Duration chips hide while a session is running; inter-chip spacing and paddings reduced.
@@ -33,9 +26,9 @@ Developer notes (compactness and ad safety):
 - Right stats rail for Points/Streak/Sessions nests in a darker card to declutter the main list.
 
 Open items:
-- Finish merging Today’s Mission card and Mission Capsule into a single cohesive “Mission” card on Summary.
-- Optional: shrink inline chart a few more pixels on compact devices; convert Chart/Text toggles to icon‑only below a width threshold.
-- Lint polish (const hints, minor style) — non‑functional.
+- Wire Quest capsule and inner Ambient Score label on the ring
+- Implement adaptive threshold suggestion logic (stub exists)
+- Optional: live surfaces (iOS Live Activity / Android ongoing notification)
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
 - **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
@@ -48,13 +41,11 @@ Open items:
 - **Build Verification**: ✅ iOS & Android builds successfully with monetization
 - **Ads (AdMob)**: ✅ Banner wired, dev uses test units, release uses production units; optional QA fallback to test on failure
 
-### 🌙 Mission-Based Habit Builder (Month Scale)
-- Direction: Move beyond weekly stats into a month-long "Mission" with stages (Ignition → Lift-off → Stage Separation → Orbit) driven by tiny daily goals (default 1 minute/activity).
-- Home must remain calm and uncluttered. Noise widget becomes activity-aware (compact by default; full chart only when relevant or expanded).
-- Phase 1 has been APPROVED (see docs/development/habit-tracking-plan.md) and should be gated behind a feature flag.
-
-Feature flag:
-- `FEATURE_MISSIONS_UI` (default false; already wired as `AppConstants.featureMissionsUi`). When true, show: Activity chips, Mission capsule (rocket with stages), Daily goal ring, compact noise panel with expand.
+### 🌙 Ambient Quests Overview
+- Quiet-first profiles; Ambient Score = quietSeconds / actualSeconds
+- Quest credit when score >= target (default 70%)
+- Compassionate streaks: 2-Day Rule + monthly freeze token
+- Final docs: `docs/development/AmbientQuests_Dev_Spec.md`, `docs/development/AmbientQuests_Copy_and_MicroInteractions.md`
 
 Developer constraints:
 - Keep primary surface simple; avoid crowding the home page.
@@ -63,13 +54,9 @@ Developer constraints:
 - **Development Mode**: ✅ Mock subscriptions available for testing
 
 ### 📋 Immediate Next Steps
-1. **App Store Connect**: Configure subscription products
-2. **Google Play Console**: Configure subscription products  
-3. **Visual Assets**: Create app icons and store screenshots
-4. **Legal Documents**: Finalize privacy policy and terms of service
-5. **Ad Serving**: Allow time for new iOS banner unit to begin serving; validate fill; consider anchored adaptive size
-6. Mission UI: Merge Today’s Mission + Mission Capsule; align to attached “Ignition” look (stage label left, slim bar, mini ring percent top‑right).
-7. Home Migration: Implement habit‑forming dashboard elements per `docs/development/home_migration_plan.md` (activity chips, per‑activity daily goal compact bar ✅, 7‑day stacked bars, today timeline, compliments strip, heatmap entry, weekly recap) while enforcing: no-scroll main tabs, always-visible ads, and M3 minimalism.
+1. Wire Quest capsule UI and ring inner Ambient Score label (behind flags)
+2. Implement adaptive threshold suggestion (provider stub present)
+3. Optional: live surfaces; ensure background safety and pause/end actions
 
 ### 🎯 **Launch Timeline: 6 Weeks Total (Week 1 Complete)**
 - **Week 1**: ✅ Monetization infrastructure (COMPLETE - AHEAD OF SCHEDULE)
@@ -147,35 +134,32 @@ flutter clean && flutter pub get
 - iOS Banner Unit (default): `ca-app-pub-2086096819226646/9050063581`
 - Dev Mode: test ad unit always; Release: production unit; Optional fallback (QA): `ADS_FALLBACK_TEST_ON_FAIL=true`
 
-## Phase 1 Implementation Notes (Developers)
+## Ambient Quests Implementation Notes (Developers)
 
-Scope (behind `FEATURE_MISSIONS_UI`):
-- Activity chips + provider, persistence of last selection
-- Mission model with fixed 30-day window, default per-activity goal 1 minute/day
-- Mission capsule (rocket stages): Pre‑flight, Ignition, Lift‑off, Stage Separation, Orbit
-- Daily goal ring for selected activity
-- Noise widget modes: off/compact/full; compact = sparkline + dB badge; full = existing chart
-- First 1-minute session celebration (balloons/confetti)
+Feature flags: see `lib/constants/ambient_flags.dart`
+- FF_QUESTS, FF_AMBIENT_SCORE, FF_ADAPTIVE_THRESHOLD (true)
+- FF_ACTIVE_PROFILES, FF_HEALTH_SYNC, FF_CALENDAR_EXPORT (false)
 
-Non-goals (Phase 1):
-- No multi-mission Programs, no heatmap yet, no export
-- No complex notification scheduler changes; reuse existing daily reminder with adjusted copy
+Scope (P0):
+- Wire Activity Profiles (Study, Reading, Meditation) with per‑profile `thresholdDb`
+- Compute Ambient Score during sessions (quietSeconds / actualSeconds)
+- Quest Capsule card on Home (above Today’s Goals) showing daily goal progress
+- Compassionate streaks (2‑Day Rule + monthly freeze token; Premium: extra tokens)
+- Adaptive Threshold chip after 3 wins (suggest +2 dB; ask before applying)
+- Live activity / ongoing notification with countdown + % quiet and pause/end actions
 
-Acceptance Criteria:
-- Home stays visually calm, no vertical crowding
-- Users can complete a 1-minute session immediately after onboarding and see a brief celebration
-- Mission stage transitions are deterministic and recorded locally
+Non-goals (P0):
+- Health/Calendar integrations (P2 behind flags)
+- Multi‑mission programs; complex schedulers
+
+Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin tests)
 
 ---
 
-## Habit‑Forming Dashboard Migration Plan (Oct 5, 2025)
+## Documentation updates
 
-See `docs/development/home_migration_plan.md` for a living plan. Summary:
-
-- What’s live now: Two‑tab Home (Summary/Activity), Quick Duration chips, ProgressRing with Start/Stop, InlineNoisePanel with live dB header, anchored banner ad, Mission capsule behind feature flag, confetti/a11y, updated purchases API.
-- To migrate from legacy Home: settings entry, theme selector access, tips/compliments surface, activity selector chips, per‑activity daily goal ring, 7‑day stacked bars by activity, today timeline strip, heatmap entry, weekly recap. Free vs Premium gating preserved.
-- Phases: 0) instrumentation, 1) overview upgrades (chips/ring/stacked bars/timeline), 2) compliments & nudges, 3) heatmap + weekly recap, 4) premium insights (already implemented) & A/B tests.
-- Quality gates: analyzer clean, ad safety (no overlap), 44px touch targets, reduced motion honored, localization length.
+- Mission/Habit documents have been archived in `docs/archive/`
+- Use Ambient Quests docs as the single source of truth
 
 
 

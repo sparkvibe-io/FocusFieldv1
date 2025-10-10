@@ -12,8 +12,12 @@ Welcome to the Focus Field documentation hub. This directory contains comprehens
 - Recent cleanup: removed committed coverage artifact; added `.gitignore` entries for coverage & Flutter ephemeral dirs.
 - Large formatting pass applied across codebase (Dart formatter).
 - Android emulator launch issues under investigation (Pixel Tablet AVD failing to start locally).
-- Next immediate technical focus: Phase 1 of Mission UI (feature‑flagged) while keeping home page calm.
-- Business focus: mission copywriting, gentle onboarding, and store positioning (Productivity primary; Health & Fitness / Lifestyle secondary).
+- Final product direction: Ambient Quests (quiet-first profiles, Ambient Score, Quest capsule, compassionate streaks). Mission/Habit docs have been archived.
+- Implemented: Adaptive threshold suggestion provider (±2 dB after 3 wins/losses), debug-only long-press to cycle overrides, inline apply hint with auto-clear, and a 24-hour cooldown for suggestions. Unit tests cover wins/losses/neutral, override precedence, and cooldown behavior.
+- Implemented: Minimal AmbientSessionEngine and Quest state providers; Quest capsule scaffold and ring subtitle wiring in progress.
+- Next focus: move Quest application into the session engine (remove UI-side apply), expose a live calm-percent stream for ring subtitle, and add hysteresis/cooldown tuning behind flags.
+
+See also: the up-to-date Feature Inventory and status tracker in [development/feature-inventory.md](development/feature-inventory.md).
 
 > This section should be updated whenever a major milestone or blocking issue changes.
 
@@ -22,7 +26,9 @@ Welcome to the Focus Field documentation hub. This directory contains comprehens
 ### Project Documentation
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 - **[MONETIZATION_SETUP.md](MONETIZATION_SETUP.md)** - Subscription system setup guide
-- **[Habit Tracking Plan](development/habit-tracking-plan.md)** - Month-scale mission direction and Phase 1 scope
+- **[Ambient Quests – Dev Spec](development/AmbientQuests_Dev_Spec.md)** - Final implementation plan and acceptance criteria
+- **[Ambient Quests – Copy & Micro-Interactions](development/AmbientQuests_Copy_and_MicroInteractions.md)** - Copy deck and micro-interactions
+- Archived: Habit tracking & migration documents moved to `docs/archive/`
 - **[Environment Setup](development/environment-setup.md)** - API keys and secrets management *(coming soon)*
 
 ### For Users
@@ -32,6 +38,7 @@ Welcome to the Focus Field documentation hub. This directory contains comprehens
 
 ### For Developers
 - **[Setup Guide](development/setup-guide.md)** - Development environment setup
+- **[Feature Inventory (Status)](development/feature-inventory.md)** - What’s done vs. what’s next across major features
 - **[API Reference](api/api-reference.md)** - Complete API documentation
 - **[Architecture Overview](architecture/system-overview.md)** - System architecture and design
 - **[Contributing Guide](development/contributing.md)** - How to contribute *(coming soon)*
@@ -145,7 +152,7 @@ The **[assets/](assets/)** directory contains:
 ---
 
 ## Last Updated
-January 27, 2025
+October 7, 2025
 
 **Documentation Version**: 1.0.0  
 **Project Version**: 1.0.0

@@ -5,34 +5,23 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
-## 🚀 Current Direction (October 2025): Month‑Scale Missions + Mission Capsule
+## 🚀 Current Direction (October 2025): Ambient Quests (Final Plan)
 
-We’ve evolved from weekly stats to a month‑long habit mission. The home screen stays calm, while a compact “Mission capsule” shows a rocket progressing through stages (Pre‑flight → Ignition → Lift‑off → Stage Separation → Orbit) based on tiny daily goals (default 1 minute/activity). The noise widget is activity‑aware and compact by default, with an inline chart toggle.
+Ambient Quests is the merged, quiet‑first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today’s goal progress, and streaks are compassionate (2‑Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
 
-Phase 1 (behind a feature flag):
-- Activity chips (Studying, Fitness, Meditation, Family, Reading, Work, Noise Monitor, Custom)
-- Mission capsule with stage markers and days remaining
-- Daily goal ring per selected activity (e.g., 0/1m)
-- Compact noise widget (sparkline + dB badge) with expand to full chart when relevant
-- First 1‑minute session celebration (balloons/confetti)
+P0 highlights (minimal churn):
+- Activity Profiles with per‑profile `usesNoise` and `thresholdDb`
+- Ambient Score: quietSeconds / actualSeconds for quiet profiles
+- Quest Capsule on Home: daily micro‑goal progress
+- Compassionate Streaks: 2‑Day Rule + monthly freeze token (Premium: extra tokens)
+- Adaptive Threshold Chip: suggest a slightly stricter level after consistent wins
+- Live Activity / Ongoing Notification: countdown + “% quiet”, pause/end
 
-Enable Missions UI:
+Docs to implement from:
+- `docs/development/AmbientQuests_Dev_Spec.md`
+- `docs/development/AmbientQuests_Copy_and_MicroInteractions.md`
 
-```bash
-flutter run --dart-define=FEATURE_MISSIONS_UI=true \
-  --dart-define=REVENUECAT_API_KEY=REVENUECAT_API_KEY_NOT_SET \
-  --dart-define=IS_DEVELOPMENT=true \
-  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=true
-```
-
-See `docs/development/habit-tracking-plan.md` for the complete plan.
-
-Mission Capsule + Today’s Mission Merge (Design Note):
-- We will merge the “Ignition” capsule visual with Today’s Mission into a single card on the Summary tab:
-  - Top row: “Today’s Mission” title and a Start CTA
-  - Body: Capsule content with stage label on the left, a slim horizontal progress bar spanning the card, and a mini circular ring at the top‑right showing percent (matching the attached Ignition mock)
-  - Footer line: “Days remaining: N · X/20 micro‑sessions”
-  - Feature‑flagged under `FEATURE_MISSIONS_UI` and sourced from `mission_provider`
+Feature flags (default): see `lib/constants/ambient_flags.dart`.
 
 ## 🌟 Features
 
@@ -48,8 +37,7 @@ Mission Capsule + Today’s Mission Merge (Design Note):
 - **Achievement System**: Visual feedback with confetti celebrations
 
 ### Advanced Analytics
-- **Tabbed Overview Widget**: ✅ **NEW** Space-optimized interface combining Practice Overview + Advanced Analytics
-- **Mission Capsule (Feature-flagged)**: Month-scale progress visualization with tiny daily goals (Phase 1)
+- **Tabbed Overview Widget**: ✅ Space-optimized interface combining Practice Overview + Advanced Analytics
 - **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
 - **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
 - **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
@@ -70,14 +58,14 @@ Mission Capsule + Today’s Mission Merge (Design Note):
 - **Confetti Celebrations**: Successful session reward
 - **Permission Guidance**: Microphone access onboarding
 - **Compact Layout**: Key controls on one screen
-- **Calm Home**: Activity‑aware noise widget (compact by default), mission capsule as a simple focal point
+- **Calm Home**: Activity‑aware noise widget (compact by default); Quest capsule as the focal point
 
 ### Data & Privacy
 - **Local Storage Only**: No audio recorded or transmitted
 - **Data Export (Premium)**: CSV & PDF reports
 - **Reset Option**: Wipes all local settings & history
 
-> Note: Cloud backup / sync is not yet available (local-only). See the "Planned / Not Yet Implemented" section below.
+> Note: Cloud backup / sync is not yet available (local-only).
 
 ## 📱 Screenshots
 
@@ -439,7 +427,7 @@ lib/
 #### Widgets
 - `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
 - `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates + integrated quick threshold selectors
-- `TabbedOverviewWidget`: ✅ **NEW** Space-optimized tabbed container combining Practice Overview + Advanced Analytics
+- `TabbedOverviewWidget`: Space-optimized tabbed container combining Practice Overview + Advanced Analytics
 - `QuickDurationSelector`: ✅ **NEW** Compact session duration buttons with premium integration and paywall
 - `QuickDecibelSelector`: ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - `SessionHistoryGraph`: Historical performance tracking with visual trends
@@ -504,7 +492,7 @@ flutter analyze --no-fatal-infos
   - Real-time updates: Immediately affects silence detection without settings navigation
   - Responsive design: Compact layout that works across all screen sizes
 
-### Tabbed Overview Widget - Space Optimization ✅ **NEW**
+### Tabbed Overview Widget - Space Optimization
 - **Combined Interface**: Merges Practice Overview and Advanced Analytics into elegant tabbed container
 - **Space Savings**: Frees ~80px of vertical space for advertisement placement (free users)
 - **Overview Tab**:
@@ -675,29 +663,11 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 - [ ] Multi-language support
 - [ ] Advanced analytics dashboard
 
-## 🚧 Planned / Not Yet Implemented Features
+### Ambient Quests Scope Notes
 
-The following items are referenced in UI placeholders, roadmap checklists, or marketing copy but are NOT yet fully implemented in the current build:
-
-- Cloud synchronization & cross‑device backup (local storage only today)
-- AI Insights (label present; no AI-generated analysis yet)
-- Multi-environment / profile presets (e.g., Work / Study / Sleep)
-- Social or community features (sharing, leaderboards, collaboration)
-- Team / group collaboration workspace
-- Spike / interruption detection (noise spike event tracking)
-- Silence quality score (composite metric beyond average dB)
-- Advanced cloud backup / restore flows
-- Streak goal customization & proactive reminders/notifications
-- Health platform integrations (Apple Health, Google Fit)
-
-Premium Paywall – Currently Delivered:
-- Extended sessions (up to 120 minutes)
-- 90‑day history retention
-- Advanced analytics (performance metrics, trends)
-- Data export (CSV / PDF)
-- Premium theme pack
-
-Everything else in the premium roadmap is aspirational until moved to the delivered list.
+- Ambient Quests supersedes earlier “Mission/Mission Capsule” docs, which are archived.
+- Optional P2 integrations are feature‑flagged: Health sync, Calendar export.
+- See the Dev Spec for acceptance tests and rollout plan.
 
 ### Technical Improvements
 - [ ] Flutter Sound integration for enhanced audio processing
@@ -763,36 +733,11 @@ adb shell pm clear io.sparkvibe.focusfield
 
 ### Getting Help
 
-## 🆘 Support
+## 🗺️ Roadmap (focused)
 
-- **Documentation**: Check this README and [docs folder](docs/)
-- **Issues**: Report bugs and feature requests via GitHub Issues
-- **Troubleshooting**: See troubleshooting section above for common solutions
-- **Discussions**: Join community discussions for help and ideas
-- **Privacy**: Review our privacy policy for data handling details
-
-### Reporting Issues
-
-When reporting issues, please include:
-- Device model and OS version
-- Flutter version (`flutter --version`)
-- Steps to reproduce
-- Expected vs actual behavior
-- Error messages or logs if available
-
----
-
-**Focus Field** - Transform your environment into a sanctuary of focus and mindfulness. 🧘‍♀️✨ 
-
-## 💰 Monetization & Subscription System
-
-### Status: ⚙️ Implemented (Docs & Dynamic Pricing Update In Progress)
-
-Focus Field includes a RevenueCat-based subscription system with dynamic product pricing (fetched from live store offerings when available) and a mock mode for local development.
-
-#### Core Infrastructure
-- RevenueCat integration via `purchases_flutter` with platform-specific API keys
-- **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
+- P0: Profiles, Ambient Score, Quest capsule, compassionate streaks, adaptive threshold, live surfaces
+- P1: Micro-haptics, weekly share card, “Best Space & Time” insight
+- P2: Health/Health Connect write, Calendar export (feature‑flagged)
 - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
 - Tiered access: Free, Premium, Premium Plus (future expansion)
 - Feature gating with `FeatureGate` + Riverpod providers
@@ -881,4 +826,4 @@ For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to re
 6. **Launch Marketing**: Execute go-to-market strategy
 
 ## Last Updated
-August 29, 2025 - Added native paywall dismissal handling (suppresses fallback on close), aggregated noise controller, throttled logger, shared permission Future, and documentation updates.
+October 6, 2025 — Updated to Ambient Quests final direction; archived legacy Mission/Habit documents and linked to the new spec.

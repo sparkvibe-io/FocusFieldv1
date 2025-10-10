@@ -169,6 +169,7 @@
   ,"statusSuccess": "Stille erreicht! +1 Punkt"
   ,"statusFailure": "Zu laut!"
   ,"upgrade": "Upgrade"
+  ,"upgradeRequired": "Upgrade erforderlich"
   ,"exportCsvSpreadsheet": "CSV Tabelle"
   ,"exportPdfReport": "PDF Bericht"
   ,"formattedReportCharts": "Bericht mit Diagrammen"

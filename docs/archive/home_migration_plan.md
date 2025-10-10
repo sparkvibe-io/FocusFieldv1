@@ -1,18 +1,20 @@
-> Archived Oct 6, 2025. Superseded by Ambient Quests final plan.
-
 # Archived: Home Migration Plan – Habit‑Forming Dashboard (Oct 5, 2025)
 
-Please use the Ambient Quests spec for the current, final plan:
-- docs/development/AmbientQuests_Dev_Spec.md
-- docs/development/AmbientQuests_Copy_and_MicroInteractions.md
+Archived on Oct 6, 2025 in favor of Ambient Quests.
 
-## Guiding Principles (Always) — historical
+---
+
+# Home Migration Plan – Habit‑Forming Dashboard (Oct 5, 2025)
+
+This plan documents what is already integrated on the finalized Home (Summary/Activity) and what remains to migrate from the legacy home and prototypes. It aligns with the product goal to shift from a single noise monitor to a habit‑forming dashboard across studying, meditation, work, noise reduction, and custom activities.
+
+## Guiding Principles (Always)
 
 1) No scrolling on main pages (Home/Summary/Activity). Design content to fit without vertical scrolling on typical devices. Prefer tabs, carousels, and compact summaries over long lists.
 2) Advertisements are always visible. Reserve space or use anchored adaptive banners; ensure controls/content never overlap or obscure ads.
 3) Material 3, minimal, and non‑repeatable. Follow Material 3 guidelines, reduce duplication, and show concise, unique information.
 
-## Current Home (Working/Integrated) — historical
+## Current Home (Working/Integrated)
 
 - Tabs: Summary and Activity (HomePageElegant)
 - Activity tab
@@ -29,7 +31,7 @@ Please use the Ambient Quests spec for the current, final plan:
   - RevenueCat API v9 migration and UI purchase flows
   - Color API updated to withValues
 
-## To Migrate (From Legacy Home/V2/Backups) — historical
+## To Migrate (From Legacy Home/V2/Backups)
 
 - Activity selector chips (activity_tracking_provider)
   - Horizontal chips: Studying, Meditation, Work, Noise Monitor + Custom
@@ -49,7 +51,7 @@ Please use the Ambient Quests spec for the current, final plan:
 - Settings/Theme/Tips entry
   - Gear/star/insight icons in header; open Settings sheet, Theme selector, and Tips
 
-## Data Model (Lightweight) — historical
+## Data Model (Lightweight)
 
 Add fields to session records (where not present):
 - activityType: enum { studying, meditation, work, noise_monitor, custom }
@@ -58,12 +60,12 @@ Add fields to session records (where not present):
 - decibelAvg/decibelP90?: double; thresholdAtRun: double; notes?: string
 - derived: dailyGoalMet, dayOfWeek, hourBucket
 
-## Free vs Premium — historical
+## Free vs Premium
 
 - Free: activity tagging, daily goal ring, stacked bars, today timeline, streaks, weekly recap snapshot
 - Premium: advanced analytics (already built), multi‑week heatmap, downloadable recap, per‑activity insights
 
-## Implementation Phases — historical
+## Implementation Phases
 
 - Phase 0: Instrumentation (1 day)
   - Ensure providers capture per‑activity minutes/sessions; compute daily aggregates
@@ -74,14 +76,14 @@ Add fields to session records (where not present):
 - Phase 3: Heatmap + Weekly Recap (2 days)
 - Phase 4: Premium insights (existing) + A/B tests (ongoing)
 
-## Quality Gates — historical
+## Quality Gates
 
 - Analyzer clean; unit tests for aggregation logic
 - Ad safety: content above banner; no overlapping tappables; banner region reserved and visible
 - Layout: no vertical scroll on main tabs under common screen sizes; verify on iPhone SE/13/14 Pro Max and common Android sizes
 - Accessibility: min 44 px touch targets; reduced motion; localization lengths
 
-## Integration Map (Code Pointers) — historical
+## Integration Map (Code Pointers)
 
 - Chips: previously referenced `home_page_elegant_backup.dart` (now deleted). Implement anew using `activityTrackingProvider` or reference `home_page_elegant.dart`.
 - Daily ring: reuse `ProgressRing` in a compact mode or build a small `LinearProgress` + percent chip
@@ -91,7 +93,7 @@ Add fields to session records (where not present):
 - Heatmap entry: add to Overview header; open a bottom sheet with condensed monthly heatmap
 - Weekly recap: simple local computation; present in a modal on Sunday night
 
-## Open Questions — historical
+## Open Questions
 
 - Goal defaults per activity (10 min) vs user‑configured presets
 - Where to place streak display (chip badge vs Today ring footer)

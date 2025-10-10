@@ -129,6 +129,7 @@
   ,"statusSuccess": "Silence achieved! +1 point"
   ,"statusFailure": "Too noisy! Try again"
   ,"upgrade": "Upgrade"
+  ,"upgradeRequired": "アップグレードが必要です"
   ,"exportCsvSpreadsheet": "CSV Spreadsheet"
   ,"exportPdfReport": "PDF Report"
   ,"formattedReportCharts": "Formatted report with charts"

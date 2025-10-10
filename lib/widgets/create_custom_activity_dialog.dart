@@ -411,7 +411,7 @@ class _GoalMinutesSlider extends StatelessWidget {
         const SizedBox(height: 6),
         Row(
           children: [
-            Text('${min} min', style: theme.textTheme.bodySmall),
+            Text('$min min', style: theme.textTheme.bodySmall),
             Expanded(
               child: Slider(
                 value: v,
@@ -422,7 +422,7 @@ class _GoalMinutesSlider extends StatelessWidget {
                 onChanged: (d) => onChanged(d.round()),
               ),
             ),
-            Text('${max} min', style: theme.textTheme.bodySmall),
+            Text('$max min', style: theme.textTheme.bodySmall),
           ],
         ),
       ],

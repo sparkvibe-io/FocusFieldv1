@@ -169,6 +169,7 @@
   ,"statusSuccess": "¡Silencio logrado! +1 punto"
   ,"statusFailure": "¡Demasiado ruido!"
   ,"upgrade": "Mejorar"
+  ,"upgradeRequired": "Se requiere actualización"
   ,"exportCsvSpreadsheet": "Hoja CSV"
   ,"exportPdfReport": "Informe PDF"
   ,"formattedReportCharts": "Informe con gráficos"

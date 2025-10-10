@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'dart:math' as math;
+import 'dart:async';
 import '../providers/silence_provider.dart';
 import '../providers/activity_provider.dart';
 import '../providers/accessibility_provider.dart';
@@ -13,8 +14,12 @@ import '../widgets/inline_noise_panel.dart';
 import '../widgets/create_custom_activity_dialog.dart';
 import '../providers/theme_provider.dart';
 import './trends_sheet.dart';
+import './settings_sheet.dart';
 import '../providers/subscription_provider.dart';
 import 'package:confetti/confetti.dart';
+// Ambient Quests flags/providers
+import 'package:focus_field/constants/ambient_flags.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart';
 // import '../providers/mission_provider.dart';
 // import '../models/mission.dart';
 
@@ -36,6 +41,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   DateTime? _lastThemeToggleTime;
   // Activity tab: selected session duration in minutes
   int _selectedDurationMinutes = 1;
+  // Live calm tracking handled by liveCalmPercentProvider
+  StreamSubscription<double>? _noiseSub;
   // Activity list scroll state for the Summary card
   final ScrollController _activityScrollController = ScrollController();
   int _activityPageIndex = 0; // which chunk of 3 items is visible
@@ -76,9 +83,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       }
     });
 
+    // No local counters needed; liveCalmPercentProvider computes from stream.
   }
   @override
   void dispose() {
+    try { _noiseSub?.cancel(); } catch (_) {}
     _activityScrollController.dispose();
     _tabController.dispose();
     _confetti.dispose();
@@ -94,6 +103,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     if (!_sessionListenerWired) {
       _sessionListenerWired = true;
       ref.listen<SilenceState>(silenceStateProvider, (previous, next) async {
+        // Live calm counters handled centrally; nothing to reset here.
         if (next.success == true && previous?.success != true) {
           _confetti.play();
           try {
@@ -245,7 +255,18 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               ),
               IconButton(
                 icon: Icon(Icons.settings_outlined, color: theme.colorScheme.onSurfaceVariant),
-                onPressed: () {},
+                onPressed: () {
+                  // Subtle haptic for accessibility
+                  try {
+                    ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+                  } catch (_) {}
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const SettingsSheet(),
+                  );
+                },
                 tooltip: 'Settings',
               ),
             ],
@@ -301,8 +322,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Activity Progress with real provider integration
         _buildProposedActivityWidget3(context),
         const SizedBox(height: 8),
-        // Eye-catching Today's Focus card below Activity
-        _buildTodaysMissionCard(context),
+        // Ambient Quest capsule (flag-gated); falls back to legacy card if disabled
+        if (AmbientFlags.quests)
+          _buildAmbientQuestCapsule(context)
+        else
+          _buildTodaysMissionCard(context),
         const SizedBox(height: 8),
   // 7-day stacked bars moved to Trends > Show More (Basic tab)
         _buildTrendsCard(context),
@@ -598,8 +622,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     if (!context.mounted) return;
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Upgrade to Premium to add more activities'),
+                      const SnackBar(
+                        content: Text('Upgrade to Premium to add more activities'),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -649,8 +673,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Upgrade to Premium to add more activities'),
+        const SnackBar(
+          content: Text('Upgrade to Premium to add more activities'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -984,7 +1008,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                   context,
                                   Icons.stars,
                                   'Points',
-                                  '${points}/${pointsTarget.toInt()}',
+                                  '$points/${pointsTarget.toInt()}',
                                   '',
                                   (points / pointsTarget).clamp(0.0, 1.0),
                                   const Color(0xFFFA114F),
@@ -994,7 +1018,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                   context,
                                   Icons.local_fire_department,
                                   'Streak',
-                                  '${streak}/${streakTarget.toInt()}',
+                                  '$streak/${streakTarget.toInt()}',
                                   'DAYS',
                                   (streak / streakTarget).clamp(0.0, 1.0),
                                   const Color(0xFFB0FC38),
@@ -1004,7 +1028,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                   context,
                                   Icons.play_circle_outline,
                                   'Sessions',
-                                  '${sessions}/${sessionsTarget.toInt()}',
+                                  '$sessions/${sessionsTarget.toInt()}',
                                   '',
                                   (sessions / sessionsTarget).clamp(0.0, 1.0),
                                   const Color(0xFF00D9FF),
@@ -1195,8 +1219,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 2),
               LayoutBuilder(
                 builder: (context, c) {
-                  final barHeight = 10.0;
-                  final radius = Radius.circular(5);
+                  const barHeight = 10.0;
+                  const radius = Radius.circular(5);
                   final completedWidth = (c.maxWidth * progress).clamp(0.0, c.maxWidth);
                   return SizedBox(
                     height: barHeight,
@@ -2658,6 +2682,114 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
+  // Ambient Quest capsule: compact, colorful but subtle; navigates to Activity tab
+  Widget _buildAmbientQuestCapsule(BuildContext context) {
+    final theme = Theme.of(context);
+    final qs = ref.watch(questStateProvider);
+    final title = 'Ambient Quest';
+    final subtitle = (qs == null)
+        ? 'Calm minutes loading…'
+        : 'Calm ${qs.progressQuietMinutes}/${qs.goalQuietMinutes} min • Streak ${qs.streakCount}';
+    final canFreeze = (qs?.freezeTokens ?? 0) > 0;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primary.withValues(alpha: 0.35),
+            theme.colorScheme.tertiary.withValues(alpha: 0.25),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.22),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.eco_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.92),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          if (canFreeze)
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: OutlinedButton(
+                onPressed: () async {
+                  final ok = await ref.read(questStateProvider.notifier).freezeToday();
+                  if (!context.mounted) return;
+                  if (ok) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Today frozen — you’re covered.'),
+                        behavior: SnackBarBehavior.floating,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                ),
+                child: const Text('Freeze'),
+              ),
+            ),
+          ElevatedButton(
+            onPressed: () => _tabController.animateTo(1),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.25),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Go',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildQuickStatsCard(BuildContext context) {
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
@@ -2871,6 +3003,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final theme = Theme.of(context);
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
+    // Ambient score subtitle shown for quiet-required activities when enabled
+    String? ambientSubtitle;
+    if (AmbientFlags.ambientScore) {
+      final selected = ref.watch(selectedActivityProvider);
+      final selectedType = ActivityType.fromKey(selected);
+      if (selectedType.requiresSilence) {
+        final liveCalm = ref.watch(liveCalmPercentProvider);
+        if (silenceState.isListening && (liveCalm != null)) {
+          ambientSubtitle = 'Calm ${liveCalm.round()}%';
+        } else {
+          ambientSubtitle = 'Calm';
+        }
+      }
+    }
     final size = MediaQuery.sizeOf(context);
     final isCompact = size.height < 720;
     final ringSize = isCompact ? 186.0 : 206.0;
@@ -2911,6 +3057,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             progress: silenceState.progress,
             isListening: silenceState.isListening,
             timeLabel: _formatTimeForSeconds(durationSeconds),
+            subtitleText: ambientSubtitle,
             onStart: () {
               if (silenceState.isListening) {
                 _stopSilenceDetection(context);
@@ -3106,9 +3253,27 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     accessibilityService.vibrateOnEvent(AccessibilityEvent.sessionStart);
     accessibilityService.announceSessionStart((sessionDuration / 60).round());
 
+    // Show ongoing notification right before starting listening
+    try {
+      await ref.read(notificationServiceProvider).showOngoingSession(
+        title: 'Deep Focus',
+        body: 'Stay focused. Leaving the app may end the session.',
+        progress: 0,
+      );
+    } catch (_) {}
+
     await silenceDetector.startListening(
       onProgress: (progress) {
         silenceStateNotifier.setProgress(progress);
+        // Update ongoing notification progress (coarse)
+        try {
+          final pct = (progress * 100).clamp(0, 100).round();
+          ref.read(notificationServiceProvider).updateOngoingSession(
+            title: 'Deep Focus',
+            body: 'Session in progress',
+            progress: pct,
+          );
+        } catch (_) {}
         // Avoid voice during session to keep focus
       },
       onComplete: (success) async {
@@ -3136,6 +3301,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           );
 
           await silenceDataNotifier.addSessionRecord(sessionRecord);
+
+          // Ambient Quests: Quest application moved to AmbientSessionEngine.end()
 
           // Phase 1 celebration for first micro-session of the day (>= 60s)
           if (success && actualDuration >= 60) {
@@ -3186,9 +3353,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               );
             }
           }
+          try { await ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
         }
       },
-      onError: (error) {
+      onError: (error) async {
         if (ref.read(silenceStateProvider).canStop) {
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
@@ -3208,6 +3376,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           );
 
           silenceDataNotifier.addSessionRecord(sessionRecord);
+          try { await ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
         }
       },
     );
@@ -3222,6 +3391,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     silenceStateNotifier.stopSession();
     silenceDetector.clearReadings();
     accessibilityService.vibrateOnEvent(AccessibilityEvent.buttonPress);
+    try { ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
   }
 
   String _missionDayKey(DateTime date) {
@@ -3322,6 +3492,7 @@ class _GlowingProgressRing extends StatelessWidget {
   final String timeLabel; // e.g., 01:00 or 1:30:00
   final VoidCallback onStart;
   final bool isListening;
+  final String? subtitleText;
 
   const _GlowingProgressRing({
     required this.size,
@@ -3329,6 +3500,7 @@ class _GlowingProgressRing extends StatelessWidget {
     required this.timeLabel,
     required this.onStart,
     required this.isListening,
+    this.subtitleText,
   });
 
   @override
@@ -3393,6 +3565,16 @@ class _GlowingProgressRing extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              if (subtitleText != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitleText!,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: onStart,

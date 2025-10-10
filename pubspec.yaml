@@ -39,11 +39,13 @@ dependencies:
   google_mobile_ads: ^5.1.0
   package_info_plus: ^8.0.0
   in_app_review: ^2.0.9
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  riverpod: ^2.6.1
 
 flutter:
   uses-material-design: true 

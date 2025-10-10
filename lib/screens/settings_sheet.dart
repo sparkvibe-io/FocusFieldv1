@@ -18,6 +18,8 @@ import 'package:focus_field/widgets/theme_selector_widget.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:focus_field/services/tip_service.dart';
+import 'package:focus_field/providers/adaptive_tuning_provider.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart' show debugAdaptiveOverrideProvider;
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -64,7 +66,7 @@ class SettingsSheet extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Column(
           children: [
             Container(
@@ -83,26 +85,18 @@ class SettingsSheet extends ConsumerWidget {
                   Text(
                     AppLocalizations.of(context)!.settings,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ],
               ),
             ),
             TabBar(
               tabs: [
-                Tab(
-                  icon: const Icon(Icons.tune),
-                  text: AppLocalizations.of(context)!.tabBasic,
-                ),
-                Tab(
-                  icon: const Icon(Icons.engineering),
-                  text: AppLocalizations.of(context)!.tabAdvanced,
-                ),
-                Tab(
-                  icon: const Icon(Icons.info),
-                  text: AppLocalizations.of(context)!.tabAbout,
-                ),
+                const Tab(icon: Icon(Icons.tune)), // Basic
+                const Tab(icon: Icon(Icons.center_focus_strong)), // Focus
+                const Tab(icon: Icon(Icons.engineering)), // Advanced
+                const Tab(icon: Icon(Icons.info)), // About
               ],
             ),
             Expanded(
@@ -115,6 +109,7 @@ class SettingsSheet extends ConsumerWidget {
                           const NeverScrollableScrollPhysics(), // Disable tab swiping
                       children: [
                         _basicTab(context, ref, notifier, settings),
+                        _focusTab(context, ref, notifier, settings),
                         _advancedTab(context, ref, notifier, settings),
                         _aboutTab(context, ref),
                       ],
@@ -322,15 +317,21 @@ class SettingsSheet extends ConsumerWidget {
     SettingsNotifier notifier,
     Map<String, dynamic> settings,
   ) {
+    final size = MediaQuery.of(context).size;
+    final isSmallPhone = size.height < 760 || size.width < 380;
+    final cols = size.width < 380 ? 1 : 2;
+    final tileHeight = size.width < 380 ? 220.0 : (isSmallPhone ? 260.0 : 240.0);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: GridView.count(
+      child: GridView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.2,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: cols,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          mainAxisExtent: tileHeight,
+        ),
         children: [
           _advancedCard(
             context,
@@ -366,13 +367,12 @@ class SettingsSheet extends ConsumerWidget {
             title: AppLocalizations.of(context)!.notifications,
             subtitle: AppLocalizations.of(context)!.remindersCelebrations,
             icon: Icons.notifications,
-            onTap:
-                () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => const NotificationSettingsWidget(),
-                ),
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const NotificationSettingsWidget(),
+            ),
           ),
           _advancedCard(
             context,
@@ -382,6 +382,300 @@ class SettingsSheet extends ConsumerWidget {
             onTap: () => _showAccessibilityDialog(context, notifier, settings),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _focusTab(
+    BuildContext context,
+    WidgetRef ref,
+    SettingsNotifier notifier,
+    Map<String, dynamic> settings,
+  ) {
+    final size = MediaQuery.of(context).size;
+    final isNarrow = size.width < 380;
+    // Use a simple column to avoid grid overflows; respect small screens.
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          if (!bool.fromEnvironment('dart.vm.product')) _adaptiveTuningCard(context, ref),
+          if (!bool.fromEnvironment('dart.vm.product')) const SizedBox(height: 12),
+          if (!bool.fromEnvironment('dart.vm.product')) _adaptiveOverrideCard(context, ref),
+          const SizedBox(height: 12),
+          // Deep Focus quick entry
+          _advancedCard(
+            context,
+            title: 'Deep Focus',
+            subtitle: 'End session if app is left',
+            icon: Icons.lock_clock,
+            onTap: () => _showDeepFocusDialog(context, notifier, settings),
+          ),
+          if (isNarrow) const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showDeepFocusDialog(
+    BuildContext context,
+    SettingsNotifier notifier,
+    Map<String, dynamic> settings,
+  ) async {
+    bool enabled = (settings['deepFocusEnabled'] as bool?) ?? false;
+    int grace = (settings['deepFocusGraceSeconds'] as int?)?.clamp(1, 300) ?? 10;
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Deep Focus'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Expanded(child: Text('Enable Deep Focus')),
+                  Switch(
+                    value: enabled,
+                    onChanged: (v) {
+                      enabled = v;
+                      notifier.updateSetting('deepFocusEnabled', v);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Text('Grace period (seconds)'),
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      value: grace.toDouble(),
+                      min: 1,
+                      max: 120,
+                      divisions: 119,
+                      label: '$grace s',
+                      onChanged: (v) {
+                        grace = v.round();
+                        notifier.updateSetting('deepFocusGraceSeconds', grace);
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 44, child: Text('$grace s', textAlign: TextAlign.end)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'When enabled, leaving the app will end the session after the grace period.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _adaptiveTuningCard(BuildContext context, WidgetRef ref) {
+    // Debug-only card to tweak adaptive suggestion tuning at runtime.
+    final tuning = ref.watch(adaptiveTuningProvider);
+    final controller = ref.read(adaptiveTuningProvider.notifier);
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.tune, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Adaptive Tuning (Debug)',
+                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  ),
+                  onPressed: () => controller.restoreDefaults(),
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            _tuningRow(
+              context,
+              label: 'Cooldown',
+              value: tuning.cooldownHours,
+              onMinus: () => controller.setCooldownHours((tuning.cooldownHours - 1).clamp(1, 168)),
+              onPlus: () => controller.setCooldownHours((tuning.cooldownHours + 1).clamp(1, 168)),
+            ),
+            const SizedBox(height: 4),
+            _tuningRow(
+              context,
+              label: 'Base',
+              value: tuning.baseStreak,
+              onMinus: () => controller.setBaseStreak((tuning.baseStreak - 1).clamp(1, 10)),
+              onPlus: () => controller.setBaseStreak((tuning.baseStreak + 1).clamp(1, 10)),
+            ),
+            const SizedBox(height: 4),
+            _tuningRow(
+              context,
+              label: 'Bonus',
+              value: tuning.reverseBonus,
+              onMinus: () => controller.setReverseBonus((tuning.reverseBonus - 1).clamp(0, 5)),
+              onPlus: () => controller.setReverseBonus((tuning.reverseBonus + 1).clamp(0, 5)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _tuningRow(
+    BuildContext context, {
+    required String label,
+    required int value,
+    required VoidCallback onMinus,
+    required VoidCallback onPlus,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
+        IconButton(
+          onPressed: onMinus,
+          icon: const Icon(Icons.remove_circle_outline),
+          visualDensity: VisualDensity.compact,
+          iconSize: 18,
+        ),
+        Text('$value', style: theme.textTheme.titleMedium),
+        IconButton(
+          onPressed: onPlus,
+          icon: const Icon(Icons.add_circle_outline),
+          visualDensity: VisualDensity.compact,
+          iconSize: 18,
+        ),
+      ],
+    );
+  }
+
+  Widget _adaptiveOverrideCard(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final forced = ref.watch(debugAdaptiveOverrideProvider);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isNarrow = constraints.maxWidth < 320;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Adaptive Override (Debug)',
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (forced != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text('Forcing: $forced dB', style: theme.textTheme.labelSmall),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                if (!isNarrow)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 42, // +2 typical from 40
+                          icon: const Icon(Icons.trending_up),
+                          label: const Text('Force +2 dB'),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 38, // -2 typical from 40
+                          icon: const Icon(Icons.trending_down),
+                          label: const Text('Force -2 dB'),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 42,
+                        icon: const Icon(Icons.trending_up),
+                        label: const Text('Force +2 dB'),
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      OutlinedButton.icon(
+                        onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 38,
+                        icon: const Icon(Icons.trending_down),
+                        label: const Text('Force -2 dB'),
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = null,
+                    child: const Text('Clear override'),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,4 +1,6 @@
-# New Design Implementation Review
+> Archived Oct 6, 2025 — Superseded by Ambient Quests final plan. See docs/development/AmbientQuests_Dev_Spec.md
+
+# Archived: New Design Implementation Review (Mission-based)
 
 **Date:** October 3, 2025
 **Status:** ✅ Ready for Review & Testing
@@ -7,7 +9,9 @@
 
 ## Overview
 
-This document summarizes the new mission-based habit tracking design implementation per the updated requirements discussed on October 3, 2025.
+This document summarized a mission-based habit tracking design. The finalized direction is Ambient Quests. Refer to:
+- docs/development/AmbientQuests_Dev_Spec.md
+- docs/development/AmbientQuests_Copy_and_MicroInteractions.md
 
 ## Design Philosophy
 

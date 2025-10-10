@@ -8,6 +8,8 @@ import 'package:focus_field/services/rating_service.dart';
 import 'package:focus_field/constants/permission_constants.dart';
 import 'package:focus_field/widgets/permission_dialogs.dart';
 import 'package:focus_field/services/tip_service.dart';
+import 'package:focus_field/services/deep_focus_manager.dart';
+import 'package:focus_field/providers/notification_provider.dart';
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -45,6 +47,36 @@ class AppInitializer extends ConsumerWidget {
                     ref,
                   ),
               data: (silenceData) {
+                // Initialize services after core data loaded
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  // Notifications
+                  final notificationService = ref.read(notificationServiceProvider);
+                  await notificationService.initialize();
+                  // Wire action handler for ongoing notification actions
+                  notificationService.actionHandler = (actionId, payload) async {
+                    if (actionId == 'STOP_SESSION') {
+                      try {
+                        ref.read(silenceStateProvider.notifier).stopSession();
+                        await notificationService.cancelOngoingSession();
+                      } catch (_) {}
+                    }
+                  };
+
+                  // Deep Focus lifecycle manager
+                  final dfm = DeepFocusManager(
+                    onBreach: () async {
+                      // End/stop session if running
+                      try {
+                        final silent = ref.read(silenceStateProvider);
+                        if (silent.isListening) {
+                          ref.read(silenceStateProvider.notifier).stopSession();
+                          await notificationService.cancelOngoingSession();
+                        }
+                      } catch (_) {}
+                    },
+                  );
+                  await dfm.init();
+                });
                 // Trigger rating prompt logic (non-blocking)
                 WidgetsBinding.instance.addPostFrameCallback((_) async {
                   try {
