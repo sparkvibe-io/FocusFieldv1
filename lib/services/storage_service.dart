@@ -385,6 +385,17 @@ class StorageService {
     await _prefs!.setBool(key, value);
   }
 
+  // Integer helpers
+  Future<int?> getInt(String key) async {
+    await _init();
+    return _prefs!.getInt(key);
+  }
+
+  Future<void> setInt(String key, int value) async {
+    await _init();
+    await _prefs!.setInt(key, value);
+  }
+
   /// Update streak based on current date
   Future<SilenceData> updateStreak(SilenceData currentData) async {
     final now = DateTime.now();

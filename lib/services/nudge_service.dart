@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import 'dart:math' as math;
 
@@ -49,13 +48,13 @@ class NudgeService {
     // Celebrate specific milestones
     if (currentStreak == 3) {
       await recordNudge();
-      return '🎉 3-day streak! You're building momentum.';
+      return '🎉 3-day streak! You\'re building momentum.';
     } else if (currentStreak == 7) {
       await recordNudge();
       return '⭐ One week strong! Your focus is impressive.';
     } else if (currentStreak == 14) {
       await recordNudge();
-      return '🔥 Two weeks! You're on fire!';
+      return '🔥 Two weeks! You\'re on fire!';
     } else if (currentStreak == 30) {
       await recordNudge();
       return '🏆 30 days! This is a true habit now.';
@@ -79,7 +78,7 @@ class NudgeService {
 
     // First session encouragement
     if (sessionsToday == 0 && totalSessions > 5) {
-      messages.add('Ready for today's focus session?');
+      messages.add('Ready for today\'s focus session?');
       messages.add('A few quiet minutes can make all the difference.');
       messages.add('Your focused moments await.');
     }
@@ -87,7 +86,7 @@ class NudgeService {
     // Progress encouragement
     if (sessionsToday == 1 && currentStreak >= 3) {
       messages.add('Great start! One more session to keep the momentum.');
-      messages.add('You're in the zone today!');
+      messages.add('You\'re in the zone today!');
     }
 
     // Streak protection

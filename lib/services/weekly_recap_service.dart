@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../models/weekly_recap.dart';
 import '../models/silence_data.dart';
 import '../services/storage_service.dart';
@@ -20,9 +19,10 @@ class WeeklyRecapService {
     final weekStart = _getWeekStart(now);
     final weekEnd = weekStart.add(const Duration(days: 7));
 
-    // Get sessions from the past week
-    final weekSessions = silenceData.sessions.where((s) =>
-        s.timestamp.isAfter(weekStart) && s.timestamp.isBefore(weekEnd)).toList();
+  // Get sessions from the past week (using recentSessions model)
+  final weekSessions = silenceData.recentSessions
+    .where((s) => s.date.isAfter(weekStart) && s.date.isBefore(weekEnd))
+    .toList();
 
     // Calculate streak at start and end of week
     final streakAtEnd = silenceData.currentStreak;

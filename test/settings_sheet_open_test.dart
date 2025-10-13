@@ -20,7 +20,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
+    // Let initial async work settle a bit
+    await tester.pump(const Duration(milliseconds: 200));
   }
 
   testWidgets('tapping settings icon opens Settings sheet', (tester) async {
@@ -28,9 +29,8 @@ void main() {
     expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
     await tester.tap(find.byIcon(Icons.settings_outlined));
     // Let the bottom sheet animate in
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pumpAndSettle(const Duration(milliseconds: 200));
-    // Header should contain localized Settings text
-    expect(find.textContaining('Settings', findRichText: true), findsWidgets);
+    await tester.pump(const Duration(milliseconds: 200));
+    // Expect the Settings header text
+    expect(find.text('Settings'), findsWidgets);
   });
 }

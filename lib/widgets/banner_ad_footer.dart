@@ -21,7 +21,14 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
   @override
   void initState() {
     super.initState();
-    _init();
+    // Skip initializing ads during widget tests to avoid platform views
+    const inTest = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
+    if (!inTest) {
+      _init();
+    } else {
+      _loading = false;
+      _banner = null;
+    }
   }
 
   Future<void> _init() async {
@@ -108,6 +115,9 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    // During tests, render nothing
+    const inTest = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
+    if (inTest) return const SizedBox.shrink();
     if (_loading) {
       return SizedBox(
         height: 52,

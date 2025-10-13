@@ -21,9 +21,9 @@ class TodayTimelineWidget extends StatelessWidget {
     final tomorrow = today.add(const Duration(days: 1));
 
     // Filter today's sessions
-    final todaySessions = sessions
-        .where((s) => s.timestamp.isAfter(today) && s.timestamp.isBefore(tomorrow))
-        .toList();
+  final todaySessions = sessions
+    .where((s) => s.date.isAfter(today) && s.date.isBefore(tomorrow))
+    .toList();
 
     if (todaySessions.isEmpty) {
       return SizedBox(
@@ -72,7 +72,7 @@ class TodayTimelineWidget extends StatelessWidget {
 
                     // Session dots
                     ...todaySessions.map((session) {
-                      final sessionTime = session.timestamp;
+                      final sessionTime = session.date;
                       final minutesSinceMidnight =
                           sessionTime.hour * 60 + sessionTime.minute;
                       final position = (minutesSinceMidnight / (24 * 60)) * width;
@@ -173,15 +173,15 @@ class _SessionDot extends StatelessWidget {
     final timeFormat = DateFormat.jm();
 
     return Tooltip(
-      message: '${timeFormat.format(session.timestamp)} • '
+      message: '${timeFormat.format(session.date)} • '
           '${session.duration ~/ 60}min • '
-          '${session.success ? "✓" : "×"}',
+      '${session.completed ? "✓" : "×"}',
       child: Container(
         width: 16,
         height: 16,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: session.success
+      color: session.completed
               ? theme.colorScheme.primary
               : theme.colorScheme.error,
           border: Border.all(
@@ -190,7 +190,7 @@ class _SessionDot extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: (session.success
+        color: (session.completed
                       ? theme.colorScheme.primary
                       : theme.colorScheme.error)
                   .withOpacity(0.3),
@@ -199,7 +199,7 @@ class _SessionDot extends StatelessWidget {
             ),
           ],
         ),
-        child: session.success
+        child: session.completed
             ? Icon(
                 Icons.check,
                 size: 10,

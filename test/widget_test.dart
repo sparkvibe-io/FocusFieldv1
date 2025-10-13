@@ -32,14 +32,31 @@ void main() {
       WidgetTester tester,
     ) async {
       await _pumpApp(tester);
-      // Duration chips live under the Activity tab in the Session Control card.
-      // Switch to Activity tab first.
-      await tester.tap(find.text('Activity'));
-      await tester.pumpAndSettle();
-      // Quick duration chips include common minutes like 1, 5, 10
-      expect(find.text('1'), findsWidgets);
-      expect(find.text('5'), findsWidgets);
-      expect(find.text('10'), findsWidgets);
+      // Go to Sessions tab (prefer targeting within TabBar to avoid ambiguity)
+      final sessionsTabText = find.descendant(
+        of: find.byType(TabBar),
+        matching: find.text('Sessions'),
+      );
+      if (sessionsTabText.evaluate().isNotEmpty) {
+        await tester.tap(sessionsTabText);
+      } else {
+        await tester.tap(find.byIcon(Icons.play_circle_outline_rounded));
+      }
+      // Let the tab animation complete
+      await tester.pump(const Duration(milliseconds: 600));
+
+      // Scroll until the session control card (with duration chips) comes into view
+      final target = find.text('1m');
+      await tester.scrollUntilVisible(
+        target,
+        500.0,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      // Quick duration chips include common minutes like 1m, 5m, 10m
+      expect(find.text('1m'), findsWidgets);
+      expect(find.text('5m'), findsWidgets);
+      expect(find.text('10m'), findsWidgets);
     });
 
     testWidgets('should not show status message before interaction', (

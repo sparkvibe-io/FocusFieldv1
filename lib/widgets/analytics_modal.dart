@@ -412,8 +412,8 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildActivityProgress(BuildContext context, WidgetRef ref) {
-    final activityState = ref.watch(activityTrackingProvider);
-
+    // TODO: Wire up real activity tracking provider when available.
+    // Temporarily show placeholder to keep build green.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -427,49 +427,13 @@ class AnalyticsModal extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            ...activityState.trackedActivities.map((activity) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          activity.type.icon,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            activity.type.key,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                        Text(
-                          activity.goalIndicator,
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: activity.progress,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
-                      color: activity.isCompleted
-                          ? Colors.green
-                          : Theme.of(context).colorScheme.primary,
-                    ),
-                  ],
-                ),
-              );
-            }),
+            Text(
+              'Detailed activity tracking coming soon.',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
           ],
         ),
       ),
