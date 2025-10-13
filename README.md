@@ -57,9 +57,26 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - ✅ 50/50 split with vertical divider
 - ✅ Simultaneous access to progress tracking and session controls
 
+### ✅ **HOME DASHBOARD & LIVE METRICS COMPLETE** (Oct 13, 2025)
+
+**Dynamic Trends Display**:
+- ✅ Real-time metrics calculated from actual session data
+- ✅ "Your patterns" card shows live stats (Focus Time, Sessions, Average, Ambient Score)
+- ✅ Trend indicators based on performance thresholds (e.g., >15 min/day = up arrow)
+- ✅ Session model enhanced with `ambientScore` field for quiet session tracking
+- ✅ Storage service upgraded with `saveUserPreferences/loadUserPreferences` helpers
+- ✅ User preferences provider refactored with cleaner persistence methods
+- ✅ Responsive padding system unified across all widgets
+- ✅ Animated tab-aware header with dynamic quest subtitle
+
+**Technical Improvements**:
+- ✅ Null-safe disposal methods with proper error handling
+- ✅ Enhanced light/dark theme palettes for better contrast
+- ✅ Full code formatting and analyzer verification (0 issues)
+
 ### 🔄 **Remaining Work (P1)**
 
-- ⏳ iOS Live Activities (Lock Screen + Dynamic Island) - Platform parity with Android
+- ⏳ iOS Live Activities (Lock Screen + Dynamic Island) - **Deferred to post-launch** for platform parity with Android
 
 **Implementation Docs**:
 - `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin acceptance tests)
@@ -114,11 +131,17 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 ### Advanced Analytics
 - **Tabbed Overview Widget**: ✅ Space-optimized interface combining Practice Overview + Advanced Analytics
+- **Live Pattern Analysis**: ✅ **NEW** Real metrics calculated from session history
+  - Average daily focus time from last 7 days of sessions
+  - Weekly session frequency tracking
+  - Average session duration across all recent sessions
+  - Ambient score percentage from noise-monitored sessions
+- **Trend Indicators**: ✅ **NEW** Up/down arrows showing performance vs smart thresholds (e.g., >15 min/day focus time = up)
 - **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
 - **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
-- **12-Week Activity Heatmap**: ✅ **NEW** GitHub-style contribution graph showing session intensity over 12 weeks
-- **Today Timeline**: ✅ **NEW** 24-hour horizontal timeline with session dots positioned by time of day
-- **Weekly Target Line**: ✅ **NEW** Visual goal reference (30min default) overlaid on 7-day trends
+- **12-Week Activity Heatmap**: ✅ GitHub-style contribution graph showing session intensity over 12 weeks
+- **Today Timeline**: ✅ 24-hour horizontal timeline with session dots positioned by time of day
+- **Weekly Target Line**: ✅ Visual goal reference (30min default) overlaid on 7-day trends
 - **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
 - **Session History Graph**: Visual representation of quiet progress
 - **7-Day Activity Chart**: Real-time stacked bar chart showing minutes by activity with per-activity colors
@@ -130,7 +153,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - **Adjustable Decibel Threshold**: 20–80 dB (default 38) with high-threshold warning ≥70 dB
 - **Session Duration**: Free up to 30 minutes; Premium up to 120 minutes
 - **Calibration Dialog**: Previous vs new threshold, ambient warnings
-- **Theme System**: System / Light / Dark
+- **Theme System**: Modern, high-contrast default themes (Light & Dark), plus premium options.
 - **Accessibility Settings**: High contrast, large text, vibration feedback
 
 ### User Experience
@@ -337,7 +360,8 @@ Unit tests cover smart reminder eligibility (`shouldSendDailyReminder`) with inj
 - **Sample Interval**: 200ms (system constant)
 - **Points System**: 1 point per quiet minute
 - **Chart Smoothing**: Exponential moving average
-- **Theme**: System default
+- **Theme**: High-contrast, modern default themes (Light & Dark).
+- **Premium Themes**: Includes `Ocean Blue`, `Forest Green`, `Cyber Neon`, and more.
 
 ### Advanced Configuration
 - **Calibration**: Ambient baseline sets initial threshold
@@ -624,7 +648,8 @@ _Section de-duplicated; previous duplicate removed._
 
 ### User Interface
 - **Tabbed Settings**: Organized interface with Basic, Advanced, and About sections
-- **Theme Management**: Quick theme cycling with visual feedback (System/Light/Dark)
+- **Theme Management**: Quick theme cycling with visual feedback (System/Light/Dark).
+- **Premium Themes**: A variety of exclusive themes for subscribed users.
 - **Compact Layout**: Single-screen design eliminating scroll requirements
 - **Modern Controls**: Visual sliders with live value indicators and smooth animations
 - **Intelligent Spacing**: Optimized component positioning for better user interaction
@@ -676,6 +701,33 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 
+### Latest Updates (v0.1.2 - Live Metrics Release - Oct 13, 2025)
+
+#### 📊 **Dynamic Trends & Real Data**
+- ✅ **Live Metrics**: Replaced placeholder data with real calculations from session history
+  - Focus Time: Average daily minutes from last 7 days
+  - Sessions: Weekly session count tracking
+  - Average Duration: Calculated across all recent sessions
+  - Ambient Score: Average calm percentage from quiet sessions
+- ✅ **Ambient Score Tracking**: Added `ambientScore` field to `SessionRecord` model for persistent storage
+- ✅ **User Preferences Enhancement**: Upgraded storage service with dedicated `saveUserPreferences/loadUserPreferences` methods
+- ✅ **Provider Refactoring**: Streamlined `UserPreferencesNotifier` with `_persist` helper and cleaner setters
+- ✅ **Responsive Design**: Unified `_getResponsivePadding` helper across all widgets for consistent spacing
+- ✅ **Header Refinement**: Animated tab-aware header with dynamic quest subtitle showing real-time calm percentage
+- ✅ **Theme Improvements**: Enhanced light/dark color palettes for better contrast and readability
+
+#### 🎨 **Brand Alignment Complete**
+- ✅ **Terminology Shift**: Updated 84 strings from "silence" to "focus" terminology across 7 languages
+- ✅ **Focus Minutes**: Changed from "quiet minutes" to "focus minutes" throughout the app
+- ✅ **Empowering Language**: "silence master" → "focus champion", reinforcing productivity focus
+- ✅ **Localization**: All notification strings updated in EN, ES, DE, FR, JA, PT, PT_BR
+
+#### 🔧 **Technical Polish**
+- ✅ **Code Quality**: Full `dart format` pass with `flutter analyze` showing 0 issues
+- ✅ **Null Safety**: Proper error handling in disposal methods
+- ✅ **Type Safety**: All preference mutations use sanitized/clamped values
+- ✅ **Documentation**: Updated CLAUDE.md and README.md with latest implementation details
+
 ### Recent Major Updates (v0.1.1 - Stability Release)
 
 #### 🛡️ **Critical Stability Fixes**
@@ -703,7 +755,7 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 ### Previous Updates (v0.1.0)
 - ✅ **Enhanced Progress Ring**: Always-visible interactive control with real-time countdown
 - ✅ **Real-Time Noise Chart**: Live visualization with smoothing algorithms
-- ✅ **Advanced Theme System**: System/Light/Dark modes with quick switching
+- ✅ **Advanced Theme System**: High-contrast default themes (Light/Dark) and exclusive premium themes.
 - ✅ **Tabbed Settings**: Organized interface with Basic, Advanced, and About sections
 - ✅ **Performance Optimization**: Reduced blinking and improved battery efficiency
 - ✅ **Compact UI Design**: Single-screen layout with optimized spacing
@@ -721,7 +773,7 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 - [x] Extended sessions (up to 120 minutes)
 - [x] Advanced analytics & weekly trends
 - [x] Data export (CSV/PDF)
-- [x] Premium themes
+- [x] Premium themes & customization
 - [x] Priority support
 - [x] Calibration dialog & high-threshold warnings
 
@@ -855,7 +907,7 @@ premium.tier.yearly
 - Extended sessions (120m vs 30m free)
 - Advanced analytics
 - Data export (CSV/PDF)
-- Premium themes
+- Premium themes & customization
 - Priority support
 
 #### Future Higher Tier (Deferred)
@@ -909,4 +961,4 @@ For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to re
 6. **Launch Marketing**: Execute go-to-market strategy
 
 ## Last Updated
-October 6, 2025 — Updated to Ambient Quests final direction; archived legacy Mission/Habit documents and linked to the new spec.
+October 13, 2025 — Added live metrics to "Your patterns" card, enhanced session model with ambient score tracking, upgraded user preferences persistence, and completed brand alignment across all notification strings.

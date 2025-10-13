@@ -257,18 +257,18 @@ class NotificationService {
     final sessionCount = _sessionTimes.length;
 
     if (optimalTime == null || sessionCount == 0) {
-      return 'Time for your daily silence practice! 🧘‍♂️';
+      return 'Time for your daily focus practice! 🎯';
     }
 
     final timeString =
         '${optimalTime.hour.toString().padLeft(2, '0')}:${optimalTime.minute.toString().padLeft(2, '0')}';
 
     if (sessionCount < 5) {
-      return 'Building your silence habit! Ready for today\'s session? 🌱';
+      return 'Building your focus habit! Ready for today\'s session? 🌱';
     } else if (sessionCount < 15) {
       return 'You usually practice around $timeString. Ready to continue your streak? ⭐';
     } else {
-      return 'Your daily $timeString silence session awaits! You\'ve got this! 🏆';
+      return 'Your daily $timeString focus session awaits! You\'ve got this! 🏆';
     }
   }
 
@@ -276,12 +276,12 @@ class NotificationService {
   String getCompletionMessage(bool success, int durationMinutes) {
     if (success) {
       if (durationMinutes >= 5) {
-        return 'Excellent! You completed a $durationMinutes-minute silence session! 🏆';
+        return 'Excellent! $durationMinutes focus minutes earned! 🏆';
       } else {
-        return 'Great job! $durationMinutes minutes of peaceful silence achieved! ✨';
+        return 'Great job! $durationMinutes focus minutes in your session! ✨';
       }
     } else {
-      return 'Session incomplete, but every attempt makes you stronger! Try again when ready. 💪';
+      return 'Session ended early—that\'s okay! Every attempt builds your focus habit. 💪';
     }
   }
 
@@ -403,7 +403,7 @@ class NotificationService {
   Future<void> showDailyReminder(BuildContext context) async {
     final l = AppLocalizations.of(context);
     await showNotification(
-      title: l?.dailySilenceReminderTitle ?? 'Daily Silence Reminder',
+      title: l?.dailySilenceReminderTitle ?? 'Daily Focus Reminder',
       body: getSmartReminderMessage(context),
       payload: 'daily_reminder',
     );
@@ -572,8 +572,8 @@ class NotificationService {
       dailyReminderId,
       context != null
           ? (AppLocalizations.of(context)?.dailySilenceReminderTitle ??
-              'Daily Silence Reminder')
-          : 'Daily Silence Reminder',
+              'Daily Focus Reminder')
+          : 'Daily Focus Reminder',
       getSmartReminderMessage(context),
       tzTime,
       const NotificationDetails(
@@ -708,22 +708,22 @@ class NotificationService {
 
     if (streak == 0 && sessionCount == 0) {
       return l?.reminderStartJourney ??
-          '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+          '🎯 Start your focus journey today! Build your deep work habit.';
     }
 
     if (streak == 0 && sessionCount > 0) {
       return l?.reminderRestart ??
-          '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+          '🌱 Ready to restart your focus practice? Every moment is a new beginning.';
     }
 
     if (streak == 1) {
       return l?.reminderDayTwo ??
-          '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+          '⭐ Day 2 of your focus streak! Consistency builds concentration.';
     }
 
     if (streak < 7) {
       return l?.reminderStreakShort(streak) ??
-          '🔥 $streak-day streak! You\'re building a powerful habit.';
+          '🔥 $streak-day streak! You\'re building a powerful focus habit.';
     }
 
     if (streak < 30) {
@@ -732,7 +732,7 @@ class NotificationService {
     }
 
     return l?.reminderStreakLong(streak) ??
-        '👑 Incredible $streak-day streak! You\'re a silence master!';
+        '👑 Incredible $streak-day streak! You\'re a focus champion!';
   }
 
   // Achievement notification messages
@@ -740,7 +740,7 @@ class NotificationService {
     switch (achievement) {
       case 'first_session':
         return AppLocalizations.of(context!)?.achievementFirstSession ??
-            '🎉 First session completed! Welcome to your silence journey!';
+            '🎉 First session complete! Welcome to Focus Field!';
       case 'week_streak':
         return AppLocalizations.of(context!)?.achievementWeekStreak ??
             '🌟 7-day streak achieved! Consistency is your superpower!';
@@ -749,7 +749,7 @@ class NotificationService {
             '🏆 30-day streak unlocked! You\'re unstoppable!';
       case 'perfect_session':
         return AppLocalizations.of(context!)?.achievementPerfectSession ??
-            '✨ Perfect silence session! Not a sound disturbed your peace.';
+            '✨ Perfect session! 100% calm environment maintained!';
       case 'long_session':
         return AppLocalizations.of(context!)?.achievementLongSession ??
             '⏰ Extended session master! Your focus grows stronger.';
@@ -767,27 +767,27 @@ class NotificationService {
   ) {
     if (sessionsThisWeek == 0) {
       return AppLocalizations.of(context!)?.weeklyProgressNone ??
-          '💭 This week could use some silence. Ready for a peaceful session?';
+          '💭 Start your weekly goal! Ready for a focused session?';
     }
 
     if (sessionsThisWeek < 3) {
       return AppLocalizations.of(
             context!,
           )?.weeklyProgressFew(sessionsThisWeek) ??
-          '🌿 $sessionsThisWeek sessions this week. Every practice deepens your calm.';
+          '🌿 $sessionsThisWeek focus minutes this week! Every session counts.';
     }
 
     if (sessionsThisWeek < 7) {
       return AppLocalizations.of(
             context!,
           )?.weeklyProgressSome(sessionsThisWeek) ??
-          '🌊 $sessionsThisWeek sessions this week! You\'re finding your rhythm.';
+          '🌊 $sessionsThisWeek focus minutes earned! You\'re on track!';
     }
 
     return AppLocalizations.of(
           context!,
         )?.weeklyProgressPerfect(sessionsThisWeek) ??
-        '🎯 Perfect week with $sessionsThisWeek sessions! Your dedication shines.';
+        '🎯 $sessionsThisWeek focus minutes achieved! Perfect week!';
   }
 
   bool _isInTestEnvironment() {

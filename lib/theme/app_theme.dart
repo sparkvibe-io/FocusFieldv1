@@ -59,7 +59,9 @@ class AppTheme {
           Color(0xFFB347FF), // purple
         ],
       );
-      decorations = AppDecorations.premium(accentColor: const Color(0xFF00FFF0));
+      decorations = AppDecorations.premium(
+        accentColor: const Color(0xFF00FFF0),
+      );
     } else if (mode == AppThemeMode.midnightTeal) {
       dramatic = DramaticThemeStyling(
         appBackgroundGradient: const LinearGradient(
@@ -86,7 +88,9 @@ class AppTheme {
           Color(0xFF5DF27C), // green accent
         ],
       );
-      decorations = AppDecorations.premium(accentColor: const Color(0xFF00D295));
+      decorations = AppDecorations.premium(
+        accentColor: const Color(0xFF00D295),
+      );
     }
 
     final highContrast = enableHighContrast;
@@ -141,23 +145,36 @@ class AppTheme {
     switch (mode) {
       case AppThemeMode.system:
         return brightness == Brightness.dark
-            ? ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.dark,
-            )
-            : ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.light,
-            );
+            ? _getColorScheme(AppThemeMode.dark, Brightness.dark)
+            : _getColorScheme(AppThemeMode.light, Brightness.light);
       case AppThemeMode.light:
-        return ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+        final baseLight = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF006A6A), // Professional Teal
           brightness: Brightness.light,
         );
+        return baseLight.copyWith(
+          surface: const Color(0xFFF0F5F5), // Soft gray background
+          surfaceContainer: const Color(0xFFE8EEEE),
+          surfaceContainerHighest:
+              Colors.white, // White cards for high contrast
+          primary: const Color(0xFF005A5A),
+          onPrimary: Colors.white,
+          outline: baseLight.outline.withValues(alpha: 0.5),
+        );
       case AppThemeMode.dark:
-        return ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+        final baseDark = ColorScheme.fromSeed(
+          seedColor: const Color(0xFF00E0E0), // Vibrant Cyan
           brightness: Brightness.dark,
+        );
+        return baseDark.copyWith(
+          surface: const Color(0xFF1A1C1C), // Dark slate background
+          surfaceContainer: const Color(0xFF242626),
+          surfaceContainerHighest: const Color(
+            0xFF282A2A,
+          ), // Lighter gray cards
+          primary: const Color(0xFF00E0E0),
+          onPrimary: Colors.black,
+          outline: baseDark.outline.withValues(alpha: 0.5),
         );
       case AppThemeMode.oceanBlue:
         final baseOcean = ColorScheme.fromSeed(
@@ -304,13 +321,18 @@ class AppTheme {
     }
   }
 
-  static CardThemeData _cardThemeFor(AppThemeMode mode, ColorScheme scheme, bool highContrast) {
+  static CardThemeData _cardThemeFor(
+    AppThemeMode mode,
+    ColorScheme scheme,
+    bool highContrast,
+  ) {
     // Borderless by default with subtle background highlights
     final baseShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
-      side: highContrast
-          ? BorderSide(color: scheme.primary, width: 1.2)
-          : BorderSide.none,
+      side:
+          highContrast
+              ? BorderSide(color: scheme.primary, width: 1.2)
+              : BorderSide.none,
     );
 
     switch (mode) {
@@ -340,7 +362,8 @@ class AppTheme {
           elevation: highContrast ? 2 : 0,
           shape: baseShape,
           color: scheme.surfaceContainerHighest.withValues(alpha: 0.9),
-          shadowColor: highContrast ? scheme.onSurface.withValues(alpha: 0.4) : null,
+          shadowColor:
+              highContrast ? scheme.onSurface.withValues(alpha: 0.4) : null,
           margin: EdgeInsets.zero,
         );
     }

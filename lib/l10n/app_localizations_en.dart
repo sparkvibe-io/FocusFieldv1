@@ -396,6 +396,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String get faqNotificationsA => 'Smart reminders learn habits and celebrate milestones.';
 
   @override
+  String get faqFocusMinutesQ => 'What are focus minutes?';
+
+  @override
+  String get faqFocusMinutesA => 'Focus minutes measure time spent in calm environments (≥70% quiet). They\'re earned during sessions when ambient noise stays below your threshold.';
+
+  @override
+  String get faqAmbientQuestQ => 'What is the Ambient Quest system?';
+
+  @override
+  String get faqAmbientQuestA => 'Daily focus challenges that track quiet minutes across Study, Reading, and Meditation activities. Set a goal (10-60 min), build streaks, and earn freeze tokens monthly.';
+
+  @override
+  String get faqStreaksQ => 'How do streaks work?';
+
+  @override
+  String get faqStreaksA => 'Streaks track consecutive days of reaching your goal. The compassionate 2-Day Rule means missing one day won\'t break your streak—only two consecutive misses reset it. Use monthly freeze tokens to protect streaks on tough days.';
+
+  @override
+  String get faqActivitiesQ => 'What activities can I track?';
+
+  @override
+  String get faqActivitiesA => 'Focus Field offers Study, Reading, and Meditation activities. Each tracks progress toward your daily goal. Enable/disable activities and adjust your goal (10-60 min) in the Activity Progress section.';
+
+  @override
+  String get faqCalibrateQ => 'How do I calibrate my microphone?';
+
+  @override
+  String get faqCalibrateA => 'Go to Settings > Advanced > Noise Calibration. The app measures your ambient baseline for 5 seconds and suggests an appropriate threshold. Recalibrate when changing environments.';
+
+  @override
+  String get faqMicTroubleshootQ => 'Why isn\'t my microphone working?';
+
+  @override
+  String get faqMicTroubleshootA => 'Check: (1) Microphone permission granted in device settings, (2) No other apps using microphone, (3) Restart app if needed. Contact support if issues persist.';
+
+  @override
+  String get faqSubscriptionTiersQ => 'What\'s the difference between subscription tiers?';
+
+  @override
+  String get faqSubscriptionTiersA => 'Free: 30-min sessions, 7-day history, basic features. Premium (\$1.99/mo): 120-min sessions, 90-day history, analytics, export, themes. Premium Plus (\$3.99/mo): Coming soon with cloud sync and AI insights.';
+
+  @override
+  String get faqDeepFocusQ => 'What is Deep Focus mode?';
+
+  @override
+  String get faqDeepFocusA => 'A Premium feature that automatically ends your session if you leave the app for more than the grace period (default 10s). Helps maintain distraction-free focus sessions.';
+
+  @override
+  String get faqDailyGoalQ => 'How do I adjust my daily goal?';
+
+  @override
+  String get faqDailyGoalA => 'Tap \'Edit\' in the Activity Progress section on the Today tab. Adjust the global daily goal slider (10-60 min) and enable/disable specific activities (Study, Reading, Meditation).';
+
+  @override
+  String get faqCalmPercentQ => 'What does the Calm % mean?';
+
+  @override
+  String get faqCalmPercentA => 'The percentage of time during your session where ambient noise stayed below threshold. Sessions with ≥70% Calm qualify for quest credit. Higher percentages mean better focus environments.';
+
+  @override
   String get close => 'Close';
 
   @override
@@ -760,7 +820,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationPreview => 'Notification Preview';
 
   @override
-  String get dailySilenceReminderTitle => 'Daily Silence Reminder';
+  String get dailySilenceReminderTitle => 'Daily Focus Reminder';
 
   @override
   String get weeklyProgressReportTitle => 'Weekly Progress Report 📊';
@@ -775,17 +835,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionCompleteEndedTitle => 'Session Ended';
 
   @override
-  String get reminderStartJourney => '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+  String get reminderStartJourney => '🎯 Start your focus journey today! Build your deep work habit.';
 
   @override
-  String get reminderRestart => '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+  String get reminderRestart => '🌱 Ready to restart your focus practice? Every moment is a new beginning.';
 
   @override
-  String get reminderDayTwo => '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+  String get reminderDayTwo => '⭐ Day 2 of your focus streak! Consistency builds concentration.';
 
   @override
   String reminderStreakShort(int streak) {
-    return '🔥 $streak-day streak! You\'re building a powerful habit.';
+    return '🔥 $streak-day streak! You\'re building a powerful focus habit.';
   }
 
   @override
@@ -795,11 +855,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reminderStreakLong(int streak) {
-    return '👑 Incredible $streak-day streak! You\'re a silence master!';
+    return '👑 Incredible $streak-day streak! You\'re a focus champion!';
   }
 
   @override
-  String get achievementFirstSession => '🎉 First session completed! Welcome to your silence journey!';
+  String get achievementFirstSession => '🎉 First session complete! Welcome to Focus Field!';
 
   @override
   String get achievementWeekStreak => '🌟 7-day streak achieved! Consistency is your superpower!';
@@ -808,7 +868,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get achievementMonthStreak => '🏆 30-day streak unlocked! You\'re unstoppable!';
 
   @override
-  String get achievementPerfectSession => '✨ Perfect silence session! Not a sound disturbed your peace.';
+  String get achievementPerfectSession => '✨ Perfect session! 100% calm environment maintained!';
 
   @override
   String get achievementLongSession => '⏰ Extended session master! Your focus grows stronger.';
@@ -817,21 +877,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get achievementGeneric => '🎊 Achievement unlocked! Keep up the great work!';
 
   @override
-  String get weeklyProgressNone => '💭 This week could use some silence. Ready for a peaceful session?';
+  String get weeklyProgressNone => '💭 Start your weekly goal! Ready for a focused session?';
 
   @override
   String weeklyProgressFew(int count) {
-    return '🌿 $count sessions this week. Every practice deepens your calm.';
+    return '🌿 $count focus minutes this week! Every session counts.';
   }
 
   @override
   String weeklyProgressSome(int count) {
-    return '🌊 $count sessions this week! You\'re finding your rhythm.';
+    return '🌊 $count focus minutes earned! You\'re on track!';
   }
 
   @override
   String weeklyProgressPerfect(int count) {
-    return '🎯 Perfect week with $count sessions! Your dedication shines.';
+    return '🎯 $count focus minutes achieved! Perfect week!';
   }
 
   @override

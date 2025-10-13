@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 CURRENT STATUS — Oct 12, 2025: Tablet Responsive Design Complete
+## 🚀 CURRENT STATUS — Oct 13, 2025: Brand Alignment & UI Polish Complete
 ### Product Principles (Always)
 - No scrolling on main pages (Home/Summary/Activity). Use compact components, tabs, and carousels to fit without vertical scroll.
 - Advertisements are always visible (anchored adaptive banner), never obscured by overlays or long content.
@@ -75,6 +75,7 @@ Developer notes (compactness and ad safety):
 **Localization**:
 - ✅ All 7 languages updated (EN, ES, DE, FR, JA, PT, PT_BR)
 - ✅ 7 new strings added for Quest Capsule & Adaptive Threshold
+- ✅ 84 notification strings updated for brand alignment (Oct 13, 2025)
 - ✅ `flutter gen-l10n` verified: 0 untranslated messages
 
 ### ✅ **ACTIVITY CUSTOMIZATION SYSTEM COMPLETE** (Oct 11, 2025)
@@ -118,8 +119,71 @@ Developer notes (compactness and ad safety):
 - ✅ Session completion updates both per-activity minutes and global progress
 - ✅ Profile selection persists across app restarts
 
+### ✅ **BRAND ALIGNMENT & UI FIXES** (Oct 13, 2025)
+**Notification Brand Rebranding**:
+- ✅ **Complete Terminology Shift**: Changed from "silence" to "focus" across all notification strings
+- ✅ **Focus Minutes Terminology**: Updated from "quiet minutes" to "focus minutes" (building focus, not measuring silence)
+- ✅ **7 Languages Updated**: All 7 supported locales (EN, ES, DE, FR, JA, PT, PT_BR) - 11 strings each
+- ✅ **NotificationService Updated**: 7 fallback message methods updated in `lib/services/notification_service.dart`
+- ✅ **Brand References**: Added explicit "Welcome to Focus Field!" in first session achievement
+- ✅ **Empowering Language**: Changed "silence master" → "focus champion", meditation/zen → productivity/concentration
+- ✅ **Localization Regenerated**: Ran `flutter gen-l10n` successfully with 0 errors
+- ✅ **Total Updates**: 84 strings updated (7 fallback methods + 11 strings × 7 languages)
+
+**Dynamic Calm Percentage Fix**:
+- ✅ **Removed Hardcoded Value**: Fixed Today page subtitle in `lib/screens/home_page_elegant.dart:270`
+- ✅ **Dynamic Calculation**: Now reads from `questState.requiredScore` field (default 0.7 = 70%)
+- ✅ **Single Source of Truth**: Calm percentage now consistent with actual quest qualification logic
+- ✅ **Future-Proof**: If required score changes, UI automatically updates to match
+
+**Key String Changes**:
+```dart
+// Before: "silence journey", "silence master", "quiet minutes"
+// After: "focus journey", "focus champion", "focus minutes"
+
+// Example notification updates:
+"Daily Silence Reminder" → "Daily Focus Reminder"
+"Start your silence journey today!" → "Start your focus journey today! Build your deep work habit."
+"X-day streak! You're a silence master!" → "X-day streak! You're a focus champion!"
+"X quiet minutes this week" → "X focus minutes this week! Every session counts."
+```
+
+**Technical Impact**:
+- Reinforces Focus Field as a **productivity and focus-building application**
+- Ambient silence is now clearly positioned as the **measurement tool**, not the end goal
+- All user-facing messaging aligned with brand identity across notifications, achievements, and reminders
+
+### ✅ **HOME DASHBOARD REFINEMENT & LIVE METRICS COMPLETE** (Oct 13, 2025)
+**Dynamic Trends Integration**:
+- ✅ **Removed Hardcoded Metrics**: "Your patterns" card now calculates real data from `SilenceData`
+- ✅ **Live Calculations from Session History**:
+  - **Focus Time**: `avgDailyFocusTimeInMinutes` calculated from last 7 days of sessions
+  - **Sessions**: `sessionsPerWeek` count from recent activity
+  - **Average**: `avgSessionDurationInMinutes` across all recent sessions
+  - **Ambient Score**: `avgAmbientScore` percentage from quiet sessions (new!)
+- ✅ **Trend Indicators**: Up/down arrows based on actual performance thresholds
+- ✅ **Data Persistence**: Enhanced storage service with user preferences helpers
+- ✅ **Graceful Fallbacks**: Shows loading state and error handling for async data
+
+**Model & Service Enhancements**:
+- ✅ **Session Model Extended**: Added `ambientScore` field to `SessionRecord` model
+- ✅ **Storage Service Upgraded**: New `saveUserPreferences/loadUserPreferences` methods
+- ✅ **User Preferences Refactor**: Streamlined provider with `_persist` helper and cleaner setters
+- ✅ **Type Safety**: All preference mutations use sanitized/clamped values
+
+**UI/UX Polish**:
+- ✅ **Header Alignment**: Animated tab-aware header with quest-driven subtitle showing dynamic calm%
+- ✅ **Responsive Padding**: Unified `_getResponsivePadding` helper across all widgets
+- ✅ **Tab Transitions**: Smooth AnimatedSwitcher with proper keying for Today vs Sessions headers
+- ✅ **Theme Improvements**: Enhanced light/dark color palettes for better contrast
+
+**Technical Improvements**:
+- ✅ **Null-Safe Disposals**: Proper error handling in dispose methods
+- ✅ **Code Formatting**: Full `dart format` pass with analyzer clean (0 issues)
+- ✅ **Documentation Sync**: Updated localization files and notification copy
+
 ### 📋 Remaining Work (P1)
-1. **iOS Live Activities**: Match Android ongoing notification parity (see `docs/development/iOS_Live_Activities_Plan.md`)
+1. **iOS Live Activities**: Match Android ongoing notification parity (deferred to post-launch - see `docs/development/iOS_Live_Activities_Plan.md`)
 
 ### 🔮 **Future Enhancements (P2)**
 **Activity System Expansion** (Deferred to P2):
@@ -279,7 +343,7 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **SubscriptionService** (`lib/services/subscription_service.dart`): ✅ **COMPLETE** RevenueCat integration for premium features
 - **ExportService** (`lib/services/export_service.dart`): Data export functionality (CSV/PDF) ✅
 - **AnalyticsService** (`lib/services/analytics_service.dart`): User behavior tracking ✅
-- **NotificationService** (`lib/services/notification_service.dart`): Smart reminders and session tracking ✅
+- **NotificationService** (`lib/services/notification_service.dart`): Smart reminders and session tracking with Focus Field brand alignment ✅
 - **SupportService** (`lib/services/support_service.dart`): Email support with device info ✅
 
 ### Key Providers
@@ -292,7 +356,7 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **AdaptiveThresholdNotifier** (`lib/providers/adaptive_threshold_provider.dart`): ✅ Tracks consecutive wins, suggests threshold increase after 3 successes
 - **activeSessionDurationProvider** (`lib/providers/silence_provider.dart`): ✅ Temporary session duration overrides for quick selectors
 - **activeDecibelThresholdProvider** (`lib/providers/silence_provider.dart`): ✅ Temporary threshold overrides for quick selectors
-- **ThemeProvider** (`lib/providers/theme_provider.dart`): App theming with System/Light/Dark modes ✅
+- **ThemeProvider** (`lib/providers/theme_provider.dart`): Manages app theming, including the new high-contrast default themes and premium options. ✅
 - **NotificationProvider** (`lib/providers/notification_provider.dart`): Smart reminder state management ✅
 - **AccessibilityProvider** (`lib/providers/accessibility_provider.dart`): Accessibility features ✅
 
@@ -528,10 +592,11 @@ double getProgressRingSize(BuildContext context) {
 - Optimized chart rendering with fl_chart
 
 ### Theme System
-- Material 3 design with dynamic color support
-- Three modes: System, Light, Dark themes
-- Custom AppTheme with purple night mode
-- Consistent color scheme across all components
+- **Default Themes**: Modern, high-contrast themes for Light and Dark modes.
+  - **Light Theme**: Professional teal accents on a soft gray background with white cards for excellent contrast and readability.
+  - **Dark Theme**: Vibrant cyan accents on a dark slate background with lighter gray cards, creating a focused, low-glare experience.
+- **Premium Themes**: Includes `Ocean Blue`, `Forest Green`, `Cyber Neon`, and more for subscribed users.
+- **Theme Provider**: Manages theme state and allows users to switch between System, Light, and Dark modes.
 
 ## Business Context
 

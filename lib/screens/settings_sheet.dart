@@ -1064,8 +1064,38 @@ class SettingsSheet extends ConsumerWidget {
                     ),
                     _faqItem(
                       context,
-                      AppLocalizations.of(context)!.faqAudioRecordedQ,
-                      AppLocalizations.of(context)!.faqAudioRecordedA,
+                      AppLocalizations.of(context)!.faqFocusMinutesQ,
+                      AppLocalizations.of(context)!.faqFocusMinutesA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqAmbientQuestQ,
+                      AppLocalizations.of(context)!.faqAmbientQuestA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqStreaksQ,
+                      AppLocalizations.of(context)!.faqStreaksA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqActivitiesQ,
+                      AppLocalizations.of(context)!.faqActivitiesA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqCalmPercentQ,
+                      AppLocalizations.of(context)!.faqCalmPercentA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqDailyGoalQ,
+                      AppLocalizations.of(context)!.faqDailyGoalA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqCalibrateQ,
+                      AppLocalizations.of(context)!.faqCalibrateA,
                     ),
                     _faqItem(
                       context,
@@ -1077,8 +1107,28 @@ class SettingsSheet extends ConsumerWidget {
                     ),
                     _faqItem(
                       context,
+                      AppLocalizations.of(context)!.faqMicTroubleshootQ,
+                      AppLocalizations.of(context)!.faqMicTroubleshootA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqAudioRecordedQ,
+                      AppLocalizations.of(context)!.faqAudioRecordedA,
+                    ),
+                    _faqItem(
+                      context,
                       AppLocalizations.of(context)!.faqPremiumFeaturesQ,
                       AppLocalizations.of(context)!.faqPremiumFeaturesA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqSubscriptionTiersQ,
+                      AppLocalizations.of(context)!.faqSubscriptionTiersA,
+                    ),
+                    _faqItem(
+                      context,
+                      AppLocalizations.of(context)!.faqDeepFocusQ,
+                      AppLocalizations.of(context)!.faqDeepFocusA,
                     ),
                     _faqItem(
                       context,

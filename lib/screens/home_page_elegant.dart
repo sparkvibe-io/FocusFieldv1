@@ -85,9 +85,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     _activityScrollController.addListener(() {
       final itemExtent = _activityRowHeight + _activityRowSpacing;
       // Index of the first fully/partially visible item
-      final firstIndex = (_activityScrollController.offset / itemExtent)
-          .clamp(0, double.infinity)
-          .floor();
+      final firstIndex =
+          (_activityScrollController.offset / itemExtent)
+              .clamp(0, double.infinity)
+              .floor();
       final page = firstIndex ~/ _visibleActivityRows;
       if (page != _activityPageIndex) {
         setState(() => _activityPageIndex = page);
@@ -96,10 +97,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     // No local counters needed; liveCalmPercentProvider computes from stream.
   }
+
   @override
   void dispose() {
-    try { _noiseSub?.cancel(); } catch (_) {}
-    try { _ambientTickSub?.cancel(); } catch (_) {}
+    try {
+      _noiseSub?.cancel();
+    } catch (_) {}
+    try {
+      _ambientTickSub?.cancel();
+    } catch (_) {}
     _activityScrollController.dispose();
     _tabController.dispose();
     _confetti.dispose();
@@ -108,10 +114,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   // Helper to get responsive scale factor based on screen size
   double _getScaleFactor(BuildContext context) {
-  final size = MediaQuery.sizeOf(context);
-  const baseWidth = 360.0; // Base design width (standard phone)
+    final size = MediaQuery.sizeOf(context);
+    const baseWidth = 360.0; // Base design width (standard phone)
     final currentWidth = size.width;
-    
+
     // Scale between 1.0 (small phones) and 1.8 (large tablets)
     final scale = (currentWidth / baseWidth).clamp(1.0, 1.8);
     return scale;
@@ -128,10 +134,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final theme = Theme.of(context);
     final size = MediaQuery.sizeOf(context);
     final orientation = MediaQuery.orientationOf(context);
-    
+
     // Detect tablet landscape: width >= 840 (large tablet) and landscape orientation
     // Matches our orientation locking policy (landscape only allowed on ≥840dp devices)
-    final isTabletLandscape = size.width >= 840 && orientation == Orientation.landscape;
+    final isTabletLandscape =
+        size.width >= 840 && orientation == Orientation.landscape;
 
     // Listen for session completion/failure to trigger confetti and a11y events
     if (!_sessionListenerWired) {
@@ -140,13 +147,18 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Live calm counters handled centrally; nothing to reset here.
         if (next.success == true && previous?.success != true) {
           // Respect reduce motion preference
-          final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+          final reduceMotion =
+              MediaQuery.maybeOf(context)?.disableAnimations ?? false;
           if (!reduceMotion) {
             _confetti.play();
           }
           try {
-            ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.sessionComplete);
-            ref.read(accessibilityServiceProvider).announceSessionComplete(true);
+            ref
+                .read(accessibilityServiceProvider)
+                .vibrateOnEvent(AccessibilityEvent.sessionComplete);
+            ref
+                .read(accessibilityServiceProvider)
+                .announceSessionComplete(true);
           } catch (_) {}
           await Future.delayed(const Duration(seconds: 2));
           if (mounted) {
@@ -154,8 +166,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           }
         } else if (next.success == false && previous?.success != false) {
           try {
-            ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.sessionFailed);
-            ref.read(accessibilityServiceProvider).announceSessionComplete(false);
+            ref
+                .read(accessibilityServiceProvider)
+                .vibrateOnEvent(AccessibilityEvent.sessionFailed);
+            ref
+                .read(accessibilityServiceProvider)
+                .announceSessionComplete(false);
           } catch (_) {}
         }
       });
@@ -173,8 +189,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF8B9DC3).withValues(alpha: 0.08), // Soft blue-gray
-                    const Color(0xFF86B489).withValues(alpha: 0.04), // Sage green
+                    const Color(
+                      0xFF8B9DC3,
+                    ).withValues(alpha: 0.08), // Soft blue-gray
+                    const Color(
+                      0xFF86B489,
+                    ).withValues(alpha: 0.04), // Sage green
                     theme.colorScheme.surface,
                   ],
                   stops: const [0.0, 0.3, 1.0],
@@ -206,21 +226,21 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
                 // Tab content - show side-by-side in tablet landscape
                 Expanded(
-                  child: isTabletLandscape
-                      ? _buildTabletLandscapeLayout(context)
-                      : TabBarView(
-                          controller: _tabController,
-                          physics: const BouncingScrollPhysics(),
-                          children: [
-                            _buildSummaryTab(context),
-                            _buildSessionsTab(context),
-                          ],
-                        ),
+                  child:
+                      isTabletLandscape
+                          ? _buildTabletLandscapeLayout(context)
+                          : TabBarView(
+                            controller: _tabController,
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              _buildSummaryTab(context),
+                              _buildSessionsTab(context),
+                            ],
+                          ),
                 ),
 
                 // Bottom navigation bar - hide in tablet landscape
-                if (!isTabletLandscape)
-                  _buildBottomNav(context),
+                if (!isTabletLandscape) _buildBottomNav(context),
               ],
             ),
           ),
@@ -232,70 +252,103 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   Widget _buildHeader(BuildContext context, {bool isTabletLandscape = false}) {
     final theme = Theme.of(context);
     final currentTheme = ref.watch(themeProvider);
-    final size = MediaQuery.sizeOf(context);
-    final isNarrow = size.width < 360;
-    final horizontalPad = isNarrow ? 8.0 : 12.0;
-  // Inline date label not shown in the current design; removed to reduce warnings
+    final horizontalPad = _getResponsivePadding(context, 12);
+    final showSummaryHeader = _currentTab == 0 || isTabletLandscape;
+    final userPrefs = ref.watch(userPreferencesProvider);
+
+    final Widget headerContent;
+    if (showSummaryHeader) {
+      final questState = ref.watch(questStateProvider);
+      final goalMinutes =
+          questState?.goalQuietMinutes ?? userPrefs.globalDailyQuietGoalMinutes;
+      final calmPercent = ((questState?.requiredScore ?? 0.7) * 100).round();
+      final titleText =
+          isTabletLandscape ? 'Your Focus Dashboard' : 'Focus minutes today';
+
+      headerContent = KeyedSubtree(
+        key: ValueKey('summary-${isTabletLandscape ? 'tablet' : 'phone'}'),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                titleText,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Goal: $goalMinutes min • Calm ≥$calmPercent%',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      final enabledNames = userPrefs.enabledProfiles
+          .map((id) => _capitalizeFirst(id))
+          .join(' • ');
+      headerContent = KeyedSubtree(
+        key: const ValueKey('sessions-header'),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Pick your mode',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                enabledNames.isEmpty
+                    ? 'Study • Reading • Meditation'
+                    : enabledNames,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    // Inline date label not shown in the current design; removed to reduce warnings
 
     return Container(
-      padding: EdgeInsets.fromLTRB(horizontalPad, 8, horizontalPad, 8),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPad, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Functional headline with subtitle
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  isTabletLandscape 
-                      ? 'Your Focus Dashboard'
-                      : (_currentTab == 0 ? 'Focus minutes today' : 'Pick your mode'),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                if (_currentTab == 0 || isTabletLandscape)
-                  Builder(
-                    builder: (context) {
-                      final questState = ref.watch(questStateProvider);
-                      final goal = questState?.goalQuietMinutes ?? 20;
-                      return Text(
-                        'Goal: $goal min • Calm ≥70%',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    },
-                  )
-                else
-                  Builder(
-                    builder: (context) {
-                      final userPrefs = ref.watch(userPreferencesProvider);
-                      final enabledNames = userPrefs.enabledProfiles
-                          .map((id) => _capitalizeFirst(id))
-                          .join(' • ');
-                      return Text(
-                        enabledNames.isEmpty ? 'Study • Reading • Meditation' : enabledNames,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      );
-                    },
-                  ),
-              ],
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: headerContent,
             ),
           ),
           // Actions: (Summary only) date chip, Tips, Theme, Settings
@@ -303,7 +356,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: Icon(Icons.lightbulb_outline, color: theme.colorScheme.onSurfaceVariant),
+                icon: Icon(
+                  Icons.lightbulb_outline,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 onPressed: () async {
                   final tipService = ref.read(tipServiceProvider);
                   await tipService.showCurrentTip(context);
@@ -311,16 +367,24 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 tooltip: 'Tips',
               ),
               IconButton(
-                icon: Icon(currentTheme.icon, color: theme.colorScheme.onSurfaceVariant),
+                icon: Icon(
+                  currentTheme.icon,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 onPressed: () => _toggleTheme(context),
                 tooltip: 'Theme',
               ),
               IconButton(
-                icon: Icon(Icons.settings_outlined, color: theme.colorScheme.onSurfaceVariant),
+                icon: Icon(
+                  Icons.settings_outlined,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 onPressed: () {
                   // Subtle haptic for accessibility
                   try {
-                    ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+                    ref
+                        .read(accessibilityServiceProvider)
+                        .vibrateOnEvent(AccessibilityEvent.buttonPress);
                   } catch (_) {}
                   showModalBottomSheet(
                     context: context,
@@ -341,7 +405,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   void _toggleTheme(BuildContext context) {
     // Debounce rapid taps to avoid cycling too fast and stacking snackbars
     final now = DateTime.now();
-    if (_lastThemeToggleTime != null && now.difference(_lastThemeToggleTime!) < const Duration(milliseconds: 350)) {
+    if (_lastThemeToggleTime != null &&
+        now.difference(_lastThemeToggleTime!) <
+            const Duration(milliseconds: 350)) {
       return;
     }
     _lastThemeToggleTime = now;
@@ -350,7 +416,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final current = ref.read(themeProvider);
     // Subtle haptic feedback
     try {
-      ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.buttonPress);
+      ref
+          .read(accessibilityServiceProvider)
+          .vibrateOnEvent(AccessibilityEvent.buttonPress);
     } catch (_) {}
 
     themeNotifier.cycleTheme(hasPremiumAccess: hasPremiumAccess);
@@ -361,7 +429,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             ? AppThemeMode.values
             : [AppThemeMode.system, AppThemeMode.light, AppThemeMode.dark];
     final currentIndex = availableThemes.indexOf(current);
-    final nextIndex = currentIndex >= 0 ? (currentIndex + 1) % availableThemes.length : 0;
+    final nextIndex =
+        currentIndex >= 0 ? (currentIndex + 1) % availableThemes.length : 0;
     final nextTheme = availableThemes[nextIndex];
     // Avoid stacking snackbars
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -394,14 +463,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         else
           _buildTodaysMissionCard(context),
         SizedBox(height: spacing),
-  // 7-day stacked bars moved to Trends > Show More (Basic tab)
+        // 7-day stacked bars moved to Trends > Show More (Basic tab)
         _buildTrendsCard(context),
         SizedBox(height: spacing),
         if (showAd) _buildAdvertisementPlaceholder(context),
       ],
     );
   }
-
 
   Widget _buildSessionsTab(BuildContext context, {bool showAd = true}) {
     final horizontalPad = _getResponsivePadding(context, 12);
@@ -410,7 +478,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final spacing = _getResponsivePadding(context, 8);
 
     return ListView(
-      padding: EdgeInsets.fromLTRB(horizontalPad, verticalPad, horizontalPad, bottomPad),
+      padding: EdgeInsets.fromLTRB(
+        horizontalPad,
+        verticalPad,
+        horizontalPad,
+        bottomPad,
+      ),
       physics: const BouncingScrollPhysics(),
       children: [
         // Merged: Activity chips + Today progress in single card
@@ -446,7 +519,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
   Widget _buildTabletLandscapeLayout(BuildContext context) {
-  final theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,18 +542,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 ),
               ),
               // Today tab content (with ad at bottom)
-              Expanded(
-                child: _buildSummaryTab(context, showAd: true),
-              ),
+              Expanded(child: _buildSummaryTab(context, showAd: true)),
             ],
           ),
         ),
 
         // Vertical divider
-        Container(
-          width: 1,
-          color: theme.colorScheme.outlineVariant,
-        ),
+        Container(width: 1, color: theme.colorScheme.outlineVariant),
 
         // Right panel: Sessions tab
         Expanded(
@@ -500,9 +568,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 ),
               ),
               // Sessions tab content (no ad in landscape mode)
-              Expanded(
-                child: _buildSessionsTab(context, showAd: false),
-              ),
+              Expanded(child: _buildSessionsTab(context, showAd: false)),
             ],
           ),
         ),
@@ -524,76 +590,79 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final done = questState?.progressQuietMinutes ?? 0;
     final ratio = goal == 0 ? 0.0 : (done / goal).clamp(0.0, 1.0);
 
-  // subtle encouragement (visual glow previously used)
+    // subtle encouragement (visual glow previously used)
 
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Leading activity icon
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(iconData, color: color, size: 20),
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Leading activity icon
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
           ),
-          const SizedBox(width: 12),
-          // Title + X/Y + slim progress
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Today',
-                      style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+          child: Icon(iconData, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        // Title + X/Y + slim progress
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Today',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '$done/$goal min',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: LinearProgressIndicator(
-                    value: ratio,
-                    minHeight: 6,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Percent chip
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: color.withValues(alpha: 0.45)),
-            ),
-            child: Text(
-              '${(ratio * 100).round()}%',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
+                  const SizedBox(width: 8),
+                  Text(
+                    '$done/$goal min',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: ratio,
+                  minHeight: 6,
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.6),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Percent chip
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: color.withValues(alpha: 0.45)),
+          ),
+          child: Text(
+            '${(ratio * 100).round()}%',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 
   /// Ambient Quests: Display all 4 activity profiles in circular chips
@@ -604,70 +673,79 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final theme = Theme.of(context);
 
     // Filter profiles to show only enabled ones
-    final enabledProfiles = profiles.where((profile) =>
-      userPrefs.enabledProfiles.contains(profile.id)
-    ).toList();
+    final enabledProfiles =
+        profiles
+            .where((profile) => userPrefs.enabledProfiles.contains(profile.id))
+            .toList();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: enabledProfiles.map((profile) {
-          final isSelected = profile.id == selectedId;
-          final color = _getActivityColor(profile.id);
-          final icon = _getActivityIcon(profile.id);
+        children:
+            enabledProfiles.map((profile) {
+              final isSelected = profile.id == selectedId;
+              final color = _getActivityColor(profile.id);
+              final icon = _getActivityIcon(profile.id);
 
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: InkWell(
-                onTap: () => ref.read(selectedProfileIdProvider.notifier).setProfile(profile.id),
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? color.withValues(alpha: 0.15)
-                        : Colors.transparent,
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: InkWell(
+                    onTap:
+                        () => ref
+                            .read(selectedProfileIdProvider.notifier)
+                            .setProfile(profile.id),
                     borderRadius: BorderRadius.circular(16),
-                    border: isSelected
-                        ? Border.all(color: color, width: 2)
-                        : null,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Circular icon container
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: 28,
-                        ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? color.withValues(alpha: 0.15)
+                                : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        border:
+                            isSelected
+                                ? Border.all(color: color, width: 2)
+                                : null,
                       ),
-                      const SizedBox(height: 6),
-                      // Label
-                      Text(
-                        profile.name,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                          color: isSelected ? color : theme.colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Circular icon container
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(icon, color: Colors.white, size: 28),
+                          ),
+                          const SizedBox(height: 6),
+                          // Label
+                          Text(
+                            profile.name,
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w600,
+                              color:
+                                  isSelected
+                                      ? color
+                                      : theme.colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }
@@ -690,14 +768,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surface,
+          color:
+              isSelected
+                  ? theme.colorScheme.primaryContainer
+                  : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
+            color:
+                isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -707,15 +787,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             Container(
               width: 24,
               height: 24,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 14,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              child: Icon(icon, color: Colors.white, size: 14),
             ),
             const SizedBox(width: 6),
             Text(
@@ -747,14 +820,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surface,
+          color:
+              isSelected
+                  ? theme.colorScheme.primaryContainer
+                  : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
+            color:
+                isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -764,10 +839,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             Container(
               width: 24,
               height: 24,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               child: Center(child: iconWidget),
             ),
             const SizedBox(width: 6),
@@ -819,7 +891,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ),
     );
   }
-
 
   Widget _buildStatRingSkeleton(ThemeData theme) {
     return Column(
@@ -966,15 +1037,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         Container(
           width: 36,
           height: 36,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 18,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          child: Icon(icon, color: Colors.white, size: 18),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -993,7 +1057,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 builder: (context, c) {
                   const barHeight = 10.0;
                   const radius = Radius.circular(5);
-                  final completedWidth = (c.maxWidth * progress).clamp(0.0, c.maxWidth);
+                  final completedWidth = (c.maxWidth * progress).clamp(
+                    0.0,
+                    c.maxWidth,
+                  );
                   return SizedBox(
                     height: barHeight,
                     child: Stack(
@@ -1031,7 +1098,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildCompactActivityRow(ThemeData theme, Map<String, dynamic> activity) {
+  Widget _buildCompactActivityRow(
+    ThemeData theme,
+    Map<String, dynamic> activity,
+  ) {
     final completed = activity['completed'] as int;
     final target = activity['target'] as int;
     final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
@@ -1044,10 +1114,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Icon(
               activity['icon'] as IconData,
               color: Colors.white,
@@ -1099,7 +1166,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   // Larger activity row for Activity Progress widget (3 activities visible)
-  Widget _buildLargerActivityRow(ThemeData theme, Map<String, dynamic> activity) {
+  Widget _buildLargerActivityRow(
+    ThemeData theme,
+    Map<String, dynamic> activity,
+  ) {
     final completed = activity['completed'] as int;
     final target = activity['target'] as int;
     final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
@@ -1113,15 +1183,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon ?? Icons.error,
-              color: Colors.white,
-              size: 24,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            child: Icon(icon ?? Icons.error, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1166,6 +1229,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ),
     );
   }
+
   // PROPOSED 3: Circular Ring Icons in Grid
   Widget _buildCircularRingActivityWidget(BuildContext context) {
     final theme = Theme.of(context);
@@ -1191,7 +1255,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             children: [
               Row(
                 children: [
-                  Text('Ring Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Ring Progress',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '(${totalHours % 1 == 0 ? totalHours.toInt() : totalHours.toStringAsFixed(1)}h/${targetHours.toInt()}h)',
@@ -1208,7 +1277,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -1218,67 +1290,80 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: activities.map((activity) {
-              final completed = activity['completed'] as int;
-              final target = activity['target'] as int;
-              final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
-              final color = activity['color'] as Color;
+            children:
+                activities.map((activity) {
+                  final completed = activity['completed'] as int;
+                  final target = activity['target'] as int;
+                  final progress =
+                      target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
+                  final color = activity['color'] as Color;
 
-              return SizedBox(
-                width: 70,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: 56,
-                            height: 56,
-                            child: CircularProgressIndicator(
-                              value: 1.0,
-                              strokeWidth: 5,
-                              backgroundColor: Colors.transparent,
-                              valueColor: AlwaysStoppedAnimation<Color>(color.withValues(alpha: 0.2)),
-                            ),
+                  return SizedBox(
+                    width: 70,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: CircularProgressIndicator(
+                                  value: 1.0,
+                                  strokeWidth: 5,
+                                  backgroundColor: Colors.transparent,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    color.withValues(alpha: 0.2),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: CircularProgressIndicator(
+                                  value: progress,
+                                  strokeWidth: 5,
+                                  backgroundColor: Colors.transparent,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    color,
+                                  ),
+                                  strokeCap: StrokeCap.round,
+                                ),
+                              ),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  activity['icon'] as IconData,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            width: 56,
-                            height: 56,
-                            child: CircularProgressIndicator(
-                              value: progress,
-                              strokeWidth: 5,
-                              backgroundColor: Colors.transparent,
-                              valueColor: AlwaysStoppedAnimation<Color>(color),
-                              strokeCap: StrokeCap.round,
-                            ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          activity['label'] as String,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10,
                           ),
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(activity['icon'] as IconData, color: Colors.white, size: 20),
-                          ),
-                        ],
-                      ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      activity['label'] as String,
-                      style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 10),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
           ),
         ],
       ),
@@ -1304,7 +1389,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1314,7 +1401,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             children: [
               Row(
                 children: [
-                  Text('Stacked Bars', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Stacked Bars',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '(${totalHours % 1 == 0 ? totalHours.toInt() : totalHours.toStringAsFixed(1)}h/${targetHours.toInt()}h)',
@@ -1331,7 +1423,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -1351,9 +1446,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     height: 6,
                     margin: const EdgeInsets.only(bottom: 4),
                     decoration: BoxDecoration(
-                      color: index == 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      color:
+                          index == 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline.withValues(
+                                alpha: 0.3,
+                              ),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1371,7 +1469,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       final activity = activities[index];
                       final completed = activity['completed'] as int;
                       final target = activity['target'] as int;
-                      final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
+                      final progress =
+                          target > 0
+                              ? (completed / target).clamp(0.0, 1.0)
+                              : 0.0;
                       final color = activity['color'] as Color;
 
                       return Padding(
@@ -1381,8 +1482,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                             Container(
                               width: 32,
                               height: 32,
-                              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                              child: Icon(activity['icon'] as IconData, color: Colors.white, size: 16),
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                activity['icon'] as IconData,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -1390,18 +1498,27 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         activity['label'] as String,
-                                        style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 11),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 11,
+                                            ),
                                       ),
                                       Text(
                                         '${completed}m / ${target}m',
-                                        style: theme.textTheme.labelSmall?.copyWith(
-                                          color: theme.colorScheme.onSurfaceVariant,
-                                          fontSize: 10,
-                                        ),
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                              color:
+                                                  theme
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                              fontSize: 10,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -1412,7 +1529,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                         height: 8,
                                         decoration: BoxDecoration(
                                           color: color.withValues(alpha: 0.2),
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                       ),
                                       FractionallySizedBox(
@@ -1421,7 +1540,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                                           height: 8,
                                           decoration: BoxDecoration(
                                             color: color,
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1453,49 +1574,50 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final profiles = ref.watch(defaultProfilesProvider);
     final prefs = ref.watch(userPreferencesProvider);
     final questState = ref.watch(questStateProvider);
-    
+
     final goalMinutes = prefs.globalDailyQuietGoalMinutes;
-    
+
     // Filter profiles based on user preferences
-    final enabledProfiles = profiles.where((profile) {
-      return prefs.enabledProfiles.contains(profile.id);
-    }).toList();
-    
+    final enabledProfiles =
+        profiles.where((profile) {
+          return prefs.enabledProfiles.contains(profile.id);
+        }).toList();
+
     // Build activity list from enabled profiles with per-activity data
-    final activities = enabledProfiles.map((profile) {
-      final icon = _getActivityIcon(profile.id);
-      final color = _getActivityColor(profile.id);
-      
-      // Get per-activity minutes based on profile ID
-      int completedMinutes = 0;
-      if (questState != null) {
-        switch (profile.id) {
-          case 'study':
-            completedMinutes = questState.studyMinutes;
-            break;
-          case 'reading':
-            completedMinutes = questState.readingMinutes;
-            break;
-          case 'meditation':
-            completedMinutes = questState.meditationMinutes;
-            break;
-        }
-      }
-      
-      return {
-        'icon': icon,
-        'label': _titleCase(profile.name),
-        'completed': completedMinutes,
-        'target': goalMinutes,
-        'color': color,
-      };
-  }).toList();
+    final activities =
+        enabledProfiles.map((profile) {
+          final icon = _getActivityIcon(profile.id);
+          final color = _getActivityColor(profile.id);
+
+          // Get per-activity minutes based on profile ID
+          int completedMinutes = 0;
+          if (questState != null) {
+            switch (profile.id) {
+              case 'study':
+                completedMinutes = questState.studyMinutes;
+                break;
+              case 'reading':
+                completedMinutes = questState.readingMinutes;
+                break;
+              case 'meditation':
+                completedMinutes = questState.meditationMinutes;
+                break;
+            }
+          }
+
+          return {
+            'icon': icon,
+            'label': _titleCase(profile.name),
+            'completed': completedMinutes,
+            'target': goalMinutes,
+            'color': color,
+          };
+        }).toList();
 
     // Calculate overall progress from quest state (sum of all activities)
     final totalMinutes = questState?.progressQuietMinutes ?? 0;
-    final overallProgress = goalMinutes > 0 
-        ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) 
-        : 0.0;
+    final overallProgress =
+        goalMinutes > 0 ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) : 0.0;
     final percentageText = '${(overallProgress * 100).toInt()}%';
 
     final displayActivities = activities;
@@ -1505,7 +1627,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1513,7 +1637,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Session Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Session Progress',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               TextButton.icon(
                 onPressed: () {
                   showModalBottomSheet(
@@ -1527,7 +1656,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -1546,9 +1678,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     height: 6,
                     margin: const EdgeInsets.only(bottom: 4),
                     decoration: BoxDecoration(
-                      color: index == 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      color:
+                          index == 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline.withValues(
+                                alpha: 0.3,
+                              ),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1564,7 +1699,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     physics: const BouncingScrollPhysics(),
                     itemCount: displayActivities.length,
                     itemBuilder: (context, index) {
-                      return _buildLargerActivityRow(theme, displayActivities[index]);
+                      return _buildLargerActivityRow(
+                        theme,
+                        displayActivities[index],
+                      );
                     },
                   ),
                 ),
@@ -1596,7 +1734,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                         value: overallProgress,
                         strokeWidth: 10,
                         backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.colorScheme.primary,
+                        ),
                         strokeCap: StrokeCap.round,
                       ),
                     ),
@@ -1639,59 +1779,62 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final profiles = ref.watch(defaultProfilesProvider);
     final prefs = ref.watch(userPreferencesProvider);
     final questState = ref.watch(questStateProvider);
-    
+
     final goalMinutes = prefs.globalDailyQuietGoalMinutes;
-    
+
     // Filter profiles based on user preferences (includes "other" now)
-    final enabledProfiles = profiles.where((profile) {
-      return prefs.enabledProfiles.contains(profile.id);
-    }).toList();
-    
+    final enabledProfiles =
+        profiles.where((profile) {
+          return prefs.enabledProfiles.contains(profile.id);
+        }).toList();
+
     // Build activity list from enabled profiles with per-activity data
-    final activities = enabledProfiles.map((profile) {
-      final icon = _getActivityIcon(profile.id);
-      final color = _getActivityColor(profile.id);
-      
-      // Get per-activity minutes based on profile ID
-      int completedMinutes = 0;
-      if (questState != null) {
-        switch (profile.id) {
-          case 'study':
-            completedMinutes = questState.studyMinutes;
-            break;
-          case 'reading':
-            completedMinutes = questState.readingMinutes;
-            break;
-          case 'meditation':
-            completedMinutes = questState.meditationMinutes;
-            break;
-          case 'other':
-            completedMinutes = questState.otherMinutes;
-            break;
-        }
-      }
-      
-      return {
-        'icon': icon,
-        'label': _titleCase(profile.name),
-        'completed': completedMinutes,
-        'target': goalMinutes,
-        'color': color,
-      };
-    }).toList();
+    final activities =
+        enabledProfiles.map((profile) {
+          final icon = _getActivityIcon(profile.id);
+          final color = _getActivityColor(profile.id);
+
+          // Get per-activity minutes based on profile ID
+          int completedMinutes = 0;
+          if (questState != null) {
+            switch (profile.id) {
+              case 'study':
+                completedMinutes = questState.studyMinutes;
+                break;
+              case 'reading':
+                completedMinutes = questState.readingMinutes;
+                break;
+              case 'meditation':
+                completedMinutes = questState.meditationMinutes;
+                break;
+              case 'other':
+                completedMinutes = questState.otherMinutes;
+                break;
+            }
+          }
+
+          return {
+            'icon': icon,
+            'label': _titleCase(profile.name),
+            'completed': completedMinutes,
+            'target': goalMinutes,
+            'color': color,
+          };
+        }).toList();
 
     // Calculate overall progress from quest state (sum of all activities)
     final totalMinutes = questState?.progressQuietMinutes ?? 0;
-    final overallProgress = goalMinutes > 0 
-        ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) 
-        : 0.0;
+    final overallProgress =
+        goalMinutes > 0 ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) : 0.0;
     final percentageText = '${(overallProgress * 100).toInt()}%';
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1721,7 +1864,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   label: const Text('Edit'),
                   style: TextButton.styleFrom(
                     foregroundColor: theme.colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                   ),
                 ),
               ],
@@ -1752,14 +1898,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
     final totalHours = (totalCompleted / 60.0);
     final targetHours = (totalTarget / 60.0);
-    final overallProgress = totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
+    final overallProgress =
+        totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1767,14 +1916,22 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Session Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Session Progress',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               TextButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.tune, size: 16),
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -1793,9 +1950,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     height: 6,
                     margin: const EdgeInsets.only(bottom: 4),
                     decoration: BoxDecoration(
-                      color: index == 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      color:
+                          index == 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline.withValues(
+                                alpha: 0.3,
+                              ),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1843,7 +2003,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                         value: overallProgress,
                         strokeWidth: 8,
                         backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.colorScheme.primary,
+                        ),
                         strokeCap: StrokeCap.round,
                       ),
                     ),
@@ -1862,6 +2024,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           '${targetHours.toInt()}h',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
                             fontSize: 10,
                           ),
                         ),
@@ -1890,14 +2053,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
     final totalHours = (totalCompleted / 60.0);
     final targetHours = (totalTarget / 60.0);
-    final overallProgress = totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
+    final overallProgress =
+        totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1907,7 +2073,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             children: [
               Row(
                 children: [
-                  Text('Stacked Bars', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Stacked Bars',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '(${totalHours % 1 == 0 ? totalHours.toInt() : totalHours.toStringAsFixed(1)}h/${targetHours.toInt()}h)',
@@ -1917,7 +2088,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Text('(3 activities)', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  Text(
+                    '(3 activities)',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
               TextButton.icon(
@@ -1926,7 +2102,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -1939,72 +2118,95 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               Expanded(
                 flex: 3,
                 child: Column(
-                  children: activities.map((activity) {
-                    final completed = activity['completed'] as int;
-                    final target = activity['target'] as int;
-                    final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
-                    final color = activity['color'] as Color;
+                  children:
+                      activities.map((activity) {
+                        final completed = activity['completed'] as int;
+                        final target = activity['target'] as int;
+                        final progress =
+                            target > 0
+                                ? (completed / target).clamp(0.0, 1.0)
+                                : 0.0;
+                        final color = activity['color'] as Color;
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                            child: Icon(activity['icon'] as IconData, color: Colors.white, size: 16),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      activity['label'] as String,
-                                      style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 11),
-                                    ),
-                                    Text(
-                                      '${completed}m / ${target}m',
-                                      style: theme.textTheme.labelSmall?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
                                 ),
-                                const SizedBox(height: 4),
-                                Stack(
+                                child: Icon(
+                                  activity['icon'] as IconData,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      height: 8,
-                                      decoration: BoxDecoration(
-                                        color: color.withValues(alpha: 0.2),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                    FractionallySizedBox(
-                                      widthFactor: progress,
-                                      child: Container(
-                                        height: 8,
-                                        decoration: BoxDecoration(
-                                          color: color,
-                                          borderRadius: BorderRadius.circular(4),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          activity['label'] as String,
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 11,
+                                              ),
                                         ),
-                                      ),
+                                        Text(
+                                          '${completed}m / ${target}m',
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                                color:
+                                                    theme
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                fontSize: 10,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            color: color.withValues(alpha: 0.2),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                        ),
+                                        FractionallySizedBox(
+                                          widthFactor: progress,
+                                          child: Container(
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: color,
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                        );
+                      }).toList(),
                 ),
               ),
               const SizedBox(width: 12),
@@ -2034,7 +2236,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                         value: overallProgress,
                         strokeWidth: 7,
                         backgroundColor: Colors.transparent,
-                        valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.colorScheme.primary,
+                        ),
                         strokeCap: StrokeCap.round,
                       ),
                     ),
@@ -2080,14 +2284,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
     final totalHours = (totalCompleted / 60.0);
     final targetHours = (totalTarget / 60.0);
-    final overallProgress = totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
+    final overallProgress =
+        totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2097,7 +2304,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             children: [
               Row(
                 children: [
-                  Text('Stacked Bars', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Stacked Bars',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     '(${totalHours % 1 == 0 ? totalHours.toInt() : totalHours.toStringAsFixed(1)}h/${targetHours.toInt()}h)',
@@ -2107,7 +2319,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Text('(5 activities)', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  Text(
+                    '(5 activities)',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
               TextButton.icon(
@@ -2116,7 +2333,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                 ),
               ),
             ],
@@ -2128,7 +2348,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               ...activities.map((activity) {
                 final completed = activity['completed'] as int;
                 final target = activity['target'] as int;
-                final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
+                final progress =
+                    target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
                 final color = activity['color'] as Color;
 
                 return Padding(
@@ -2138,8 +2359,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       Container(
                         width: 28,
                         height: 28,
-                        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                        child: Icon(activity['icon'] as IconData, color: Colors.white, size: 14),
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          activity['icon'] as IconData,
+                          color: Colors.white,
+                          size: 14,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -2151,7 +2379,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                               children: [
                                 Text(
                                   activity['label'] as String,
-                                  style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 10),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                  ),
                                 ),
                                 Text(
                                   '${completed}m / ${target}m',
@@ -2213,8 +2444,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                             child: CircularProgressIndicator(
                               value: overallProgress,
                               strokeWidth: 4,
-                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.15),
-                              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                              backgroundColor: theme.colorScheme.primary
+                                  .withValues(alpha: 0.15),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.primary,
+                              ),
                               strokeCap: StrokeCap.round,
                             ),
                           ),
@@ -2264,14 +2498,62 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   List<Map<String, dynamic>> _getActivitiesData() {
     return [
-      {'icon': Icons.school_outlined, 'label': 'Study', 'completed': 30, 'target': 60, 'color': const Color(0xFF7F6BB0)},
-      {'icon': Icons.menu_book_outlined, 'label': 'Reading', 'completed': 45, 'target': 60, 'color': const Color(0xFF5B9BD5)},
-      {'icon': Icons.self_improvement_outlined, 'label': 'Meditation', 'completed': 20, 'target': 20, 'color': const Color(0xFF70AD47)},
-      {'icon': Icons.fitness_center_outlined, 'label': 'Gym', 'completed': 15, 'target': 30, 'color': const Color(0xFFFA114F)},
-      {'icon': Icons.work_outline, 'label': 'Work', 'completed': 120, 'target': 180, 'color': const Color(0xFFED7D31)},
-      {'icon': Icons.directions_run, 'label': 'Running', 'completed': 0, 'target': 30, 'color': const Color(0xFF9B59B6)},
-      {'icon': Icons.people_outline, 'label': 'Family', 'completed': 60, 'target': 60, 'color': const Color(0xFFFFC000)},
-      {'icon': Icons.volume_off_outlined, 'label': 'Focus', 'completed': 10, 'target': 30, 'color': const Color(0xFF00D9FF)},
+      {
+        'icon': Icons.school_outlined,
+        'label': 'Study',
+        'completed': 30,
+        'target': 60,
+        'color': const Color(0xFF7F6BB0),
+      },
+      {
+        'icon': Icons.menu_book_outlined,
+        'label': 'Reading',
+        'completed': 45,
+        'target': 60,
+        'color': const Color(0xFF5B9BD5),
+      },
+      {
+        'icon': Icons.self_improvement_outlined,
+        'label': 'Meditation',
+        'completed': 20,
+        'target': 20,
+        'color': const Color(0xFF70AD47),
+      },
+      {
+        'icon': Icons.fitness_center_outlined,
+        'label': 'Gym',
+        'completed': 15,
+        'target': 30,
+        'color': const Color(0xFFFA114F),
+      },
+      {
+        'icon': Icons.work_outline,
+        'label': 'Work',
+        'completed': 120,
+        'target': 180,
+        'color': const Color(0xFFED7D31),
+      },
+      {
+        'icon': Icons.directions_run,
+        'label': 'Running',
+        'completed': 0,
+        'target': 30,
+        'color': const Color(0xFF9B59B6),
+      },
+      {
+        'icon': Icons.people_outline,
+        'label': 'Family',
+        'completed': 60,
+        'target': 60,
+        'color': const Color(0xFFFFC000),
+      },
+      {
+        'icon': Icons.volume_off_outlined,
+        'label': 'Focus',
+        'completed': 10,
+        'target': 30,
+        'color': const Color(0xFF00D9FF),
+      },
     ];
   }
 
@@ -2280,9 +2562,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final isDark = theme.brightness == Brightness.dark;
 
     // Inverse background: brighter in dark mode, darker in light mode
-    final backgroundColor = isDark
-        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
-        : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
+    final backgroundColor =
+        isDark
+            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -2367,11 +2650,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 ),
               ),
               // Icon - increased size to almost touch edges
-              Icon(
-                icon,
-                color: color,
-                size: 26,
-              ),
+              Icon(icon, color: color, size: 26),
             ],
           ),
         ),
@@ -2413,10 +2692,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
         Column(
@@ -2469,10 +2745,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -2509,10 +2782,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF5B6B7C),
-            Color(0xFF4A5A6A),
-          ],
+          colors: [Color(0xFF5B6B7C), Color(0xFF4A5A6A)],
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -2638,9 +2908,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -2667,46 +2935,131 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildTrendsCard(BuildContext context) {
     final theme = Theme.of(context);
+    final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
-    return Container(
-      padding: _getCardPadding(context),
-      decoration: context.cardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return silenceDataAsync.when(
+      data: (data) {
+        if (data.recentSessions.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final now = DateTime.now();
+        final sevenDaysAgo = now.subtract(const Duration(days: 7));
+
+        final sessionsLast7Days =
+            data.recentSessions
+                .where((s) => s.date.isAfter(sevenDaysAgo))
+                .toList();
+
+        final quietSessionsLast7Days =
+            sessionsLast7Days.where((s) => s.ambientScore != null).toList();
+
+        final totalAmbientScore = quietSessionsLast7Days.fold<double>(
+          0,
+          (prev, s) => prev + s.ambientScore!,
+        );
+        final avgAmbientScore =
+            quietSessionsLast7Days.isNotEmpty
+                ? (totalAmbientScore / quietSessionsLast7Days.length) * 100
+                : 0;
+
+        final totalDurationLast7DaysInSeconds = sessionsLast7Days.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+        final avgDailyFocusTimeInMinutes =
+            (totalDurationLast7DaysInSeconds / 7) / 60;
+
+        final sessionsPerWeek = sessionsLast7Days.length;
+
+        final totalRecentDurationInSeconds = data.recentSessions.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+        final avgSessionDurationInMinutes =
+            data.recentSessions.isNotEmpty
+                ? (totalRecentDurationInSeconds / data.recentSessions.length) /
+                    60
+                : 0;
+
+        // Dummy trend direction for now
+        final focusTimeTrendUp = avgDailyFocusTimeInMinutes > 15;
+        final sessionsTrendUp = sessionsPerWeek > 3;
+        final avgDurationTrendUp = avgSessionDurationInMinutes > 5;
+        final ambientScoreTrendUp = avgAmbientScore > 75;
+
+        return Container(
+          padding: _getCardPadding(context),
+          decoration: context.cardDecoration,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Your patterns',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Your patterns',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => const TrendsSheet(),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                    ),
+                    child: const Text('Show More'),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (_) => const TrendsSheet(),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                ),
-                child: const Text('Show More'),
+              const SizedBox(height: 8),
+              _buildTrendItem(
+                context,
+                'Focus Time',
+                '${avgDailyFocusTimeInMinutes.toStringAsFixed(0)} min/day',
+                focusTimeTrendUp,
+                const Color(0xFFB0FC38),
+              ),
+              const SizedBox(height: 8),
+              _buildTrendItem(
+                context,
+                'Sessions',
+                '$sessionsPerWeek/week',
+                sessionsTrendUp,
+                const Color(0xFF00D9FF),
+              ),
+              const SizedBox(height: 8),
+              _buildTrendItem(
+                context,
+                'Average',
+                '${avgSessionDurationInMinutes.toStringAsFixed(0)} min',
+                avgDurationTrendUp,
+                const Color(0xFFFA114F),
+              ),
+              const SizedBox(height: 8),
+              _buildTrendItem(
+                context,
+                'Ambient Score',
+                '${avgAmbientScore.toStringAsFixed(0)}%/week',
+                ambientScoreTrendUp,
+                Colors.purple.shade300,
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          _buildTrendItem(context, 'Focus Time', '29 MIN/DAY', true, const Color(0xFFB0FC38)),
-          const SizedBox(height: 8),
-          _buildTrendItem(context, 'Sessions', '4/WEEK', true, const Color(0xFF00D9FF)),
-          const SizedBox(height: 8),
-          _buildTrendItem(context, 'Average', '7 MIN', false, const Color(0xFFFA114F)),
-        ],
-      ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
     );
   }
 
@@ -2727,12 +3080,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           size: 20,
         ),
         const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            label,
-            style: theme.textTheme.bodyMedium,
-          ),
-        ),
+        Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
         Text(
           value,
           style: theme.textTheme.labelMedium?.copyWith(
@@ -2746,7 +3094,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   // Simple Trends page moved to a bottom sheet (TrendsSheet). This block retained for context comments only.
-// TrendsPage moved to bottom as a top-level widget
+  // TrendsPage moved to bottom as a top-level widget
 
   IconData _getActivityIcon(String activityKey) {
     switch (activityKey.toLowerCase()) {
@@ -2836,12 +3184,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   for (final m in const [1, 5, 10, 30])
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
-                      child: _buildDurationChip(context, m, _selectedDurationMinutes == m),
+                      child: _buildDurationChip(
+                        context,
+                        m,
+                        _selectedDurationMinutes == m,
+                      ),
                     ),
                   for (final m in const [60, 90, 120, 240])
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
-                      child: _buildDurationChipPremium(context, m, _selectedDurationMinutes == m),
+                      child: _buildDurationChipPremium(
+                        context,
+                        m,
+                        _selectedDurationMinutes == m,
+                      ),
                     ),
                   const SizedBox(width: 6),
                 ],
@@ -2874,7 +3230,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildDurationChip(BuildContext context, int minutes, bool isSelected) {
+  Widget _buildDurationChip(
+    BuildContext context,
+    int minutes,
+    bool isSelected,
+  ) {
     final theme = Theme.of(context);
     return TextButton(
       onPressed: () {
@@ -2891,9 +3251,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         '${minutes}m',
         style: theme.textTheme.labelMedium?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant,
+          color:
+              isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
           decoration: isSelected ? TextDecoration.underline : null,
           decorationColor: theme.colorScheme.primary,
           decorationThickness: 2,
@@ -2902,7 +3263,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildDurationChipPremium(BuildContext context, int minutes, bool isSelected) {
+  Widget _buildDurationChipPremium(
+    BuildContext context,
+    int minutes,
+    bool isSelected,
+  ) {
     final theme = Theme.of(context);
     String label;
     if (minutes == 60) {
@@ -2929,9 +3294,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         label,
         style: theme.textTheme.labelMedium?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant,
+          color:
+              isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant,
           decoration: isSelected ? TextDecoration.underline : null,
           decorationColor: theme.colorScheme.primary,
           decorationThickness: 2,
@@ -3011,10 +3377,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final usesNoise = activeProfile.usesNoise;
     final plannedSeconds = sessionDuration;
     try {
-      await ref.read(ambientSessionEngineProvider.notifier).start(
-            plannedSeconds: plannedSeconds,
-            usesNoise: usesNoise,
-          );
+      await ref
+          .read(ambientSessionEngineProvider.notifier)
+          .start(plannedSeconds: plannedSeconds, usesNoise: usesNoise);
     } catch (_) {}
 
     // Compact Today’s Focus card — Title + Body (icon, message+status, CTA) + Progress
@@ -3036,11 +3401,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     // Show ongoing notification right before starting listening
     try {
-      await ref.read(notificationServiceProvider).showOngoingSession(
-        title: 'Deep Focus',
-        body: 'Stay focused. Leaving the app may end the session.',
-        progress: 0,
-      );
+      await ref
+          .read(notificationServiceProvider)
+          .showOngoingSession(
+            title: 'Deep Focus',
+            body: 'Stay focused. Leaving the app may end the session.',
+            progress: 0,
+          );
     } catch (_) {}
 
     // Start 1Hz ambient ticks using RealTimeNoiseController
@@ -3050,7 +3417,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       _ambientTickSub = noiseController.stream.listen((db) {
         try {
           final threshold = ref.read(decibelThresholdProvider).round();
-          ref.read(ambientSessionEngineProvider.notifier).tick(
+          ref
+              .read(ambientSessionEngineProvider.notifier)
+              .tick(
                 usesNoise: usesNoise,
                 currentDb: db,
                 thresholdDb: threshold,
@@ -3066,11 +3435,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Update ongoing notification progress (coarse)
         try {
           final pct = (progress * 100).clamp(0, 100).round();
-          ref.read(notificationServiceProvider).updateOngoingSession(
-            title: 'Deep Focus',
-            body: 'Session in progress',
-            progress: pct,
-          );
+          ref
+              .read(notificationServiceProvider)
+              .updateOngoingSession(
+                title: 'Deep Focus',
+                body: 'Session in progress',
+                progress: pct,
+              );
         } catch (_) {}
         // Avoid voice during session to keep focus
       },
@@ -3085,9 +3456,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           final actualDuration = endTime.difference(startTime).inSeconds;
 
           final durationInMinutes = (sessionDuration / 60).round();
-          final pointsEarned = success
-              ? (durationInMinutes * AppConstants.pointsPerMinute)
-              : 0;
+          final pointsEarned =
+              success ? (durationInMinutes * AppConstants.pointsPerMinute) : 0;
 
           final sessionRecord = SessionRecord(
             date: startTime,
@@ -3111,7 +3481,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           } catch (_) {}
 
           // Stop ticking subscription
-          try { await _ambientTickSub?.cancel(); } catch (_) {}
+          try {
+            await _ambientTickSub?.cancel();
+          } catch (_) {}
           _ambientTickSub = null;
 
           // Phase 1 celebration for first micro-session of the day (>= 60s)
@@ -3149,7 +3521,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               );
             }
           }
-          try { await ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
+          try {
+            await ref.read(notificationServiceProvider).cancelOngoingSession();
+          } catch (_) {}
         }
       },
       onError: (error) async {
@@ -3173,9 +3547,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
           silenceDataNotifier.addSessionRecord(sessionRecord);
           // Stop ambient engine tick without persisting a session record
-          try { await _ambientTickSub?.cancel(); } catch (_) {}
+          try {
+            await _ambientTickSub?.cancel();
+          } catch (_) {}
           _ambientTickSub = null;
-          try { await ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
+          try {
+            ref.read(notificationServiceProvider).cancelOngoingSession();
+          } catch (_) {}
         }
       },
     );
@@ -3193,14 +3571,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     // End ambient engine if running (user-initiated stop)
     try {
       final plannedSeconds = ref.read(sessionDurationProvider);
-      ref.read(ambientSessionEngineProvider.notifier).end(
-            reason: 'stopped',
-            plannedSeconds: plannedSeconds,
-          );
+      ref
+          .read(ambientSessionEngineProvider.notifier)
+          .end(reason: 'stopped', plannedSeconds: plannedSeconds);
     } catch (_) {}
-    try { _ambientTickSub?.cancel(); } catch (_) {}
+    try {
+      _ambientTickSub?.cancel();
+    } catch (_) {}
     _ambientTickSub = null;
-    try { ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
+    try {
+      ref.read(notificationServiceProvider).cancelOngoingSession();
+    } catch (_) {}
   }
 
   String _missionDayKey(DateTime date) {
@@ -3260,10 +3641,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: const [
-            Tab(
-              icon: Icon(Icons.today_rounded),
-              text: 'Today',
-            ),
+            Tab(icon: Icon(Icons.today_rounded), text: 'Today'),
             Tab(
               icon: Icon(Icons.play_circle_outline_rounded),
               text: 'Sessions',
@@ -3280,7 +3658,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   String _getMonthName(int month) {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
     return months[month - 1];
   }
 
@@ -3290,7 +3681,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   String _getMonthShortName(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return months[month - 1];
   }
 }
@@ -3316,7 +3720,7 @@ class _GlowingProgressRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ringColor = theme.colorScheme.primary;
-  final glowColor = ringColor.withValues(alpha: 0.35);
+    final glowColor = ringColor.withValues(alpha: 0.35);
 
     return SizedBox(
       width: size,
@@ -3341,7 +3745,9 @@ class _GlowingProgressRing extends StatelessWidget {
             height: size * 0.92,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.25),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.25,
+              ),
             ),
           ),
           // Progress arc
@@ -3389,9 +3795,10 @@ class _GlowingProgressRing extends StatelessWidget {
                 onPressed: onStart,
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
-                  backgroundColor: isListening
-                      ? theme.colorScheme.error
-                      : theme.colorScheme.primary,
+                  backgroundColor:
+                      isListening
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,
                   padding: const EdgeInsets.all(18),
                   elevation: 3,
@@ -3402,7 +3809,10 @@ class _GlowingProgressRing extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Text(isListening ? 'Stop' : 'Start', style: theme.textTheme.titleMedium),
+              Text(
+                isListening ? 'Stop' : 'Start',
+                style: theme.textTheme.titleMedium,
+              ),
             ],
           ),
         ],
@@ -3416,37 +3826,55 @@ class _RingPainter extends CustomPainter {
   final double progress;
   final double stroke;
 
-  _RingPainter({required this.color, required this.progress, required this.stroke});
+  _RingPainter({
+    required this.color,
+    required this.progress,
+    required this.stroke,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - stroke / 2;
 
-    final bgPaint = Paint()
-  ..color = color.withValues(alpha: 0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke
-      ..strokeCap = StrokeCap.round;
+    final bgPaint =
+        Paint()
+          ..color = color.withValues(alpha: 0.15)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = stroke
+          ..strokeCap = StrokeCap.round;
 
-    final fgPaint = Paint()
-  ..shader = SweepGradient(colors: [color, color.withValues(alpha: 0.6)], startAngle: 0, endAngle: 6.28318).createShader(Rect.fromCircle(center: center, radius: radius))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke
-      ..strokeCap = StrokeCap.round;
+    final fgPaint =
+        Paint()
+          ..shader = SweepGradient(
+            colors: [color, color.withValues(alpha: 0.6)],
+            startAngle: 0,
+            endAngle: 6.28318,
+          ).createShader(Rect.fromCircle(center: center, radius: radius))
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = stroke
+          ..strokeCap = StrokeCap.round;
 
     // Background ring
     canvas.drawCircle(center, radius, bgPaint);
 
     // Progress arc (start at -90 degrees)
-  const startAngle = -3.14159 / 2;
-  final sweep = 6.28318 * progress;
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweep, false, fgPaint);
+    const startAngle = -3.14159 / 2;
+    final sweep = 6.28318 * progress;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      sweep,
+      false,
+      fgPaint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant _RingPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.color != color || oldDelegate.stroke != stroke;
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.stroke != stroke;
 }
 
 /// Custom painter for multi-segment ring
@@ -3466,11 +3894,12 @@ class _MultiSegmentRingPainter extends CustomPainter {
     const strokeWidth = 16.0;
 
     // Draw background ring
-    final bgPaint = Paint()
-      ..color = Colors.grey.withValues(alpha: 0.2)
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    final bgPaint =
+        Paint()
+          ..color = Colors.grey.withValues(alpha: 0.2)
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
     canvas.drawCircle(center, radius, bgPaint);
 
     // Draw segments for each activity
@@ -3485,11 +3914,12 @@ class _MultiSegmentRingPainter extends CustomPainter {
         final progressAngle = (segmentAngle * completed) / target;
 
         if (completed > 0) {
-          final paint = Paint()
-            ..color = color
-            ..strokeWidth = strokeWidth
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round;
+          final paint =
+              Paint()
+                ..color = color
+                ..strokeWidth = strokeWidth
+                ..style = PaintingStyle.stroke
+                ..strokeCap = StrokeCap.round;
 
           canvas.drawArc(
             Rect.fromCircle(center: center, radius: radius),
@@ -3527,36 +3957,62 @@ class _ActivityRingsPainter extends CustomPainter {
     const strokeWidth = 14.0;
 
     // Outer ring - Focus (Red)
-    _drawRing(canvas, center, size.width / 2 - strokeWidth / 2, strokeWidth,
-        const Color(0xFFFA114F), focusProgress);
+    _drawRing(
+      canvas,
+      center,
+      size.width / 2 - strokeWidth / 2,
+      strokeWidth,
+      const Color(0xFFFA114F),
+      focusProgress,
+    );
 
     // Middle ring - Streak (Green)
-    _drawRing(canvas, center, size.width / 2 - strokeWidth * 2.5, strokeWidth,
-        const Color(0xFFB0FC38), streakProgress);
+    _drawRing(
+      canvas,
+      center,
+      size.width / 2 - strokeWidth * 2.5,
+      strokeWidth,
+      const Color(0xFFB0FC38),
+      streakProgress,
+    );
 
     // Inner ring - Sessions (Cyan)
-    _drawRing(canvas, center, size.width / 2 - strokeWidth * 4.5, strokeWidth,
-        const Color(0xFF00D9FF), sessionsProgress);
+    _drawRing(
+      canvas,
+      center,
+      size.width / 2 - strokeWidth * 4.5,
+      strokeWidth,
+      const Color(0xFF00D9FF),
+      sessionsProgress,
+    );
   }
 
-  void _drawRing(Canvas canvas, Offset center, double radius,
-      double strokeWidth, Color color, double progress) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.2)
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+  void _drawRing(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    double strokeWidth,
+    Color color,
+    double progress,
+  ) {
+    final paint =
+        Paint()
+          ..color = color.withValues(alpha: 0.2)
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
 
     // Background ring
     canvas.drawCircle(center, radius, paint);
 
     // Progress ring
     if (progress > 0) {
-      final progressPaint = Paint()
-        ..color = color
-        ..strokeWidth = strokeWidth
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round;
+      final progressPaint =
+          Paint()
+            ..color = color
+            ..strokeWidth = strokeWidth
+            ..style = PaintingStyle.stroke
+            ..strokeCap = StrokeCap.round;
 
       const startAngle = -math.pi / 2;
       final sweepAngle = 2 * math.pi * progress;
@@ -3596,7 +4052,7 @@ class _ScrollableIconGrid extends StatelessWidget {
     final theme = Theme.of(context);
     // Two columns, vertical scroll; height shows two full rows
     // Slightly shorter per-row target; actual tile height is governed by childAspectRatio below.
-  const rowHeight = 68.0;
+    const rowHeight = 68.0;
     return SizedBox(
       height: rowHeight * 2 + 4, // two rows visible
       child: GridView.builder(
@@ -3637,7 +4093,9 @@ class _ScrollableIconGrid extends StatelessWidget {
                             value: 1.0,
                             strokeWidth: 4,
                             backgroundColor: Colors.transparent,
-                            valueColor: AlwaysStoppedAnimation<Color>(item.color.withValues(alpha: 0.2)),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              item.color.withValues(alpha: 0.2),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -3647,15 +4105,24 @@ class _ScrollableIconGrid extends StatelessWidget {
                             value: item.progress,
                             strokeWidth: 4,
                             backgroundColor: Colors.transparent,
-                            valueColor: AlwaysStoppedAnimation<Color>(item.color),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              item.color,
+                            ),
                             strokeCap: StrokeCap.round,
                           ),
                         ),
                         Container(
                           width: circleSize * 0.72,
                           height: circleSize * 0.72,
-                          decoration: BoxDecoration(color: item.color, shape: BoxShape.circle),
-                          child: Icon(item.icon, color: Colors.white, size: circleSize * 0.36),
+                          decoration: BoxDecoration(
+                            color: item.color,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            item.icon,
+                            color: Colors.white,
+                            size: circleSize * 0.36,
+                          ),
                         ),
                       ],
                     ),
@@ -3663,7 +4130,10 @@ class _ScrollableIconGrid extends StatelessWidget {
                   const SizedBox(height: spacing),
                   Text(
                     item.label,
-                    style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 10),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -3706,7 +4176,9 @@ class _OverallRing extends StatelessWidget {
             value: percent.clamp(0.0, 1.0),
             strokeWidth: 12,
             backgroundColor: Colors.transparent,
-            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              theme.colorScheme.primary,
+            ),
             strokeCap: StrokeCap.round,
           ),
         ),
@@ -3732,5 +4204,5 @@ class _OverallRing extends StatelessWidget {
     );
   }
 }
-// Stages chips removed for now to keep the card compact
 
+// Stages chips removed for now to keep the card compact

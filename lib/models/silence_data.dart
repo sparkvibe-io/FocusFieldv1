@@ -80,6 +80,7 @@ class SessionRecord {
   final int duration; // in seconds
   final bool completed;
   final String? activity; // optional activity/category tag
+  final double? ambientScore;
 
   const SessionRecord({
     required this.date,
@@ -88,6 +89,7 @@ class SessionRecord {
     required this.duration,
     required this.completed,
     this.activity,
+    this.ambientScore,
   });
 
   Map<String, dynamic> toJson() {
@@ -98,6 +100,7 @@ class SessionRecord {
       'duration': duration,
       'completed': completed,
       'activity': activity,
+      'ambientScore': ambientScore,
     };
   }
 
@@ -109,6 +112,7 @@ class SessionRecord {
       duration: json['duration'] ?? 0,
       completed: json['completed'] ?? false,
       activity: json['activity'] as String?,
+      ambientScore: json['ambientScore'] as double?,
     );
   }
 }

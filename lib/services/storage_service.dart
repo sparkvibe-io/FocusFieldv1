@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/constants/app_constants.dart';
 import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/models/user_preferences.dart';
 
 class StorageService {
   static const String _silenceDataKey = 'silence_data';
@@ -14,6 +15,7 @@ class StorageService {
   static const String _lastSessionDateKey = 'last_session_date';
   static const String _totalSessionsKey = 'total_sessions';
   static const String _averageScoreKey = 'average_score';
+  static const String _userPreferencesKey = 'user_preferences';
   // Deep Focus settings
   static const String _deepFocusEnabledKey = 'deep_focus_enabled';
   static const String _deepFocusGraceSecondsKey = 'deep_focus_grace_seconds';
@@ -230,6 +232,26 @@ class StorageService {
     }
 
     return const SilenceData();
+  }
+
+  Future<void> saveUserPreferences(UserPreferences preferences) async {
+    await _init();
+    final jsonString = jsonEncode(preferences.toJson());
+    await _prefs!.setString(_userPreferencesKey, jsonString);
+  }
+
+  Future<UserPreferences> loadUserPreferences() async {
+    await _init();
+    final jsonString = _prefs!.getString(_userPreferencesKey);
+    if (jsonString == null) {
+      return UserPreferences.defaults();
+    }
+    try {
+      final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+      return UserPreferences.fromJson(jsonMap);
+    } catch (_) {
+      return UserPreferences.defaults();
+    }
   }
 
   /// Save decibel threshold setting
