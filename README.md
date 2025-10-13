@@ -5,23 +5,99 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
-## 🚀 Current Direction (October 2025): Ambient Quests (Final Plan)
+## 🚀 Current Status (October 2025): Tablet Responsive Design Complete ✅
 
-Ambient Quests is the merged, quiet‑first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today’s goal progress, and streaks are compassionate (2‑Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
+**Ambient Quests** is the merged, quiet-first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today's goal progress, and streaks are compassionate (2-Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
 
-P0 highlights (minimal churn):
-- Activity Profiles with per‑profile `usesNoise` and `thresholdDb`
-- Ambient Score: quietSeconds / actualSeconds for quiet profiles
-- Quest Capsule on Home: daily micro‑goal progress
-- Compassionate Streaks: 2‑Day Rule + monthly freeze token (Premium: extra tokens)
-- Adaptive Threshold Chip: suggest a slightly stricter level after consistent wins
-- Live Activity / Ongoing Notification: countdown + “% quiet”, pause/end
+**Simple & Customizable**: Users can now show/hide activities and adjust their daily quiet goal (10-60 minutes) through a polished Edit Activities sheet. Each activity tracks separate progress toward the global goal.
 
-Docs to implement from:
-- `docs/development/AmbientQuests_Dev_Spec.md`
-- `docs/development/AmbientQuests_Copy_and_MicroInteractions.md`
+### ✅ **P0 Implementation COMPLETE** (Oct 9-10, 2025)
 
-Feature flags (default): see `lib/constants/ambient_flags.dart`.
+**Core Engine**:
+- ✅ Activity Profiles with per-profile `usesNoise` and `thresholdDb`
+- ✅ Ambient Score: `quietSeconds / actualSeconds` calculated in real-time (1Hz ticks)
+- ✅ Quest State Management: daily goals, streak tracking, freeze tokens
+- ✅ Compassionate Streaks: Permissive 2-Day Rule + monthly freeze token replenishment
+- ✅ Session Lifecycle: Full integration (start → tick → end)
+- ✅ Background Safety: Android STOP action & Deep Focus breach handlers
+
+**Analytics & Visualization**:
+- ✅ 12-week Activity Heatmap (GitHub-style contribution graph)
+- ✅ Today Timeline (24-hour micro-chart with session dots)
+- ✅ Weekly Target Line overlay on 7-day trends chart
+- ✅ Unified Trends Sheet (heatmap integrated into "Show More")
+
+### ✅ **P1 Implementation COMPLETE** (Oct 10-11, 2025)
+
+**Quest Features**:
+- ✅ Quest Capsule UI on Activity tab (progress bar, streak, freeze token)
+- ✅ Ambient Score display inside progress ring (live calm% during sessions)
+- ✅ Adaptive Threshold suggestions (after 3 consecutive wins, 7-day cooldown)
+- ✅ Full localization (7 languages: EN, ES, DE, FR, JA, PT, PT_BR)
+
+**Activity Customization** (Oct 11, 2025):
+- ✅ **Per-Activity Tracking**: Study, Reading, Meditation tracked separately
+- ✅ **Edit Activities Sheet**: Show/hide activities, adjust daily goal (10-60 min)
+- ✅ **User Preferences**: Persisted settings for enabled activities and goals
+- ✅ **Material Design 3**: Consistent icons throughout (replaced emojis)
+- ✅ **UI Polish**: All bottom sheets match (85% height, drag handles, scrollable)
+- ✅ **Activity Filtering**: Summary displays only enabled activities
+
+### ✅ **Tablet & Responsive Design Complete** (Oct 12, 2025)
+
+**Responsive System**:
+- ✅ Breakpoint-based responsive utilities (phone/small tablet/large tablet)
+- ✅ Adaptive text scaling (1.0x → 1.15x → 1.25x)
+- ✅ Proportional widget sizing (progress rings, charts, buttons)
+- ✅ Orientation locking (portrait-only <840dp, all orientations ≥840dp)
+
+**Tablet Landscape Layout (≥840dp)**:
+- ✅ Split-screen: Today panel (left) + Sessions panel (right)
+- ✅ Single ad placement strategy (only in Today panel)
+- ✅ 50/50 split with vertical divider
+- ✅ Simultaneous access to progress tracking and session controls
+
+### 🔄 **Remaining Work (P1)**
+
+- ⏳ iOS Live Activities (Lock Screen + Dynamic Island) - Platform parity with Android
+
+**Implementation Docs**:
+- `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin acceptance tests)
+- `docs/development/AmbientQuests_Copy_and_MicroInteractions.md` (UX specifications)
+- `docs/development/Ambient_Quests_P0_Implementation_Summary.md` (✨ NEW - completed work summary)
+- `docs/development/iOS_Live_Activities_Plan.md` (iOS implementation guide)
+
+**Feature Flags**: see `lib/constants/ambient_flags.dart` (P0 flags enabled by default)
+
+## 📱 Platform Support
+
+**Phones (Primary):**
+- Optimized for 4.7"-6.7" smartphones (iOS & Android)
+- Single-column layout with compact widgets
+- All features accessible without scrolling
+
+**Tablets (Adaptive):**
+- Intelligent scaling for 7"-13" tablets
+- **Portrait Mode**: Phone layout with proportional scaling (fonts +15-25%, widgets +20-35%)
+- **Landscape Mode (≥840dp only)**: Split-Screen layout
+  - Left panel (50%): Today tab with sessions, quest progress, patterns - **ad at bottom**
+  - Right panel (50%): Sessions tab with activity controls, progress ring - **no ad**
+  - Single ad placement strategy (only in Today panel)
+  - Simultaneous access to progress tracking and session controls
+  - 50/50 split with vertical divider for clear separation
+
+**Orientation Policy:**
+- **Phones & Small Tablets (<840dp)**: Portrait-only (landscape disabled to protect ad visibility)
+- **Large Tablets (≥840dp)**: All orientations allowed
+
+**Responsive Design:**
+- Breakpoints: Phone (<600dp), Small Tablet (600-840dp), Large Tablet (>840dp)
+- Adaptive typography and touch targets (scaling up to 1.25x on large tablets)
+- Proportional widget sizing (progress rings, charts, buttons scale 20-36%)
+- Orientation locking via `OrientationLocker` widget (`lib/main.dart`)
+- Responsive utilities: `lib/utils/responsive_utils.dart`
+- Tablet landscape layout: `lib/screens/home_page_elegant.dart` (_buildTabletLandscapeLayout)
+- See `CLAUDE.md` for detailed implementation strategy
 
 ## 🌟 Features
 
@@ -40,11 +116,16 @@ Feature flags (default): see `lib/constants/ambient_flags.dart`.
 - **Tabbed Overview Widget**: ✅ Space-optimized interface combining Practice Overview + Advanced Analytics
 - **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
 - **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
+- **12-Week Activity Heatmap**: ✅ **NEW** GitHub-style contribution graph showing session intensity over 12 weeks
+- **Today Timeline**: ✅ **NEW** 24-hour horizontal timeline with session dots positioned by time of day
+- **Weekly Target Line**: ✅ **NEW** Visual goal reference (30min default) overlaid on 7-day trends
 - **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
 - **Session History Graph**: Visual representation of quiet progress
-- **7-Day Activity Chart**: Real-time bar chart showing daily points with actual session data
+- **7-Day Activity Chart**: Real-time stacked bar chart showing minutes by activity with per-activity colors
 
 ### Customization & Settings
+- **Activity Customization**: ✅ **NEW** Show/hide activities (Study, Reading, Meditation), adjust daily goal (10-60 min)
+- **Per-Activity Tracking**: ✅ **NEW** Separate progress tracking for each activity toward global goal
 - **Tabbed Settings Interface**: Basic, Advanced, About
 - **Adjustable Decibel Threshold**: 20–80 dB (default 38) with high-threshold warning ≥70 dB
 - **Session Duration**: Free up to 30 minutes; Premium up to 120 minutes
@@ -56,6 +137,8 @@ Feature flags (default): see `lib/constants/ambient_flags.dart`.
 - **Progress Ring Control**: Start/stop & visual completion
 - **Smooth Visual Updates**: Smoothing filters + aggregated controller reduce jitter & frame drops
 - **Confetti Celebrations**: Successful session reward
+- **Material Design 3**: ✅ **NEW** Consistent Material icons throughout (Study 🎓→📚, Reading 📖→📕, Meditation 🧘→🧘‍♀️)
+- **Consistent Bottom Sheets**: ✅ **NEW** All sheets match (85% height, drag handles, scrollable overflow protection)
 - **Permission Guidance**: Microphone access onboarding
 - **Compact Layout**: Key controls on one screen
 - **Calm Home**: Activity‑aware noise widget (compact by default); Quest capsule as the focal point

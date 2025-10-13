@@ -33,6 +33,7 @@ class AppTheme {
 
     // Dramatic extension (default neutral)
     DramaticThemeStyling dramatic = DramaticThemeStyling.neutral();
+    AppDecorations decorations = AppDecorations.standard();
 
     if (mode == AppThemeMode.cyberNeon) {
       dramatic = const DramaticThemeStyling(
@@ -58,6 +59,7 @@ class AppTheme {
           Color(0xFFB347FF), // purple
         ],
       );
+      decorations = AppDecorations.premium(accentColor: const Color(0xFF00FFF0));
     } else if (mode == AppThemeMode.midnightTeal) {
       dramatic = DramaticThemeStyling(
         appBackgroundGradient: const LinearGradient(
@@ -84,13 +86,14 @@ class AppTheme {
           Color(0xFF5DF27C), // green accent
         ],
       );
+      decorations = AppDecorations.premium(accentColor: const Color(0xFF00D295));
     }
 
     final highContrast = enableHighContrast;
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      extensions: [dramatic],
+      extensions: [dramatic, decorations],
       // Make scaffold transparent for dramatic premium themes so gradient shows through
       scaffoldBackgroundColor:
           (mode == AppThemeMode.cyberNeon || mode == AppThemeMode.midnightTeal)
@@ -107,18 +110,7 @@ class AppTheme {
         foregroundColor: colorScheme.onSurface,
         toolbarHeight: 56,
       ),
-      cardTheme: _cardThemeFor(mode, colorScheme).copyWith(
-        elevation: highContrast ? 2 : null,
-        shadowColor:
-            highContrast ? colorScheme.onSurface.withValues(alpha: 0.4) : null,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side:
-              highContrast
-                  ? BorderSide(color: colorScheme.primary, width: 1.2)
-                  : BorderSide.none,
-        ),
-      ),
+      cardTheme: _cardThemeFor(mode, colorScheme, highContrast),
       elevatedButtonTheme: _elevatedButtonThemeFor(mode, colorScheme),
       outlinedButtonTheme: _outlinedButtonThemeFor(mode, colorScheme),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -312,40 +304,44 @@ class AppTheme {
     }
   }
 
-  static CardThemeData _cardThemeFor(AppThemeMode mode, ColorScheme scheme) {
-    // Base card style
+  static CardThemeData _cardThemeFor(AppThemeMode mode, ColorScheme scheme, bool highContrast) {
+    // Borderless by default with subtle background highlights
     final baseShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
+      side: highContrast
+          ? BorderSide(color: scheme.primary, width: 1.2)
+          : BorderSide.none,
     );
+
     switch (mode) {
       case AppThemeMode.cyberNeon:
         return CardThemeData(
-          color: scheme.surfaceContainer.withValues(alpha: 0.55),
-          elevation: 6,
-          shadowColor: const Color(0xFF00FFF0).withValues(alpha: 0.35),
+          color: scheme.surfaceContainer.withValues(alpha: 0.8),
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             side: const BorderSide(color: Color(0xFF00FFF0), width: 1.2),
           ),
-          margin: const EdgeInsets.all(8),
+          margin: EdgeInsets.zero,
         );
       case AppThemeMode.midnightTeal:
         return CardThemeData(
-          color: scheme.surfaceContainer.withValues(alpha: 0.60),
-          elevation: 4,
-          shadowColor: const Color(0xFF00D295).withValues(alpha: 0.25),
+          color: scheme.surfaceContainer.withValues(alpha: 0.85),
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             side: const BorderSide(color: Color(0xFF004D39), width: 1.0),
           ),
-          margin: const EdgeInsets.all(8),
+          margin: EdgeInsets.zero,
         );
       default:
+        // Borderless with clear background for good visibility
         return CardThemeData(
-          elevation: 2,
+          elevation: highContrast ? 2 : 0,
           shape: baseShape,
-          color: scheme.surfaceContainer,
-          margin: const EdgeInsets.all(8),
+          color: scheme.surfaceContainerHighest.withValues(alpha: 0.9),
+          shadowColor: highContrast ? scheme.onSurface.withValues(alpha: 0.4) : null,
+          margin: EdgeInsets.zero,
         );
     }
   }

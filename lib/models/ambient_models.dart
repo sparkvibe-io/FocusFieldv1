@@ -134,10 +134,17 @@ class QuestState {
   final int dayIndex; // 1..30
   final int goalQuietMinutes; // default 20
   final double requiredScore; // default 0.7
-  final int progressQuietMinutes;
+  final int progressQuietMinutes; // sum of all per-activity minutes
   final int streakCount;
   final int freezeTokens;
   final DateTime lastUpdatedAt;
+  final bool missedYesterday; // for permissive 2-Day Rule
+  
+  // Per-activity minute tracking
+  final int studyMinutes;
+  final int readingMinutes;
+  final int meditationMinutes;
+  final int otherMinutes;
 
   const QuestState({
     required this.cycleId,
@@ -148,6 +155,11 @@ class QuestState {
     required this.streakCount,
     required this.freezeTokens,
     required this.lastUpdatedAt,
+    this.missedYesterday = false,
+    this.studyMinutes = 0,
+    this.readingMinutes = 0,
+    this.meditationMinutes = 0,
+    this.otherMinutes = 0,
   });
 
   QuestState copyWith({
@@ -159,6 +171,11 @@ class QuestState {
     int? streakCount,
     int? freezeTokens,
     DateTime? lastUpdatedAt,
+    bool? missedYesterday,
+    int? studyMinutes,
+    int? readingMinutes,
+    int? meditationMinutes,
+    int? otherMinutes,
   }) => QuestState(
         cycleId: cycleId ?? this.cycleId,
         dayIndex: dayIndex ?? this.dayIndex,
@@ -168,6 +185,11 @@ class QuestState {
         streakCount: streakCount ?? this.streakCount,
         freezeTokens: freezeTokens ?? this.freezeTokens,
         lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
+        missedYesterday: missedYesterday ?? this.missedYesterday,
+        studyMinutes: studyMinutes ?? this.studyMinutes,
+        readingMinutes: readingMinutes ?? this.readingMinutes,
+        meditationMinutes: meditationMinutes ?? this.meditationMinutes,
+        otherMinutes: otherMinutes ?? this.otherMinutes,
       );
 
   Map<String, dynamic> toJson() => {
@@ -179,6 +201,11 @@ class QuestState {
         'streakCount': streakCount,
         'freezeTokens': freezeTokens,
         'lastUpdatedAt': lastUpdatedAt.millisecondsSinceEpoch,
+        'missedYesterday': missedYesterday,
+        'studyMinutes': studyMinutes,
+        'readingMinutes': readingMinutes,
+        'meditationMinutes': meditationMinutes,
+        'otherMinutes': otherMinutes,
       };
 
   factory QuestState.fromJson(Map<String, dynamic> json) => QuestState(
@@ -192,5 +219,10 @@ class QuestState {
         lastUpdatedAt: DateTime.fromMillisecondsSinceEpoch(
           json['lastUpdatedAt'] as int? ?? DateTime.now().millisecondsSinceEpoch,
         ),
+        missedYesterday: json['missedYesterday'] as bool? ?? false,
+        studyMinutes: json['studyMinutes'] as int? ?? 0,
+        readingMinutes: json['readingMinutes'] as int? ?? 0,
+        meditationMinutes: json['meditationMinutes'] as int? ?? 0,
+        otherMinutes: json['otherMinutes'] as int? ?? 0,
       );
 }

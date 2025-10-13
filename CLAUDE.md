@@ -6,29 +6,129 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 CURRENT STATUS — Oct 6, 2025: Ambient Quests (Final Direction)
+## 🚀 CURRENT STATUS — Oct 12, 2025: Tablet Responsive Design Complete
 ### Product Principles (Always)
 - No scrolling on main pages (Home/Summary/Activity). Use compact components, tabs, and carousels to fit without vertical scroll.
 - Advertisements are always visible (anchored adaptive banner), never obscured by overlays or long content.
 - Material 3 with minimal, non‑repeatable content. Prefer concise, unique information over duplicated elements.
+- **UI Consistency**: All bottom sheets use same height (85% screen), drag handles, and scrollable content structure.
 
+### ✅ **AMBIENT QUESTS P0 LOOP - COMPLETE** (Oct 9-10, 2025)
+**Core Quest Engine**:
+- ✅ AmbientSessionEngine fully integrated with session lifecycle (start → 1Hz tick → end)
+- ✅ Ambient Score calculation: `quietSeconds / actualSeconds` tracked in real-time
+- ✅ Quest updates centralized via QuestStateController
+- ✅ Live calm% parity verification (logs difference if >1%)
+- ✅ Session state tracks `usesNoise` flag for noise-requiring activities
+- ✅ **Activity Profiles (P0)**: 3 quiet-first profiles only (Study, Reading, Meditation)
+  - All 3 profiles use noise monitoring (`usesNoise: true`, threshold: 38 dB)
+  - Custom activity creation deferred to P2
+  - Legacy activity system removed
 
-Highlights since last update:
-- Ambient Quests docs and scaffolding added: feature flags, models, providers
-- Activity tab: duration chips, progress ring, inline noise panel remain
-- Quest Capsule: to be wired above Today’s Goals (small card)
-- Adaptive Threshold Chip: to be shown after 3 qualifying sessions
-- Ads: anchored banner remains; ensure safe spacing
+**Rollover & Streak System**:
+- ✅ Daily rollover: resets progress at day change
+- ✅ Monthly rollover: replenishes freeze token (max 1 per month)
+- ✅ Permissive 2-Day Rule: streak resets only if **two consecutive days** are missed
+- ✅ `missedYesterday` flag tracks gap days for accurate streak calculation
+- ✅ Freeze token protects streak and counts as goal completion
+
+**Lifecycle Integration**:
+- ✅ Session start: launches ambient engine with activity's `requiresSilence` flag
+- ✅ 1Hz ticking: subscribes to RealTimeNoiseController stream
+- ✅ Session end: persists ambient score, applies quest credit
+- ✅ Android STOP action: ends engine and persists partial session
+- ✅ Deep Focus breach: ends engine with breach reason
+
+**Analytics & Visualization** (Oct 10, 2025):
+- ✅ **12-week Activity Heatmap** (GitHub-style contribution graph)
+- ✅ **Today Timeline** (24-hour micro-chart with session dots)
+- ✅ **Weekly Target Line** on 7-day trends chart (30min default)
+- ✅ **Unified Trends Sheet**: Heatmap integrated into "Show More" Basic tab
+- ✅ **Simplified UI**: Single "Show More" button (removed redundant heatmap icon)
 
 Developer notes (compactness and ad safety):
 - Duration chips hide while a session is running; inter-chip spacing and paddings reduced.
 - Chart height trimmed (approx 110–116 px) and container paddings tightened; threshold quick chips remain available when not listening.
 - Right stats rail for Points/Streak/Sessions nests in a darker card to declutter the main list.
+- Heatmap scrollable within TrendsSheet, follows standard bottom sheet structure (85% max height)
 
-Open items:
-- Wire Quest capsule and inner Ambient Score label on the ring
-- Implement adaptive threshold suggestion logic (stub exists)
-- Optional: live surfaces (iOS Live Activity / Android ongoing notification)
+### ✅ **P1 CORE FEATURES COMPLETE** (Oct 10, 2025)
+**Quest Capsule UI**:
+- ✅ Ultra-minimal widget created: `lib/widgets/quest_capsule.dart`
+- ✅ Shows progress bar, numbers, streak (if >0), freeze token (if >0)
+- ✅ Wired to Activity tab in `lib/screens/home_page_elegant.dart`
+- ✅ Follows "less is more" principle - no redundant content
+
+**Ambient Score Display**:
+- ✅ Already implemented in `lib/widgets/progress_ring.dart:158-177`
+- ✅ Shows "85% Calm" inside ring during sessions
+- ✅ Only displays for noise-requiring activities
+- ✅ Real-time updates via `calmPercent` parameter
+
+**Adaptive Threshold**:
+- ✅ Provider created: `lib/providers/adaptive_threshold_provider.dart`
+- ✅ Widget created: `lib/widgets/adaptive_threshold_chip.dart`
+- ✅ Tracks consecutive wins, suggests +2 dB after 3 successes
+- ✅ Wired to Activity tab, shows "3 wins! Try 40 dB?"
+- ✅ 7-day dismissal cooldown
+
+**Localization**:
+- ✅ All 7 languages updated (EN, ES, DE, FR, JA, PT, PT_BR)
+- ✅ 7 new strings added for Quest Capsule & Adaptive Threshold
+- ✅ `flutter gen-l10n` verified: 0 untranslated messages
+
+### ✅ **ACTIVITY CUSTOMIZATION SYSTEM COMPLETE** (Oct 11, 2025)
+**Per-Activity Tracking**:
+- ✅ Quest state tracks Study/Reading/Meditation minutes separately
+- ✅ Global progress = sum of all enabled activities
+- ✅ Proper rollover logic (resets daily/monthly per-activity data)
+- ✅ Activity Progress widget displays actual per-activity minutes
+
+**User Preferences System**:
+- ✅ New model: `lib/models/user_preferences.dart`
+- ✅ Provider: `lib/providers/user_preferences_provider.dart`
+- ✅ Persists: enabled profiles, global goal (10-60 min), last duration per profile
+- ✅ Future-ready for advanced mode (per-activity goals)
+
+**Edit Activities Sheet**:
+- ✅ Widget: `lib/widgets/activity_edit_sheet.dart`
+- ✅ Show/Hide toggles for Study, Reading, Meditation
+- ✅ Global daily goal slider (10-60 minutes, default 20)
+- ✅ Advanced section (collapsed, ready for per-activity goals in P2)
+- ✅ Material Design 3 icons (replaced emojis)
+- ✅ Matches Settings sheet UX (85% height, drag handle, scrollable)
+- ✅ Wired to Activity Progress "Edit" button
+
+**UI/UX Polish**:
+- ✅ **Material Design Icons**: Replaced emojis with Material 3 icons throughout
+  - Study: `Icons.school_outlined`
+  - Reading: `Icons.menu_book_outlined`
+  - Meditation: `Icons.self_improvement_outlined`
+- ✅ **Bottom Sheet Consistency**: All sheets match Settings pattern
+  - 85% screen height with BoxConstraints
+  - Drag handle (40x4px) at top
+  - Expanded + SingleChildScrollView for overflow protection
+  - Same border radius (20px top corners)
+- ✅ **Compact Spacing**: Reduced padding/spacing to fit content without overflow
+- ✅ **Activity Filtering**: Summary shows only enabled activities from preferences
+
+**Architecture Changes**:
+- ✅ Quest state uses `userPreferences.globalDailyQuietGoalMinutes` instead of hardcoded 20
+- ✅ Activity Progress widget reads from `userPreferencesProvider`
+- ✅ Session completion updates both per-activity minutes and global progress
+- ✅ Profile selection persists across app restarts
+
+### 📋 Remaining Work (P1)
+1. **iOS Live Activities**: Match Android ongoing notification parity (see `docs/development/iOS_Live_Activities_Plan.md`)
+
+### 🔮 **Future Enhancements (P2)**
+**Activity System Expansion** (Deferred to P2):
+- **Custom Activity Creation**: User-defined activities with custom icons, colors, and goals
+- **Active Profiles**: Non-quiet activities (Fitness, Family, Custom) that don't use noise monitoring
+- **Advanced Activity Features**: Motion assist, health sync, calendar export
+- **Feature Flag**: `FF_ACTIVE_PROFILES = false` (currently disabled)
+
+**Why Deferred**: P0 focuses on validating the core quest loop with 3 simple, quiet-first activities. Adding custom activities and active profiles before validating core value would add unnecessary complexity. See `docs/development/AmbientQuests_Dev_Spec.md` lines 198-199 for P2 rollout plan.
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
 - **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
@@ -52,11 +152,6 @@ Developer constraints:
 - Compact noise chart by default; full chart via explicit expand or when activity requires silence (e.g., Meditation, Study, Noise Monitor).
 - Respect accessibility (reduced motion), ad safety spacing, and localization length.
 - **Development Mode**: ✅ Mock subscriptions available for testing
-
-### 📋 Immediate Next Steps
-1. Wire Quest capsule UI and ring inner Ambient Score label (behind flags)
-2. Implement adaptive threshold suggestion (provider stub present)
-3. Optional: live surfaces; ensure background safety and pause/end actions
 
 ### 🎯 **Launch Timeline: 6 Weeks Total (Week 1 Complete)**
 - **Week 1**: ✅ Monetization infrastructure (COMPLETE - AHEAD OF SCHEDULE)
@@ -140,17 +235,25 @@ Feature flags: see `lib/constants/ambient_flags.dart`
 - FF_QUESTS, FF_AMBIENT_SCORE, FF_ADAPTIVE_THRESHOLD (true)
 - FF_ACTIVE_PROFILES, FF_HEALTH_SYNC, FF_CALENDAR_EXPORT (false)
 
-Scope (P0):
-- Wire Activity Profiles (Study, Reading, Meditation) with per‑profile `thresholdDb`
-- Compute Ambient Score during sessions (quietSeconds / actualSeconds)
-- Quest Capsule card on Home (above Today’s Goals) showing daily goal progress
-- Compassionate streaks (2‑Day Rule + monthly freeze token; Premium: extra tokens)
-- Adaptive Threshold chip after 3 wins (suggest +2 dB; ask before applying)
-- Live activity / ongoing notification with countdown + % quiet and pause/end actions
+### ✅ Completed (P0 - Oct 9-10, 2025):
+- ✅ **Ambient Session Engine**: Full lifecycle integration (start/tick/end)
+- ✅ **Ambient Score**: Real-time calculation (`quietSeconds / actualSeconds`)
+- ✅ **Quest System**: Daily rollover, monthly freeze tokens, 2-Day Rule streaks
+- ✅ **Activity Profiles**: Persist selected profile with `requiresSilence` flag
+- ✅ **Parity Logging**: Tracks live calm% vs ambient score (±1% tolerance)
+- ✅ **Background Safety**: Android STOP action and Deep Focus breach handling
+- ✅ **Analytics Widgets**: Heatmap (12-week), Today Timeline, Weekly Target Line
 
-Non-goals (P0):
-- Health/Calendar integrations (P2 behind flags)
+### 🔄 In Progress (P1):
+- ⏳ Quest Capsule card on Home (above Today's Goals) showing daily goal progress
+- ⏳ Ambient Score inner ring label for live calm% display
+- ⏳ Adaptive Threshold chip after 3 wins (suggest +2 dB; ask before applying)
+- ⏳ iOS Live Activities (parity with Android ongoing notification)
+
+### 📋 Deferred (P2):
+- Health/Calendar integrations (behind flags)
 - Multi‑mission programs; complex schedulers
+- Custom activity profile creation UI
 
 Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin tests)
 
@@ -182,8 +285,13 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 ### Key Providers
 - **SilenceDataNotifier** (`lib/providers/silence_provider.dart`): Session data and statistics ✅
 - **SubscriptionProvider** (`lib/providers/subscription_provider.dart`): ✅ **COMPLETE** Premium feature management
-- **activeSessionDurationProvider** (`lib/providers/silence_provider.dart`): ✅ **NEW** Temporary session duration overrides for quick selectors
-- **activeDecibelThresholdProvider** (`lib/providers/silence_provider.dart`): ✅ **NEW** Temporary threshold overrides for quick selectors
+- **AmbientSessionEngine** (`lib/providers/ambient_quest_provider.dart`): ✅ Real-time ambient score tracking with 1Hz ticks
+- **QuestStateController** (`lib/providers/ambient_quest_provider.dart`): ✅ Daily goals, streak management, rollover logic, per-activity minute tracking
+- **SelectedProfileNotifier** (`lib/providers/ambient_quest_provider.dart`): ✅ Persisted activity profile selection
+- **UserPreferencesNotifier** (`lib/providers/user_preferences_provider.dart`): ✅ **NEW** Manages enabled activities, global goal, last duration per profile
+- **AdaptiveThresholdNotifier** (`lib/providers/adaptive_threshold_provider.dart`): ✅ Tracks consecutive wins, suggests threshold increase after 3 successes
+- **activeSessionDurationProvider** (`lib/providers/silence_provider.dart`): ✅ Temporary session duration overrides for quick selectors
+- **activeDecibelThresholdProvider** (`lib/providers/silence_provider.dart`): ✅ Temporary threshold overrides for quick selectors
 - **ThemeProvider** (`lib/providers/theme_provider.dart`): App theming with System/Light/Dark modes ✅
 - **NotificationProvider** (`lib/providers/notification_provider.dart`): Smart reminder state management ✅
 - **AccessibilityProvider** (`lib/providers/accessibility_provider.dart`): Accessibility features ✅
@@ -197,9 +305,15 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **ProgressRing** (`lib/widgets/progress_ring.dart`): Interactive session control with countdown timer ✅
 - **RealTimeNoiseChart** (`lib/widgets/real_time_noise_chart.dart`): Live decibel visualization with quick threshold selectors ✅
 - **SessionHistoryGraph** (`lib/widgets/session_history_graph.dart`): Historical performance tracking ✅
-- **TabbedOverviewWidget** (`lib/widgets/tabbed_overview_widget.dart`): ✅ **NEW** Space-optimized tabbed container combining Practice Overview + Advanced Analytics
-- **QuickDurationSelector** (`lib/widgets/quick_duration_selector.dart`): ✅ **NEW** Compact session duration buttons with premium integration
-- **QuickDecibelSelector** (`lib/widgets/quick_decibel_selector.dart`): ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
+- **SessionHeatmap** (`lib/widgets/session_heatmap.dart`): ✅ 12-week GitHub-style activity heatmap
+- **TodayTimelineWidget** (`lib/widgets/today_timeline_widget.dart`): ✅ 24-hour timeline with session dots
+- **WeeklyRecapCard** (`lib/widgets/weekly_recap_card.dart`): ✅ Weekly progress summary with achievements
+- **QuestCapsule** (`lib/widgets/quest_capsule.dart`): ✅ Ultra-minimal daily quest progress (progress bar, streak, freeze token)
+- **AdaptiveThresholdChip** (`lib/widgets/adaptive_threshold_chip.dart`): ✅ Threshold suggestion chip after 3 consecutive wins
+- **ActivityEditSheet** (`lib/widgets/activity_edit_sheet.dart`): ✅ **NEW** Bottom sheet for customizing visible activities and daily goal (Material 3 icons, scrollable, 85% height)
+- **TabbedOverviewWidget** (`lib/widgets/tabbed_overview_widget.dart`): ✅ Space-optimized tabbed container combining Practice Overview + Advanced Analytics
+- **QuickDurationSelector** (`lib/widgets/quick_duration_selector.dart`): ✅ Compact session duration buttons with premium integration
+- **QuickDecibelSelector** (`lib/widgets/quick_decibel_selector.dart`): ✅ Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - **FeatureGate** (`lib/widgets/feature_gate.dart`): ✅ **COMPLETE** Premium feature access control
 - **PaywallWidget** (`lib/widgets/paywall_widget.dart`): ✅ **COMPLETE** Subscription management UI
 - **AdvancedAnalyticsWidget** (`lib/widgets/advanced_analytics_widget.dart`): Premium analytics dashboard ✅
@@ -270,6 +384,107 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **Real-time Feedback**: Immediate visual response to threshold and duration changes
 - **Data-driven Charts**: 7-day activity chart shows actual session data with bar heights based on points earned
 - **Accessibility**: All components follow Material 3 design guidelines with proper contrast and touch targets
+
+### ✅ **TABLET & RESPONSIVE DESIGN COMPLETE** (Oct 12, 2025)
+
+#### Design Philosophy
+- **Phone-First**: Optimized for 4.7"-6.7" smartphones (primary use case)
+- **Tablet-Adaptive**: Proportional scaling + intelligent layouts for 7"-13" tablets
+- **No Redundancy**: Single ad placement, no duplicate content
+- **Master-Detail Pattern**: Landscape tablets show Today + Expanded Trends side-by-side
+
+#### Responsive Breakpoints
+```dart
+class ScreenBreakpoints {
+  static const double phone = 600;      // < 600dp = phone
+  static const double tablet = 840;     // 600-840dp = small tablet
+  static const double desktop = 1024;   // > 840dp = large tablet/desktop
+}
+```
+
+#### Tablet Layout Strategy
+
+**Portrait Mode (all tablets):**
+- Keep phone layout with proportional scaling
+- Scale fonts: 1.15x (small tablet), 1.25x (large tablet)
+- Scale widgets: rings +20-35%, touch targets +20%
+- Increase padding: +20% spacing throughout
+
+**Landscape Mode (tablets ≥840dp):**
+- **Split-Screen Pattern** (50/50 split):
+  - **Left Panel (Today - 50%)**: Today tab content
+    - Sessions widget (activity rings + overall progress)
+    - Quest capsule (daily motivation)
+    - Patterns summary with "Show More" link
+    - **Single ad placement** (footer) ✅
+  - **Right Panel (Sessions - 50%)**: Sessions tab content
+    - Activity selection chips (Study/Reading/Meditation)
+    - Daily progress indicator (0/10 min)
+    - Room loudness monitoring
+    - Duration selector chips (1, 5, 10, 15, 30 min + premium)
+    - Progress ring with Start button
+    - **No advertisement** (cleaner interaction space) ✅
+
+**Orientation Policy** (✅ Implemented):
+- **Phones & Small Tablets (<840dp)**: ✅ **Portrait-only** (landscape disabled to protect ad visibility)
+- **Large Tablets (≥840dp)**: ✅ **All orientations allowed** (landscape enables master-detail layout)
+- **Dynamic Locking**: Orientation restrictions update automatically based on screen width
+- **Ad Protection**: Landscape mode on small screens would hide footer ads, so it's disabled
+
+**Implementation**:
+- `OrientationLocker` widget in `lib/main.dart` monitors screen width
+- Uses `SystemChrome.setPreferredOrientations()` to enforce policy
+- Updates orientation restrictions on screen size changes
+
+**Why This Approach:**
+- ✅ **Single ad placement** - Only in Today panel (left), not Sessions panel (avoids duplicate ads)
+- ✅ **Simultaneous access** - Both Today and Sessions tabs visible without switching
+- ✅ **Glanceable progress** - See daily goals and start sessions side-by-side
+- ✅ **Natural workflow** - Review progress (left), start session (right)
+- ✅ **Maximized interaction space** - Sessions panel clean without ads for better UX
+
+#### Adaptive Sizing Formula
+```dart
+// Typography scaling
+double getTextScale(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  if (width < 600) return 1.0;          // Phone
+  if (width < 840) return 1.15;         // Small tablet
+  return 1.25;                          // Large tablet (max)
+}
+
+// Widget proportional sizing
+double getProgressRingSize(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  if (width < 600) return 206;          // Phone: 206px
+  if (width < 840) return 240;          // Small tablet: +16%
+  return 280;                           // Large tablet: +36%
+}
+```
+
+#### Implementation Status
+- ✅ **Complete**: Responsive utilities and breakpoints (`lib/utils/responsive_utils.dart`)
+- ✅ **Complete**: Adaptive text scaling (main.dart builder)
+- ✅ **Complete**: Widget proportional sizing (all major widgets updated)
+- ✅ **Complete**: Orientation locking (portrait-only for phones/small tablets)
+- ✅ **Complete**: Tablet landscape split-screen layout (≥840dp)
+  - Left panel: Today tab with ad at bottom
+  - Right panel: Sessions tab without ad
+  - 50/50 split with vertical divider
+- ✅ **Complete**: Advertisement placement strategy
+  - Portrait mode: Ads in both tabs (normal behavior)
+  - Landscape mode (tablets ≥840dp): Ad only in Today panel (left side)
+  - Conditional rendering via `showAd` parameter in tab builders
+- ✅ **Fixed**: Trends sheet overflow (7-day chart bar spacing)
+- ✅ **Fixed**: Removed duplicate ads from tablet landscape panels
+
+#### Testing Checklist
+- [ ] Test on 7" tablet (600x1024 portrait/landscape)
+- [ ] Test on 10" tablet (800x1280 portrait/landscape)
+- [ ] Test on 12.9" iPad Pro (1024x1366 portrait/landscape)
+- [ ] Verify touch targets ≥48x48dp on all sizes
+- [ ] Verify single ad placement in landscape
+- [ ] Verify text scaling doesn't break layouts
 
 ## Data Models
 

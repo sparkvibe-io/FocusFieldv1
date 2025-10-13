@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/silence_provider.dart';
 import '../providers/subscription_provider.dart';
-import '../providers/activity_provider.dart';
 import '../models/subscription_tier.dart';
 import '../widgets/feature_gate.dart';
 

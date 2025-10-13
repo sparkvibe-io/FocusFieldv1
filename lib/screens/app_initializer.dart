@@ -10,6 +10,7 @@ import 'package:focus_field/widgets/permission_dialogs.dart';
 import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/services/deep_focus_manager.dart';
 import 'package:focus_field/providers/notification_provider.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart';
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -58,6 +59,13 @@ class AppInitializer extends ConsumerWidget {
                       try {
                         ref.read(silenceStateProvider.notifier).stopSession();
                         await notificationService.cancelOngoingSession();
+                        // Also end ambient engine to persist partial session if any
+                        try {
+                          final plannedSeconds = ref.read(sessionDurationProvider);
+                          await ref
+                              .read(ambientSessionEngineProvider.notifier)
+                              .end(reason: 'stopped_from_notification', plannedSeconds: plannedSeconds);
+                        } catch (_) {}
                       } catch (_) {}
                     }
                   };
@@ -71,6 +79,12 @@ class AppInitializer extends ConsumerWidget {
                         if (silent.isListening) {
                           ref.read(silenceStateProvider.notifier).stopSession();
                           await notificationService.cancelOngoingSession();
+                          try {
+                            final plannedSeconds = ref.read(sessionDurationProvider);
+                            await ref
+                                .read(ambientSessionEngineProvider.notifier)
+                                .end(reason: 'deep_focus_breach', plannedSeconds: plannedSeconds);
+                          } catch (_) {}
                         }
                       } catch (_) {}
                     },

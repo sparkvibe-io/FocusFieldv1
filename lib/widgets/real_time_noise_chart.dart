@@ -9,16 +9,17 @@ import 'dart:math' as math;
 import 'package:focus_field/utils/throttled_logger.dart';
 import 'package:focus_field/utils/debug_log.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
-import 'package:focus_field/widgets/quick_decibel_selector.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
   final bool isListening;
+  final bool showHeader;
 
   const RealTimeNoiseChart({
     super.key,
     required this.threshold,
     required this.isListening,
+    this.showHeader = true,
   });
 
   @override
@@ -173,82 +174,43 @@ class RealTimeNoiseChart extends HookConsumerWidget {
     }, []);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: dramatic?.cardBackgroundGradient,
-        color:
-            dramatic?.cardBackgroundGradient == null
-                ? theme.colorScheme.surfaceContainer
-                : null,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              dramatic != null
-                  ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                  : theme.colorScheme.outline.withValues(alpha: 0.12),
-          width: 1,
-        ),
-        boxShadow:
-            dramatic != null
-                ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 18,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 6),
-                  ),
-                ]
-                : null,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
       ),
       child: Column(
         children: [
-          // Header with quick decibel selector
-          Row(
-            children: [
-              // Left: Decibel (replaces duplicate title)
-              Text(
-                '${smoothedDecibel.value.toStringAsFixed(1)} dB',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: smoothedDecibel.value > threshold
-                      ? theme.colorScheme.error
-                      : theme.colorScheme.primary,
+          // Header - just threshold line indicator (hidden when showHeader is false)
+          if (showHeader) ...[
+            Row(
+              children: [
+                Icon(
+                  Icons.rule,
+                  size: 12,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
-              ),
-              const SizedBox(width: 6),
-
-              // Center: Quick decibel selector (only when not listening for cleaner UI)
-              if (!isListening)
-                Expanded(
-                  child: Center(
-                    child: QuickDecibelSelector(
-                      thresholds: const [20, 40, 60, 80],
-                      selectedThreshold: ref.watch(activeDecibelThresholdProvider),
-                      onThresholdSelected: (threshold) {
-                        ref.read(activeDecibelThresholdProvider.notifier)
-                           .state = threshold;
-                      },
-                      enabled: !isListening,
-                    ),
+                const SizedBox(width: 4),
+                Text(
+                  'Threshold: ${threshold.toStringAsFixed(0)} dB',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
-                )
-              else
-                const Expanded(child: SizedBox()), // Spacer when listening
-
-              // Right: small status dot
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: smoothedDecibel.value > threshold
-                      ? theme.colorScheme.error
-                      : theme.colorScheme.primary,
-                  shape: BoxShape.circle,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
+                const Spacer(),
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: smoothedDecibel.value > threshold
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
+          ],
 
           // Chart
           Expanded(

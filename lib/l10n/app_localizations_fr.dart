@@ -565,7 +565,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get upgrade => 'Améliorer';
 
   @override
-  String get upgradeRequired => 'Upgrade Required';
+  String get upgradeRequired => 'Mise à niveau requise';
 
   @override
   String get exportCsvSpreadsheet => 'Feuille CSV';
@@ -983,4 +983,57 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tipInfoTooltip => 'Afficher l\'astuce';
+
+  @override
+  String get questCapsuleTitle => 'Quête Ambiante';
+
+  @override
+  String get questCapsuleLoading => 'Chargement des minutes calmes…';
+
+  @override
+  String questCapsuleProgress(int progress, int goal, int streak) {
+    return 'Calme $progress/$goal min • Série $streak';
+  }
+
+  @override
+  String get questFreezeButton => 'Geler';
+
+  @override
+  String get questFrozenToday => 'Aujourd\'hui gelé — vous êtes protégé.';
+
+  @override
+  String get questGoButton => 'Aller';
+
+  @override
+  String calmPercent(int percent) {
+    return 'Calme $percent%';
+  }
+
+  @override
+  String get calmLabel => 'Calme';
+
+  @override
+  String get day => 'jour';
+
+  @override
+  String get days => 'jours';
+
+  @override
+  String get freeze => 'geler';
+
+  @override
+  String adaptiveThresholdSuggestion(int threshold) {
+    return '3 victoires ! Essayer $threshold dB ?';
+  }
+
+  @override
+  String get adaptiveThresholdNotNow => 'Pas maintenant';
+
+  @override
+  String get adaptiveThresholdTryIt => 'Essayer';
+
+  @override
+  String adaptiveThresholdConfirm(int threshold) {
+    return 'Seuil défini à $threshold dB';
+  }
 }

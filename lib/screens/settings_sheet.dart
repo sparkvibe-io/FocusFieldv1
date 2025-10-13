@@ -8,7 +8,6 @@ import 'package:focus_field/models/subscription_tier.dart';
 import 'package:focus_field/providers/silence_provider.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/services/export_service.dart';
-import 'package:focus_field/services/noise_calibration_service.dart';
 import 'package:focus_field/services/support_service.dart';
 import 'package:focus_field/services/rating_service.dart';
 // TODO: remove if not existing in project or adjust paths
@@ -18,8 +17,6 @@ import 'package:focus_field/widgets/theme_selector_widget.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:focus_field/services/tip_service.dart';
-import 'package:focus_field/providers/adaptive_tuning_provider.dart';
-import 'package:focus_field/providers/ambient_quest_provider.dart' show debugAdaptiveOverrideProvider;
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -66,7 +63,7 @@ class SettingsSheet extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: DefaultTabController(
-        length: 4,
+        length: 3,
         child: Column(
           children: [
             Container(
@@ -94,7 +91,6 @@ class SettingsSheet extends ConsumerWidget {
             TabBar(
               tabs: [
                 const Tab(icon: Icon(Icons.tune)), // Basic
-                const Tab(icon: Icon(Icons.center_focus_strong)), // Focus
                 const Tab(icon: Icon(Icons.engineering)), // Advanced
                 const Tab(icon: Icon(Icons.info)), // About
               ],
@@ -109,7 +105,6 @@ class SettingsSheet extends ConsumerWidget {
                           const NeverScrollableScrollPhysics(), // Disable tab swiping
                       children: [
                         _basicTab(context, ref, notifier, settings),
-                        _focusTab(context, ref, notifier, settings),
                         _advancedTab(context, ref, notifier, settings),
                         _aboutTab(context, ref),
                       ],
@@ -335,20 +330,19 @@ class SettingsSheet extends ConsumerWidget {
         children: [
           _advancedCard(
             context,
-            title: AppLocalizations.of(context)!.noiseCalibration,
-            subtitle: AppLocalizations.of(context)!.calibrateBaseline,
-            icon: Icons.equalizer,
+            title: 'Deep Focus',
+            subtitle: 'End session if app is left',
+            icon: Icons.lock_clock,
             isPremium: true,
             hasAccess: ref.watch(premiumAccessProvider),
             onTap: () async {
               if (ref.read(premiumAccessProvider)) {
-                await _showCalibrationDialog(context, notifier);
+                await _showDeepFocusDialog(context, notifier, settings);
               } else {
                 showPaywall(
                   context,
                   requiredTier: SubscriptionTier.premium,
-                  featureDescription:
-                      AppLocalizations.of(context)!.unlockAdvancedCalibration,
+                  featureDescription: 'Unlock Deep Focus to automatically end sessions when you leave the app',
                 );
               }
             },
@@ -381,37 +375,6 @@ class SettingsSheet extends ConsumerWidget {
             icon: Icons.accessibility,
             onTap: () => _showAccessibilityDialog(context, notifier, settings),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _focusTab(
-    BuildContext context,
-    WidgetRef ref,
-    SettingsNotifier notifier,
-    Map<String, dynamic> settings,
-  ) {
-    final size = MediaQuery.of(context).size;
-    final isNarrow = size.width < 380;
-    // Use a simple column to avoid grid overflows; respect small screens.
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          if (!bool.fromEnvironment('dart.vm.product')) _adaptiveTuningCard(context, ref),
-          if (!bool.fromEnvironment('dart.vm.product')) const SizedBox(height: 12),
-          if (!bool.fromEnvironment('dart.vm.product')) _adaptiveOverrideCard(context, ref),
-          const SizedBox(height: 12),
-          // Deep Focus quick entry
-          _advancedCard(
-            context,
-            title: 'Deep Focus',
-            subtitle: 'End session if app is left',
-            icon: Icons.lock_clock,
-            onTap: () => _showDeepFocusDialog(context, notifier, settings),
-          ),
-          if (isNarrow) const SizedBox(height: 8),
         ],
       ),
     );
@@ -481,202 +444,6 @@ class SettingsSheet extends ConsumerWidget {
           ],
         );
       },
-    );
-  }
-
-  Widget _adaptiveTuningCard(BuildContext context, WidgetRef ref) {
-    // Debug-only card to tweak adaptive suggestion tuning at runtime.
-    final tuning = ref.watch(adaptiveTuningProvider);
-    final controller = ref.read(adaptiveTuningProvider.notifier);
-    final theme = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.tune, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Adaptive Tuning (Debug)',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  ),
-                  onPressed: () => controller.restoreDefaults(),
-                  child: const Text('Reset'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            _tuningRow(
-              context,
-              label: 'Cooldown',
-              value: tuning.cooldownHours,
-              onMinus: () => controller.setCooldownHours((tuning.cooldownHours - 1).clamp(1, 168)),
-              onPlus: () => controller.setCooldownHours((tuning.cooldownHours + 1).clamp(1, 168)),
-            ),
-            const SizedBox(height: 4),
-            _tuningRow(
-              context,
-              label: 'Base',
-              value: tuning.baseStreak,
-              onMinus: () => controller.setBaseStreak((tuning.baseStreak - 1).clamp(1, 10)),
-              onPlus: () => controller.setBaseStreak((tuning.baseStreak + 1).clamp(1, 10)),
-            ),
-            const SizedBox(height: 4),
-            _tuningRow(
-              context,
-              label: 'Bonus',
-              value: tuning.reverseBonus,
-              onMinus: () => controller.setReverseBonus((tuning.reverseBonus - 1).clamp(0, 5)),
-              onPlus: () => controller.setReverseBonus((tuning.reverseBonus + 1).clamp(0, 5)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _tuningRow(
-    BuildContext context, {
-    required String label,
-    required int value,
-    required VoidCallback onMinus,
-    required VoidCallback onPlus,
-  }) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
-        IconButton(
-          onPressed: onMinus,
-          icon: const Icon(Icons.remove_circle_outline),
-          visualDensity: VisualDensity.compact,
-          iconSize: 18,
-        ),
-        Text('$value', style: theme.textTheme.titleMedium),
-        IconButton(
-          onPressed: onPlus,
-          icon: const Icon(Icons.add_circle_outline),
-          visualDensity: VisualDensity.compact,
-          iconSize: 18,
-        ),
-      ],
-    );
-  }
-
-  Widget _adaptiveOverrideCard(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final forced = ref.watch(debugAdaptiveOverrideProvider);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isNarrow = constraints.maxWidth < 320;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Adaptive Override (Debug)',
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (forced != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text('Forcing: $forced dB', style: theme.textTheme.labelSmall),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                if (!isNarrow)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 42, // +2 typical from 40
-                          icon: const Icon(Icons.trending_up),
-                          label: const Text('Force +2 dB'),
-                          style: OutlinedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 38, // -2 typical from 40
-                          icon: const Icon(Icons.trending_down),
-                          label: const Text('Force -2 dB'),
-                          style: OutlinedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 42,
-                        icon: const Icon(Icons.trending_up),
-                        label: const Text('Force +2 dB'),
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      OutlinedButton.icon(
-                        onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = 38,
-                        icon: const Icon(Icons.trending_down),
-                        label: const Text('Force -2 dB'),
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        ),
-                      ),
-                    ],
-                  ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => ref.read(debugAdaptiveOverrideProvider.notifier).state = null,
-                    child: const Text('Clear override'),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
     );
   }
 
@@ -1095,24 +862,6 @@ class SettingsSheet extends ConsumerWidget {
         );
       }
     }
-  }
-
-  Future<void> _showCalibrationDialog(
-    BuildContext context,
-    SettingsNotifier notifier,
-  ) async {
-    final container = ProviderScope.containerOf(context);
-    double? prev;
-    final async = container.read(appSettingsProvider);
-    if (async.hasValue) prev = async.value?['decibelThreshold'] as double?;
-    await showDialog(
-      context: context,
-      builder:
-          (_) => _NoiseCalibrationDialog(
-            settingsNotifier: notifier,
-            previousThreshold: prev,
-          ),
-    );
   }
 
   Future<void> _exportData(BuildContext context) async {
@@ -1537,145 +1286,6 @@ class SettingsSheet extends ConsumerWidget {
                   ],
                 ),
           ),
-    );
-  }
-}
-
-class _NoiseCalibrationDialog extends StatefulWidget {
-  final SettingsNotifier settingsNotifier;
-  final double? previousThreshold;
-  const _NoiseCalibrationDialog({
-    required this.settingsNotifier,
-    this.previousThreshold,
-  });
-  @override
-  State<_NoiseCalibrationDialog> createState() =>
-      _NoiseCalibrationDialogState();
-}
-
-class _NoiseCalibrationDialogState extends State<_NoiseCalibrationDialog> {
-  bool _isCalibrating = true;
-  double? _recommended;
-  double? _previous;
-  bool _noChange = false;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _run();
-  }
-
-  Future<void> _run() async {
-    try {
-      _previous = widget.previousThreshold;
-      final value = await NoiseCalibrationService.instance.calibrate();
-      if (!mounted) return;
-      if (value == null) {
-        setState(() {
-          _error = AppLocalizations.of(context)!.couldNotReadMic;
-          _isCalibrating = false;
-        });
-        return;
-      }
-      final clamped =
-          value
-              .clamp(AppConstants.decibelMin, AppConstants.decibelMax)
-              .toDouble();
-      await widget.settingsNotifier.updateSetting('decibelThreshold', clamped);
-      final unchanged =
-          (_previous != null) && ((clamped - _previous!).abs() < 0.5);
-      setState(() {
-        _recommended = clamped;
-        _isCalibrating = false;
-        _noChange = unchanged;
-      });
-    } catch (_) {
-      if (mounted) {
-        setState(() {
-          _error = AppLocalizations.of(context)!.calibrationFailed;
-          _isCalibrating = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.noiseFloorCalibration),
-      content: SizedBox(
-        width: 320,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_isCalibrating) ...[
-              Text(AppLocalizations.of(context)!.measuringAmbientNoise),
-              const SizedBox(height: 16),
-              const LinearProgressIndicator(),
-            ] else if (_error != null) ...[
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isCalibrating = true;
-                    _error = null;
-                    _recommended = null;
-                  });
-                  _run();
-                },
-                child: Text(AppLocalizations.of(context)!.retry),
-              ),
-            ] else if (_recommended != null) ...[
-              Icon(
-                Icons.check_circle,
-                color: Theme.of(context).colorScheme.primary,
-                size: 48,
-              ),
-              const SizedBox(height: 12),
-              if (_previous != null)
-                Text(
-                  AppLocalizations.of(context)!.previousThreshold(
-                    double.parse(_previous!.toStringAsFixed(2)),
-                  ),
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              Text(
-                AppLocalizations.of(
-                  context,
-                )!.newThreshold(double.parse(_recommended!.toStringAsFixed(2))),
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              if (_noChange)
-                Text(
-                  AppLocalizations.of(context)!.noSignificantChange,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )
-              else if (_recommended! >= AppConstants.highThresholdWarning)
-                Text(
-                  AppLocalizations.of(context)!.highAmbientDetected,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                )
-              else
-                Text(AppLocalizations.of(context)!.adjustAnytimeSettings),
-            ],
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context)!.close),
-        ),
-      ],
     );
   }
 }

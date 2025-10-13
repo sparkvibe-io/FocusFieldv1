@@ -7,20 +7,46 @@ import '../models/ambient_models.dart';
 import '../providers/silence_provider.dart';
 import 'package:focus_field/constants/ambient_flags.dart';
 import 'adaptive_tuning_provider.dart';
+import 'user_preferences_provider.dart';
 
 const _uuid = Uuid();
 
-// Default quiet-first profiles
+// Default quiet-first profiles (now includes "other" for 4 activities)
 final defaultProfilesProvider = Provider<List<ActivityProfile>>((ref) {
   return const [
     ActivityProfile(id: 'study', name: 'Study', icon: '🎓', usesNoise: true, thresholdDb: 38),
     ActivityProfile(id: 'reading', name: 'Reading', icon: '📖', usesNoise: true, thresholdDb: 38),
     ActivityProfile(id: 'meditation', name: 'Meditation', icon: '🧘', usesNoise: true, thresholdDb: 38),
+    ActivityProfile(id: 'other', name: 'Other', icon: '⭐', usesNoise: true, thresholdDb: 38),
   ];
 });
 
-// Selected profile ID
-final selectedProfileIdProvider = StateProvider<String>((ref) => 'study');
+// Selected profile ID with persistence
+final selectedProfileIdProvider = StateNotifierProvider<SelectedProfileNotifier, String>((ref) {
+  return SelectedProfileNotifier(ref);
+});
+
+class SelectedProfileNotifier extends StateNotifier<String> {
+  final Ref _ref;
+
+  SelectedProfileNotifier(this._ref) : super('study') {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final storage = await _ref.read(storageServiceProvider.future);
+    final savedId = await storage.getString('selected_activity_profile');
+    if (savedId != null && savedId.isNotEmpty) {
+      state = savedId;
+    }
+  }
+
+  Future<void> setProfile(String profileId) async {
+    state = profileId;
+    final storage = await _ref.read(storageServiceProvider.future);
+    await storage.setString('selected_activity_profile', profileId);
+  }
+}
 
 // Active profile object
 final activeProfileProvider = Provider<ActivityProfile>((ref) {
@@ -36,6 +62,7 @@ class AmbientSessionState {
   final int violations;
   final double ambientScore;
   final bool running;
+  final bool sessionUsesNoise;
 
   const AmbientSessionState({
     this.sessionId,
@@ -44,6 +71,7 @@ class AmbientSessionState {
     this.violations = 0,
     this.ambientScore = 0.0,
     this.running = false,
+    this.sessionUsesNoise = true,
   });
 
   AmbientSessionState copyWith({
@@ -53,6 +81,7 @@ class AmbientSessionState {
     int? violations,
     double? ambientScore,
     bool? running,
+    bool? sessionUsesNoise,
   }) => AmbientSessionState(
         sessionId: sessionId ?? this.sessionId,
         elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
@@ -60,6 +89,7 @@ class AmbientSessionState {
         violations: violations ?? this.violations,
         ambientScore: ambientScore ?? this.ambientScore,
         running: running ?? this.running,
+        sessionUsesNoise: sessionUsesNoise ?? this.sessionUsesNoise,
       );
 }
 
@@ -72,10 +102,18 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
   DateTime? _start;
   AmbientSessionEngine(this._ref) : super(const AmbientSessionState());
 
-  Future<String> start({required int plannedSeconds}) async {
+  Future<String> start({required int plannedSeconds, required bool usesNoise}) async {
     final id = _uuid.v4();
     _start = DateTime.now();
-    state = state.copyWith(sessionId: id, running: true, elapsedSeconds: 0, quietSeconds: 0, violations: 0, ambientScore: 0.0);
+    state = state.copyWith(
+      sessionId: id,
+      running: true,
+      elapsedSeconds: 0,
+      quietSeconds: 0,
+      violations: 0,
+      ambientScore: 0.0,
+      sessionUsesNoise: usesNoise,
+    );
     return id;
   }
 
@@ -106,7 +144,7 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
       endedAt: ended,
       quietSeconds: state.quietSeconds,
       violations: state.violations,
-      ambientScore: profile.usesNoise ? state.ambientScore : null,
+      ambientScore: state.sessionUsesNoise ? state.ambientScore : null,
     );
 
     // Persist minimal history
@@ -194,21 +232,24 @@ class QuestStateController extends StateNotifier<QuestState?> {
       try {
         final map = jsonDecode(jsonString) as Map<String, dynamic>;
         state = QuestState.fromJson(map);
+        await _rolloverIfNeeded();
         return;
       } catch (_) {}
     }
     {
       final now = DateTime.now();
+      final prefs = _ref.read(userPreferencesProvider);
       state = QuestState(
         cycleId: '${now.year}-${now.month.toString().padLeft(2, '0')}',
         dayIndex: now.day,
-        goalQuietMinutes: 20,
+        goalQuietMinutes: prefs.globalDailyQuietGoalMinutes,
         requiredScore: 0.7,
         progressQuietMinutes: 0,
         streakCount: 0,
         freezeTokens: 1,
         lastUpdatedAt: now,
       );
+      await save();
     }
   }
 
@@ -219,36 +260,129 @@ class QuestStateController extends StateNotifier<QuestState?> {
     }
   }
 
-  Future<void> applySession(AmbientSession session) async {
+  // Handles day/month rollover, resets daily progress and replenishes monthly freeze token (max 1)
+  // Implements permissive 2-Day Rule: only reset streak if two consecutive days are missed
+  Future<void> _rolloverIfNeeded() async {
     final qs = state;
     if (qs == null) return;
     final now = DateTime.now();
+    final currentCycleId = '${now.year}-${now.month.toString().padLeft(2, '0')}'
+        ;
+    var updated = qs;
+    // Month change -> reset cycle, keep streak, replenish freeze token to 1
+    if (qs.cycleId != currentCycleId) {
+      updated = updated.copyWith(
+        cycleId: currentCycleId,
+        dayIndex: now.day,
+        progressQuietMinutes: 0,
+        studyMinutes: 0,
+        readingMinutes: 0,
+        meditationMinutes: 0,
+        freezeTokens: 1, // one freeze token per month
+        missedYesterday: false, // fresh month
+        lastUpdatedAt: now,
+      );
+    }
+    // Day change within same month
+    final last = DateTime(qs.lastUpdatedAt.year, qs.lastUpdatedAt.month, qs.lastUpdatedAt.day);
+    final today = DateTime(now.year, now.month, now.day);
+    if (today.isAfter(last)) {
+      // Permissive 2-Day Rule: only reset streak if BOTH yesterday AND the day before were missed
+      final yesterdayMissed = qs.progressQuietMinutes < qs.goalQuietMinutes;
+      final resetStreak = yesterdayMissed && qs.missedYesterday; // two days in a row
+
+      updated = updated.copyWith(
+        dayIndex: now.day,
+        progressQuietMinutes: 0,
+        studyMinutes: 0,
+        readingMinutes: 0,
+        meditationMinutes: 0,
+        streakCount: resetStreak ? 0 : qs.streakCount,
+        missedYesterday: yesterdayMissed, // track for next rollover
+        lastUpdatedAt: now,
+      );
+    }
+    if (updated != qs) {
+      state = updated;
+      await save();
+    }
+  }
+
+  Future<void> applySession(AmbientSession session) async {
+    await _rolloverIfNeeded();
+    final qs = state;
+    if (qs == null) return;
+    final now = DateTime.now();
+    
+    // Calculate credited minutes if ambient score qualifies
     int credited = 0;
     bool qualifies = false;
     if (session.ambientScore != null) {
       qualifies = session.ambientScore! >= qs.requiredScore;
       credited = qualifies ? (session.quietSeconds ~/ 60) : 0;
     }
-    final newProgress = min(qs.goalQuietMinutes, qs.progressQuietMinutes + credited);
+    
+    // Track per-activity minutes based on profileId
+    int newStudyMinutes = qs.studyMinutes;
+    int newReadingMinutes = qs.readingMinutes;
+    int newMeditationMinutes = qs.meditationMinutes;
+    
+    switch (session.profileId) {
+      case 'study':
+        newStudyMinutes = qs.studyMinutes + credited;
+        break;
+      case 'reading':
+        newReadingMinutes = qs.readingMinutes + credited;
+        break;
+      case 'meditation':
+        newMeditationMinutes = qs.meditationMinutes + credited;
+        break;
+    }
+    
+    // Calculate total progress as sum of all activities (capped at goal)
+    final totalMinutes = newStudyMinutes + newReadingMinutes + newMeditationMinutes;
+    final newProgress = min(qs.goalQuietMinutes, totalMinutes);
+    
     int newStreak = qs.streakCount;
-    if (newProgress >= qs.goalQuietMinutes) newStreak = qs.streakCount + 1;
+    bool clearMissed = false;
+
+    // If goal is met, increment streak and clear missedYesterday flag
+    if (newProgress >= qs.goalQuietMinutes) {
+      newStreak = qs.streakCount + 1;
+      clearMissed = true; // goal met, streak is safe
+    }
 
     state = qs.copyWith(
       progressQuietMinutes: newProgress,
+      studyMinutes: newStudyMinutes,
+      readingMinutes: newReadingMinutes,
+      meditationMinutes: newMeditationMinutes,
       streakCount: newStreak,
       dayIndex: now.day,
+      missedYesterday: clearMissed ? false : qs.missedYesterday,
       lastUpdatedAt: now,
     );
     await save();
   }
 
+  /// Update the goal when user preferences change
+  Future<void> updateGoal(int newGoalMinutes) async {
+    final qs = state;
+    if (qs == null) return;
+    state = qs.copyWith(goalQuietMinutes: newGoalMinutes);
+    await save();
+  }
+
   Future<bool> freezeToday() async {
+    await _rolloverIfNeeded();
     final qs = state;
     if (qs == null) return false;
     if (qs.freezeTokens <= 0) return false;
+    // Freeze counts as goal completion: clear missedYesterday flag
     state = qs.copyWith(
       progressQuietMinutes: qs.goalQuietMinutes,
       freezeTokens: qs.freezeTokens - 1,
+      missedYesterday: false, // freeze protects streak
       lastUpdatedAt: DateTime.now(),
     );
     await save();

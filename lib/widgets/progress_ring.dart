@@ -12,6 +12,8 @@ class ProgressRing extends StatelessWidget {
   final VoidCallback? onTap;
   final int? sessionDurationSeconds; // Total session duration for countdown
   final bool showSetDuration; // Show set duration when inactive
+  final double? calmPercent; // Ambient score percentage (0-100)
+  final bool showCalmPercent; // Show calm% label (only for noise-requiring activities)
 
   const ProgressRing({
     super.key,
@@ -24,6 +26,8 @@ class ProgressRing extends StatelessWidget {
     this.onTap,
     this.sessionDurationSeconds,
     this.showSetDuration = false,
+    this.calmPercent,
+    this.showCalmPercent = false,
   });
 
   @override
@@ -148,6 +152,28 @@ class ProgressRing extends StatelessWidget {
                       ] else if (isListening && sessionDurationSeconds != null) ...[
                         _buildCountdownText(theme),
                         const SizedBox(height: 8),
+                      ],
+
+                      // Calm% display (only when showCalmPercent is true and listening)
+                      if (showCalmPercent && isListening && calmPercent != null) ...[
+                        Text(
+                          '${calmPercent!.round()}%',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Calm',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
                       ],
 
                       // Icon with responsive size

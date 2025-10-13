@@ -311,4 +311,41 @@
   ,"tipInstructionAccessibility": "Settings → Advanced → Accessibility."
   ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
   ,"tipInfoTooltip": "Tipp anzeigen"
+  ,"questCapsuleTitle": "Ambient Quest"
+  ,"questCapsuleLoading": "Ruhige Minuten werden geladen…"
+  ,"questCapsuleProgress": "Ruhe {progress}/{goal} Min • Serie {streak}"
+  ,"@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {"type": "int"},
+      "goal": {"type": "int"},
+      "streak": {"type": "int"}
+    }
+  }
+  ,"questFreezeButton": "Einfrieren"
+  ,"questFrozenToday": "Heute eingefroren — du bist geschützt."
+  ,"questGoButton": "Los"
+  ,"calmPercent": "Ruhe {percent}%"
+  ,"@calmPercent": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  }
+  ,"calmLabel": "Ruhe"
+  ,"day": "Tag"
+  ,"days": "Tage"
+  ,"freeze": "einfrieren"
+  ,"adaptiveThresholdSuggestion": "3 Siege! {threshold} dB versuchen?"
+  ,"@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
+  ,"adaptiveThresholdNotNow": "Nicht jetzt"
+  ,"adaptiveThresholdTryIt": "Probieren"
+  ,"adaptiveThresholdConfirm": "Schwellenwert auf {threshold} dB gesetzt"
+  ,"@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
 }

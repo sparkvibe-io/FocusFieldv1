@@ -565,7 +565,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get upgrade => 'Upgrade';
 
   @override
-  String get upgradeRequired => 'Upgrade Required';
+  String get upgradeRequired => 'Atualização Necessária';
 
   @override
   String get exportCsvSpreadsheet => 'Planilha CSV';
@@ -983,6 +983,59 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tipInfoTooltip => 'Mostrar dica';
+
+  @override
+  String get questCapsuleTitle => 'Missão Ambiental';
+
+  @override
+  String get questCapsuleLoading => 'Carregando minutos calmos…';
+
+  @override
+  String questCapsuleProgress(int progress, int goal, int streak) {
+    return 'Calma $progress/$goal min • Sequência $streak';
+  }
+
+  @override
+  String get questFreezeButton => 'Congelar';
+
+  @override
+  String get questFrozenToday => 'Hoje congelado — você está protegido.';
+
+  @override
+  String get questGoButton => 'Ir';
+
+  @override
+  String calmPercent(int percent) {
+    return 'Calma $percent%';
+  }
+
+  @override
+  String get calmLabel => 'Calma';
+
+  @override
+  String get day => 'dia';
+
+  @override
+  String get days => 'dias';
+
+  @override
+  String get freeze => 'congelar';
+
+  @override
+  String adaptiveThresholdSuggestion(int threshold) {
+    return '3 vitórias! Tentar $threshold dB?';
+  }
+
+  @override
+  String get adaptiveThresholdNotNow => 'Agora não';
+
+  @override
+  String get adaptiveThresholdTryIt => 'Tentar';
+
+  @override
+  String adaptiveThresholdConfirm(int threshold) {
+    return 'Limiar definido para $threshold dB';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1964,4 +2017,57 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get tipInfoTooltip => 'Mostrar dica';
+
+  @override
+  String get questCapsuleTitle => 'Missão Ambiental';
+
+  @override
+  String get questCapsuleLoading => 'Carregando minutos calmos…';
+
+  @override
+  String questCapsuleProgress(int progress, int goal, int streak) {
+    return 'Calma $progress/$goal min • Sequência $streak';
+  }
+
+  @override
+  String get questFreezeButton => 'Congelar';
+
+  @override
+  String get questFrozenToday => 'Hoje congelado — você está protegido.';
+
+  @override
+  String get questGoButton => 'Ir';
+
+  @override
+  String calmPercent(int percent) {
+    return 'Calma $percent%';
+  }
+
+  @override
+  String get calmLabel => 'Calma';
+
+  @override
+  String get day => 'dia';
+
+  @override
+  String get days => 'dias';
+
+  @override
+  String get freeze => 'congelar';
+
+  @override
+  String adaptiveThresholdSuggestion(int threshold) {
+    return '3 vitórias! Tentar $threshold dB?';
+  }
+
+  @override
+  String get adaptiveThresholdNotNow => 'Agora não';
+
+  @override
+  String get adaptiveThresholdTryIt => 'Tentar';
+
+  @override
+  String adaptiveThresholdConfirm(int threshold) {
+    return 'Limiar definido para $threshold dB';
+  }
 }

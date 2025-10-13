@@ -311,4 +311,41 @@
   ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
   ,"tipInfoTooltip": "Mostrar dica"
   ,"upgradeRequired": "Atualização Necessária"
+  ,"questCapsuleTitle": "Missão Ambiental"
+  ,"questCapsuleLoading": "Carregando minutos calmos…"
+  ,"questCapsuleProgress": "Calma {progress}/{goal} min • Sequência {streak}"
+  ,"@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {"type": "int"},
+      "goal": {"type": "int"},
+      "streak": {"type": "int"}
+    }
+  }
+  ,"questFreezeButton": "Congelar"
+  ,"questFrozenToday": "Hoje congelado — você está protegido."
+  ,"questGoButton": "Ir"
+  ,"calmPercent": "Calma {percent}%"
+  ,"@calmPercent": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  }
+  ,"calmLabel": "Calma"
+  ,"day": "dia"
+  ,"days": "dias"
+  ,"freeze": "congelar"
+  ,"adaptiveThresholdSuggestion": "3 vitórias! Tentar {threshold} dB?"
+  ,"@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
+  ,"adaptiveThresholdNotNow": "Agora não"
+  ,"adaptiveThresholdTryIt": "Tentar"
+  ,"adaptiveThresholdConfirm": "Limiar definido para {threshold} dB"
+  ,"@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
 }

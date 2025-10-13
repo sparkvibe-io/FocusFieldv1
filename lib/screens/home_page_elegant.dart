@@ -1,18 +1,24 @@
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import '../providers/silence_provider.dart';
-import '../providers/activity_provider.dart';
 import '../providers/accessibility_provider.dart';
 import '../providers/notification_provider.dart';
 import '../services/accessibility_service.dart';
 import '../models/silence_data.dart';
 import '../constants/app_constants.dart';
 import '../widgets/inline_noise_panel.dart';
-import '../widgets/create_custom_activity_dialog.dart';
+import '../widgets/quest_capsule.dart';
+import '../widgets/adaptive_threshold_chip.dart';
+import '../widgets/activity_edit_sheet.dart';
+import '../widgets/activity_rings_widget.dart';
+import '../widgets/adaptive_activity_rings_widget.dart';
 import '../providers/theme_provider.dart';
+import '../providers/user_preferences_provider.dart';
+import '../theme/theme_extensions.dart';
 import './trends_sheet.dart';
 import './settings_sheet.dart';
 import '../providers/subscription_provider.dart';
@@ -20,6 +26,9 @@ import 'package:confetti/confetti.dart';
 // Ambient Quests flags/providers
 import 'package:focus_field/constants/ambient_flags.dart';
 import 'package:focus_field/providers/ambient_quest_provider.dart';
+import '../services/tip_service.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/banner_ad_footer.dart';
 // import '../providers/mission_provider.dart';
 // import '../models/mission.dart';
 
@@ -39,10 +48,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   bool _sessionListenerWired = false;
   // Debounce for theme toggle
   DateTime? _lastThemeToggleTime;
-  // Activity tab: selected session duration in minutes
+  // Sessions tab: selected session duration in minutes
   int _selectedDurationMinutes = 1;
   // Live calm tracking handled by liveCalmPercentProvider
   StreamSubscription<double>? _noiseSub;
+  // Ambient Quests: 1Hz tick subscription for AmbientSessionEngine
+  StreamSubscription<double>? _ambientTickSub;
   // Activity list scroll state for the Summary card
   final ScrollController _activityScrollController = ScrollController();
   int _activityPageIndex = 0; // which chunk of 3 items is visible
@@ -52,12 +63,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   static const double _activityRowSpacing = 1;
   // Consistent card style like "Last 7 Days"
   static const double _cardRadius = 16.0;
-  static const EdgeInsets _cardPadding = EdgeInsets.fromLTRB(12, 10, 12, 12);
-  BoxDecoration _cardDecoration(ThemeData theme) => BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(_cardRadius),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-      );
+
+  // Responsive card padding based on screen size
+  EdgeInsets _getCardPadding(BuildContext context) {
+    final padding = context.cardPadding;
+    return EdgeInsets.fromLTRB(padding, padding - 2, padding, padding);
+  }
 
   @override
   void initState() {
@@ -88,16 +99,39 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   @override
   void dispose() {
     try { _noiseSub?.cancel(); } catch (_) {}
+    try { _ambientTickSub?.cancel(); } catch (_) {}
     _activityScrollController.dispose();
     _tabController.dispose();
     _confetti.dispose();
     super.dispose();
   }
 
+  // Helper to get responsive scale factor based on screen size
+  double _getScaleFactor(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final baseWidth = 360.0; // Base design width (standard phone)
+    final currentWidth = size.width;
+    
+    // Scale between 1.0 (small phones) and 1.8 (large tablets)
+    final scale = (currentWidth / baseWidth).clamp(1.0, 1.8);
+    return scale;
+  }
+
+  // Helper to get responsive padding based on screen size
+  double _getResponsivePadding(BuildContext context, double basePadding) {
+    final scale = _getScaleFactor(context);
+    return basePadding * scale;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-  // Responsive flags (computed where needed per section)
+    final size = MediaQuery.sizeOf(context);
+    final orientation = MediaQuery.orientationOf(context);
+    
+    // Detect tablet landscape: width >= 840 (large tablet) and landscape orientation
+    // Matches our orientation locking policy (landscape only allowed on ≥840dp devices)
+    final isTabletLandscape = size.width >= 840 && orientation == Orientation.landscape;
 
     // Listen for session completion/failure to trigger confetti and a11y events
     if (!_sessionListenerWired) {
@@ -105,7 +139,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ref.listen<SilenceState>(silenceStateProvider, (previous, next) async {
         // Live calm counters handled centrally; nothing to reset here.
         if (next.success == true && previous?.success != true) {
-          _confetti.play();
+          // Respect reduce motion preference
+          final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+          if (!reduceMotion) {
+            _confetti.play();
+          }
           try {
             ref.read(accessibilityServiceProvider).vibrateOnEvent(AccessibilityEvent.sessionComplete);
             ref.read(accessibilityServiceProvider).announceSessionComplete(true);
@@ -135,10 +173,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.05),
-                    theme.colorScheme.surface,
+                    const Color(0xFF8B9DC3).withValues(alpha: 0.08), // Soft blue-gray
+                    const Color(0xFF86B489).withValues(alpha: 0.04), // Sage green
                     theme.colorScheme.surface,
                   ],
+                  stops: const [0.0, 0.3, 1.0],
                 ),
               ),
             ),
@@ -163,22 +202,25 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             child: Column(
               children: [
                 // Header
-                _buildHeader(context),
+                _buildHeader(context, isTabletLandscape: isTabletLandscape),
 
-                // Tab content
+                // Tab content - show side-by-side in tablet landscape
                 Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      _buildSummaryTab(context),
-                      _buildActivityTab(context),
-                    ],
-                  ),
+                  child: isTabletLandscape
+                      ? _buildTabletLandscapeLayout(context)
+                      : TabBarView(
+                          controller: _tabController,
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            _buildSummaryTab(context),
+                            _buildSessionsTab(context),
+                          ],
+                        ),
                 ),
 
-                // Bottom navigation bar
-                _buildBottomNav(context),
+                // Bottom navigation bar - hide in tablet landscape
+                if (!isTabletLandscape)
+                  _buildBottomNav(context),
               ],
             ),
           ),
@@ -187,7 +229,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, {bool isTabletLandscape = false}) {
     final theme = Theme.of(context);
     final now = DateTime.now();
     final dayShort = _getDayNameShort(now.weekday);
@@ -204,38 +246,58 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Page title (tab name) with inline date on Summary only
+          // Functional headline with subtitle
           Expanded(
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: Text(
-                    _currentTab == 0 ? 'Summary' : 'Activity',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
+                Text(
+                  isTabletLandscape 
+                      ? 'Your Focus Dashboard'
+                      : (_currentTab == 0 ? 'Focus minutes today' : 'Pick your mode'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (showInlineDate) ...[
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      '($dayShort, $monthShort ${now.day})',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    ),
+                const SizedBox(height: 2),
+                if (_currentTab == 0 || isTabletLandscape)
+                  Builder(
+                    builder: (context) {
+                      final questState = ref.watch(questStateProvider);
+                      final goal = questState?.goalQuietMinutes ?? 20;
+                      return Text(
+                        'Goal: $goal min • Calm ≥70%',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
+                  )
+                else
+                  Builder(
+                    builder: (context) {
+                      final userPrefs = ref.watch(userPreferencesProvider);
+                      final enabledNames = userPrefs.enabledProfiles
+                          .map((id) => _capitalizeFirst(id))
+                          .join(' • ');
+                      return Text(
+                        enabledNames.isEmpty ? 'Study • Reading • Meditation' : enabledNames,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    },
                   ),
-                ],
               ],
             ),
           ),
@@ -245,7 +307,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             children: [
               IconButton(
                 icon: Icon(Icons.lightbulb_outline, color: theme.colorScheme.onSurfaceVariant),
-                onPressed: () {},
+                onPressed: () async {
+                  final tipService = ref.read(tipServiceProvider);
+                  await tipService.showCurrentTip(context);
+                },
                 tooltip: 'Tips',
               ),
               IconButton(
@@ -313,64 +378,134 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildSummaryTab(BuildContext context) {
+  Widget _buildSummaryTab(BuildContext context, {bool showAd = true}) {
+    final horizontalPad = _getResponsivePadding(context, 12);
+    final bottomPad = _getResponsivePadding(context, 100);
+    final spacing = _getResponsivePadding(context, 8);
+
     return ListView(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 100),
+      padding: EdgeInsets.fromLTRB(horizontalPad, 0, horizontalPad, bottomPad),
       physics: const BouncingScrollPhysics(),
       children: [
-        const SizedBox(height: 6),
-        // Activity Progress with real provider integration
-        _buildProposedActivityWidget3(context),
-        const SizedBox(height: 8),
+        SizedBox(height: spacing),
+        // Activity Progress - Adaptive circular rings with real data
+        const AdaptiveActivityRingsWidget(),
+        SizedBox(height: spacing),
         // Ambient Quest capsule (flag-gated); falls back to legacy card if disabled
         if (AmbientFlags.quests)
           _buildAmbientQuestCapsule(context)
         else
           _buildTodaysMissionCard(context),
-        const SizedBox(height: 8),
+        SizedBox(height: spacing),
   // 7-day stacked bars moved to Trends > Show More (Basic tab)
         _buildTrendsCard(context),
-        const SizedBox(height: 8),
-        _buildAdvertisementPlaceholder(context),
+        SizedBox(height: spacing),
+        if (showAd) _buildAdvertisementPlaceholder(context),
       ],
     );
   }
 
 
-  Widget _buildActivityTab(BuildContext context) {
-    return Column(
+  Widget _buildSessionsTab(BuildContext context, {bool showAd = true}) {
+    final horizontalPad = _getResponsivePadding(context, 12);
+    final verticalPad = _getResponsivePadding(context, 8);
+    final bottomPad = _getResponsivePadding(context, 100);
+    final spacing = _getResponsivePadding(context, 8);
+
+    return ListView(
+      padding: EdgeInsets.fromLTRB(horizontalPad, verticalPad, horizontalPad, bottomPad),
+      physics: const BouncingScrollPhysics(),
       children: [
-        // Horizontal activity chips (enclosed in card)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Container(
-            decoration: _cardDecoration(Theme.of(context)),
-            child: _buildHorizontalActivityChips(context),
-          ),
-        ),
-
-        // Compact per-activity daily goal (Today) just below chips (enclosed in card)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
-          child: Container(
-            padding: _cardPadding,
-            decoration: _cardDecoration(Theme.of(context)),
-            child: _buildDailyGoalCompactInner(context),
-          ),
-        ),
-
-        // Scrollable content
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 100),
-            physics: const BouncingScrollPhysics(),
+        // Merged: Activity chips + Today progress in single card
+        Container(
+          decoration: context.cardDecoration,
+          child: Column(
             children: [
-              const SizedBox(height: 6),
-              _buildComplementaryPanel(context),
-              const SizedBox(height: 8),
-              _buildSessionControlCard(context),
-              const SizedBox(height: 8),
-              _buildAdvertisementPlaceholder(context),
+              _buildHorizontalActivityChips(context),
+              const Divider(height: 1),
+              Padding(
+                padding: _getCardPadding(context),
+                child: _buildDailyGoalCompactInner(context),
+              ),
+            ],
+          ),
+        ),
+
+        // Adaptive threshold suggestion (shows after 3 wins)
+        Padding(
+          padding: EdgeInsets.only(top: spacing),
+          child: const AdaptiveThresholdChip(),
+        ),
+
+        SizedBox(height: spacing),
+        _buildComplementaryPanel(context),
+        SizedBox(height: spacing),
+        _buildSessionControlCard(context),
+        SizedBox(height: spacing),
+        if (showAd) _buildAdvertisementPlaceholder(context),
+      ],
+    );
+  }
+
+  /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
+  Widget _buildTabletLandscapeLayout(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left panel: Today tab (no ad in landscape mode)
+        Expanded(
+          child: Column(
+            children: [
+              // Today tab header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Today',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              // Today tab content (with ad at bottom)
+              Expanded(
+                child: _buildSummaryTab(context, showAd: true),
+              ),
+            ],
+          ),
+        ),
+
+        // Vertical divider
+        Container(
+          width: 1,
+          color: theme.colorScheme.outlineVariant,
+        ),
+
+        // Right panel: Sessions tab
+        Expanded(
+          child: Column(
+            children: [
+              // Sessions tab header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Sessions',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              // Sessions tab content (no ad in landscape mode)
+              Expanded(
+                child: _buildSessionsTab(context, showAd: false),
+              ),
             ],
           ),
         ),
@@ -381,26 +516,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   // Inner content for Today's 0/1 min row; wrapper card is added by caller
   Widget _buildDailyGoalCompactInner(BuildContext context) {
     final theme = Theme.of(context);
-    final activityState = ref.watch(activityTrackingProvider);
-    if (activityState.trackedActivities.isEmpty) return const SizedBox.shrink();
+    final activeProfile = ref.watch(activeProfileProvider);
+    final questState = ref.watch(questStateProvider);
 
-    // Find selected activity progress (supports custom IDs like custom_<id>)
-    final selectedId = activityState.selectedActivity;
-    final progress = activityState.trackedActivities.firstWhere(
-      (a) => a.activityId == selectedId,
-      orElse: () => activityState.trackedActivities.first,
-    );
+    // P0: Show quest progress for the active profile
+    final color = _getActivityColor(activeProfile.id);
+    final iconData = _getActivityIcon(activeProfile.id);
 
-    final isCustom = progress.isCustom;
-    final color = isCustom
-        ? progress.customActivity!.color
-        : _getActivityColor(progress.type.key);
-    final iconData = isCustom
-        ? progress.customActivity!.icon
-        : _getActivityIcon(progress.type.key);
-
-    final goal = progress.goalMinutes.clamp(1, 1000);
-    final done = progress.completedMinutes.clamp(0, goal);
+    final goal = questState?.goalQuietMinutes ?? 20;
+    final done = questState?.progressQuietMinutes ?? 0;
     final ratio = goal == 0 ? 0.0 : (done / goal).clamp(0.0, 1.0);
 
   // subtle encouragement (visual glow previously used)
@@ -475,211 +599,83 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       );
   }
 
+  /// Ambient Quests: Display all 4 activity profiles in circular chips
   Widget _buildHorizontalActivityChips(BuildContext context) {
-    final activityState = ref.watch(activityTrackingProvider);
-    final showAddButton = activityState.trackedActivities.length < 8;
+    final profiles = ref.watch(defaultProfilesProvider);
+    final selectedId = ref.watch(selectedProfileIdProvider);
+    final userPrefs = ref.watch(userPreferencesProvider);
+    final theme = Theme.of(context);
+
+    // Filter profiles to show only enabled ones
+    final enabledProfiles = profiles.where((profile) =>
+      userPrefs.enabledProfiles.contains(profile.id)
+    ).toList();
 
     return Padding(
-      padding: _cardPadding,
-      child: SizedBox(
-        height: 60,
-        child: Row(
-        children: [
-          // Scrollable activities
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              itemCount: activityState.trackedActivities.length,
-              itemBuilder: (context, index) {
-                final activity = activityState.trackedActivities[index];
-                final isSelected = activity.activityId == activityState.selectedActivity;
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: enabledProfiles.map((profile) {
+          final isSelected = profile.id == selectedId;
+          final color = _getActivityColor(profile.id);
+          final icon = _getActivityIcon(profile.id);
 
-                // For custom activities, use Material icon; for built-in, use icon
-                final displayWidget = activity.isCustom
-                    ? Icon(activity.displayIconData!, size: 18, color: Colors.white)
-                    : Icon(_getActivityIcon(activity.type.key), size: 18, color: Colors.white);
-
-                final color = activity.isCustom
-                    ? activity.customActivity!.color
-                    : _getActivityColor(activity.type.key);
-
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _buildActivityChipHorizontalCustom(
-                    context,
-                    displayWidget,
-                    _titleCase(activity.displayTitle),
-                    isSelected,
-                    color,
-                    () => ref.read(activityTrackingProvider.notifier).selectActivity(activity.activityId),
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: InkWell(
+                onTap: () => ref.read(selectedProfileIdProvider.notifier).setProfile(profile.id),
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? color.withValues(alpha: 0.15)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    border: isSelected
+                        ? Border.all(color: color, width: 2)
+                        : null,
                   ),
-                );
-              },
-            ),
-          ),
-          // Fixed + button on the right
-          if (showAddButton)
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: _buildAddActivityButton(context),
-            ),
-        ],
-      ),
-    ),
-    );
-  }
-
-  Widget _buildAddActivityButton(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return InkWell(
-      onTap: () => _showAddActivitySheet(context),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.3),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.add,
-              color: theme.colorScheme.primary,
-              size: 20,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showAddActivitySheet(BuildContext context) async {
-    final theme = Theme.of(context);
-    final tracked = ref.read(activityTrackingProvider).trackedActivities.map((a) => a.type).toSet();
-    // Exclude 'custom' from available list - custom activities are created separately
-    final available = ActivityType.values.where((t) => !tracked.contains(t) && t != ActivityType.custom).toList();
-    final isPremium = ref.read(premiumAccessProvider);
-
-    // Bottom sheet picker
-    await showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      backgroundColor: theme.colorScheme.surface,
-      builder: (ctx) {
-        return SafeArea(
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: available.length + 1, // +1 for "Create Custom" option
-            separatorBuilder: (_, __) => Divider(
-              height: 1,
-              color: theme.colorScheme.outline.withValues(alpha: 0.1),
-            ),
-            itemBuilder: (context, index) {
-              // "Create Custom" option at the end
-              if (index == available.length) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    child: Icon(Icons.add, color: theme.colorScheme.primary, size: 18),
-                  ),
-                  title: Text(
-                    'Create Custom Activity',
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    await _showCreateCustomActivityDialog(context);
-                  },
-                );
-              }
-
-              // Pre-built activities
-              final t = available[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: _getActivityColor(t.key),
-                  child: Icon(_getActivityIcon(t.key), color: Colors.white, size: 18),
-                ),
-                title: Text(_titleCase(t.key)),
-                onTap: () async {
-                  final ok = await ref.read(activityTrackingProvider.notifier).addActivity(t.key, isPremium: isPremium);
-                  if (!context.mounted) return;
-                  if (ok) {
-                    await ref.read(activityTrackingProvider.notifier).selectActivity(t.key);
-                    if (!context.mounted) return;
-                    Navigator.of(context).pop();
-                  } else {
-                    if (!context.mounted) return;
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Upgrade to Premium to add more activities'),
-                        behavior: SnackBarBehavior.floating,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Circular icon container
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          icon,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                    );
-                  }
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _showCreateCustomActivityDialog(BuildContext context) async {
-    final customActivity = await showModalBottomSheet<CustomActivity>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: const CreateCustomActivitySheet(),
+                      const SizedBox(height: 6),
+                      // Label
+                      Text(
+                        profile.name,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                          color: isSelected ? color : theme.colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
-
-    if (customActivity == null || !context.mounted) return;
-
-    final isPremium = ref.read(premiumAccessProvider);
-    final ok = await ref.read(activityTrackingProvider.notifier).addCustomActivity(
-      customActivity,
-      isPremium: isPremium,
-    );
-
-    if (!context.mounted) return;
-
-    if (ok) {
-      await ref.read(activityTrackingProvider.notifier).selectActivity(customActivity.id);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${customActivity.title} added!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Upgrade to Premium to add more activities'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
+
+  // Legacy activity add button and dialogs removed (P0 scope: 4 fixed activity profiles)
 
   Widget _buildActivityChipHorizontal(
     BuildContext context,
@@ -794,35 +790,29 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildComplementaryPanel(BuildContext context) {
     final theme = Theme.of(context);
-    final activityState = ref.watch(activityTrackingProvider);
-    final selectedActivity = activityState.selectedActivity;
-    final selectedType = ActivityType.fromKey(selectedActivity);
+    final activeProfile = ref.watch(activeProfileProvider);
     final threshold = ref.watch(decibelThresholdProvider);
     final silenceState = ref.watch(silenceStateProvider);
 
-    if (selectedType.requiresSilence) {
-      // New: inline panel wrapped in a card
-      return Container(
-        padding: _cardPadding,
-        decoration: _cardDecoration(theme),
-        child: InlineNoisePanel(
-          threshold: threshold,
-          isListening: silenceState.isListening,
-        ),
+    if (activeProfile.usesNoise) {
+      // InlineNoisePanel has its own container styling
+      return InlineNoisePanel(
+        threshold: threshold,
+        isListening: silenceState.isListening,
       );
     }
 
     // Non-silence activity: provide a compact helper card
     return Container(
-      padding: _cardPadding,
-      decoration: _cardDecoration(theme),
+      padding: _getCardPadding(context),
+      decoration: context.cardDecoration,
       child: Row(
         children: [
           Icon(Icons.track_changes, color: theme.colorScheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Set your duration and track ${_titleCase(selectedType.key)} time. Session history and analytics will appear in Summary.',
+              'Set your duration and track your time. Session history and analytics will appear in Summary.',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -833,223 +823,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildActivityProgressWidget(BuildContext context) {
-    final theme = Theme.of(context);
-    final screen = MediaQuery.sizeOf(context);
-
-    // Provider-driven data
-    final activityState = ref.watch(activityTrackingProvider);
-    final activities = activityState.trackedActivities;
-    final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
-
-    // Fallback placeholder if empty
-    final hasItems = activities.isNotEmpty;
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 8, 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Activity',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.tune, size: 16),
-                label: const Text('Edit'),
-                style: TextButton.styleFrom(
-                  foregroundColor: theme.colorScheme.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Scroll indicators
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: () {
-          final pageCount = ((hasItems ? activities.length : 1) / _visibleActivityRows).ceil();
-                  return List.generate(pageCount, (index) {
-                    final active = index == _activityPageIndex;
-                    return Container(
-                      width: 6,
-                      height: 6,
-                      margin: const EdgeInsets.only(bottom: 4),
-                      decoration: BoxDecoration(
-                        color: active
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.outline
-                                .withValues(alpha: 0.3),
-                        shape: BoxShape.circle,
-                      ),
-                    );
-                  });
-                }(),
-              ),
-              const SizedBox(width: 8),
-              // Vertically scrollable activities (slightly narrower than before)
-              Expanded(
-                flex: 3,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    // Derive a list height proportional to the screen so the
-                    // card feels balanced while showing exactly 3 rows.
-          final desiredListHeight = (screen.height * 0.195)
-            .clamp(112.0, 198.0);
-          final computedRowHeight = (
-                      desiredListHeight -
-                      (_visibleActivityRows - 1) * _activityRowSpacing
-          ) / _visibleActivityRows;
-          _activityRowHeight = computedRowHeight < 40.0
-            ? 40.0
-            : computedRowHeight;
-
-                    return SizedBox(
-                      height: _visibleActivityRows * _activityRowHeight +
-                          (_visibleActivityRows - 1) * _activityRowSpacing,
-                      child: ListView.separated(
-                        controller: _activityScrollController,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: hasItems ? activities.length : 1,
-                        itemBuilder: (context, index) {
-                          if (!hasItems) {
-                            return SizedBox(
-                              height: _activityRowHeight,
-                              child: _buildActivityRow(
-                                context,
-                                Icons.add,
-                                'Add Activity',
-                                0.0,
-                                theme.colorScheme.primary,
-                              ),
-                            );
-                          }
-                          final a = activities[index];
-                          final key = a.type.key;
-                          return SizedBox(
-                            height: _activityRowHeight,
-                            child: _buildActivityRow(
-                              context,
-                              _getActivityIcon(key),
-                              _titleCase(key),
-                              a.progress,
-                              _getActivityColor(key),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: _activityRowSpacing),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Stats panel with compact horizontal rows inside a darker nested card
-              Align(
-                alignment: Alignment.centerRight,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: 110,
-                    maxWidth: (screen.width * 0.28).clamp(115.0, 150.0),
-                  ),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                      // Darker nested background without an explicit border
-                      color: Color.alphaBlend(
-                        Colors.black.withValues(alpha: 0.25),
-                        theme.colorScheme.surfaceContainerHighest,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        silenceDataAsync.when(
-                          data: (d) {
-                            final points = d.totalPoints;
-                            final sessions = d.totalSessions;
-                            final streak = d.currentStreak;
-                            // Simple targets for proportional rings
-                            const pointsTarget = 100.0;
-                            const sessionsTarget = 20.0;
-                            const streakTarget = 7.0;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildStatRingRow(
-                                  context,
-                                  Icons.stars,
-                                  'Points',
-                                  '$points/${pointsTarget.toInt()}',
-                                  '',
-                                  (points / pointsTarget).clamp(0.0, 1.0),
-                                  const Color(0xFFFA114F),
-                                ),
-                                const SizedBox(height: 8),
-                                _buildStatRingRow(
-                                  context,
-                                  Icons.local_fire_department,
-                                  'Streak',
-                                  '$streak/${streakTarget.toInt()}',
-                                  'DAYS',
-                                  (streak / streakTarget).clamp(0.0, 1.0),
-                                  const Color(0xFFB0FC38),
-                                ),
-                                const SizedBox(height: 8),
-                                _buildStatRingRow(
-                                  context,
-                                  Icons.play_circle_outline,
-                                  'Sessions',
-                                  '$sessions/${sessionsTarget.toInt()}',
-                                  '',
-                                  (sessions / sessionsTarget).clamp(0.0, 1.0),
-                                  const Color(0xFF00D9FF),
-                                ),
-                              ],
-                            );
-                          },
-                          loading: () => _buildStatRingSkeleton(theme),
-                          error: (_, __) => _buildStatRingSkeleton(theme),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildStatRingSkeleton(ThemeData theme) {
     return Column(
@@ -1062,7 +835,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           '—/—',
           '',
           0.0,
-          theme.colorScheme.primary.withValues(alpha: 0.6),
+          const Color(0xFF5B9BD5), // Blue - colorblind safe
         ),
         const SizedBox(height: 8),
         _buildStatRingRow(
@@ -1072,7 +845,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           '—/—',
           'DAYS',
           0.0,
-          const Color(0xFFB0FC38),
+          const Color(0xFFFF9500), // Orange - distinguishable for colorblind
         ),
         const SizedBox(height: 8),
         _buildStatRingRow(
@@ -1082,7 +855,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           '—/—',
           '',
           0.0,
-          const Color(0xFF00D9FF),
+          const Color(0xFF34C759), // Green - colorblind safe
         ),
       ],
     );
@@ -1092,6 +865,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     if (s.isEmpty) return s;
     return s[0].toUpperCase() + s.substring(1);
   }
+
+  String _capitalizeFirst(String s) => _titleCase(s);
 
   // Compact stat row: circular indicator with icon + text to the right
   Widget _buildStatRingRow(
@@ -1409,8 +1184,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final targetHours = (totalTarget / 60.0);
 
     return Container(
-      padding: _cardPadding,
-      decoration: _cardDecoration(theme),
+      padding: _getCardPadding(context),
+      decoration: context.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1673,54 +1448,60 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   // PROPOSED 1-3: Activity Progress with 3 activities + overall circle
+  // Legacy activity widget removed (P0: using Quest Capsule)
   Widget _buildProposedActivityWidget3(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Provider-driven data
-    final activityState = ref.watch(activityTrackingProvider);
-    final trackedActivities = activityState.trackedActivities;
-    final hasActivities = trackedActivities.isNotEmpty;
-
-    // Convert tracked activities to the format expected by _buildLargerActivityRow
-    final activities = trackedActivities.take(3).map((a) {
-      // Assuming target is 60 minutes for now (can be made configurable)
-      final targetMinutes = 60;
-      final completedMinutes = (a.progress * targetMinutes).round();
-
-      // Use custom properties if available, otherwise use built-in type properties
-      final icon = a.isCustom ? a.displayIconData : _getActivityIcon(a.type.key);
-      final color = a.isCustom ? a.customActivity!.color : _getActivityColor(a.type.key);
-
+    // Show only enabled quest profiles with per-activity progress
+    final profiles = ref.watch(defaultProfilesProvider);
+    final prefs = ref.watch(userPreferencesProvider);
+    final questState = ref.watch(questStateProvider);
+    
+    final goalMinutes = prefs.globalDailyQuietGoalMinutes;
+    
+    // Filter profiles based on user preferences
+    final enabledProfiles = profiles.where((profile) {
+      return prefs.enabledProfiles.contains(profile.id);
+    }).toList();
+    
+    // Build activity list from enabled profiles with per-activity data
+    final activities = enabledProfiles.map((profile) {
+      final icon = _getActivityIcon(profile.id);
+      final color = _getActivityColor(profile.id);
+      
+      // Get per-activity minutes based on profile ID
+      int completedMinutes = 0;
+      if (questState != null) {
+        switch (profile.id) {
+          case 'study':
+            completedMinutes = questState.studyMinutes;
+            break;
+          case 'reading':
+            completedMinutes = questState.readingMinutes;
+            break;
+          case 'meditation':
+            completedMinutes = questState.meditationMinutes;
+            break;
+        }
+      }
+      
       return {
         'icon': icon,
-        'label': _titleCase(a.displayTitle),
+        'label': _titleCase(profile.name),
         'completed': completedMinutes,
-        'target': targetMinutes,
+        'target': goalMinutes,
         'color': color,
       };
     }).toList();
 
-    // Calculate overall progress from tracked activities
-    double overallProgress = 0.0;
-    if (trackedActivities.isNotEmpty) {
-      double totalProgress = 0.0;
-      for (var activity in trackedActivities.take(3)) {
-        totalProgress += activity.progress;
-      }
-      overallProgress = (totalProgress / trackedActivities.take(3).length).clamp(0.0, 1.0);
-    }
+    // Calculate overall progress from quest state (sum of all activities)
+    final totalMinutes = questState?.progressQuietMinutes ?? 0;
+    final overallProgress = goalMinutes > 0 
+        ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) 
+        : 0.0;
     final percentageText = '${(overallProgress * 100).toInt()}%';
 
-    // Fallback if no activities
-    final displayActivities = hasActivities ? activities : [
-      {
-        'icon': Icons.add,
-        'label': 'Add Activity',
-        'completed': 0,
-        'target': 60,
-        'color': theme.colorScheme.primary,
-      }
-    ];
+    final displayActivities = activities;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
@@ -1735,9 +1516,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Activity Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text('Session Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const ActivityEditSheet(),
+                  );
+                },
                 icon: const Icon(Icons.tune, size: 16),
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
@@ -1845,6 +1633,115 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
+  // NEW: Activity Rings Widget - Circular progress rings (1-4 activities)
+  // Test version with adaptive layouts based on enabled activities count
+  Widget _buildActivityRingsWidgetTest(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Show only enabled quest profiles with per-activity progress
+    final profiles = ref.watch(defaultProfilesProvider);
+    final prefs = ref.watch(userPreferencesProvider);
+    final questState = ref.watch(questStateProvider);
+    
+    final goalMinutes = prefs.globalDailyQuietGoalMinutes;
+    
+    // Filter profiles based on user preferences (includes "other" now)
+    final enabledProfiles = profiles.where((profile) {
+      return prefs.enabledProfiles.contains(profile.id);
+    }).toList();
+    
+    // Build activity list from enabled profiles with per-activity data
+    final activities = enabledProfiles.map((profile) {
+      final icon = _getActivityIcon(profile.id);
+      final color = _getActivityColor(profile.id);
+      
+      // Get per-activity minutes based on profile ID
+      int completedMinutes = 0;
+      if (questState != null) {
+        switch (profile.id) {
+          case 'study':
+            completedMinutes = questState.studyMinutes;
+            break;
+          case 'reading':
+            completedMinutes = questState.readingMinutes;
+            break;
+          case 'meditation':
+            completedMinutes = questState.meditationMinutes;
+            break;
+          case 'other':
+            completedMinutes = questState.otherMinutes;
+            break;
+        }
+      }
+      
+      return {
+        'icon': icon,
+        'label': _titleCase(profile.name),
+        'completed': completedMinutes,
+        'target': goalMinutes,
+        'color': color,
+      };
+    }).toList();
+
+    // Calculate overall progress from quest state (sum of all activities)
+    final totalMinutes = questState?.progressQuietMinutes ?? 0;
+    final overallProgress = goalMinutes > 0 
+        ? (totalMinutes / goalMinutes).clamp(0.0, 1.0) 
+        : 0.0;
+    final percentageText = '${(overallProgress * 100).toInt()}%';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with title and edit button
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Ring Progress (${goalMinutes}min/${goalMinutes}min)',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => const ActivityEditSheet(),
+                    );
+                  },
+                  icon: const Icon(Icons.tune, size: 16),
+                  label: const Text('Edit'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Activity rings widget
+          ActivityRingsWidget(
+            activities: activities,
+            overallProgress: overallProgress,
+            overallPercentageText: percentageText,
+            goalMinutes: goalMinutes,
+          ),
+        ],
+      ),
+    );
+  }
+
   // PROPOSED 1-5: Activity Progress with 5 activities + overall circle
   Widget _buildProposedActivityWidget5(BuildContext context) {
     final theme = Theme.of(context);
@@ -1873,7 +1770,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Activity Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text('Session Progress', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               TextButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.tune, size: 16),
@@ -2383,11 +2280,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildHorizontalStatsWidget(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Inverse background: brighter in dark mode, darker in light mode
+    final backgroundColor = isDark
+        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
+        : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -2399,7 +2302,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             'Focus',
             '1/100 MIN',
             0.01,
-            const Color(0xFFFA114F),
+            const Color(0xFF5B9BD5), // Blue - colorblind safe
           ),
           _buildCompactStatItem(
             context,
@@ -2407,7 +2310,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             'Streak',
             '1/7 DAYS',
             0.14,
-            const Color(0xFFB0FC38),
+            const Color(0xFFFF9500), // Orange - distinguishable for colorblind
           ),
           _buildCompactStatItem(
             context,
@@ -2415,7 +2318,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             'Sessions',
             '2/20',
             0.1,
-            const Color(0xFF00D9FF),
+            const Color(0xFF34C759), // Green - colorblind safe
           ),
         ],
       ),
@@ -2543,24 +2446,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   Widget _buildAdvertisementPlaceholder(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Center(
-        child: Text(
-          'Advertisement',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ),
+    // Don't show ads for premium users
+    final hasPremiumAccess = ref.read(premiumAccessProvider);
+    if (hasPremiumAccess) {
+      return const SizedBox.shrink();
+    }
+
+    // Show real Google Mobile Ads banner for free users
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: FooterBannerAd(),
     );
   }
 
@@ -2682,111 +2577,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  // Ambient Quest capsule: compact, colorful but subtle; navigates to Activity tab
+  // Ultra-minimal quest capsule: just progress bar, numbers, streak, and freeze token (if relevant)
   Widget _buildAmbientQuestCapsule(BuildContext context) {
-    final theme = Theme.of(context);
-    final qs = ref.watch(questStateProvider);
-    final title = 'Ambient Quest';
-    final subtitle = (qs == null)
-        ? 'Calm minutes loading…'
-        : 'Calm ${qs.progressQuietMinutes}/${qs.goalQuietMinutes} min • Streak ${qs.streakCount}';
-    final canFreeze = (qs?.freezeTokens ?? 0) > 0;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.35),
-            theme.colorScheme.tertiary.withValues(alpha: 0.25),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.eco_rounded,
-              color: Colors.white,
-              size: 26,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.92),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          if (canFreeze)
-            Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: OutlinedButton(
-                onPressed: () async {
-                  final ok = await ref.read(questStateProvider.notifier).freezeToday();
-                  if (!context.mounted) return;
-                  if (ok) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Today frozen — you’re covered.'),
-                        behavior: SnackBarBehavior.floating,
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
-                child: const Text('Freeze'),
-              ),
-            ),
-          ElevatedButton(
-            onPressed: () => _tabController.animateTo(1),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.25),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Go',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
+    return QuestCapsule(
+      onNavigateToActivity: () => _tabController.animateTo(1),
     );
   }
 
@@ -2878,8 +2672,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final theme = Theme.of(context);
 
     return Container(
-      padding: _cardPadding,
-      decoration: _cardDecoration(theme),
+      padding: _getCardPadding(context),
+      decoration: context.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2887,7 +2681,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Trends',
+                'Your patterns',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -2961,12 +2755,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     switch (activityKey.toLowerCase()) {
       case 'work':
         return Icons.work_outline;
+      case 'study':
       case 'studying':
         return Icons.school_outlined;
       case 'reading':
         return Icons.menu_book_outlined;
       case 'meditation':
         return Icons.self_improvement_outlined;
+      case 'other':
+        return Icons.star_outline;
       case 'fitness':
         return Icons.fitness_center_outlined;
       case 'family':
@@ -2981,19 +2778,22 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   Color _getActivityColor(String activityKey) {
     switch (activityKey.toLowerCase()) {
       case 'work':
-        return const Color(0xFFED7D31); // Orange
+        return const Color(0xFFC6927E); // Muted terracotta
+      case 'study':
       case 'studying':
-        return const Color(0xFF7F6BB0); // Purple
+        return const Color(0xFF8B9DC3); // Soft blue-gray
       case 'reading':
-        return const Color(0xFF5B9BD5); // Blue
+        return const Color(0xFF7BA7BC); // Muted teal-blue
       case 'meditation':
-        return const Color(0xFF70AD47); // Green
+        return const Color(0xFF86B489); // Sage green
+      case 'other':
+        return const Color(0xFFC4A57B); // Muted amber
       case 'fitness':
-        return const Color(0xFFFA114F); // Red
+        return const Color(0xFFC97B7B); // Dusty rose
       case 'family':
-        return const Color(0xFFFFC000); // Yellow
+        return const Color(0xFFD4B896); // Soft gold
       case 'noise':
-        return const Color(0xFF00D9FF); // Cyan
+        return const Color(0xFF7BB8B8); // Muted cyan
       default:
         return const Color(0xFF5B9BD5); // Default blue
     }
@@ -3001,29 +2801,31 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildSessionControlCard(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
     // Ambient score subtitle shown for quiet-required activities when enabled
     String? ambientSubtitle;
     if (AmbientFlags.ambientScore) {
-      final selected = ref.watch(selectedActivityProvider);
-      final selectedType = ActivityType.fromKey(selected);
-      if (selectedType.requiresSilence) {
+      final activeProfile = ref.watch(activeProfileProvider);
+      if (activeProfile.usesNoise) {
         final liveCalm = ref.watch(liveCalmPercentProvider);
         if (silenceState.isListening && (liveCalm != null)) {
-          ambientSubtitle = 'Calm ${liveCalm.round()}%';
+          ambientSubtitle = l10n.calmPercent(liveCalm.round());
         } else {
-          ambientSubtitle = 'Calm';
+          ambientSubtitle = l10n.calmLabel;
         }
       }
     }
     final size = MediaQuery.sizeOf(context);
     final isCompact = size.height < 720;
-    final ringSize = isCompact ? 186.0 : 206.0;
+    // Responsive ring size: adjusts for phones/tablets automatically
+    final baseRingSize = context.progressRingSize;
+    final ringSize = isCompact ? baseRingSize * 0.9 : baseRingSize;
 
     return Container(
-      padding: _cardPadding,
-      decoration: _cardDecoration(theme),
+      padding: _getCardPadding(context),
+      decoration: context.cardDecoration,
       child: Column(
         children: [
           // Duration selector (hide while session is running)
@@ -3035,12 +2837,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 physics: const BouncingScrollPhysics(),
                 children: [
                   const SizedBox(width: 6),
-                  for (final m in const [1, 5, 10, 15, 30])
+                  for (final m in const [1, 5, 10, 30])
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
                       child: _buildDurationChip(context, m, _selectedDurationMinutes == m),
                     ),
-                  for (final m in const [60, 90, 120])
+                  for (final m in const [60, 90, 120, 240])
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
                       child: _buildDurationChipPremium(context, m, _selectedDurationMinutes == m),
@@ -3078,41 +2880,27 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildDurationChip(BuildContext context, int minutes, bool isSelected) {
     final theme = Theme.of(context);
-    return InkWell(
-      onTap: () {
+    return TextButton(
+      onPressed: () {
         setState(() => _selectedDurationMinutes = minutes);
         // propagate to active session duration provider (in seconds)
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
       },
-      borderRadius: BorderRadius.circular(10),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        decoration: BoxDecoration(
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      child: Text(
+        '${minutes}m',
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
           color: isSelected
               ? theme.colorScheme.primary
-              : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
-                    blurRadius: 4,
-                    spreadRadius: 0.5,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          minutes.toString(),
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected
-                ? theme.colorScheme.onPrimary
-                : theme.colorScheme.onSurface,
-            fontSize: 12,
-          ),
+              : theme.colorScheme.onSurfaceVariant,
+          decoration: isSelected ? TextDecoration.underline : null,
+          decorationColor: theme.colorScheme.primary,
+          decorationThickness: 2,
         ),
       ),
     );
@@ -3120,56 +2908,43 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildDurationChipPremium(BuildContext context, int minutes, bool isSelected) {
     final theme = Theme.of(context);
-    return InkWell(
-      onTap: () {
+    String label;
+    if (minutes == 60) {
+      label = '1hr';
+    } else if (minutes == 90) {
+      label = '1.5hr';
+    } else if (minutes == 120) {
+      label = '2hr';
+    } else {
+      label = '4hr';
+    }
+
+    return TextButton.icon(
+      onPressed: () {
         setState(() => _selectedDurationMinutes = minutes);
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
       },
-      borderRadius: BorderRadius.circular(10),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        decoration: BoxDecoration(
+      icon: Icon(
+        Icons.star,
+        size: 14,
+        color: isSelected ? theme.colorScheme.primary : Colors.amber,
+      ),
+      label: Text(
+        label,
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
           color: isSelected
               ? theme.colorScheme.primary
-              : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
-                    blurRadius: 4,
-                    spreadRadius: 0.5,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : null,
+              : theme.colorScheme.onSurfaceVariant,
+          decoration: isSelected ? TextDecoration.underline : null,
+          decorationColor: theme.colorScheme.primary,
+          decorationThickness: 2,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              minutes == 60
-                  ? '1h'
-                  : minutes == 90
-                      ? '1.5h'
-                      : '2h',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface,
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(width: 2),
-            Icon(
-              Icons.star,
-              size: 12,
-              color: isSelected ? theme.colorScheme.onPrimary : Colors.amber,
-            ),
-          ],
-        ),
+      ),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
@@ -3235,6 +3010,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final accessibilityService = ref.read(accessibilityServiceProvider);
     final notificationService = ref.read(notificationServiceProvider);
     final startTime = DateTime.now();
+    // Ambient Quests: start engine and set up 1Hz ticks
+    final activeProfile = ref.read(activeProfileProvider);
+    final usesNoise = activeProfile.usesNoise;
+    final plannedSeconds = sessionDuration;
+    try {
+      await ref.read(ambientSessionEngineProvider.notifier).start(
+            plannedSeconds: plannedSeconds,
+            usesNoise: usesNoise,
+          );
+    } catch (_) {}
 
     // Compact Today’s Focus card — Title + Body (icon, message+status, CTA) + Progress
     await notificationService.recordSessionTime(startTime);
@@ -3260,6 +3045,23 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         body: 'Stay focused. Leaving the app may end the session.',
         progress: 0,
       );
+    } catch (_) {}
+
+    // Start 1Hz ambient ticks using RealTimeNoiseController
+    try {
+      _ambientTickSub?.cancel();
+      final noiseController = ref.read(realTimeNoiseControllerProvider);
+      _ambientTickSub = noiseController.stream.listen((db) {
+        try {
+          final threshold = ref.read(decibelThresholdProvider).round();
+          ref.read(ambientSessionEngineProvider.notifier).tick(
+                usesNoise: usesNoise,
+                currentDb: db,
+                thresholdDb: threshold,
+                deltaSeconds: 1,
+              );
+        } catch (_) {}
+      });
     } catch (_) {}
 
     await silenceDetector.startListening(
@@ -3297,40 +3099,38 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             averageNoise: sessionStats.averageNoise,
             duration: actualDuration,
             completed: success,
-            activity: ref.read(selectedActivityProvider),
+            activity: ref.read(selectedProfileIdProvider),
           );
 
           await silenceDataNotifier.addSessionRecord(sessionRecord);
 
-          // Ambient Quests: Quest application moved to AmbientSessionEngine.end()
+          // Ambient Quests: end engine to persist session + update quests
+          try {
+            await ref
+                .read(ambientSessionEngineProvider.notifier)
+                .end(
+                  reason: success ? 'completed' : 'ended',
+                  plannedSeconds: sessionDuration,
+                );
+          } catch (_) {}
+
+          // Stop ticking subscription
+          try { await _ambientTickSub?.cancel(); } catch (_) {}
+          _ambientTickSub = null;
 
           // Phase 1 celebration for first micro-session of the day (>= 60s)
+          // Legacy mission celebration removed (P0 uses Quest system instead)
           if (success && actualDuration >= 60) {
-            final missionDayKey = _missionDayKey(DateTime.now());
             try {
-              final celebrated = await ref
-                  .read(firstMicroCelebratedProvider(missionDayKey).future);
-              if (!celebrated) {
-                ref
-                    .read(accessibilityServiceProvider)
-                    .vibrateOnEvent(AccessibilityEvent.sessionComplete);
-                await ref
-                    .read(firstMicroCelebratedControllerProvider)
-                    .markCelebrated(missionDayKey);
-              }
+              ref
+                  .read(accessibilityServiceProvider)
+                  .vibrateOnEvent(AccessibilityEvent.sessionComplete);
             } catch (_) {}
           }
 
           // Update per-activity progress minutes for Today bar
-          try {
-            final selected = ref.read(selectedActivityProvider);
-            final minutes = (actualDuration / 60).round().clamp(0, 480);
-            if (minutes > 0) {
-              await ref
-                  .read(activityTrackingProvider.notifier)
-                  .updateProgress(selected, minutes);
-            }
-          } catch (_) {}
+          // P0: Quest progress is automatically updated via ambient engine
+          // Legacy activity tracking removed
 
           if (notificationService.enableSessionComplete) {
             if (!context.mounted) return;
@@ -3372,10 +3172,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             averageNoise: sessionStats.averageNoise,
             duration: actualDuration,
             completed: false,
-            activity: ref.read(selectedActivityProvider),
+            activity: ref.read(selectedProfileIdProvider),
           );
 
           silenceDataNotifier.addSessionRecord(sessionRecord);
+          // Stop ambient engine tick without persisting a session record
+          try { await _ambientTickSub?.cancel(); } catch (_) {}
+          _ambientTickSub = null;
           try { await ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
         }
       },
@@ -3391,6 +3194,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     silenceStateNotifier.stopSession();
     silenceDetector.clearReadings();
     accessibilityService.vibrateOnEvent(AccessibilityEvent.buttonPress);
+    // End ambient engine if running (user-initiated stop)
+    try {
+      final plannedSeconds = ref.read(sessionDurationProvider);
+      ref.read(ambientSessionEngineProvider.notifier).end(
+            reason: 'stopped',
+            plannedSeconds: plannedSeconds,
+          );
+    } catch (_) {}
+    try { _ambientTickSub?.cancel(); } catch (_) {}
+    _ambientTickSub = null;
     try { ref.read(notificationServiceProvider).cancelOngoingSession(); } catch (_) {}
   }
 
@@ -3452,12 +3265,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: const [
             Tab(
-              icon: Icon(Icons.summarize_rounded),
-              text: 'Summary',
+              icon: Icon(Icons.today_rounded),
+              text: 'Today',
             ),
             Tab(
-              icon: Icon(Icons.track_changes_rounded),
-              text: 'Activity',
+              icon: Icon(Icons.play_circle_outline_rounded),
+              text: 'Sessions',
             ),
           ],
         ),

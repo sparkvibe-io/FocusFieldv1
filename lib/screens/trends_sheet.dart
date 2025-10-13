@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/silence_provider.dart';
 import 'package:focus_field/models/silence_data.dart';
-import 'package:focus_field/providers/activity_provider.dart';
+import 'package:focus_field/widgets/session_heatmap.dart';
+import 'package:focus_field/widgets/advanced_analytics_widget.dart';
+import 'package:focus_field/widgets/feature_gate.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/utils/responsive_utils.dart';
 
 /// Bottom sheet that mirrors Settings sheet style for consistency.
 /// Tabs: Basic, Advanced. Basic includes 7-day trend; Advanced reserved for future.
@@ -113,14 +118,7 @@ class _TrendsBasicTab extends ConsumerWidget {
           // 7-day stacked bars card (fixed height, minimal)
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest
-                  .withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: 0.2),
-              ),
-            ),
+            decoration: context.cardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -142,7 +140,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 SizedBox(
-                  height: 140,
+                  height: context.chartHeight + 30,
                   child: dataAsync.when(
                     data: (d) => _SevenDayStackedBars(sessions: d.recentSessions),
                     loading: () => const Center(child: CircularProgressIndicator()),
@@ -167,6 +165,49 @@ class _TrendsBasicTab extends ConsumerWidget {
               _statChip(context, Icons.today, 'Best Day',
                   _bestDayLabel(context, dataAsync)),
             ],
+          ),
+          const SizedBox(height: 16),
+          // 12-week activity heatmap
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: context.cardDecoration,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Activity Heatmap',
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Last 12 weeks',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                dataAsync.when(
+                  data: (d) => SessionHeatmap(
+                    sessions: d.recentSessions,
+                    weeks: 12,
+                  ),
+                  loading: () => const SizedBox(
+                    height: 120,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (_, __) => SizedBox(
+                    height: 80,
+                    child: Center(
+                      child: Text(
+                        'Unable to load heatmap',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -221,14 +262,7 @@ class _TrendsBasicTab extends ConsumerWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest
-              .withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.2),
-          ),
-        ),
+        decoration: context.subtleCardDecoration,
         child: Row(
           children: [
             Icon(icon, color: theme.colorScheme.primary, size: 18),
@@ -298,19 +332,21 @@ class _SevenDayStackedBars extends ConsumerWidget {
         return Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final barMax = constraints.maxHeight - 22; // reserve space for label
+              final barMax = constraints.maxHeight - 28; // reserve space for label + spacing
               final barHeight = total == 0 ? 0.0 : (total / maxDay) * barMax;
               // Stable ordering of segments by activity id
               final entries = map.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // Bar area
+                  // Bar area with optional target line
                   SizedBox(
                     height: barMax,
                     child: Stack(
                       alignment: Alignment.bottomCenter,
                       children: [
+                        // Weekly target line (drawn first, behind bars)
+                        _buildTargetLine(context, barMax, maxDay),
                         // Baseline tick for empty days
                         if (total == 0)
                           Align(
@@ -351,6 +387,37 @@ class _SevenDayStackedBars extends ConsumerWidget {
     );
   }
 
+  Widget _buildTargetLine(BuildContext context, double barMax, int maxDay) {
+    final theme = Theme.of(context);
+    // Default weekly target: 30 minutes per day
+    const dailyTargetMinutes = 30;
+
+    if (maxDay < dailyTargetMinutes) {
+      // Don't show target line if it would be above the chart
+      return const SizedBox.shrink();
+    }
+
+    final targetLinePosition = (dailyTargetMinutes / maxDay) * barMax;
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: targetLinePosition,
+      child: Container(
+        height: 2,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.tertiary.withOpacity(0.6),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.tertiary.withOpacity(0.3),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildStackedSegments(
     BuildContext context,
     WidgetRef ref,
@@ -383,16 +450,7 @@ class _SevenDayStackedBars extends ConsumerWidget {
   }
 
   Color? _activityColor(BuildContext context, WidgetRef ref, String activityId) {
-    // Try custom activity color from provider
-    final activities = ref.read(activityTrackingProvider).trackedActivities;
-    final match = activities.where((a) => a.activityId == activityId).toList();
-    if (match.isNotEmpty) {
-      final a = match.first;
-      if (a.isCustom) return a.customActivity?.color;
-      // built-in
-      return _builtInColor(a.type.key);
-    }
-    // If not found, assume built-in key
+    // P0: Use built-in color mapping for the 3 quiet-first profiles
     return _builtInColor(activityId);
   }
 
@@ -400,21 +458,23 @@ class _SevenDayStackedBars extends ConsumerWidget {
     switch (key.toLowerCase()) {
       case 'work':
         return const Color(0xFFED7D31);
+      case 'study':
       case 'studying':
-        return const Color(0xFF7F6BB0);
+        return const Color(0xFF8B9DC3); // Soft blue-gray
       case 'reading':
-        return const Color(0xFF5B9BD5);
+        return const Color(0xFF7BA7BC); // Muted teal-blue
       case 'meditation':
-        return const Color(0xFF70AD47);
+        return const Color(0xFF86B489); // Sage green
       case 'fitness':
         return const Color(0xFFFA114F);
       case 'family':
-        return const Color(0xFFFFC000);
+      case 'other':
+        return const Color(0xFFC4A57B); // Muted amber
       case 'noise':
       case 'focus':
         return const Color(0xFF00D9FF);
       default:
-        return const Color(0xFF5B9BD5);
+        return const Color(0xFF7BA7BC); // Muted teal-blue
     }
   }
 
@@ -424,22 +484,36 @@ class _SevenDayStackedBars extends ConsumerWidget {
   }
 }
 
-class _TrendsAdvancedTab extends StatelessWidget {
+class _TrendsAdvancedTab extends ConsumerWidget {
   const _TrendsAdvancedTab();
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
-      child: Container(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dataAsync = ref.watch(silenceDataNotifierProvider);
+
+    return dataAsync.when(
+      data: (data) => SingleChildScrollView(
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        child: FeatureGate(
+          featureId: 'advanced_analytics',
+          requiredTier: SubscriptionTier.premium,
+          child: AdvancedAnalyticsWidget(silenceData: data),
         ),
-        child: Text('Advanced analysis coming soon…', style: theme.textTheme.bodyMedium),
+      ),
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Text(
+            'Error loading data',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
       ),
     );
   }

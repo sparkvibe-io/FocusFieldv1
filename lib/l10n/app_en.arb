@@ -304,36 +304,36 @@
   ,"tipsShown": "Tips shown"
   ,"showTips": "Show Tips"
   ,"hideTips": "Hide Tips"
-  ,"tip01": "Short sessions count—start with 2–3 minutes to build consistency."
-  ,"tip02": "Use Smart Daily Reminders to nudge you at your best time."
-  ,"tip03": "Recalibrate when your environment changes for better accuracy."
-  ,"tip04": "Check Weekly Trends to spot your momentum over time."
-  ,"tip05": "Streaks grow with daily wins—show up, even for one minute."
-  ,"tip06": "High ambient noise? Raise threshold a bit to reduce false fails."
-  ,"tip07": "Try different times of day to find your quiet sweet spot."
-  ,"tip08": "Session complete notifications keep motivation high—enable them!"
-  ,"tip09": "Prefer hands‑off? Auto reminders can schedule themselves (Smart)."
-  ,"tip10": "Use shorter sessions on busy days to keep your streak alive."
-  ,"tip11": "The progress ring is tappable—start or stop with a single tap."
-  ,"tip12": "Export your data (Premium) to share progress or back it up."
-  ,"tip13": "Average session length helps you choose the right duration."
-  ,"tip14": "Consistency beats intensity—small daily practice compounds."
-  ,"tip15": "Set a gentle goal: 5 quiet minutes is a great baseline."
-  ,"tip16": "The noise chart helps you see spikes—aim for calmer periods."
-  ,"tip17": "Upgrade session duration (Premium) for longer focus blocks."
-  ,"tip18": "High threshold warning guards accuracy—avoid setting it too high."
-  ,"tip19": "Weekdays vary—tune your weekly summary to your schedule."
-  ,"tip20": "Accessibility options: high contrast, large text, and vibration."
-  ,"tip21": "Ambient baseline matters—calibrate when moving to new spaces."
-  ,"tip22": "Quiet wins add up—1 point per minute keeps it simple."
-  ,"tip23": "Confetti celebrates progress—small celebrations reinforce habits."
-  ,"tip24": "Try mornings if evenings are noisy—best time differs for everyone."
-  ,"tip25": "Fine‑tune the decibel threshold for your room’s character."
-  ,"tip26": "Use the moving average to smooth out noisy days."
-  ,"tip27": "Let Weekly Insights remind you of your progress rhythm."
-  ,"tip28": "Finish what you start—short sessions reduce friction to begin."
-  ,"tip29": "Silence is a skill—practice makes patterns, patterns make progress."
-  ,"tip30": "You’re one tap away—start a tiny session now."
+  ,"tip01": "Start small—even 2 minutes builds your focus habit."
+  ,"tip02": "Your streak has grace—one miss won't break it with the 2-Day Rule."
+  ,"tip03": "Try Study, Reading, or Meditation activities to match your focus style."
+  ,"tip04": "Check your 12-week Heatmap to see how small wins compound over time."
+  ,"tip05": "Watch your live Calm % during sessions—higher scores mean better focus!"
+  ,"tip06": "Customize your daily goal (10-60 min) to match your rhythm."
+  ,"tip07": "Use your monthly Freeze Token to protect your streak on tough days."
+  ,"tip08": "After 3 wins, Focus Field suggests a stricter threshold—ready to level up?"
+  ,"tip09": "High ambient noise? Raise your threshold to stay in the zone."
+  ,"tip10": "Smart Daily Reminders learn your best time—let them guide you."
+  ,"tip11": "The progress ring is tappable—one tap starts your focus session."
+  ,"tip12": "Recalibrate when your environment changes for better accuracy."
+  ,"tip13": "Session notifications celebrate your wins—enable them for motivation!"
+  ,"tip14": "Consistency beats perfection—show up, even on busy days."
+  ,"tip15": "Try different times of day to discover your quiet sweet spot."
+  ,"tip16": "Your daily progress is always visible—tap Go to start anytime."
+  ,"tip17": "Each activity tracks separately toward your goal—variety keeps it fresh."
+  ,"tip18": "Export your data (Premium) to see your complete focus journey."
+  ,"tip19": "Confetti celebrates every completion—small wins deserve recognition!"
+  ,"tip20": "Your baseline matters—calibrate when moving to new spaces."
+  ,"tip21": "Your 7-Day Trends reveal patterns—check them weekly for insights."
+  ,"tip22": "Upgrade session duration (Premium) for longer deep focus blocks."
+  ,"tip23": "Focus is a practice—small sessions build the habit you want."
+  ,"tip24": "Weekly Summary shows your rhythm—tune it to your schedule."
+  ,"tip25": "Fine-tune your threshold for your space—every room is different."
+  ,"tip26": "Accessibility options help everyone focus—high contrast, large text, vibration."
+  ,"tip27": "Today Timeline shows when you focused—find your productive hours."
+  ,"tip28": "Finish what you start—shorter sessions mean more completions."
+  ,"tip29": "Quiet Minutes add up toward your goal—progress over perfection."
+  ,"tip30": "You're one tap away—start a tiny session right now."
     ,"tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations."
     ,"tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time."
     ,"tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune."
@@ -350,4 +350,41 @@
   ,"tipInstructionAccessibility": "Settings → Advanced → Accessibility."
   ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
   ,"tipInfoTooltip": "Show tip"
+  ,"questCapsuleTitle": "Ambient Quest"
+  ,"questCapsuleLoading": "Calm minutes loading…"
+  ,"questCapsuleProgress": "Calm {progress}/{goal} min • Streak {streak}"
+  ,"@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {"type": "int"},
+      "goal": {"type": "int"},
+      "streak": {"type": "int"}
+    }
+  }
+  ,"questFreezeButton": "Freeze"
+  ,"questFrozenToday": "Today frozen — you're covered."
+  ,"questGoButton": "Go"
+  ,"calmPercent": "Calm {percent}%"
+  ,"@calmPercent": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  }
+  ,"calmLabel": "Calm"
+  ,"day": "day"
+  ,"days": "days"
+  ,"freeze": "freeze"
+  ,"adaptiveThresholdSuggestion": "3 wins! Try {threshold} dB?"
+  ,"@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
+  ,"adaptiveThresholdNotNow": "Not Now"
+  ,"adaptiveThresholdTryIt": "Try It"
+  ,"adaptiveThresholdConfirm": "Threshold set to {threshold} dB"
+  ,"@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {"type": "int"}
+    }
+  }
 }

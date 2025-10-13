@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/silence_provider.dart';
-import 'package:focus_field/providers/activity_provider.dart';
 import 'package:focus_field/utils/debug_log.dart';
 
 /// A compact decibel pill that shows the current noise level.
@@ -23,7 +22,6 @@ class InlineNoisePeek extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final controller = ref.watch(realTimeNoiseControllerProvider);
-    final selectedActivity = ref.watch(selectedActivityProvider);
 
     // State
     final current = useState<double>(0);
@@ -41,7 +39,8 @@ class InlineNoisePeek extends HookConsumerWidget {
       return () => sub.cancel();
     }, [controller]);
 
-    final emphasis = selectedActivity == 'noise';
+    // P0: No 'noise' activity, all 3 profiles use noise monitoring
+    final emphasis = false;
 
     return GestureDetector(
       onTap: onTap,

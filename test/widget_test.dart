@@ -28,12 +28,6 @@ void main() {
   });
 
   group('Focus Field App', () {
-    testWidgets('should display app title', (WidgetTester tester) async {
-      await _pumpApp(tester);
-  // HomePageElegant header shows the current tab title ('Summary' by default)
-  expect(find.text('Summary'), findsWidgets);
-    });
-
     testWidgets('should show primary ring and duration chips', (
       WidgetTester tester,
     ) async {

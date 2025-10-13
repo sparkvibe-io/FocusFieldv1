@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:focus_field/providers/activity_provider.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart';
 import 'package:focus_field/models/silence_data.dart';
 
 /// Displays one-day progress rings for the user's selected categories.
@@ -12,10 +12,9 @@ class TodayRings extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // For Phase 1 we derive the category set from the current selected activity
-    // plus a small preset. In the next step, this will come from onboarding.
-    final selected = ref.watch(selectedActivityProvider);
-    final categories = <String>{selected, ...activityTypes.take(3)}.toList();
+    // P0: Use the 3 quiet-first activity profiles
+    final profiles = ref.watch(defaultProfilesProvider);
+    final categories = profiles.map((p) => p.id).toList();
 
     final today = DateTime.now();
     final dayStart = DateTime(today.year, today.month, today.day);

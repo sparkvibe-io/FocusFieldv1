@@ -565,7 +565,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get upgrade => 'Upgrade';
 
   @override
-  String get upgradeRequired => 'Upgrade Required';
+  String get upgradeRequired => 'アップグレードが必要です';
 
   @override
   String get exportCsvSpreadsheet => 'CSV Spreadsheet';
@@ -983,4 +983,57 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tipInfoTooltip => 'ヒントを表示';
+
+  @override
+  String get questCapsuleTitle => 'アンビエントクエスト';
+
+  @override
+  String get questCapsuleLoading => '静かな時間を読み込み中…';
+
+  @override
+  String questCapsuleProgress(int progress, int goal, int streak) {
+    return '静寂 $progress/$goal 分 • ストリーク $streak';
+  }
+
+  @override
+  String get questFreezeButton => '凍結';
+
+  @override
+  String get questFrozenToday => '今日は凍結されました — 保護されています。';
+
+  @override
+  String get questGoButton => '移動';
+
+  @override
+  String calmPercent(int percent) {
+    return '静寂 $percent%';
+  }
+
+  @override
+  String get calmLabel => '静寂';
+
+  @override
+  String get day => '日';
+
+  @override
+  String get days => '日';
+
+  @override
+  String get freeze => '凍結';
+
+  @override
+  String adaptiveThresholdSuggestion(int threshold) {
+    return '3勝！ $threshold dBを試す？';
+  }
+
+  @override
+  String get adaptiveThresholdNotNow => '今はしない';
+
+  @override
+  String get adaptiveThresholdTryIt => '試す';
+
+  @override
+  String adaptiveThresholdConfirm(int threshold) {
+    return 'しきい値を$threshold dBに設定';
+  }
 }

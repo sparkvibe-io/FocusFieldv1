@@ -847,94 +847,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hideTips => 'Hide Tips';
 
   @override
-  String get tip01 => 'Short sessions count—start with 2–3 minutes to build consistency.';
+  String get tip01 => 'Start small—even 2 minutes builds your focus habit.';
 
   @override
-  String get tip02 => 'Use Smart Daily Reminders to nudge you at your best time.';
+  String get tip02 => 'Your streak has grace—one miss won\'t break it with the 2-Day Rule.';
 
   @override
-  String get tip03 => 'Recalibrate when your environment changes for better accuracy.';
+  String get tip03 => 'Try Study, Reading, or Meditation activities to match your focus style.';
 
   @override
-  String get tip04 => 'Check Weekly Trends to spot your momentum over time.';
+  String get tip04 => 'Check your 12-week Heatmap to see how small wins compound over time.';
 
   @override
-  String get tip05 => 'Streaks grow with daily wins—show up, even for one minute.';
+  String get tip05 => 'Watch your live Calm % during sessions—higher scores mean better focus!';
 
   @override
-  String get tip06 => 'High ambient noise? Raise threshold a bit to reduce false fails.';
+  String get tip06 => 'Customize your daily goal (10-60 min) to match your rhythm.';
 
   @override
-  String get tip07 => 'Try different times of day to find your quiet sweet spot.';
+  String get tip07 => 'Use your monthly Freeze Token to protect your streak on tough days.';
 
   @override
-  String get tip08 => 'Session complete notifications keep motivation high—enable them!';
+  String get tip08 => 'After 3 wins, Focus Field suggests a stricter threshold—ready to level up?';
 
   @override
-  String get tip09 => 'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
+  String get tip09 => 'High ambient noise? Raise your threshold to stay in the zone.';
 
   @override
-  String get tip10 => 'Use shorter sessions on busy days to keep your streak alive.';
+  String get tip10 => 'Smart Daily Reminders learn your best time—let them guide you.';
 
   @override
-  String get tip11 => 'The progress ring is tappable—start or stop with a single tap.';
+  String get tip11 => 'The progress ring is tappable—one tap starts your focus session.';
 
   @override
-  String get tip12 => 'Export your data (Premium) to share progress or back it up.';
+  String get tip12 => 'Recalibrate when your environment changes for better accuracy.';
 
   @override
-  String get tip13 => 'Average session length helps you choose the right duration.';
+  String get tip13 => 'Session notifications celebrate your wins—enable them for motivation!';
 
   @override
-  String get tip14 => 'Consistency beats intensity—small daily practice compounds.';
+  String get tip14 => 'Consistency beats perfection—show up, even on busy days.';
 
   @override
-  String get tip15 => 'Set a gentle goal: 5 quiet minutes is a great baseline.';
+  String get tip15 => 'Try different times of day to discover your quiet sweet spot.';
 
   @override
-  String get tip16 => 'The noise chart helps you see spikes—aim for calmer periods.';
+  String get tip16 => 'Your daily progress is always visible—tap Go to start anytime.';
 
   @override
-  String get tip17 => 'Upgrade session duration (Premium) for longer focus blocks.';
+  String get tip17 => 'Each activity tracks separately toward your goal—variety keeps it fresh.';
 
   @override
-  String get tip18 => 'High threshold warning guards accuracy—avoid setting it too high.';
+  String get tip18 => 'Export your data (Premium) to see your complete focus journey.';
 
   @override
-  String get tip19 => 'Weekdays vary—tune your weekly summary to your schedule.';
+  String get tip19 => 'Confetti celebrates every completion—small wins deserve recognition!';
 
   @override
-  String get tip20 => 'Accessibility options: high contrast, large text, and vibration.';
+  String get tip20 => 'Your baseline matters—calibrate when moving to new spaces.';
 
   @override
-  String get tip21 => 'Ambient baseline matters—calibrate when moving to new spaces.';
+  String get tip21 => 'Your 7-Day Trends reveal patterns—check them weekly for insights.';
 
   @override
-  String get tip22 => 'Quiet wins add up—1 point per minute keeps it simple.';
+  String get tip22 => 'Upgrade session duration (Premium) for longer deep focus blocks.';
 
   @override
-  String get tip23 => 'Confetti celebrates progress—small celebrations reinforce habits.';
+  String get tip23 => 'Focus is a practice—small sessions build the habit you want.';
 
   @override
-  String get tip24 => 'Try mornings if evenings are noisy—best time differs for everyone.';
+  String get tip24 => 'Weekly Summary shows your rhythm—tune it to your schedule.';
 
   @override
-  String get tip25 => 'Fine‑tune the decibel threshold for your room’s character.';
+  String get tip25 => 'Fine-tune your threshold for your space—every room is different.';
 
   @override
-  String get tip26 => 'Use the moving average to smooth out noisy days.';
+  String get tip26 => 'Accessibility options help everyone focus—high contrast, large text, vibration.';
 
   @override
-  String get tip27 => 'Let Weekly Insights remind you of your progress rhythm.';
+  String get tip27 => 'Today Timeline shows when you focused—find your productive hours.';
 
   @override
-  String get tip28 => 'Finish what you start—short sessions reduce friction to begin.';
+  String get tip28 => 'Finish what you start—shorter sessions mean more completions.';
 
   @override
-  String get tip29 => 'Silence is a skill—practice makes patterns, patterns make progress.';
+  String get tip29 => 'Quiet Minutes add up toward your goal—progress over perfection.';
 
   @override
-  String get tip30 => 'You’re one tap away—start a tiny session now.';
+  String get tip30 => 'You\'re one tap away—start a tiny session right now.';
 
   @override
   String get tipInstructionNotifications => 'Settings → Advanced → Notifications to configure reminders and celebrations.';
@@ -983,4 +983,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tipInfoTooltip => 'Show tip';
+
+  @override
+  String get questCapsuleTitle => 'Ambient Quest';
+
+  @override
+  String get questCapsuleLoading => 'Calm minutes loading…';
+
+  @override
+  String questCapsuleProgress(int progress, int goal, int streak) {
+    return 'Calm $progress/$goal min • Streak $streak';
+  }
+
+  @override
+  String get questFreezeButton => 'Freeze';
+
+  @override
+  String get questFrozenToday => 'Today frozen — you\'re covered.';
+
+  @override
+  String get questGoButton => 'Go';
+
+  @override
+  String calmPercent(int percent) {
+    return 'Calm $percent%';
+  }
+
+  @override
+  String get calmLabel => 'Calm';
+
+  @override
+  String get day => 'day';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get freeze => 'freeze';
+
+  @override
+  String adaptiveThresholdSuggestion(int threshold) {
+    return '3 wins! Try $threshold dB?';
+  }
+
+  @override
+  String get adaptiveThresholdNotNow => 'Not Now';
+
+  @override
+  String get adaptiveThresholdTryIt => 'Try It';
+
+  @override
+  String adaptiveThresholdConfirm(int threshold) {
+    return 'Threshold set to $threshold dB';
+  }
 }

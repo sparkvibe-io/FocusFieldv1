@@ -294,8 +294,8 @@ class TipService {
   bool _isPremiumTip(int id) {
     // Mark tips that explicitly mention Premium functionality
     switch (id) {
-      case 11: // Export data (Premium)
-      case 16: // Upgrade session duration (Premium)
+      case 17: // Export data (Premium)
+      case 21: // Upgrade session duration (Premium)
         return true;
       default:
         return false;
@@ -305,94 +305,94 @@ class TipService {
   String? _getInstructionsForTip(BuildContext context, int id) {
     final l10n = AppLocalizations.of(context);
     switch (id) {
-      // 0 Short sessions → set a short session duration
+      // 0 Start small sessions → set duration
       case 0:
         return l10n?.tipInstructionSetTime;
-      // 1 Smart daily reminders → open Notifications (Daily Reminders)
+      // 1 2-Day Rule grace → view Quest Capsule
       case 1:
-        return l10n?.tipInstructionDailyReminders;
-      // 2 Recalibrate ambient baseline
+        return 'Activity tab → Quest Capsule shows your streak';
+      // 2 Try activity profiles → Activity tab
       case 2:
-        return l10n?.tipInstructionCalibrate;
-      // 3 Weekly trends live in Analytics
+        return 'Activity tab → tap Edit to show/hide activities';
+      // 3 12-week Heatmap → Trends
       case 3:
-        return l10n?.tipInstructionOpenAnalytics;
-      // 4 Daily wins—even 1 minute → set time short
+        return 'Summary tab → Show More → Heatmap';
+      // 4 Live Calm % → start a session
       case 4:
-        return l10n?.tipInstructionSetTime;
-      // 5 Threshold tuning
+        return l10n?.tipInstructionStartNow;
+      // 5 Customize daily goal → Edit Activities
       case 5:
-        return l10n?.tipInstructionThreshold;
-      // 6 Try different times → check Best Time metric in Analytics
+        return 'Activity tab → Edit → adjust daily goal (10-60 min)';
+      // 6 Freeze Token → Quest Capsule
       case 6:
-        return l10n?.tipInstructionOpenAnalytics;
-      // 7 Session complete notifications
+        return 'Activity tab → Quest Capsule → Freeze button';
+      // 7 Adaptive threshold suggestions → after 3 wins
       case 7:
-        return l10n?.tipInstructionSessionComplete;
-      // 8 Smart auto reminders
+        return 'Activity tab → suggestions appear after 3 successes';
+      // 8 High ambient noise → adjust threshold
       case 8:
-        return l10n?.tipInstructionDailyReminders;
-      // 9 Shorter sessions on busy days
+        return l10n?.tipInstructionThreshold;
+      // 9 Smart reminders → notifications
       case 9:
-        return l10n?.tipInstructionSetTime;
-      // 10 Tap ring to start/stop
+        return l10n?.tipInstructionDailyReminders;
+      // 10 Tap ring to start
       case 10:
         return l10n?.tipInstructionTapRing;
-      // 11 Export data (Premium)
+      // 11 Recalibrate baseline
       case 11:
-        return l10n?.tipInstructionExport;
-      // 12 Check average session length in Analytics
-      case 12:
-        return l10n?.tipInstructionOpenAnalytics;
-      // 13 Consistency → enable reminders
-      case 13:
-        return l10n?.tipInstructionDailyReminders;
-      // 14 5-minute baseline → set duration
-      case 14:
-        return l10n?.tipInstructionSetTime;
-      // 15 Noise chart → start a session to view
-      case 15:
-        return l10n?.tipInstructionOpenNoiseChart;
-      // 16 Upgrade duration (Premium)
-      case 16:
-        return l10n?.tipInstructionUpgradeDuration;
-      // 17 High threshold warning → threshold setting
-      case 17:
-        return l10n?.tipInstructionThreshold;
-      // 18 Tune weekly summary
-      case 18:
-        return l10n?.tipInstructionWeeklySummary;
-      // 19 Accessibility options
-      case 19:
-        return l10n?.tipInstructionAccessibility;
-      // 20 Ambient baseline matters → calibrate
-      case 20:
         return l10n?.tipInstructionCalibrate;
-      // 21 Quiet wins add up → start a session now
-      case 21:
+      // 12 Session notifications
+      case 12:
+        return l10n?.tipInstructionSessionComplete;
+      // 13 Consistency beats perfection → start small
+      case 13:
         return l10n?.tipInstructionStartNow;
-      // 22 Confetti on completion → start a session
+      // 14 Try different times
+      case 14:
+        return 'Summary tab → Show More → Today Timeline';
+      // 15 Quest Capsule → Activity tab
+      case 15:
+        return 'Activity tab → Quest Capsule → tap Go';
+      // 16 Per-activity tracking → Edit Activities
+      case 16:
+        return 'Activity tab → Edit to see individual progress';
+      // 17 Export data (Premium)
+      case 17:
+        return l10n?.tipInstructionExport;
+      // 18 Confetti celebrates wins
+      case 18:
+        return l10n?.tipInstructionStartNow;
+      // 19 Ambient baseline → calibrate
+      case 19:
+        return l10n?.tipInstructionCalibrate;
+      // 20 7-Day Trends → Summary
+      case 20:
+        return 'Summary tab → Show More → 7-Day Trends';
+      // 21 Upgrade duration (Premium)
+      case 21:
+        return l10n?.tipInstructionUpgradeDuration;
+      // 22 Focus is a practice
       case 22:
         return l10n?.tipInstructionStartNow;
-      // 23 Try mornings → pick a daily reminder time
+      // 23 Weekly summary → notifications
       case 23:
-        return l10n?.tipInstructionDailyReminders;
-      // 24 Fine‑tune threshold
+        return l10n?.tipInstructionWeeklySummary;
+      // 24 Fine-tune threshold
       case 24:
         return l10n?.tipInstructionThreshold;
-      // 25 Moving average context → see Analytics trends
+      // 25 Accessibility options
       case 25:
-        return l10n?.tipInstructionOpenAnalytics;
-      // 26 Weekly insights reminder → enable weekly summary
+        return l10n?.tipInstructionAccessibility;
+      // 26 Today Timeline → Trends
       case 26:
-        return l10n?.tipInstructionWeeklySummary;
-      // 27 Finish what you start—short sessions → set short duration
+        return 'Summary tab → Show More → Today Timeline';
+      // 27 Shorter sessions mean more completions
       case 27:
         return l10n?.tipInstructionSetTime;
-      // 28 Practice → start now
+      // 28 Quiet Minutes add up
       case 28:
-        return l10n?.tipInstructionStartNow;
-      // 29 One tap away → tap ring
+        return 'Activity tab → Quest Capsule shows progress';
+      // 29 One tap away
       case 29:
         return l10n?.tipInstructionTapRing;
       default:
@@ -400,38 +400,38 @@ class TipService {
     }
   }
 
-  // 30 concise, motivational, app-capability tips (English fallbacks)
+  // 30 concise, motivational, Focus Field tips (English fallbacks)
   static const List<String> _tips = [
-    'Short sessions count - start with 2-3 minutes to build consistency.',
-    'Use Smart Daily Reminders to nudge you at your best time.',
+    'Start small—even 2 minutes builds your focus habit.',
+    'Your streak has grace—one miss won\'t break it with the 2-Day Rule.',
+    'Try Study, Reading, or Meditation activities to match your focus style.',
+    'Check your 12-week Heatmap to see how small wins compound over time.',
+    'Watch your live Calm % during sessions—higher scores mean better focus!',
+    'Customize your daily goal (10-60 min) to match your rhythm.',
+    'Use your monthly Freeze Token to protect your streak on tough days.',
+    'After 3 wins, Focus Field suggests a stricter threshold—ready to level up?',
+    'High ambient noise? Raise your threshold to stay in the zone.',
+    'Smart Daily Reminders learn your best time—let them guide you.',
+    'The progress ring is tappable—one tap starts your focus session.',
     'Recalibrate when your environment changes for better accuracy.',
-    'Check Weekly Trends to spot your momentum over time.',
-    'Streaks grow with daily wins - show up, even for one minute.',
-    'High ambient noise? Raise threshold a bit to reduce false fails.',
-    'Try different times of day to find your quiet sweet spot.',
-    'Session complete notifications keep motivation high - enable them!',
-    'Prefer hands-off? Auto reminders can schedule themselves (Smart).',
-    'Use shorter sessions on busy days to keep your streak alive.',
-    'The progress ring is tappable - start or stop with a single tap.',
-    'Export your data (Premium) to share progress or back it up.',
-    'Average session length helps you choose the right duration.',
-    'Consistency beats intensity - small daily practice compounds.',
-    'Set a gentle goal: 5 quiet minutes is a great baseline.',
-    'The noise chart helps you see spikes - aim for calmer periods.',
-    'Upgrade session duration (Premium) for longer focus blocks.',
-    'High threshold warning guards accuracy - avoid setting it too high.',
-    'Weekdays vary - tune your weekly summary to your schedule.',
-    'Accessibility options: high contrast, large text, and vibration.',
-    'Ambient baseline matters - calibrate when moving to new spaces.',
-    'Quiet wins add up - 1 point per minute keeps it simple.',
-    'Confetti celebrates progress - small celebrations reinforce habits.',
-    'Try mornings if evenings are noisy - best time differs for everyone.',
-    'Fine-tune the decibel threshold for your room\'s character.',
-    'Use the moving average to smooth out noisy days.',
-    'Let Weekly Insights remind you of your progress rhythm.',
-    'Finish what you start - short sessions reduce friction to begin.',
-    'Silence is a skill - practice makes patterns, patterns make progress.',
-    'You\'re one tap away - start a tiny session now.',
+    'Session notifications celebrate your wins—enable them for motivation!',
+    'Consistency beats perfection—show up, even on busy days.',
+    'Try different times of day to discover your quiet sweet spot.',
+    'Your daily progress is always visible—tap Go to start anytime.',
+    'Each activity tracks separately toward your goal—variety keeps it fresh.',
+    'Export your data (Premium) to see your complete focus journey.',
+    'Confetti celebrates every completion—small wins deserve recognition!',
+    'Your baseline matters—calibrate when moving to new spaces.',
+    'Your 7-Day Trends reveal patterns—check them weekly for insights.',
+    'Upgrade session duration (Premium) for longer deep focus blocks.',
+    'Focus is a practice—small sessions build the habit you want.',
+    'Weekly Summary shows your rhythm—tune it to your schedule.',
+    'Fine-tune your threshold for your space—every room is different.',
+    'Accessibility options help everyone focus—high contrast, large text, vibration.',
+    'Today Timeline shows when you focused—find your productive hours.',
+    'Finish what you start—shorter sessions mean more completions.',
+    'Quiet Minutes add up toward your goal—progress over perfection.',
+    'You\'re one tap away—start a tiny session right now.',
   ];
 
   // Tip Methods with Proper Timing
