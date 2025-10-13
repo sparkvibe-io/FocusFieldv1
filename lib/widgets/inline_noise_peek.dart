@@ -40,7 +40,7 @@ class InlineNoisePeek extends HookConsumerWidget {
     }, [controller]);
 
     // P0: No 'noise' activity, all 3 profiles use noise monitoring
-    final emphasis = false;
+    // Removed unused constant emphasis flag to avoid dead_code warnings
 
     return GestureDetector(
       onTap: onTap,
@@ -52,8 +52,8 @@ class InlineNoisePeek extends HookConsumerWidget {
           color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: (emphasis ? theme.colorScheme.primary : theme.colorScheme.outline)
-                .withValues(alpha: emphasis ? 0.45 : 0.2),
+            // Simplified: always use outline with a subtle alpha
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
           ),
         ),
         child: Row(

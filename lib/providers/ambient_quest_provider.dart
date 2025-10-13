@@ -409,15 +409,15 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
   try {
     final storage = await ref.watch(storageServiceProvider.future);
     // Cooldown: suggest at most once per 24 hours. Consider last suggested or last applied time.
-    DateTime? _parseMs(String? v) {
+  DateTime? parseMs(String? v) {
       if (v == null || v.isEmpty) return null;
       final ms = int.tryParse(v);
       if (ms == null) return null;
       return DateTime.fromMillisecondsSinceEpoch(ms);
     }
     final now = DateTime.now();
-    final lastSuggested = _parseMs(await storage.getString('ambient_adaptive_last_suggest_ms'));
-    final lastApplied = _parseMs(await storage.getString('ambient_adaptive_last_applied_ms'));
+  final lastSuggested = parseMs(await storage.getString('ambient_adaptive_last_suggest_ms'));
+  final lastApplied = parseMs(await storage.getString('ambient_adaptive_last_applied_ms'));
     final lastEvent = [lastSuggested, lastApplied]
         .whereType<DateTime>()
         .fold<DateTime?>(null, (prev, e) => prev == null ? e : (e.isAfter(prev) ? e : prev));

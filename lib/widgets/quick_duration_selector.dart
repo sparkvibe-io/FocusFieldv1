@@ -31,23 +31,23 @@ class QuickDurationSelector extends ConsumerWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: durations.asMap().entries.map((entry) {
-            final index = entry.key;
-            final minutes = entry.value;
-            return Padding(
-              padding: EdgeInsets.only(
-                right: index < durations.length - 1 ? 4.0 : 0, // Minimal spacing between buttons
-              ),
-              child: _buildDurationChip(
-                context,
-                ref,
-                theme,
-                loc,
-                minutes,
-              ),
-            );
-          }).toList(),
+          children: [
+            ...List.generate(durations.length, (i) {
+              final minutes = durations[i];
+              return Padding(
+                padding: EdgeInsets.only(
+                  right: i < durations.length - 1 ? 4.0 : 0,
+                ),
+                child: _buildDurationChip(
+                  context,
+                  ref,
+                  theme,
+                  loc,
+                  minutes,
+                ),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -137,8 +137,8 @@ class QuickDurationSelector extends ConsumerWidget {
     if (isPremium) {
       return FeatureGate(
         featureId: 'extended_sessions',
-        child: chip,
         fallback: chip, // Still show the chip, but handle premium logic in tap
+        child: chip,
       );
     }
 

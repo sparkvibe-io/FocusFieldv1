@@ -406,10 +406,10 @@ class _SevenDayStackedBars extends ConsumerWidget {
       child: Container(
         height: 2,
         decoration: BoxDecoration(
-          color: theme.colorScheme.tertiary.withOpacity(0.6),
+          color: theme.colorScheme.tertiary.withValues(alpha: 0.6),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.tertiary.withOpacity(0.3),
+              color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
               blurRadius: 4,
             ),
           ],

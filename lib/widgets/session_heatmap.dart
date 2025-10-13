@@ -188,10 +188,10 @@ class SessionHeatmap extends StatelessWidget {
         decoration: BoxDecoration(
           color: minutes == 0
               ? theme.colorScheme.surfaceContainerHighest
-              : theme.colorScheme.primary.withOpacity(intensity),
+              : theme.colorScheme.primary.withValues(alpha: intensity),
           borderRadius: BorderRadius.circular(2),
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
             width: 0.5,
           ),
         ),
@@ -234,10 +234,10 @@ class SessionHeatmap extends StatelessWidget {
       decoration: BoxDecoration(
         color: intensity == 0
             ? theme.colorScheme.surfaceContainerHighest
-            : theme.colorScheme.primary.withOpacity(intensity),
+            : theme.colorScheme.primary.withValues(alpha: intensity),
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 0.5,
         ),
       ),

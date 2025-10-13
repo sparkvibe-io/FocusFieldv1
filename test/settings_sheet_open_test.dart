@@ -10,7 +10,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  Future<void> _pump(WidgetTester tester) async {
+  Future<void> pumpOnce(WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -25,7 +25,7 @@ void main() {
   }
 
   testWidgets('tapping settings icon opens Settings sheet', (tester) async {
-    await _pump(tester);
+  await pumpOnce(tester);
     expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
     await tester.tap(find.byIcon(Icons.settings_outlined));
     // Let the bottom sheet animate in

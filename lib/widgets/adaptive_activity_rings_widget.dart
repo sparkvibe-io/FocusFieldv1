@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import '../providers/user_preferences_provider.dart';
 import '../providers/ambient_quest_provider.dart';
 import '../models/ambient_models.dart';
-import '../theme/theme_extensions.dart';
 import 'activity_edit_sheet.dart';
 import '../utils/responsive_utils.dart';
 

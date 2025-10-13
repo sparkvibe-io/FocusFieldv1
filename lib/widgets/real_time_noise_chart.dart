@@ -8,7 +8,6 @@ import 'package:focus_field/providers/silence_provider.dart';
 import 'dart:math' as math;
 import 'package:focus_field/utils/throttled_logger.dart';
 import 'package:focus_field/utils/debug_log.dart';
-import 'package:focus_field/theme/theme_extensions.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
@@ -25,7 +24,6 @@ class RealTimeNoiseChart extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final dramatic = theme.extension<DramaticThemeStyling>();
     final silenceDetector = ref.read(silenceDetectorProvider);
     final noiseController = ref.watch(realTimeNoiseControllerProvider);
 

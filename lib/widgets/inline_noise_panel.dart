@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/silence_provider.dart';
 import 'package:focus_field/widgets/real_time_noise_chart.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
-import 'package:focus_field/utils/responsive_utils.dart';
 
 /// Inline panel that shows room loudness with smart threshold suggestions.
 /// Three states:

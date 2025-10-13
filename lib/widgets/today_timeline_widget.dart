@@ -62,7 +62,7 @@ class TodayTimelineWidget extends StatelessWidget {
                           gradient: LinearGradient(
                             colors: [
                               theme.colorScheme.surfaceContainerHighest,
-                              theme.colorScheme.primary.withOpacity(0.3),
+                              theme.colorScheme.primary.withValues(alpha: 0.3),
                               theme.colorScheme.surfaceContainerHighest,
                             ],
                           ),
@@ -99,7 +99,7 @@ class TodayTimelineWidget extends StatelessWidget {
                             color: theme.colorScheme.primary,
                             boxShadow: [
                               BoxShadow(
-                                color: theme.colorScheme.primary.withOpacity(0.3),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.3),
                                 blurRadius: 4,
                               ),
                             ],
@@ -190,10 +190,10 @@ class _SessionDot extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-        color: (session.completed
+              color: (session.completed
                       ? theme.colorScheme.primary
                       : theme.colorScheme.error)
-                  .withOpacity(0.3),
+                  .withValues(alpha: 0.3),
               blurRadius: 4,
               spreadRadius: 1,
             ),

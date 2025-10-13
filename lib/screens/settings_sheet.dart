@@ -88,11 +88,11 @@ class SettingsSheet extends ConsumerWidget {
                 ],
               ),
             ),
-            TabBar(
+            const TabBar(
               tabs: [
-                const Tab(icon: Icon(Icons.tune)), // Basic
-                const Tab(icon: Icon(Icons.engineering)), // Advanced
-                const Tab(icon: Icon(Icons.info)), // About
+                Tab(icon: Icon(Icons.tune)), // Basic
+                Tab(icon: Icon(Icons.engineering)), // Advanced
+                Tab(icon: Icon(Icons.info)), // About
               ],
             ),
             Expanded(

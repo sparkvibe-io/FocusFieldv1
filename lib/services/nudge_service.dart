@@ -60,7 +60,7 @@ class NudgeService {
       return '🏆 30 days! This is a true habit now.';
     } else if (currentStreak % 50 == 0 && currentStreak > 0) {
       await recordNudge();
-      return '💎 ${currentStreak} days! Legendary commitment.';
+  return '💎 $currentStreak days! Legendary commitment.';
     }
 
     return null;
@@ -91,7 +91,7 @@ class NudgeService {
 
     // Streak protection
     if (currentStreak >= 5 && sessionsToday == 0) {
-      messages.add('Protect your ${currentStreak}-day streak with a quick session.');
+  messages.add('Protect your $currentStreak-day streak with a quick session.');
     }
 
     if (messages.isEmpty) return null;
@@ -111,7 +111,7 @@ class NudgeService {
     final messages = <String>[];
 
     if (previousStreak > 0) {
-      messages.add('Your ${previousStreak}-day streak is waiting for you.');
+  messages.add('Your $previousStreak-day streak is waiting for you.');
       messages.add('Ready to rebuild your practice?');
     } else {
       messages.add('A moment of quiet can reset your day.');

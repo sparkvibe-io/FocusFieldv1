@@ -9,7 +9,7 @@ import 'package:focus_field/providers/silence_provider.dart';
 void main() {
   ProviderContainer makeContainer() => ProviderContainer();
 
-  Map<String, dynamic> _sessionJson({
+  Map<String, dynamic> sessionJson({
     required String id,
     required int endedAtMs,
     required double ambientScore,
@@ -39,9 +39,9 @@ void main() {
   test('no suggestion within 24h cooldown after last suggestion', () async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final list = [
-      _sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
-      _sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
-      _sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
+  sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
+  sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
+  sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
     ];
     final container = makeContainer();
     final storage = await container.read(storageServiceProvider.future);
@@ -60,9 +60,9 @@ void main() {
   test('suggestion allowed after 24h cooldown has elapsed', () async {
     final now = DateTime.now().millisecondsSinceEpoch;
     final list = [
-      _sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.30),
-      _sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.40),
-      _sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.45),
+  sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.30),
+  sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.40),
+  sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.45),
     ];
     final container = makeContainer();
     final storage = await container.read(storageServiceProvider.future);

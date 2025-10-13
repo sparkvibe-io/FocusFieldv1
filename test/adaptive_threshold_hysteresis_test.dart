@@ -10,7 +10,7 @@ void main() {
   group('adaptiveThresholdProvider hysteresis', () {
     ProviderContainer makeContainer() => ProviderContainer();
 
-    Map<String, dynamic> _sessionJson({
+  Map<String, dynamic> sessionJson({
       required String id,
       required int endedAtMs,
       required double ambientScore,
@@ -50,9 +50,9 @@ void main() {
 
       // Only 3 wins should NOT be enough now due to reverse bonus; use wins only
       final list3Wins = [
-        _sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
-        _sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
-        _sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
+  sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
+  sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
+  sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
       ];
       await storage.setString('ambient_sessions_list', jsonEncode(list3Wins));
       await container.read(appSettingsProvider.future);
@@ -61,10 +61,10 @@ void main() {
 
       // With 4 wins (base 3 + reverse bonus 1), suggestion should occur
       final list4Wins = [
-        _sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
-        _sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
-        _sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
-        _sessionJson(id: 'd', endedAtMs: now - 180000, ambientScore: 0.91),
+  sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
+  sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
+  sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
+  sessionJson(id: 'd', endedAtMs: now - 180000, ambientScore: 0.91),
       ];
       await storage.setString('ambient_sessions_list', jsonEncode(list4Wins));
   final container2 = ProviderContainer();
@@ -85,9 +85,9 @@ void main() {
       await storage.saveAllSettings({'decibelThreshold': 40.0});
 
       final list3Wins = [
-        _sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
-        _sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
-        _sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
+  sessionJson(id: 'a', endedAtMs: now, ambientScore: 0.90),
+  sessionJson(id: 'b', endedAtMs: now - 60000, ambientScore: 0.92),
+  sessionJson(id: 'c', endedAtMs: now - 120000, ambientScore: 0.88),
       ];
       await storage.setString('ambient_sessions_list', jsonEncode(list3Wins));
       await container.read(appSettingsProvider.future);

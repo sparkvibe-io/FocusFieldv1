@@ -59,10 +59,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   int _activityPageIndex = 0; // which chunk of 3 items is visible
   static const int _visibleActivityRows = 3;
   // Row height is computed dynamically per build to fill most of the card.
-  double _activityRowHeight = 40;
+  final double _activityRowHeight = 40;
   static const double _activityRowSpacing = 1;
   // Consistent card style like "Last 7 Days"
-  static const double _cardRadius = 16.0;
+  // Note: _cardRadius was unused; card decoration now comes from context.cardDecoration
 
   // Responsive card padding based on screen size
   EdgeInsets _getCardPadding(BuildContext context) {
@@ -108,8 +108,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   // Helper to get responsive scale factor based on screen size
   double _getScaleFactor(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final baseWidth = 360.0; // Base design width (standard phone)
+  final size = MediaQuery.sizeOf(context);
+  const baseWidth = 360.0; // Base design width (standard phone)
     final currentWidth = size.width;
     
     // Scale between 1.0 (small phones) and 1.8 (large tablets)
@@ -231,14 +231,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildHeader(BuildContext context, {bool isTabletLandscape = false}) {
     final theme = Theme.of(context);
-    final now = DateTime.now();
-    final dayShort = _getDayNameShort(now.weekday);
-    final monthShort = _getMonthShortName(now.month);
     final currentTheme = ref.watch(themeProvider);
     final size = MediaQuery.sizeOf(context);
     final isNarrow = size.width < 360;
     final horizontalPad = isNarrow ? 8.0 : 12.0;
-    final showInlineDate = _currentTab == 0 && !isNarrow;
+  // Inline date label not shown in the current design; removed to reduce warnings
 
     return Container(
       padding: EdgeInsets.fromLTRB(horizontalPad, 8, horizontalPad, 8),
@@ -449,7 +446,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
   Widget _buildTabletLandscapeLayout(BuildContext context) {
-    final theme = Theme.of(context);
+  final theme = Theme.of(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1009,7 +1006,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                               Colors.black.withValues(alpha: 0.45),
                               theme.colorScheme.surfaceContainerHighest,
                             ),
-                            borderRadius: BorderRadius.all(radius),
+                            borderRadius: const BorderRadius.all(radius),
                           ),
                         ),
                         // Completed portion
@@ -1019,7 +1016,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           width: completedWidth,
                           decoration: BoxDecoration(
                             color: color,
-                            borderRadius: BorderRadius.all(radius),
+                            borderRadius: const BorderRadius.all(radius),
                           ),
                         ),
                       ],
@@ -1492,7 +1489,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         'target': goalMinutes,
         'color': color,
       };
-    }).toList();
+  }).toList();
 
     // Calculate overall progress from quest state (sum of all activities)
     final totalMinutes = questState?.progressQuietMinutes ?? 0;
@@ -2193,7 +2190,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     ],
                   ),
                 );
-              }).toList(),
+              }),
               const SizedBox(height: 6),
               // Overall progress bar at bottom
               Container(
@@ -2509,12 +2506,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF5B6B7C),
-            const Color(0xFF4A5A6A),
+            Color(0xFF5B6B7C),
+            Color(0xFF4A5A6A),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -2800,7 +2797,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   Widget _buildSessionControlCard(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
@@ -3443,8 +3439,8 @@ class _RingPainter extends CustomPainter {
     canvas.drawCircle(center, radius, bgPaint);
 
     // Progress arc (start at -90 degrees)
-    final startAngle = -3.14159 / 2;
-    final sweep = 6.28318 * progress;
+  const startAngle = -3.14159 / 2;
+  final sweep = 6.28318 * progress;
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweep, false, fgPaint);
   }
 
@@ -3600,7 +3596,7 @@ class _ScrollableIconGrid extends StatelessWidget {
     final theme = Theme.of(context);
     // Two columns, vertical scroll; height shows two full rows
     // Slightly shorter per-row target; actual tile height is governed by childAspectRatio below.
-    final rowHeight = 68.0;
+  const rowHeight = 68.0;
     return SizedBox(
       height: rowHeight * 2 + 4, // two rows visible
       child: GridView.builder(

@@ -107,9 +107,9 @@ class WeeklyRecapCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: recap.streakAtEnd > recap.streakAtStart
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.orange.withOpacity(0.1),
+          color: recap.streakAtEnd > recap.streakAtStart
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -198,8 +198,8 @@ class WeeklyRecapCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      theme.colorScheme.primaryContainer.withOpacity(0.5),
-                      theme.colorScheme.tertiaryContainer.withOpacity(0.5),
+                      theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                      theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),

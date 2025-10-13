@@ -90,7 +90,7 @@ class TodayRings extends ConsumerWidget {
   }
 
   List<Widget> _build7DaySummary(BuildContext context, String category, SilenceData data) {
-    final now = DateTime.now();
+  final now = DateTime.now();
     final items = <Widget>[];
     for (int i = 6; i >= 0; i--) {
       final day = now.subtract(Duration(days: i));
@@ -124,7 +124,7 @@ class _CategoryRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = 26.0;
+  const radius = 26.0;
     final color = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: onTap,

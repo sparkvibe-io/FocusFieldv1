@@ -167,7 +167,7 @@ class _MiniGoalRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = 28.0;
+  const size = 28.0;
     return SizedBox(
       width: size,
       height: size,
