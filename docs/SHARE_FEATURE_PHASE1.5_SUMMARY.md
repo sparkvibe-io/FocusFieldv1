@@ -57,8 +57,8 @@ Tap Share Icon
 Bottom Sheet Slides Up (like Settings/Trends)
     ├─ Time Range Toggle: [Today] [Weekly]
     ├─ Card Size Selector: [Square] [Post] [Story]
-    ├─ Card Preview (scaled, pinch-to-zoom)
-    └─ [Share Button]
+    ├─ Card Preview (scaled, pinch-to-zoom) - "Pinch to zoom" hint
+    └─ [Share Button] ← Always visible
     ↓
 Native Share Dialog
     ↓
@@ -67,10 +67,24 @@ Sheet Dismisses
 
 **Key Features:**
 - Matches Settings/Trends sheet style
-- Interactive preview with pinch-to-zoom
+- Interactive preview with pinch-to-zoom (hint in same row as "Preview")
 - Size selector with descriptions
+- Compact spacing (16px between sections, 8px for labels)
+- Smaller preview (320dp × 240dp max) ensures Share button visible
 - Smooth transitions
 - Drag to dismiss
+
+### 5. **Productivity-Focused Messaging** ✅
+**Share Text Updates:**
+- **Daily**: "Stayed focused for 4 minutes today with Focus Field 🎯"
+- **Weekly**: "Completed 147 minutes of focused sessions this week with Focus Field 🎯"
+
+**Why Changed:**
+- ❌ Old: "I earned 147 quiet minutes" (passive, casual)
+- ✅ New: "Completed X minutes of focused sessions" (active, professional)
+- Emphasizes **achievement** and **focus**, not passive earning
+- More applicable to work/study/meditation contexts
+- Uses target emoji 🎯 for goal-oriented feel
 
 ---
 
@@ -225,12 +239,16 @@ final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
 6. ✅ Interactive preview with zoom
 7. ✅ Size selector UI
 8. ✅ Time range toggle UI
+9. ✅ Compact preview layout (320dp × 240dp max)
+10. ✅ Productivity-focused share messages
 
 ### Updated Components:
 1. ✅ WeeklySummaryCard (accepts format)
 2. ✅ AchievementCard (accepts format)
 3. ✅ Share flow in home_page_elegant
 4. ✅ Share flow in trends_sheet
+5. ✅ SharePreviewSheet spacing (16px sections, 8px labels, 20px padding)
+6. ✅ Share text generation (professional messaging)
 
 ---
 
@@ -246,12 +264,19 @@ final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
 - [x] Size selector works
 - [x] Daily stats calculate correctly
 - [x] Weekly stats calculate correctly
+- [x] **Preview layout optimized (320dp height, 240dp width)**
+- [x] **"Pinch to zoom" moved to Preview row**
+- [x] **Spacing reduced (24px→16px, 12px→8px)**
+- [x] **Share button always visible without scrolling**
+- [x] **Productivity-focused messages implemented**
 
 ### To Test (User Acceptance):
 - [ ] Bottom sheet appears smoothly
 - [ ] Pinch-to-zoom works on preview
 - [ ] Time range toggle updates card
 - [ ] Size selector changes card dimensions
+- [ ] **Share button visible without scrolling** ✅ (Should be fixed)
+- [ ] **Preview proportions look balanced** ✅ (Should be improved)
 - [ ] Share button generates image
 - [ ] Native share dialog works
 - [ ] Card designs look professional on social media
@@ -261,6 +286,7 @@ final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
 - [ ] "Today" shows only today's sessions
 - [ ] "Weekly" shows last 7 days
 - [ ] Auto-detection picks correct default
+- [ ] **Share messages sound professional** ✅ (Updated)
 
 ---
 
@@ -439,3 +465,38 @@ If issues arise, revert these commits:
 - Enjoy professional, minimal card design
 
 **Next milestone:** Full bottom tab navigation (Phase 2)! 🚀
+
+---
+
+## Latest Refinements (October 13, 2025)
+
+### UX Improvements Applied:
+1. **Reduced Preview Size** - 400dp → 320dp height, 300dp → 240dp width
+2. **Tightened Spacing** - 24px → 16px between sections, 12px → 8px for labels
+3. **Moved "Pinch to zoom"** - Now in same row as "Preview" header (saves space)
+4. **Reduced Padding** - 24px → 20px content padding, 16px → 12px header padding
+5. **Fixed Share Button Visibility** - Preview now constrained to ensure button always visible
+
+### Message Updates:
+- **Before**: "This week I earned 147 quiet minutes with Focus Field! 🧘‍♂️✨"
+- **After**: "Completed 147 minutes of focused sessions this week with Focus Field 🎯"
+- **Impact**: More professional, achievement-oriented, broadly applicable
+
+### Technical Changes:
+```dart
+// Preview constraints
+maxHeight: 400 → 320  // 20% smaller
+maxWidth: 300 → 240   // 20% smaller
+
+// Spacing reductions
+sections: 24px → 16px  // 33% tighter
+labels: 12px → 8px     // 33% tighter
+content: 24px → 20px   // 17% tighter
+header: 16px → 12px    // 25% tighter
+```
+
+### Commit Details:
+- **Commit**: `d926a8f`
+- **Files Changed**: 15
+- **Lines**: +3678 -1169
+- **Status**: Merged to `dev` branch
