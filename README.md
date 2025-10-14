@@ -142,7 +142,7 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 - **12-Week Activity Heatmap**: ✅ GitHub-style contribution graph showing session intensity over 12 weeks
 - **Today Timeline**: ✅ 24-hour horizontal timeline with session dots positioned by time of day
 - **Weekly Target Line**: ✅ Visual goal reference (30min default) overlaid on 7-day trends
-- **AI Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types
+- **Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types based on session analytics
 - **Session History Graph**: Visual representation of quiet progress
 - **7-Day Activity Chart**: Real-time stacked bar chart showing minutes by activity with per-activity colors
 
@@ -534,7 +534,7 @@ lib/
 #### Widgets
 - `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
 - `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates + integrated quick threshold selectors
-- `TabbedOverviewWidget`: Space-optimized tabbed container combining Practice Overview + Advanced Analytics
+- `AdvancedAnalyticsWidget`: Premium analytics with compact performance metrics and per-activity insights
 - `QuickDurationSelector`: ✅ **NEW** Compact session duration buttons with premium integration and paywall
 - `QuickDecibelSelector`: ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - `SessionHistoryGraph`: Historical performance tracking with visual trends
@@ -610,7 +610,7 @@ flutter analyze --no-fatal-infos
   - Complete advanced analytics experience for premium subscribers
   - 6 comprehensive performance metrics in 2x3 grid layout
   - Full trends chart with moving averages, overall average lines, and interactive tooltips
-  - AI insights with color-coded achievement, improvement, warning, and recommendation types
+  - Data-driven insights with color-coded achievement, improvement, warning, and recommendation types
   - Dynamic 500px height to accommodate rich analytics content
 - **Premium Integration**: Analytics tab shows upgrade prompt for free users, full content for premium subscribers
 - **Smooth Transitions**: TabController with proper state management and automatic height adjustment
@@ -779,7 +779,7 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 
 ### Phase 2 Features (Planned)
 - [ ] Cloud synchronization & backup
-- [ ] AI-powered insights
+- [ ] AI-enhanced insights with predictive recommendations
 - [ ] Multi-environment profiles
 - [ ] Social/community features
 - [ ] Team collaboration
@@ -911,7 +911,7 @@ premium.tier.yearly
 - Priority support
 
 #### Future Higher Tier (Deferred)
-- Cloud sync, AI insights, multi-environments, social features (not active yet)
+- Cloud sync, AI-enhanced insights, multi-environments, social features (not active yet)
 
 #### Notes
 - Migration to the official RevenueCat Paywall (for localization & trials) is planned; current widget is an interim custom layout showing dynamic prices.

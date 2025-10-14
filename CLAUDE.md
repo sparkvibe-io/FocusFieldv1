@@ -375,7 +375,6 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **QuestCapsule** (`lib/widgets/quest_capsule.dart`): ✅ Ultra-minimal daily quest progress (progress bar, streak, freeze token)
 - **AdaptiveThresholdChip** (`lib/widgets/adaptive_threshold_chip.dart`): ✅ Threshold suggestion chip after 3 consecutive wins
 - **ActivityEditSheet** (`lib/widgets/activity_edit_sheet.dart`): ✅ **NEW** Bottom sheet for customizing visible activities and daily goal (Material 3 icons, scrollable, 85% height)
-- **TabbedOverviewWidget** (`lib/widgets/tabbed_overview_widget.dart`): ✅ Space-optimized tabbed container combining Practice Overview + Advanced Analytics
 - **QuickDurationSelector** (`lib/widgets/quick_duration_selector.dart`): ✅ Compact session duration buttons with premium integration
 - **QuickDecibelSelector** (`lib/widgets/quick_decibel_selector.dart`): ✅ Instant threshold adjustment buttons (20, 40, 60, 80 dB)
 - **FeatureGate** (`lib/widgets/feature_gate.dart`): ✅ **COMPLETE** Premium feature access control
@@ -437,7 +436,7 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 - **Combined Layout**: Merges Practice Overview and Advanced Analytics into tabbed interface
 - **Space Savings**: ~80px vertical space freed for advertisement placement
 - **Overview Tab**: Compact stats (Points, Streak, Sessions) + 7-day activity chart with side-by-side layout
-- **Analytics Tab**: Full premium analytics experience (6 performance metrics, trends chart with moving averages, AI insights)
+- **Analytics Tab**: Full premium analytics experience (6 performance metrics, trends chart with moving averages, data-driven insights)
 - **Dynamic Height**: Automatically adjusts container size (80px for Overview, 500px for Analytics)
 - **Premium Gating**: Analytics tab shows paywall for free users, full content for premium subscribers
 - **Tab Controller**: Smooth animations and state management with proper lifecycle handling

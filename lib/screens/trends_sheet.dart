@@ -8,9 +8,12 @@ import 'package:focus_field/widgets/feature_gate.dart';
 import 'package:focus_field/models/subscription_tier.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
+import 'package:intl/intl.dart';
+import 'package:focus_field/widgets/share_preview_sheet.dart';
 
-/// Bottom sheet that mirrors Settings sheet style for consistency.
-/// Tabs: Basic, Advanced. Basic includes 7-day trend; Advanced reserved for future.
+/// Bottom sheet showing insights and analytics.
+/// Mirrors Settings sheet style for consistency.
+/// Tabs: Basic (7-day trends, stats), Advanced (performance metrics, premium).
 class TrendsSheet extends ConsumerStatefulWidget {
   const TrendsSheet({super.key});
 
@@ -32,6 +35,99 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  /// Shows share options with preview bottom sheet.
+  /// Calculates both daily and weekly stats for user to choose.
+  void _showShareOptions(BuildContext context, WidgetRef ref) {
+    final dataAsync = ref.read(silenceDataNotifierProvider);
+    if (!dataAsync.hasValue) return;
+
+    final data = dataAsync.value;
+    final sessions = data?.recentSessions ?? [];
+    final now = DateTime.now();
+    
+    // Calculate weekly stats
+    final startOfWeek = now.subtract(Duration(days: now.weekday % 7));
+    final endOfWeek = startOfWeek.add(const Duration(days: 6));
+    
+    int weeklyMinutes = 0;
+    int weeklySessions = 0;
+    int weeklySuccessCount = 0;
+    final weeklyActivityMinutes = <String, int>{};
+    
+    // Calculate today's stats
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+    
+    int dailyMinutes = 0;
+    int dailySessions = 0;
+    int dailySuccessCount = 0;
+    final dailyActivityMinutes = <String, int>{};
+    
+    for (final session in sessions) {
+      // Weekly calculation
+      if (session.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+          session.date.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+        weeklyMinutes += session.duration ~/ 60;
+        weeklySessions++;
+        if (session.completed) weeklySuccessCount++;
+        
+        final activity = session.activity ?? 'Other';
+        weeklyActivityMinutes[activity] = (weeklyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+      }
+      
+      // Daily calculation
+      if (session.date.isAfter(todayStart) && session.date.isBefore(todayEnd)) {
+        dailyMinutes += session.duration ~/ 60;
+        dailySessions++;
+        if (session.completed) dailySuccessCount++;
+        
+        final activity = session.activity ?? 'Other';
+        dailyActivityMinutes[activity] = (dailyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+      }
+    }
+    
+    final weeklySuccessRate = weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
+    final weeklyTopActivity = weeklyActivityMinutes.entries.isEmpty
+        ? null
+        : weeklyActivityMinutes.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+    
+    final dailySuccessRate = dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
+    final dailyTopActivity = dailyActivityMinutes.entries.isEmpty
+        ? null
+        : dailyActivityMinutes.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+    
+    final formatter = DateFormat('MMM d');
+    final weekRange = '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
+    final dateFormatter = DateFormat('MMMM d, y');
+    final todayRange = dateFormatter.format(now);
+    
+    // Determine initial time range based on available data
+    final initialTimeRange = dailyMinutes > 0 
+        ? ShareTimeRange.today 
+        : ShareTimeRange.weekly;
+    
+    // Use today's data if available, otherwise weekly
+    final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
+    final displaySessions = dailyMinutes > 0 ? dailySessions : weeklySessions;
+    final displaySuccessRate = dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
+    final displayTopActivity = dailyMinutes > 0 ? dailyTopActivity : weeklyTopActivity;
+    final displayDateRange = dailyMinutes > 0 ? todayRange : weekRange;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => SharePreviewSheet(
+        totalMinutes: displayMinutes,
+        sessionCount: displaySessions,
+        successRate: displaySuccessRate,
+        topActivity: displayTopActivity,
+        dateRange: displayDateRange,
+        initialTimeRange: initialTimeRange,
+      ),
+    );
   }
 
   @override
@@ -62,15 +158,21 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
             child: Row(
               children: [
-                Icon(Icons.trending_up, color: theme.colorScheme.primary),
+                Icon(Icons.insights, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  'Trends',
+                  'Insights',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const Spacer(),
+                // Share button
+                IconButton(
+                  icon: const Icon(Icons.share),
+                  tooltip: 'Share weekly summary',
+                  onPressed: () => _showShareOptions(context, ref),
+                ),
                 IconButton(
                   icon: Icon(Icons.close, color: theme.colorScheme.onSurface),
                   onPressed: () => Navigator.of(context).pop(),
@@ -497,7 +599,10 @@ class _TrendsAdvancedTab extends ConsumerWidget {
         child: FeatureGate(
           featureId: 'advanced_analytics',
           requiredTier: SubscriptionTier.premium,
-          child: AdvancedAnalyticsWidget(silenceData: data),
+          child: AdvancedAnalyticsWidget(
+            silenceData: data,
+            showTitle: false, // Hide title since we're already in the Advanced tab
+          ),
         ),
       ),
       loading: () => const Center(

@@ -49,6 +49,7 @@ class PerformanceMetrics {
   improvementTrend; // percentage points difference (recent - older)
   final int bestTimeOfDay; // 0-23
   final String preferredDuration; // human label
+  final Map<String, int> bestTimeByActivity; // activity -> hour (0-23)
 
   const PerformanceMetrics({
     required this.overallSuccessRate,
@@ -57,6 +58,7 @@ class PerformanceMetrics {
     required this.improvementTrend,
     required this.bestTimeOfDay,
     required this.preferredDuration,
+    this.bestTimeByActivity = const {},
   });
 }
 
@@ -170,6 +172,7 @@ class AdvancedAnalyticsService {
         improvementTrend: 0,
         bestTimeOfDay: 12,
         preferredDuration: '10 minutes',
+        bestTimeByActivity: {},
       );
     }
 
@@ -183,6 +186,7 @@ class AdvancedAnalyticsService {
     final improvementTrend = _improvementTrend(sessions);
     final bestHour = _bestTimeOfDay(sessions);
     final preferredDuration = _preferredDuration(sessions);
+    final bestTimeByActivity = _bestTimeByActivity(sessions);
 
     return PerformanceMetrics(
       overallSuccessRate: overallSuccessRate,
@@ -191,6 +195,7 @@ class AdvancedAnalyticsService {
       improvementTrend: improvementTrend,
       bestTimeOfDay: bestHour,
       preferredDuration: preferredDuration,
+      bestTimeByActivity: bestTimeByActivity,
     );
   }
 
@@ -314,6 +319,12 @@ class AdvancedAnalyticsService {
   DateTime _weekStart(DateTime d) =>
       DateTime(d.year, d.month, d.day - (d.weekday - 1));
 
+  /// Calculates consistency score based on regularity of practice sessions.
+  /// This measures HABIT CONSISTENCY (how regularly you practice), not session quality variance.
+  /// Returns a score from 0 to 1, where 1 = perfectly regular practice intervals.
+  /// 
+  /// Algorithm: Uses variance of time intervals between sessions to determine
+  /// if the user maintains a regular practice schedule (e.g., daily, every other day).
   double _consistencyScore(List<SessionRecord> sessions) {
     if (sessions.length < 3) return 0.3; // minimal data
     final sorted = [...sessions]..sort((a, b) => a.date.compareTo(b.date));
@@ -359,6 +370,42 @@ class AdvancedAnalyticsService {
     return bestHour;
   }
 
+  /// Calculates best time of day for each activity type.
+  /// Returns map of activity ID -> best hour (0-23) based on success rate.
+  Map<String, int> _bestTimeByActivity(List<SessionRecord> sessions) {
+    final activityMap = <String, Map<int, List<bool>>>{};
+    
+    // Group sessions by activity and hour
+    for (final s in sessions) {
+      final activity = s.activity ?? 'other';
+      activityMap.putIfAbsent(activity, () => {});
+      activityMap[activity]!.putIfAbsent(s.date.hour, () => []).add(s.completed);
+    }
+    
+    // Find best hour for each activity
+    final result = <String, int>{};
+    activityMap.forEach((activity, hourMap) {
+      double bestRate = -1;
+      int bestHour = 12;
+      hourMap.forEach((hour, completedList) {
+        final rate = completedList.where((c) => c).length / completedList.length;
+        if (rate > bestRate) {
+          bestRate = rate;
+          bestHour = hour;
+        }
+      });
+      result[activity] = bestHour;
+    });
+    
+    return result;
+  }
+
+  /// Determines the preferred session duration based on success rate.
+  /// Returns the duration bucket (e.g., '1-2 min', '6-10 min') with the highest
+  /// completion rate. This helps users identify their optimal focus session length.
+  /// 
+  /// Returns a localization key (bucket1to2, bucket3to5, etc.) that UI layer
+  /// can translate via AppLocalizations.
   String _preferredDuration(List<SessionRecord> sessions) {
     // Use stable bucket keys; UI layer can translate via AppLocalizations.
     String bucketKey(int minutes) {

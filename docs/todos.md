@@ -1,8 +1,8 @@
-# Focus Field — Pre-release TODOs (Single Developer)
+# Focus Field — TODOs & Future Enhancements
 
-This is a practical, prioritized checklist for a single developer preparing Focus Field for its first release. The previous repository has been deleted; no migration or branding-guidelines documentation is required. Keep this file short, actionable, and updated as you work.
+This document tracks both immediate pre-release tasks and long-term feature enhancements for Focus Field. Organized by priority with clear acceptance criteria.
 
-Last updated: 2025-09-20
+Last updated: 2025-10-13
 
 ## Assumptions
 - One developer (you) maintains the codebase.
@@ -87,6 +87,81 @@ Last updated: 2025-09-20
   - Files: `scripts/build/build-dev.sh`, `scripts/build/build-prod.sh`
   - Confirm env var usage matches docs; add small hints if needed.
   - Acceptance: One-command dev build works; prod build instructions are accurate (keys via env).
+
+---
+
+## P0.5 — UX Enhancement: Bottom Tab Navigation (FUTURE)
+
+**Status:** MVP Phase 1 ✅ Completed (October 13, 2025)  
+**Next Phase:** Full bottom tab architecture (Planned)
+
+### Current State (MVP - Phase 1)
+- ✅ Share icon added to Insights card header
+- ✅ Renamed "Your Patterns" → "Insights"  
+- ✅ Changed "Show More" → Icon-only button with tooltip
+- ✅ Implemented 4 shareable card styles (Weekly, Achievement, Streak, Activity Rings)
+- ✅ Fixed overflow issues in cards (FittedBox, reduced font sizes)
+- ✅ Share functionality integrated into Trends/Insights sheet
+
+### Proposed Phase 2: Bottom Tab Navigation
+
+**Target Structure:**
+```
+[Today Tab]    - Session controls + today's stats
+[Sessions Tab] - History, analytics, trends, export
+[Share Tab]    - Shareable achievements, weekly cards
+```
+
+**Rationale:**
+- Industry standard (Instagram, Strava, Twitter)
+- Prominent share placement = viral growth
+- Clear content hierarchy
+- Scalable (add Profile/Community tab later)
+
+**Implementation Plan:**
+
+1. **Create Tab Structure** (~1 hour)
+   - [ ] `lib/screens/tabs/today_tab.dart` - Session ring, quick controls
+   - [ ] `lib/screens/tabs/sessions_tab.dart` - History, trends, analytics
+   - [ ] `lib/screens/tabs/share_tab.dart` - Shareable cards, achievements
+   - [ ] Add BottomNavigationBar to main scaffold
+
+2. **Refactor Today Tab** (~1.5 hours)
+   - [ ] Move session ring + timer controls
+   - [ ] Move quick duration selector
+   - [ ] Add today's session summary (points, sessions, streak)
+   - [ ] Keep mission capsule if active
+
+3. **Create Sessions Tab** (~1.5 hours)
+   - [ ] Session history list
+   - [ ] Weekly trends chart (8 weeks)
+   - [ ] Advanced analytics (tabbed: Basic/Advanced)
+   - [ ] Heat map widget
+   - [ ] Export options (CSV/PDF)
+
+4. **Create Share Tab** (~1 hour)
+   - [ ] Hero weekly stat card
+   - [ ] 4 card style previews (tap to customize)
+   - [ ] Recent achievements section
+   - [ ] Streak milestones
+   - [ ] Quick share buttons
+
+5. **State & Localization** (~0.5 hours)
+   - [ ] Tab index state provider
+   - [ ] Persist selected tab preference
+   - [ ] Add strings: "Today", "Sessions", "Share"
+   - [ ] Translate to supported languages
+
+**Success Metrics to Track:**
+- Share button tap rate (target: >10% of users)
+- Completed shares (target: >50% of taps)
+- User retention after sharing (hypothesis: higher)
+- New user acquisition from shares (UTM tracking)
+
+**Design References:**
+- [Material 3 Bottom Navigation](https://m3.material.io/components/navigation-bar/overview)
+- [Instagram Insights UX](https://business.instagram.com/instagram-insights)
+- Strava share features
 
 ---
 
