@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/theme_provider.dart';
 import 'package:focus_field/providers/accessibility_provider.dart';
 import 'package:focus_field/screens/splash_screen.dart';
+import 'package:focus_field/screens/home_page_elegant.dart';
 import 'package:focus_field/theme/app_theme.dart';
 import 'package:focus_field/services/navigation_service.dart';
 // RevenueCat (purchases_flutter) is configured inside SubscriptionService during provider initialization.
@@ -141,6 +142,9 @@ class FocusFieldApp extends ConsumerWidget {
       ],
       // Start with splash screen which transitions to AppInitializer
       home: const SplashScreen(),
+      routes: {
+        '/home': (context) => const HomePageElegant(),
+      },
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         // Combine responsive scaling with user accessibility scaling

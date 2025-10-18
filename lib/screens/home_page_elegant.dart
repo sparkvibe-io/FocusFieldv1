@@ -38,7 +38,9 @@ import '../widgets/banner_ad_footer.dart';
 
 /// Elegant home screen inspired by Apple Fitness with modern Material Design
 class HomePageElegant extends ConsumerStatefulWidget {
-  const HomePageElegant({super.key});
+  final int initialTab;
+  
+  const HomePageElegant({super.key, this.initialTab = 0});
 
   @override
   ConsumerState<HomePageElegant> createState() => _HomePageElegantState();
@@ -78,7 +80,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialTab);
+    _currentTab = widget.initialTab;
     _confetti = ConfettiController(duration: const Duration(seconds: 2));
     _tabController.addListener(() {
       setState(() {
@@ -3947,14 +3950,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
           if (notificationService.enableSessionComplete) {
             if (!context.mounted) return;
+            // Use actual session duration for the message, not just credited minutes
+            final sessionMinutes = (actualDuration / 60).round();
             notificationService.showSessionComplete(
               context,
               success,
-              creditedMinutes, // Use credited minutes for notifications
+              sessionMinutes, // Show actual session duration
             );
             final message = notificationService.getCompletionMessage(
               success,
-              creditedMinutes, // Use credited minutes for notifications
+              sessionMinutes, // Show actual session duration
             );
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

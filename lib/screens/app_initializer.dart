@@ -1,8 +1,10 @@
 import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/providers/silence_provider.dart';
 import 'package:focus_field/screens/home_page_elegant.dart';
+import 'package:focus_field/screens/onboarding_screen.dart';
 import 'package:focus_field/widgets/error_boundary.dart';
 import 'package:focus_field/services/rating_service.dart';
 import 'package:focus_field/constants/permission_constants.dart';
@@ -11,6 +13,12 @@ import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/services/deep_focus_manager.dart';
 import 'package:focus_field/providers/notification_provider.dart';
 import 'package:focus_field/providers/ambient_quest_provider.dart';
+
+/// Provider to check if onboarding has been completed
+final _onboardingCompletedProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('onboardingCompleted') ?? false;
+});
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -48,81 +56,104 @@ class AppInitializer extends ConsumerWidget {
                     ref,
                   ),
               data: (silenceData) {
-                // Initialize services after core data loaded
-                WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  // Notifications
-                  final notificationService = ref.read(notificationServiceProvider);
-                  await notificationService.initialize();
-                  // Wire action handler for ongoing notification actions
-                  notificationService.actionHandler = (actionId, payload) async {
-                    if (actionId == 'STOP_SESSION') {
-                      try {
-                        ref.read(silenceStateProvider.notifier).stopSession();
-                        await notificationService.cancelOngoingSession();
-                        // Also end ambient engine to persist partial session if any
-                        try {
-                          final plannedSeconds = ref.read(sessionDurationProvider);
-                          await ref
-                              .read(ambientSessionEngineProvider.notifier)
-                              .end(reason: 'stopped_from_notification', plannedSeconds: plannedSeconds);
-                        } catch (_) {}
-                      } catch (_) {}
+                // Check if onboarding has been completed via async provider
+                final onboardingAsync = ref.watch(_onboardingCompletedProvider);
+                
+                return onboardingAsync.when(
+                  loading: () => _buildLoadingScreen(context, 'Loading...'),
+                  error: (e, _) {
+                    // If we can't check onboarding status, show home anyway
+                    return _initializeServicesAndShowHome(context, ref, silenceData);
+                  },
+                  data: (onboardingCompleted) {
+                    if (!onboardingCompleted) {
+                      // Show onboarding screen for first-time users
+                      return const OnboardingScreen(isReplay: false);
                     }
-                  };
-
-                  // Deep Focus lifecycle manager
-                  final dfm = DeepFocusManager(
-                    onBreach: () async {
-                      // End/stop session if running
-                      try {
-                        final silent = ref.read(silenceStateProvider);
-                        if (silent.isListening) {
-                          ref.read(silenceStateProvider.notifier).stopSession();
-                          await notificationService.cancelOngoingSession();
-                          try {
-                            final plannedSeconds = ref.read(sessionDurationProvider);
-                            await ref
-                                .read(ambientSessionEngineProvider.notifier)
-                                .end(reason: 'deep_focus_breach', plannedSeconds: plannedSeconds);
-                          } catch (_) {}
-                        }
-                      } catch (_) {}
-                    },
-                  );
-                  await dfm.init();
-                });
-                // Trigger rating prompt logic (non-blocking)
-                WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  try {
-                    await RatingService.instance.initLaunch();
-                    // silenceData is a SilenceData model
-                    if (!context.mounted) return;
-                    await RatingService.instance.maybePrompt(
-                      context,
-                      totalSessions: silenceData.totalSessions,
-                      lastSessionDurationSeconds:
-                          silenceData.recentSessions.isNotEmpty
-                              ? silenceData.recentSessions.first.duration
-                              : null,
-                    );
-                    // Reset tip session state on app start
-                    try {
-                      await ref.read(tipServiceProvider).resetSessionState();
-                    } catch (_) {}
-                  } catch (_) {
-                    /* ignore rating errors */
-                  }
-                });
-                // Using HomePageElegant - Refined with rocket theme and bottom tabs
-                return const SafeWidget(
-                  context: 'app_initialization',
-                  child: _PermissionChecker(child: HomePageElegant()),
+                    
+                    return _initializeServicesAndShowHome(context, ref, silenceData);
+                  },
                 );
               },
             );
           },
         );
       },
+    );
+  }
+
+  Widget _initializeServicesAndShowHome(BuildContext context, WidgetRef ref, dynamic silenceData) {
+    // Initialize services after core data loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Notifications
+      final notificationService = ref.read(notificationServiceProvider);
+      await notificationService.initialize();
+      // Wire action handler for ongoing notification actions
+      notificationService.actionHandler = (actionId, payload) async {
+        if (actionId == 'STOP_SESSION') {
+          try {
+            ref.read(silenceStateProvider.notifier).stopSession();
+            await notificationService.cancelOngoingSession();
+            // Also end ambient engine to persist partial session if any
+            try {
+              final plannedSeconds = ref.read(sessionDurationProvider);
+              await ref
+                  .read(ambientSessionEngineProvider.notifier)
+                  .end(reason: 'stopped_from_notification', plannedSeconds: plannedSeconds);
+            } catch (_) {}
+          } catch (_) {}
+        }
+      };
+
+      // Deep Focus lifecycle manager
+      final dfm = DeepFocusManager(
+        onBreach: () async {
+          // End/stop session if running
+          try {
+            final silent = ref.read(silenceStateProvider);
+            if (silent.isListening) {
+              ref.read(silenceStateProvider.notifier).stopSession();
+              await notificationService.cancelOngoingSession();
+              try {
+                final plannedSeconds = ref.read(sessionDurationProvider);
+                await ref
+                    .read(ambientSessionEngineProvider.notifier)
+                    .end(reason: 'deep_focus_breach', plannedSeconds: plannedSeconds);
+              } catch (_) {}
+            }
+          } catch (_) {}
+        },
+      );
+      await dfm.init();
+    });
+    
+    // Trigger rating prompt logic (non-blocking)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        await RatingService.instance.initLaunch();
+        // silenceData is a SilenceData model
+        if (!context.mounted) return;
+        await RatingService.instance.maybePrompt(
+          context,
+          totalSessions: silenceData.totalSessions,
+          lastSessionDurationSeconds:
+              silenceData.recentSessions.isNotEmpty
+                  ? silenceData.recentSessions.first.duration
+                  : null,
+        );
+        // Reset tip session state on app start
+        try {
+          await ref.read(tipServiceProvider).resetSessionState();
+        } catch (_) {}
+      } catch (_) {
+        /* ignore rating errors */
+      }
+    });
+    
+    // Using HomePageElegant - Refined with rocket theme and bottom tabs
+    return const SafeWidget(
+      context: 'app_initialization',
+      child: _PermissionChecker(child: HomePageElegant()),
     );
   }
 

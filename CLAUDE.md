@@ -130,12 +130,49 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 // Threshold selectors: 30dB 40dB 50dB 60dB 80dB
 ```
 
+**Onboarding System Implementation** (Oct 18, 2025):
+- ✅ **6-Screen Onboarding Flow**: New first-time user experience
+  - **Screen 1: Welcome** - Introduces app concept with 3 key features (Focus Sessions, Smart Tracking, Compassionate Streaks)
+  - **Screen 2: Environment Assessment** - Helps users choose threshold (Home 38dB, Office 42dB, Café 48dB, Public 55dB)
+  - **Screen 3: Goal Setting** - Daily goal selection (10-60min) with personalized advice based on choice
+  - **Screen 4: Activities** - Multi-select activities (Study, Reading, Meditation, Other) with benefits shown
+  - **Screen 5: Permission** - Microphone permission request (required for noise monitoring)
+  - **Screen 6: Pro Tips** - 4 tips (Start Small, Focus Mode, Freeze Token, 70% Rule) + launch message
+  - **Design**: Playful gradients, colorful icons, Material 3 rounded components, motivational messaging
+  - **Optimized**: All screens fit on one page without scrolling (reduced spacing, compact layouts)
+  - **Dark Mode**: Fixed visibility issue with green tip card (uses opacity-based colors)
+  - **Post-Onboarding UX**: Navigates to Sessions tab with welcome SnackBar (reduces confusion)
+  - **Replay Option**: Added "Replay Onboarding" button in Settings > About
+  - **Persistence**: Uses SharedPreferences to track completion (`onboardingCompleted` flag)
+  - Files Created:
+    - `lib/screens/onboarding_screen.dart` - Main onboarding widget
+    - `docs/development/onboarding_implementation.md` - Technical documentation
+    - `docs/development/onboarding_optimization_summary.md` - Optimization notes
+  - Files Modified:
+    - `lib/screens/app_initializer.dart` - Added onboarding completion check
+    - `lib/screens/settings_sheet.dart` - Added replay button
+    - `lib/main.dart` - Added home route
+    - `pubspec.yaml` - Added `smooth_page_indicator: ^1.2.0+3` dependency
+
+**Bug Fixes** (Oct 18, 2025):
+- ✅ **Session Completion Message Fix**: "0 focus minutes" now shows actual session duration
+  - **Problem**: Message showed credited minutes (quiet seconds / 60) instead of actual duration
+  - **Example**: 1-minute session with 45s quiet time → `45 ~/ 60 = 0` minutes (wrong!)
+  - **Solution**: Calculate session minutes from actual duration: `(actualDuration / 60).round()`
+  - **Result**: 1-minute session now correctly shows "Great job! 1 focus minutes in your session! ✨"
+  - **Note**: Quest progress still uses credited minutes (compassionate credit system), only message changed
+  - File Modified: `lib/screens/home_page_elegant.dart:3951-3973`
+
 **Files Changed Summary** (Oct 18, 2025):
 1. `lib/widgets/inline_noise_panel.dart` - Room loudness widget redesign (threshold display, pulse animation, quick buttons)
-2. `lib/screens/home_page_elegant.dart` - Duration selector consistency, removed duplicate widget, freeze token display fix (Total Today)
+2. `lib/screens/home_page_elegant.dart` - Duration selector consistency, removed duplicate widget, freeze token display fix (Total Today), session completion message fix
 3. `lib/providers/ambient_quest_provider.dart` - Freeze token bug fix (lock progress when token used in applySession)
 4. `lib/widgets/adaptive_activity_rings_widget.dart` - Freeze token display logic (100% lock in Overall ring)
 5. `lib/models/ambient_models.dart` - Added `freezeTokenUsedToday` field to QuestState model
+6. `lib/screens/onboarding_screen.dart` - NEW: 6-screen onboarding flow
+7. `lib/screens/app_initializer.dart` - Onboarding completion check
+8. `lib/screens/settings_sheet.dart` - Replay onboarding option
+9. `pubspec.yaml` - Added smooth_page_indicator dependency
 
 Developer notes (compactness and ad safety):
 - Duration chips hide while a session is running; inter-chip spacing and paddings reduced.

@@ -5,11 +5,29 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
-## 🚀 Current Status (October 2025): Focus Mode & Progress Ring Redesign Complete ✅
+## 🚀 Current Status (October 2025): Onboarding System & UX Polish Complete ✅
 
 **Ambient Quests** is the merged, quiet-first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today's goal progress, and streaks are compassionate (2-Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
 
 **Simple & Customizable**: Users can now show/hide activities and adjust their daily quiet goal (10-60 minutes) through a polished Edit Activities sheet. Each activity tracks separate progress toward the global goal.
+
+**New User Onboarding (Oct 18, 2025)**: Complete 6-screen onboarding flow for first-time users - **P1 MVP-READY**:
+- ✅ **Screen 1: Welcome** - Introduces app concept with 3 key features
+- ✅ **Screen 2: Environment** - Helps users select appropriate noise threshold
+- ✅ **Screen 3: Goals** - Daily goal setting with personalized advice
+- ✅ **Screen 4: Activities** - Multi-select activities with benefit descriptions
+- ✅ **Screen 5: Permission** - Microphone access request with clear explanation
+- ✅ **Screen 6: Pro Tips** - 4 essential tips for success
+- ✅ **Playful Design**: Colorful gradients, Material 3 icons, motivational messaging
+- ✅ **Space Optimized**: All screens fit without scrolling (compact layouts, reduced spacing)
+- ✅ **Dark Mode Compatible**: Fixed visibility issues with adaptive color schemes
+- ✅ **Smart Navigation**: Directs to Sessions tab after completion (reduces confusion)
+- ✅ **Replay Option**: Available in Settings > About for returning users
+- ✅ **Persistence**: Uses SharedPreferences to track completion
+
+**Bug Fixes (Oct 18, 2025)**:
+- ✅ **Session Completion Message**: Fixed "0 focus minutes" display for short sessions - now shows actual duration
+- ✅ **Dark Mode**: Fixed invisible text on green tip card in Pro Tips screen
 
 **Success System Consolidation (Oct 17, 2025)**: Migrated to unified Ambient Score-based success determination. Sessions with ≥70% calm qualify for credit, and users earn proportional points (quiet minutes only) instead of all-or-nothing. This compassionate system encourages progress even on imperfect sessions.
 

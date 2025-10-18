@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/providers/user_preferences_provider.dart';
 import 'package:focus_field/widgets/activity_edit_sheet.dart';
+import 'package:focus_field/screens/onboarding_screen.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -582,6 +583,49 @@ class SettingsSheet extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          Card(
+            child: InkWell(
+              onTap: () => _replayOnboarding(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.tour,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Replay Onboarding',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Review the app tour and setup your preferences again',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -1057,6 +1101,15 @@ class SettingsSheet extends ConsumerWidget {
             ),
             child: const _FAQBottomSheet(),
           ),
+    );
+  }
+
+  void _replayOnboarding(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => OnboardingScreen(isReplay: true),
+        fullscreenDialog: true,
+      ),
     );
   }
 
