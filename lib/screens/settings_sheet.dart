@@ -17,6 +17,8 @@ import 'package:focus_field/widgets/theme_selector_widget.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:focus_field/services/tip_service.dart';
+import 'package:focus_field/providers/user_preferences_provider.dart';
+import 'package:focus_field/widgets/activity_edit_sheet.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -132,7 +134,9 @@ class SettingsSheet extends ConsumerWidget {
           const SizedBox(height: 20),
           _decibelSection(context, notifier, settings),
           const SizedBox(height: 20),
-          _sessionDurationSection(context, ref, notifier, settings),
+          _dailyGoalsButton(context, ref),
+          const SizedBox(height: 20),
+          _focusModeSection(context, ref),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
@@ -206,103 +210,111 @@ class SettingsSheet extends ConsumerWidget {
     return slider;
   }
 
-  Widget _sessionDurationSection(
+  Widget _dailyGoalsButton(
     BuildContext context,
     WidgetRef ref,
-    SettingsNotifier notifier,
-    Map<String, dynamic> settings,
   ) {
-    final maxMinutes = ref.watch(maxSessionMinutesProvider);
-    final tier = ref.watch(subscriptionTierStateProvider);
-    final currentMinutes =
-        ((settings['sessionDuration'] ?? AppConstants.silenceDurationSeconds)
-            as int) /
-        60.0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              AppLocalizations.of(context)!.sessionDuration,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(width: 8),
-            if (tier != SubscriptionTier.free)
-              Icon(
-                Icons.workspace_premium,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            if (tier == SubscriptionTier.free &&
-                maxMinutes < SubscriptionTier.premium.maxSessionMinutes) ...[
-              const Spacer(),
-              InkWell(
-                onTap:
-                    () => showPaywall(
-                      context,
-                      requiredTier: SubscriptionTier.premium,
-                    ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.30),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.upgrade,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        AppLocalizations.of(context)!.upgradeForMinutes(
-                          SubscriptionTier.premium.maxSessionMinutes,
-                        ),
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+    final userPrefs = ref.watch(userPreferencesProvider);
+    final currentMinutes = userPrefs.globalDailyQuietGoalMinutes;
+    final enabledCount = userPrefs.enabledProfiles.length;
+
+    // Format display value
+    final displayValue = currentMinutes >= 60
+        ? '${(currentMinutes / 60).toStringAsFixed(1)}h'
+        : '${currentMinutes}min';
+
+    return Card(
+      child: InkWell(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const ActivityEditSheet(),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.flag_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 24,
                 ),
               ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Daily Goals',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$displayValue • $enabledCount ${enabledCount == 1 ? 'activity' : 'activities'}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ],
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          AppLocalizations.of(context)!.freeUpToMinutes(maxMinutes),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 12),
-        _valueSlider(
-          context,
-          label: AppLocalizations.of(context)!.durationLabel,
-          value: currentMinutes.clamp(1.0, maxMinutes.toDouble()),
-          min: 1,
-          max: maxMinutes.toDouble(),
-          divisions: maxMinutes - 1,
-          unit: 'min',
-          onChanged:
-              (v) =>
-                  notifier.updateSetting('sessionDuration', (v * 60).round()),
+      ),
+    );
+  }
+
+  Widget _focusModeSection(BuildContext context, WidgetRef ref) {
+    final userPrefs = ref.watch(userPreferencesProvider);
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: SwitchListTile(
+        title: Row(
+          children: [
+            Icon(
+              Icons.bedtime_outlined,
+              size: 20,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            const Text('Focus Mode'),
+          ],
         ),
-      ],
+        subtitle: const Padding(
+          padding: EdgeInsets.only(left: 28),
+          child: Text(
+            'Minimize distractions during sessions with a full-screen black overlay',
+            style: TextStyle(fontSize: 12),
+          ),
+        ),
+        value: userPrefs.focusModeEnabled,
+        onChanged: (value) {
+          ref.read(userPreferencesProvider.notifier).updateFocusModeEnabled(value);
+        },
+      ),
     );
   }
 
@@ -1034,142 +1046,19 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   void _openFAQ(BuildContext context) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder:
-          (_) => AlertDialog(
-            title: Row(
-              // Constrain the text so long titles wrap instead of overflowing.
-              children: [
-                const Icon(Icons.quiz),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context)!.frequentlyAskedQuestions,
-                    softWrap: true,
-                  ),
-                ),
-              ],
+          (_) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            content: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqHowWorksQ,
-                      AppLocalizations.of(context)!.faqHowWorksA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqFocusMinutesQ,
-                      AppLocalizations.of(context)!.faqFocusMinutesA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqAmbientQuestQ,
-                      AppLocalizations.of(context)!.faqAmbientQuestA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqStreaksQ,
-                      AppLocalizations.of(context)!.faqStreaksA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqActivitiesQ,
-                      AppLocalizations.of(context)!.faqActivitiesA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqCalmPercentQ,
-                      AppLocalizations.of(context)!.faqCalmPercentA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqDailyGoalQ,
-                      AppLocalizations.of(context)!.faqDailyGoalA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqCalibrateQ,
-                      AppLocalizations.of(context)!.faqCalibrateA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqAdjustSensitivityQ,
-                      AppLocalizations.of(context)!.faqAdjustSensitivityA(
-                        AppConstants.decibelMin.toInt(),
-                        AppConstants.decibelMax.toInt(),
-                      ),
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqMicTroubleshootQ,
-                      AppLocalizations.of(context)!.faqMicTroubleshootA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqAudioRecordedQ,
-                      AppLocalizations.of(context)!.faqAudioRecordedA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqPremiumFeaturesQ,
-                      AppLocalizations.of(context)!.faqPremiumFeaturesA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqSubscriptionTiersQ,
-                      AppLocalizations.of(context)!.faqSubscriptionTiersA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqDeepFocusQ,
-                      AppLocalizations.of(context)!.faqDeepFocusA,
-                    ),
-                    _faqItem(
-                      context,
-                      AppLocalizations.of(context)!.faqNotificationsQ,
-                      AppLocalizations.of(context)!.faqNotificationsA,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(AppLocalizations.of(context)!.close),
-              ),
-            ],
+            child: const _FAQBottomSheet(),
           ),
     );
   }
-
-  Widget _faqItem(BuildContext context, String q, String a) => Padding(
-    padding: const EdgeInsets.only(bottom: 16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          q,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          a,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
-    ),
-  );
 
   void _openSupport(BuildContext context) {
     final container = ProviderScope.containerOf(context);
@@ -1340,6 +1229,289 @@ class SettingsSheet extends ConsumerWidget {
   }
 }
 
+/// FAQ Bottom Sheet with search functionality
+class _FAQBottomSheet extends StatefulWidget {
+  const _FAQBottomSheet();
+
+  @override
+  State<_FAQBottomSheet> createState() => _FAQBottomSheetState();
+}
+
+class _FAQBottomSheetState extends State<_FAQBottomSheet> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // All 20 FAQ items
+  List<Map<String, String>> get _allFAQs => [
+    {
+      'q': 'What is Focus Field and how does it help me focus?',
+      'a': 'Focus Field helps you build better focus habits by monitoring ambient noise in your environment. When you start a session (Study, Reading, Meditation, or Other), the app measures how quiet your environment is. The quieter you keep it, the more "focus minutes" you earn. This encourages you to find and maintain distraction-free spaces for deep work.',
+    },
+    {
+      'q': 'How does Focus Field measure my focus?',
+      'a': 'Focus Field monitors the ambient noise level in your environment during your session. It calculates an "Ambient Score" by tracking how many seconds your environment stays below your chosen noise threshold. If your session has at least 70% quiet time (Ambient Score ≥70%), you earn full credit for those quiet minutes.',
+    },
+    {
+      'q': 'Does Focus Field record my audio or conversations?',
+      'a': 'No, absolutely not. Focus Field only measures decibel levels (loudness) - it never records, stores, or transmits any audio. Your privacy is completely protected. The app simply checks if your environment is above or below your chosen threshold.',
+    },
+    {
+      'q': 'What activities can I track with Focus Field?',
+      'a': 'Focus Field comes with four activity types: Study 📚 (for learning and research), Reading 📖 (for focused reading), Meditation 🧘 (for mindfulness practice), and Other ⭐ (for any focus-requiring activity). All activities use ambient noise monitoring to help you maintain a quiet, focused environment.',
+    },
+    {
+      'q': 'Should I use Focus Field for all my activities?',
+      'a': 'Focus Field works best for activities where ambient noise indicates your level of focus. Activities like Study, Reading, and Meditation benefit most from quiet environments. While you can track "Other" activities, we recommend using Focus Field primarily for noise-sensitive focus work.',
+    },
+    {
+      'q': 'How do I start a focus session?',
+      'a': 'Go to the Sessions tab, select your activity (Study, Reading, Meditation, or Other), choose your session duration (1, 5, 10, 15, 30 minutes, or premium options), tap the Start button on the progress ring, and keep your environment quiet!',
+    },
+    {
+      'q': 'What session durations are available?',
+      'a': 'Free users can choose: 1, 5, 10, 15, or 30-minute sessions. Premium users also get: 1 hour, 1.5 hours, and 2-hour extended sessions for longer deep work periods.',
+    },
+    {
+      'q': 'Can I pause or stop a session early?',
+      'a': 'Yes! During a session, you\'ll see Pause and Stop buttons above the progress ring. To prevent accidental taps, you need to long-press these buttons. If you stop early, you\'ll still earn points for the quiet minutes you accumulated.',
+    },
+    {
+      'q': 'How do I earn points in Focus Field?',
+      'a': 'You earn 1 point per quiet minute. During your session, Focus Field tracks how many seconds your environment stays below the noise threshold. At the end, those quiet seconds are converted to minutes. For example, if you complete a 10-minute session with 8 minutes of quiet time, you earn 8 points.',
+    },
+    {
+      'q': 'What is the 70% threshold and why does it matter?',
+      'a': 'The 70% threshold determines if your session counts toward your daily goal. If your Ambient Score (quiet time ÷ total time) is at least 70%, your session qualifies for quest credit. Even if you\'re under 70%, you still earn points for every quiet minute!',
+    },
+    {
+      'q': 'What\'s the difference between Ambient Score and points?',
+      'a': 'Ambient Score is your session quality as a percentage (quiet seconds ÷ total seconds), determining if you hit the 70% threshold. Points are the actual quiet minutes earned (1 point = 1 minute). Ambient Score = quality, Points = achievement.',
+    },
+    {
+      'q': 'How do streaks work in Focus Field?',
+      'a': 'Streaks track consecutive days of meeting your daily goal. Focus Field uses a compassionate 2-Day Rule: Your streak only breaks if you miss two consecutive days. This means you can miss one day and your streak continues if you complete your goal the next day.',
+    },
+    {
+      'q': 'What are freeze tokens and how do I use them?',
+      'a': 'Freeze tokens protect your streak when you can\'t complete your goal. You get 1 free freeze token per month. When used, your overall progress shows 100% (goal protected), your streak is safe, and individual activity tracking continues normally. Use it wisely for busy days!',
+    },
+    {
+      'q': 'Can I customize my daily focus goal?',
+      'a': 'Yes! Tap Edit on the Sessions card in the Today tab. You can set your global daily goal (10-60 minutes for free, up to 1080 minutes for premium), enable per-activity goals for separate targets, and show/hide specific activities.',
+    },
+    {
+      'q': 'What is the noise threshold and how do I adjust it?',
+      'a': 'The threshold is the maximum noise level (in decibels) that counts as "quiet." Default is 40 dB (library quiet). You can adjust it in the Sessions tab: 30 dB (very quiet), 40 dB (library quiet - recommended), 50 dB (moderate office), 60-80 dB (louder environments).',
+    },
+    {
+      'q': 'What is Adaptive Threshold and should I use it?',
+      'a': 'After 3 consecutive successful sessions at your current threshold, Focus Field suggests increasing it by 2 dB to challenge yourself. This helps you gradually improve. You can accept or dismiss the suggestion - it only appears once every 7 days.',
+    },
+    {
+      'q': 'What is Focus Mode?',
+      'a': 'Focus Mode is a full-screen distraction-free overlay during your session. It shows your countdown timer, live calm percentage, and minimal controls (Pause/Stop via long-press). It removes all other UI elements so you can concentrate fully. Enable it in Settings > Basic > Focus Mode.',
+    },
+    {
+      'q': 'Why does Focus Field need microphone permission?',
+      'a': 'Focus Field uses your device\'s microphone to measure ambient noise levels (decibels) during sessions. This is essential to calculate your Ambient Score. Remember: no audio is ever recorded - only noise levels are measured in real-time.',
+    },
+    {
+      'q': 'Can I see my focus patterns over time?',
+      'a': 'Yes! The Today tab shows your daily progress, weekly trends, 12-week activity heatmap (like GitHub contributions), and session timeline. Premium users get advanced analytics with performance metrics, moving averages, and AI-powered insights.',
+    },
+    {
+      'q': 'How do notifications work in Focus Field?',
+      'a': 'Focus Field has smart reminders: Daily Reminders (learns your preferred focus time or use a fixed time), Session Completion notifications with results, Achievement notifications for milestones, and Weekly Summary (Premium). Enable/customize in Settings > Advanced > Notifications.',
+    },
+  ];
+
+  List<Map<String, String>> get _filteredFAQs {
+    if (_searchQuery.isEmpty) return _allFAQs;
+    
+    final query = _searchQuery.toLowerCase();
+    return _allFAQs.where((faq) {
+      final question = faq['q']!.toLowerCase();
+      final answer = faq['a']!.toLowerCase();
+      return question.contains(query) || answer.contains(query);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final filteredFAQs = _filteredFAQs;
+    
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onSurfaceVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header with close button
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 16, 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.quiz,
+                  color: theme.colorScheme.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Frequently Asked Questions',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search FAQs...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() => _searchQuery = value);
+              },
+            ),
+          ),
+          // Results count
+          if (_searchQuery.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${filteredFAQs.length} result${filteredFAQs.length == 1 ? '' : 's'} found',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+          // Scrollable content
+          Expanded(
+            child: filteredFAQs.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 48,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No results found',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Try a different search term',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...filteredFAQs.map((faq) => _buildFAQItem(
+                              theme,
+                              faq['q']!,
+                              faq['a']!,
+                            )),
+                        // Invisible spacer at bottom for complete scrolling
+                        const SizedBox(height: 80),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFAQItem(ThemeData theme, String question, String answer) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            answer,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SupportBottomSheet extends StatefulWidget {
   final SubscriptionTier userTier;
   const _SupportBottomSheet({required this.userTier});
@@ -1361,22 +1533,33 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final service = SupportService.instance;
-    final priority = service.getSupportPriority(widget.userTier);
-    final responseTime = service.getSupportResponseTime(priority);
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Scrollable content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
             Row(
               children: [
                 Icon(
@@ -1415,46 +1598,6 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
                   icon: const Icon(Icons.close),
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    t.responseTimeLabel(responseTime),
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _openFAQWebsite(context),
-                          icon: const Icon(Icons.quiz, size: 18),
-                          label: Text(t.faq),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _openDocumentationWebsite(context),
-                          icon: const Icon(Icons.article, size: 18),
-                          label: Text(t.docs),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -1509,7 +1652,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
             const SizedBox(height: 12),
             TextField(
               controller: _description,
-              maxLines: 4,
+              maxLines: 6,
               decoration: InputDecoration(
                 labelText: t.description,
                 hintText: t.issueDescriptionHint,
@@ -1537,8 +1680,11 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
               ),
             ),
             const SizedBox(height: 16),
-          ],
-        ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1609,40 +1755,6 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
-    }
-  }
-
-  Future<void> _openFAQWebsite(BuildContext context) async {
-    try {
-      await SupportService.instance.openFAQ();
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.failedOpenFaq(e.toString()),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _openDocumentationWebsite(BuildContext context) async {
-    try {
-      await SupportService.instance.openDocumentation();
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.failedOpenDocs(e.toString()),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          ),
-        );
-      }
     }
   }
 }

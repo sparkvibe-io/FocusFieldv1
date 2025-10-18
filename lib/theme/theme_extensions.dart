@@ -52,83 +52,109 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
     required this.subtleCardDecoration,
   });
 
-  /// Default borderless decorations with subtle background highlights
+  /// Clean borderless cards with prominent backgrounds and depth shadows
   factory AppDecorations.standard() => AppDecorations(
-    cardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainerHighest.withValues(alpha: 0.9),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: scheme.outline.withValues(alpha: 0.15),
-        width: 1.0,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: scheme.shadow.withValues(alpha: 0.05),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    elevatedCardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: scheme.outline.withValues(alpha: 0.2),
-        width: 1.0,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: scheme.shadow.withValues(alpha: 0.1),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ],
-    ),
-    subtleCardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainerHighest.withValues(alpha: 0.7),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: scheme.outline.withValues(alpha: 0.1),
-        width: 0.5,
-      ),
-    ),
+    cardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+
+      // Lighter, more prominent backgrounds without borders
+      final backgroundColor = isDark
+          ? scheme.surfaceContainerHighest // Use full opacity in dark
+          : scheme.surfaceContainerHighest; // Use full opacity in light
+
+      return BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.4 : 0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      );
+    },
+    elevatedCardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+
+      return BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.5 : 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      );
+    },
+    subtleCardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+
+      return BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.3 : 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      );
+    },
   );
 
-  /// Premium theme decorations (CyberNeon, MidnightTeal) with glowing borders
+  /// Premium theme decorations (CyberNeon, MidnightTeal) with intense glowing borders
   factory AppDecorations.premium({required Color accentColor}) => AppDecorations(
     cardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainer.withValues(alpha: 0.8),
+      color: scheme.surfaceContainer.withValues(alpha: 0.85),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: accentColor, width: 1.2),
-      boxShadow: [
-        BoxShadow(
-          color: accentColor.withValues(alpha: 0.3),
-          blurRadius: 12,
-          spreadRadius: 0,
-        ),
-      ],
-    ),
-    elevatedCardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainer.withValues(alpha: 0.9),
-      borderRadius: BorderRadius.circular(18),
       border: Border.all(color: accentColor, width: 1.5),
       boxShadow: [
+        // Inner glow
         BoxShadow(
-          color: accentColor.withValues(alpha: 0.4),
+          color: accentColor.withValues(alpha: 0.5),
           blurRadius: 16,
           spreadRadius: 1,
         ),
+        // Outer glow
+        BoxShadow(
+          color: accentColor.withValues(alpha: 0.3),
+          blurRadius: 24,
+          spreadRadius: 2,
+        ),
+      ],
+    ),
+    elevatedCardDecoration: (scheme) => BoxDecoration(
+      color: scheme.surfaceContainer.withValues(alpha: 0.92),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: accentColor, width: 2.0),
+      boxShadow: [
+        // Strong inner glow
+        BoxShadow(
+          color: accentColor.withValues(alpha: 0.6),
+          blurRadius: 20,
+          spreadRadius: 2,
+        ),
+        // Strong outer glow
+        BoxShadow(
+          color: accentColor.withValues(alpha: 0.4),
+          blurRadius: 32,
+          spreadRadius: 3,
+        ),
       ],
     ),
     subtleCardDecoration: (scheme) => BoxDecoration(
-      color: scheme.surfaceContainer.withValues(alpha: 0.65),
+      color: scheme.surfaceContainer.withValues(alpha: 0.70),
       borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: accentColor.withValues(alpha: 0.6), width: 1.0),
+      border: Border.all(color: accentColor.withValues(alpha: 0.7), width: 1.2),
       boxShadow: [
         BoxShadow(
-          color: accentColor.withValues(alpha: 0.2),
-          blurRadius: 8,
-          spreadRadius: 0,
+          color: accentColor.withValues(alpha: 0.35),
+          blurRadius: 12,
+          spreadRadius: 1,
         ),
       ],
     ),

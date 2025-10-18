@@ -179,6 +179,14 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
     state = state.copyWith(canStop: canStop);
   }
 
+  void setPaused(bool paused) {
+    state = state.copyWith(isPaused: paused);
+  }
+
+  void togglePause() {
+    state = state.copyWith(isPaused: !state.isPaused);
+  }
+
   void reset() {
     state = const SilenceState();
   }
@@ -190,6 +198,7 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
       progress: 0.0,
       success: null,
       error: null,
+      isPaused: false,
     );
   }
 }
@@ -297,6 +306,7 @@ class SilenceState {
   final bool? success;
   final String? error;
   final bool canStop; // New field to track if session can be stopped
+  final bool? _isPaused; // Internal nullable field for backward compatibility
 
   const SilenceState({
     this.isListening = false,
@@ -304,7 +314,11 @@ class SilenceState {
     this.success,
     this.error,
     this.canStop = false,
-  });
+    bool? isPaused,
+  }) : _isPaused = isPaused;
+
+  // Safe getter that defaults to false if null
+  bool get isPaused => _isPaused ?? false;
 
   SilenceState copyWith({
     bool? isListening,
@@ -312,6 +326,7 @@ class SilenceState {
     bool? success,
     String? error,
     bool? canStop,
+    bool? isPaused,
   }) {
     return SilenceState(
       isListening: isListening ?? this.isListening,
@@ -319,6 +334,7 @@ class SilenceState {
       success: success ?? this.success,
       error: error ?? this.error,
       canStop: canStop ?? this.canStop,
+      isPaused: isPaused ?? this.isPaused, // Use the getter which safely defaults to false
     );
   }
 }

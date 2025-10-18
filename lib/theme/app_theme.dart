@@ -41,26 +41,26 @@ class AppTheme {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF05010C), // deep void
-            Color(0xFF140033), // violet core
-            Color(0xFF001F2A), // teal shadow
-            Color(0xFF002F4F), // cyan edge
+            Color(0xFF000000), // Pure black
+            Color(0xFF0A0020), // Deep purple-black
+            Color(0xFF001520), // Midnight blue-black
+            Color(0xFF000000), // Back to pure black
           ],
-          stops: [0.0, 0.35, 0.65, 1.0],
+          stops: [0.0, 0.33, 0.66, 1.0],
         ),
         cardBackgroundGradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF0E1233), Color(0xFF050B1F)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF150028), Color(0xFF0A0015)],
         ),
         statAccentColors: [
-          Color(0xFF00F5FF), // cyan
-          Color(0xFFFF1FAE), // magenta
-          Color(0xFFB347FF), // purple
+          Color(0xFF00FFFF), // Electric cyan
+          Color(0xFFFF00FF), // Pure magenta
+          Color(0xFF9D00FF), // Electric purple
         ],
       );
       decorations = AppDecorations.premium(
-        accentColor: const Color(0xFF00FFF0),
+        accentColor: const Color(0xFF00FFFF), // Brighter cyan for stronger glow
       );
     } else if (mode == AppThemeMode.midnightTeal) {
       dramatic = DramaticThemeStyling(
@@ -68,28 +68,29 @@ class AppTheme {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF001916), // deep abyss
-            Color(0xFF002B28), // teal core
-            Color(0xFF004139), // emerald rise
+            Color(0xFF000A09), // Deep ocean black
+            Color(0xFF001412), // Darker teal abyss
+            Color(0xFF002522), // Slightly lighter abyss
+            Color(0xFF000A09), // Back to deep black
           ],
-          stops: [0.0, 0.55, 1.0],
+          stops: [0.0, 0.4, 0.7, 1.0],
         ),
         cardBackgroundGradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF002C29),
-            const Color(0xFF001E1D).withValues(alpha: 0.85),
+            const Color(0xFF001F1D),
+            const Color(0xFF001412).withValues(alpha: 0.90),
           ],
         ),
         statAccentColors: const [
-          Color(0xFF00C9A5), // primary teal
-          Color(0xFF008FA6), // blue‑teal
-          Color(0xFF5DF27C), // green accent
+          Color(0xFF00E5B8), // Bioluminescent teal
+          Color(0xFF00C9A0), // Bright jade
+          Color(0xFF52FFAA), // Electric mint
         ],
       );
       decorations = AppDecorations.premium(
-        accentColor: const Color(0xFF00D295),
+        accentColor: const Color(0xFF00E5B8), // Brighter teal for stronger glow
       );
     }
 
@@ -149,32 +150,36 @@ class AppTheme {
             : _getColorScheme(AppThemeMode.light, Brightness.light);
       case AppThemeMode.light:
         final baseLight = ColorScheme.fromSeed(
-          seedColor: const Color(0xFF006A6A), // Professional Teal
+          seedColor: const Color(0xFF00897B), // Vibrant Teal
           brightness: Brightness.light,
         );
         return baseLight.copyWith(
-          surface: const Color(0xFFF0F5F5), // Soft gray background
-          surfaceContainer: const Color(0xFFE8EEEE),
+          surface: Colors.white, // Pure White background
+          surfaceContainer: const Color(0xFFF8FFFE), // Subtle teal tint
           surfaceContainerHighest:
               Colors.white, // White cards for high contrast
-          primary: const Color(0xFF005A5A),
+          primary: const Color(0xFF00897B), // Vibrant Teal
+          secondary: const Color(0xFF00BFA5), // Bright Teal Accent
+          tertiary: const Color(0xFFFF6F00), // Energetic Orange
           onPrimary: Colors.white,
-          outline: baseLight.outline.withValues(alpha: 0.5),
+          outline: baseLight.outline, // Full visibility
         );
       case AppThemeMode.dark:
         final baseDark = ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00E0E0), // Vibrant Cyan
+          seedColor: const Color(0xFF00E5E5), // Electric Cyan
           brightness: Brightness.dark,
         );
         return baseDark.copyWith(
-          surface: const Color(0xFF1A1C1C), // Dark slate background
-          surfaceContainer: const Color(0xFF242626),
+          surface: const Color(0xFF121416), // Slightly lighter for contrast
+          surfaceContainer: const Color(0xFF1C2022), // Rich charcoal
           surfaceContainerHighest: const Color(
-            0xFF282A2A,
-          ), // Lighter gray cards
-          primary: const Color(0xFF00E0E0),
-          onPrimary: Colors.black,
-          outline: baseDark.outline.withValues(alpha: 0.5),
+            0xFF262B2D,
+          ), // Elevated dark cards - lighter for better borders
+          primary: const Color(0xFF00E5E5), // Electric Cyan
+          secondary: const Color(0xFF00FFC6), // Neon Teal
+          tertiary: const Color(0xFFFFB74D), // Warm Gold
+          onPrimary: const Color(0xFF001414), // Darker for contrast
+          outline: baseDark.outline, // Full visibility
         );
       case AppThemeMode.oceanBlue:
         final baseOcean = ColorScheme.fromSeed(
@@ -286,18 +291,18 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseNeon.copyWith(
-          // Reworked to be extremely high contrast neon on near-black with violet + magenta depths
-          surface: const Color(0xFF01060F), // almost black with blue hint
-          surfaceContainer: const Color(0xFF050B1F),
-          surfaceContainerHighest: const Color(0xFF0E1233),
-          onSurface: const Color(0xFFE7F8FF), // icy white
-          primary: const Color(0xFF00FFF0), // electric aqua
-          onPrimary: const Color(0xFF001F1C),
-          primaryContainer: const Color(0xFF003E5A),
-          onPrimaryContainer: const Color(0xFF8CFFF6),
-          secondary: const Color(0xFFFF2EC4), // hotter magenta
-          tertiary: const Color(0xFF7B5BFF), // violet
-          outline: const Color(0xFF3F4F9A),
+          // True cyberpunk: Ultra-bright neon on deep black with glowing accents
+          surface: const Color(0xFF000000), // Pure black for maximum neon contrast
+          surfaceContainer: const Color(0xFF0A0015), // Deep violet-black
+          surfaceContainerHighest: const Color(0xFF150028), // Darker violet for cards
+          onSurface: const Color(0xFFFFFFFF), // Pure white text
+          primary: const Color(0xFF00FFFF), // Electric cyan - max brightness
+          onPrimary: const Color(0xFF000000),
+          primaryContainer: const Color(0xFF003D5C),
+          onPrimaryContainer: const Color(0xFF00FFFF),
+          secondary: const Color(0xFFFF00FF), // Pure magenta - max brightness
+          tertiary: const Color(0xFF9D00FF), // Electric purple
+          outline: const Color(0xFF00FFFF), // Cyan outline for neon glow
         );
       case AppThemeMode.midnightTeal:
         final baseTeal = ColorScheme.fromSeed(
@@ -305,18 +310,18 @@ class AppTheme {
           brightness: Brightness.dark,
         );
         return baseTeal.copyWith(
-          // Deeper green-cyan abyss with bio-luminescent mints
-          surface: const Color(0xFF001312), // darker than before
-          surfaceContainer: const Color(0xFF001E1D),
-          surfaceContainerHighest: const Color(0xFF002C29),
-          onSurface: const Color(0xFFCCFFEF), // pale mint
-          primary: const Color(0xFF00D295), // vivid emerald teal
-          onPrimary: const Color(0xFF00261A),
-          primaryContainer: const Color(0xFF004D39),
-          onPrimaryContainer: const Color(0xFF92FFDE),
-          secondary: const Color(0xFF00A7C4), // aqua teal
-          tertiary: const Color(0xFF43F56A), // bio green
-          outline: const Color(0xFF1E5E55),
+          // Deep ocean abyss: Darker, richer teal with bioluminescent accents
+          surface: const Color(0xFF000A09), // Almost black with hint of teal
+          surfaceContainer: const Color(0xFF001412), // Deep ocean floor
+          surfaceContainerHighest: const Color(0xFF001F1D), // Slightly lighter for cards
+          onSurface: const Color(0xFFD5FFF0), // Pale mint glow
+          primary: const Color(0xFF00E5B8), // Vivid bioluminescent teal
+          onPrimary: const Color(0xFF000000),
+          primaryContainer: const Color(0xFF004D3D),
+          onPrimaryContainer: const Color(0xFF7FFFD4), // Aquamarine glow
+          secondary: const Color(0xFF00C9A0), // Bright jade
+          tertiary: const Color(0xFF52FFAA), // Electric mint
+          outline: const Color(0xFF00E5B8), // Teal outline for glow
         );
     }
   }
@@ -357,13 +362,15 @@ class AppTheme {
           margin: EdgeInsets.zero,
         );
       default:
-        // Borderless with clear background for good visibility
+        // Cards with visible elevation and colored shadows for depth
         return CardThemeData(
-          elevation: highContrast ? 2 : 0,
+          elevation: highContrast ? 3 : 2,
           shape: baseShape,
-          color: scheme.surfaceContainerHighest.withValues(alpha: 0.9),
+          color: scheme.surfaceContainerHighest,
           shadowColor:
-              highContrast ? scheme.onSurface.withValues(alpha: 0.4) : null,
+              highContrast
+                  ? scheme.onSurface.withValues(alpha: 0.4)
+                  : scheme.primary.withValues(alpha: 0.12),
           margin: EdgeInsets.zero,
         );
     }
@@ -410,7 +417,8 @@ class AppTheme {
             ElevatedButton.styleFrom(
               backgroundColor: scheme.primary,
               foregroundColor: scheme.onPrimary,
-              elevation: 2,
+              elevation: 4,
+              shadowColor: scheme.primary.withValues(alpha: 0.3),
             ),
           ),
         );

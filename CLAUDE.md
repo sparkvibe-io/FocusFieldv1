@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Focus Field is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
 
-## 🚀 CURRENT STATUS — Oct 13, 2025: Brand Alignment & UI Polish Complete
+## 🚀 CURRENT STATUS — Oct 18, 2025: UI Polish & Freeze Token Bug Fixes Complete
 ### Product Principles (Always)
 - No scrolling on main pages (Home/Summary/Activity). Use compact components, tabs, and carousels to fit without vertical scroll.
 - Advertisements are always visible (anchored adaptive banner), never obscured by overlays or long content.
@@ -45,6 +45,97 @@ Focus Field is a comprehensive Flutter mobile app that measures ambient silence 
 - ✅ **Weekly Target Line** on 7-day trends chart (30min default)
 - ✅ **Unified Trends Sheet**: Heatmap integrated into "Show More" Basic tab
 - ✅ **Simplified UI**: Single "Show More" button (removed redundant heatmap icon)
+
+**Success System Consolidation** (Oct 17, 2025):
+- ✅ **Unified Success Logic**: Migrated from legacy average-based to Ambient Score system
+- ✅ **Compassionate Credit**: Proportional points (quiet minutes) instead of all-or-nothing
+- ✅ **70% Threshold**: Sessions with ≥70% calm qualify for quest credit
+- ✅ **Code Cleanup**: Removed duplicate `_checkSuccess()` logic from `silence_detector.dart`
+- ✅ **Backward Compatibility**: Legacy sessions without ambient scores handled gracefully
+- ✅ **User Experience**: More encouraging outcomes, better retention
+
+**Focus Mode & Progress Ring Redesign** (Oct 17, 2025):
+- ✅ **Audio Circuit Breaker Fix**: Reduced immediate protection timeout from 5s to 500ms
+  - Prevents false "Audio access temporarily disabled" errors
+  - Maintains crash protection while improving responsiveness
+- ✅ **Focus Mode Overlay Completion State**: Added session success UI
+  - Shows check icon and "Session Complete!" message when `remainingSeconds <= 0 && progress >= 0.99`
+  - Hides Pause/Stop buttons on completion
+  - Provides clear visual feedback for session achievement
+- ✅ **Progress Ring Top-Row Controls**: Complete layout redesign
+  - **When NOT running**: Duration selector chips (1, 5, 10, 15, 30 min + premium options)
+  - **When running**: Control buttons (Focus Mode, Pause, Stop) + Ambient % text
+  - All session controls in horizontal row above ring
+  - Center shows only time countdown (removed "Calm" subtitle)
+- ✅ **Focus Mode Button Logic (Reversed)**:
+  - Shows button when Focus Mode is **DISABLED** in settings (default)
+  - Auto-activates on Start when **ENABLED** in settings (no button needed)
+  - Prevents UI clutter for users with auto-focus enabled
+- ✅ **Rectangular Button Design**: Changed from rounded (radius 16) to rectangular (radius 4)
+  - Focus Mode, Pause, Stop buttons have minimal rounding
+  - Cleaner, more professional appearance
+- ✅ **Ambient % Display**: Changed from button to plain text
+  - No background container (text-only display)
+  - Reduces visual clutter during sessions
+  - Maintains glanceable real-time feedback
+
+**Technical Implementation**:
+- Files Modified: `lib/services/audio_circuit_breaker.dart`, `lib/widgets/focus_mode_overlay.dart`, `lib/screens/home_page_elegant.dart`
+- Helper Method: `_buildTopButton()` for consistent control button styling
+- Long-press Required: Pause and Stop buttons require long-press to prevent accidental activation
+- Material 3 Colors: Uses `primaryContainer`, `secondaryContainer`, `errorContainer` for semantic button coloring
+
+**UI Consistency & Bug Fixes** (Oct 18, 2025):
+- ✅ **Room Loudness Widget Redesign**: Complete overhaul for better UX
+  - **Current Threshold Display**: Shows "Threshold: 40dB" badge in top-right (pulses when exceeded)
+  - **Pulse Animation**: Orange warning animation when room loudness exceeds threshold (1.5s intervals)
+  - **Quick Threshold Buttons**: Text-only buttons (30dB, 40dB, 50dB, 60dB, 80dB) - matches duration selector style
+  - **Color-Coded Reading**: Green (below threshold) → Orange (exceeding) → Red (≥70dB very loud)
+  - **Compact Layout**: Single-row design (reading + selectors) saves ~40px vertical space
+  - **Overflow Fix**: Reduced font sizes and spacing to fit all elements without overflow
+  - File Modified: `lib/widgets/inline_noise_panel.dart`
+- ✅ **Duration Selector Consistency**: Updated to match threshold button aesthetic
+  - **Removed Underlines**: Changed from underline to bold+color for selected state
+  - **Smaller Font**: Reduced from `labelMedium` to `bodySmall` for compactness
+  - **Muted Unselected**: 70% opacity for unselected items (clearer hierarchy)
+  - **Premium Icons**: Star icons remain for premium duration options (1hr, 1.5hr, 2hr)
+  - File Modified: `lib/screens/home_page_elegant.dart` lines 3616-3687
+- ✅ **Freeze Token Bug Fix**: Critical state management fix (2 locations)
+  - **Problem**: After using freeze token (100% complete), running sessions reset progress to actual minutes
+  - **Root Cause #1**: `applySession()` recalculated `progressQuietMinutes` from per-activity totals, overwriting freeze token value
+  - **Root Cause #2**: UI widgets read raw progress values without checking freeze token flag
+  - **Solution #1**: When `freezeTokenUsedToday = true`, lock `progressQuietMinutes` at goal value in `applySession()` (don't recalculate)
+  - **Solution #2**: UI displays check `freezeTokenUsedToday` flag and show locked progress at 100% when true
+  - **Behavior**: Freeze token keeps Overall and Total Today at 100% for entire day, subsequent sessions still track for analytics
+  - Files Modified:
+    - `lib/providers/ambient_quest_provider.dart:359-361` (state lock in applySession)
+    - `lib/widgets/adaptive_activity_rings_widget.dart:57-60` (Overall ring display)
+    - `lib/screens/home_page_elegant.dart:733-749` (Total Today display on Sessions tab)
+- ✅ **Removed Duplicate UI**: Eliminated redundant "done for the day" widget
+  - **Before**: Two widgets showing same "10/10 min, done" message (activity selection + progress ring)
+  - **After**: Single display in activity selection card only
+  - **Savings**: ~40-50px vertical space, cleaner UI
+  - **Follows Principle**: "No duplicate content" design guideline
+  - File Modified: `lib/screens/home_page_elegant.dart:3477-3511`
+
+**Visual Design System**:
+```dart
+// Consistent selector button pattern across app:
+// - Selected: Bold + Primary Color
+// - Unselected: Normal weight + Muted (70% opacity)
+// - No backgrounds, minimal padding
+// - Touch targets adequate (48x48dp minimum)
+
+// Duration selectors: 1m 5m 10m 30m ⭐1hr ⭐1.5hr ⭐2hr
+// Threshold selectors: 30dB 40dB 50dB 60dB 80dB
+```
+
+**Files Changed Summary** (Oct 18, 2025):
+1. `lib/widgets/inline_noise_panel.dart` - Room loudness widget redesign (threshold display, pulse animation, quick buttons)
+2. `lib/screens/home_page_elegant.dart` - Duration selector consistency, removed duplicate widget, freeze token display fix (Total Today)
+3. `lib/providers/ambient_quest_provider.dart` - Freeze token bug fix (lock progress when token used in applySession)
+4. `lib/widgets/adaptive_activity_rings_widget.dart` - Freeze token display logic (100% lock in Overall ring)
+5. `lib/models/ambient_models.dart` - Added `freezeTokenUsedToday` field to QuestState model
 
 Developer notes (compactness and ad safety):
 - Duration chips hide while a session is running; inter-chip spacing and paddings reduced.
@@ -182,10 +273,52 @@ Developer notes (compactness and ad safety):
 - ✅ **Code Formatting**: Full `dart format` pass with analyzer clean (0 issues)
 - ✅ **Documentation Sync**: Updated localization files and notification copy
 
+### ✅ **MVP STATUS: READY FOR LAUNCH**
+
+**Core Features Complete**:
+- ✅ Ambient Quests P0 + P1 (quest system, streaks, adaptive threshold, activity customization)
+- ✅ Focus Mode P1 (full-screen overlay, completion states, long-press controls, auto-activation)
+- ✅ Tablet responsive design (breakpoint-based scaling, landscape split-screen for tablets ≥840dp)
+- ✅ RevenueCat monetization (Premium $1.99, Premium Plus $3.99, feature gating, paywall)
+- ✅ AdMob integration (adaptive banner, dev/release modes, single placement strategy)
+- ✅ Localization (7 languages: EN, ES, DE, FR, JA, PT, PT_BR - 100% complete)
+- ✅ Success system (Ambient Score-based, 70% threshold, proportional credit)
+- ✅ Brand alignment (Focus Field terminology throughout)
+
+**What's NOT Blocking Launch**:
+- iOS Live Activities (Android notification already working)
+- Focus Mode P2/P3 enhancements (breathing animation, themes, lock mode)
+- Custom activity creation (3 default profiles sufficient for MVP)
+- Health/Calendar integrations (feature-flagged for future)
+- FAQ/Documentation widget in Settings (removed for MVP, contact support via email is sufficient)
+
 ### 📋 Remaining Work (P1)
 1. **iOS Live Activities**: Match Android ongoing notification parity (deferred to post-launch - see `docs/development/iOS_Live_Activities_Plan.md`)
 
 ### 🔮 **Future Enhancements (P2)**
+
+**Focus Mode Enhancements** (Post-MVP):
+- **P2 (Enhanced UX)**: Deferred to post-MVP release
+  - 🌬️ **Breathing Animation**: Meditation-style breathing guide (8s cycle: 4s inhale, 4s exhale) behind progress ring
+  - 🎨 **Icon Buttons**: Replace text buttons with circular icon-only buttons for cleaner minimal design
+  - 🎉 **Completion Celebration**: Enhanced success feedback with animated check icon (elastic bounce) and ambient score display
+  - ⚙️ **Settings Toggle**: Explicit "Auto Focus Mode" switch in Settings > Focus (logic already implemented)
+  - 📱 **User Control**: Toggle breathing guide in Settings, stored in `focusModeBreathingGuide` preference
+- **P3 (Premium Features)**: Requires Premium subscription tier
+  - 🔒 **Lock Mode**: Prevent exiting Focus Mode until session completes (with safety: always allow exit on completion)
+  - 🎨 **Color Themes**: 4 personalized themes (Midnight/Ocean/Forest/Sunset) with custom background/ring/glow colors
+  - 🌑 **Ultra-Minimal Mode**: Ring-only display (no timer text/buttons), long-press anywhere to reveal controls temporarily (5s)
+  - 💎 **Feature Gating**: All P3 features behind Premium paywall with upgrade prompts for free users
+
+**Implementation Files** (when prioritized):
+- New: `lib/models/focus_mode_theme.dart`, `lib/widgets/focus_mode_breathing.dart`, `lib/widgets/focus_theme_selector.dart`
+- Modified: `lib/widgets/focus_mode_overlay.dart`, `lib/models/user_preferences.dart`, `lib/screens/settings_sheet.dart`
+
+**Timeline Estimate**: 3 weeks (1 week P2, 2 weeks P3 + testing)
+
+**Why Deferred**: P1 Focus Mode (current implementation) is fully functional and MVP-ready. P2/P3 enhancements are "nice-to-have" polish features that don't block launch. Prioritizing core quest loop validation and platform configuration first.
+
+
 **Activity System Expansion** (Deferred to P2):
 - **Custom Activity Creation**: User-defined activities with custom icons, colors, and goals
 - **Active Profiles**: Non-quiet activities (Fitness, Family, Custom) that don't use noise monitoring
@@ -193,6 +326,14 @@ Developer notes (compactness and ad safety):
 - **Feature Flag**: `FF_ACTIVE_PROFILES = false` (currently disabled)
 
 **Why Deferred**: P0 focuses on validating the core quest loop with 3 simple, quiet-first activities. Adding custom activities and active profiles before validating core value would add unnecessary complexity. See `docs/development/AmbientQuests_Dev_Spec.md` lines 198-199 for P2 rollout plan.
+
+**Support Resources** (Deferred to P2):
+- **FAQ Widget**: In-app FAQ browser with common questions and answers
+- **Documentation Widget**: Quick access to user guides and tutorials from Settings
+- **Help Center Integration**: Web-based help center with searchable articles
+- **Current MVP Solution**: Email support via "Contact Support" form in Settings > About tab
+
+**Why Deferred**: Email support is sufficient for MVP. A dedicated FAQ/Docs system becomes valuable after launch when common questions emerge from real user feedback.
 
 ### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete + AdMob Banners**
 - **RevenueCat Integration**: ✅ Complete with platform-specific API keys configured
@@ -205,10 +346,14 @@ Developer notes (compactness and ad safety):
 - **Build Verification**: ✅ iOS & Android builds successfully with monetization
 - **Ads (AdMob)**: ✅ Banner wired, dev uses test units, release uses production units; optional QA fallback to test on failure
 
-### 🌙 Ambient Quests Overview
-- Quiet-first profiles; Ambient Score = quietSeconds / actualSeconds
-- Quest credit when score >= target (default 70%)
-- Compassionate streaks: 2-Day Rule + monthly freeze token
+### 🌙 Ambient Quests Overview (Consolidated Success System)
+- **Ambient Score**: Primary success metric = `quietSeconds / actualSeconds` (0.0 to 1.0)
+- **Session Success**: Ambient score >= 0.70 (70% quiet threshold)
+- **Points Award**: Proportional credit based on quiet minutes (not all-or-nothing)
+- **Quest Credit**: Sessions qualifying at 70%+ contribute quiet minutes to daily goal
+- **Compassionate Streaks**: 2-Day Rule + monthly freeze token
+- **Quiet-First Profiles**: Study, Reading, Meditation, Other (all use noise monitoring at 38 dB)
+- **Real-Time Display**: "Calm %" shown during sessions for immediate feedback
 - Final docs: `docs/development/AmbientQuests_Dev_Spec.md`, `docs/development/AmbientQuests_Copy_and_MicroInteractions.md`
 
 Developer constraints:
@@ -339,6 +484,7 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 
 ### Core Services Architecture
 - **SilenceDetector** (`lib/services/silence_detector.dart`): Core noise monitoring using `noise_meter` package ✅
+- **AudioCircuitBreaker** (`lib/services/audio_circuit_breaker.dart`): ✅ Crash protection for audio access with 500ms immediate timeout
 - **StorageService** (`lib/services/storage_service.dart`): Data persistence with SharedPreferences ✅
 - **SubscriptionService** (`lib/services/subscription_service.dart`): ✅ **COMPLETE** RevenueCat integration for premium features
 - **ExportService** (`lib/services/export_service.dart`): Data export functionality (CSV/PDF) ✅
@@ -367,6 +513,7 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 
 ### Key Widgets
 - **ProgressRing** (`lib/widgets/progress_ring.dart`): Interactive session control with countdown timer ✅
+- **FocusModeOverlay** (`lib/widgets/focus_mode_overlay.dart`): ✅ Full-screen Focus Mode with completion states, long-press Pause/Stop, and minimal distractions
 - **RealTimeNoiseChart** (`lib/widgets/real_time_noise_chart.dart`): Live decibel visualization with quick threshold selectors ✅
 - **SessionHistoryGraph** (`lib/widgets/session_history_graph.dart`): Historical performance tracking ✅
 - **SessionHeatmap** (`lib/widgets/session_heatmap.dart`): ✅ 12-week GitHub-style activity heatmap
@@ -405,18 +552,23 @@ Acceptance criteria: see `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin t
 
 ## Core Business Logic
 
-### Silence Detection
+### Silence Detection & Ambient Score System
 - Uses `noise_meter` package to monitor ambient decibel levels
 - Default threshold: 38 dB (configurable 20-80 dB)
-- Real-time monitoring at 200ms intervals during sessions
-- Ambient monitoring at 1Hz when not in active session
-- Exponential moving average for noise smoothing
+- Real-time monitoring at 200ms intervals for noise readings
+- Ambient Score calculation at 1Hz: `quietSeconds / elapsedSeconds` (range: 0.0 to 1.0)
+- Session qualification threshold: 70% (ambient score >= 0.70)
 
-### Point System
-- 1 point per minute of successful silence session
+### Point System (Ambient Score-Based)
+- **Success Determination**: `ambientScore >= 0.70` (70% quiet threshold)
+- **Points Calculation**: `creditedMinutes = quietSeconds / 60` (proportional to quiet time)
+- **Points Awarded**: `pointsEarned = creditedMinutes × 1` (1 point per quiet minute)
+- **Compassionate Credit**: Partial success rewarded (not all-or-nothing)
 - Sessions can be 1-120 minutes (configurable)
 - Daily streak tracking with best performance records
 - Achievement system with confetti celebrations
+
+**Example**: 10-minute session with 8 minutes quiet (80% ambient score) → 8 points awarded
 
 ### Premium Features (RevenueCat Integration)
 - **Premium ($1.99/month)**: Extended sessions (1h, 1.5h, 2h), advanced analytics, data export

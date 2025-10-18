@@ -139,7 +139,9 @@ class QuestState {
   final int freezeTokens;
   final DateTime lastUpdatedAt;
   final bool missedYesterday; // for permissive 2-Day Rule
-  
+  final DateTime lastFreezeReplenishment; // for weekly freeze token replenishment
+  final bool freezeTokenUsedToday; // Track if freeze token was used today (resets at daily rollover)
+
   // Per-activity minute tracking
   final int studyMinutes;
   final int readingMinutes;
@@ -155,7 +157,9 @@ class QuestState {
     required this.streakCount,
     required this.freezeTokens,
     required this.lastUpdatedAt,
+    required this.lastFreezeReplenishment,
     this.missedYesterday = false,
+    this.freezeTokenUsedToday = false,
     this.studyMinutes = 0,
     this.readingMinutes = 0,
     this.meditationMinutes = 0,
@@ -171,7 +175,9 @@ class QuestState {
     int? streakCount,
     int? freezeTokens,
     DateTime? lastUpdatedAt,
+    DateTime? lastFreezeReplenishment,
     bool? missedYesterday,
+    bool? freezeTokenUsedToday,
     int? studyMinutes,
     int? readingMinutes,
     int? meditationMinutes,
@@ -185,7 +191,9 @@ class QuestState {
         streakCount: streakCount ?? this.streakCount,
         freezeTokens: freezeTokens ?? this.freezeTokens,
         lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
+        lastFreezeReplenishment: lastFreezeReplenishment ?? this.lastFreezeReplenishment,
         missedYesterday: missedYesterday ?? this.missedYesterday,
+        freezeTokenUsedToday: freezeTokenUsedToday ?? this.freezeTokenUsedToday,
         studyMinutes: studyMinutes ?? this.studyMinutes,
         readingMinutes: readingMinutes ?? this.readingMinutes,
         meditationMinutes: meditationMinutes ?? this.meditationMinutes,
@@ -201,7 +209,9 @@ class QuestState {
         'streakCount': streakCount,
         'freezeTokens': freezeTokens,
         'lastUpdatedAt': lastUpdatedAt.millisecondsSinceEpoch,
+        'lastFreezeReplenishment': lastFreezeReplenishment.millisecondsSinceEpoch,
         'missedYesterday': missedYesterday,
+        'freezeTokenUsedToday': freezeTokenUsedToday,
         'studyMinutes': studyMinutes,
         'readingMinutes': readingMinutes,
         'meditationMinutes': meditationMinutes,
@@ -219,7 +229,11 @@ class QuestState {
         lastUpdatedAt: DateTime.fromMillisecondsSinceEpoch(
           json['lastUpdatedAt'] as int? ?? DateTime.now().millisecondsSinceEpoch,
         ),
+        lastFreezeReplenishment: DateTime.fromMillisecondsSinceEpoch(
+          json['lastFreezeReplenishment'] as int? ?? DateTime.now().millisecondsSinceEpoch,
+        ),
         missedYesterday: json['missedYesterday'] as bool? ?? false,
+        freezeTokenUsedToday: json['freezeTokenUsedToday'] as bool? ?? false,
         studyMinutes: json['studyMinutes'] as int? ?? 0,
         readingMinutes: json['readingMinutes'] as int? ?? 0,
         meditationMinutes: json['meditationMinutes'] as int? ?? 0,

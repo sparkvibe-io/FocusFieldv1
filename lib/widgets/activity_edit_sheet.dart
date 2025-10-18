@@ -44,8 +44,10 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
 
   int get _totalMinutes {
     if (!_perActivityGoalsEnabled) {
-      return _goalMinutes * _profileEnabled.values.where((e) => e).length;
+      // Global mode: the goal is the TOTAL daily goal shared across all activities
+      return _goalMinutes;
     }
+    // Per-activity mode: sum individual goals
     return _profileEnabled.entries
         .where((e) => e.value)
         .fold<int>(0, (sum, e) => sum + (_perActivityGoals[e.key] ?? 0));
@@ -261,7 +263,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
           // Global Goal (shown when per-activity is disabled)
           if (!_perActivityGoalsEnabled) ...[
             Container(
-              padding: const EdgeInsets.fromLTRB(12, 2, 12, 4),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
@@ -269,35 +271,75 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Goal',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Set your daily focus target (1 min - 18h)',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Text(
-                        '$_goalMinutes min (${(_goalMinutes / 60).toStringAsFixed(1)}h)',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
+                        '1min',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      Expanded(
+                        child: Slider(
+                          value: _goalMinutes.toDouble(),
+                          min: 1,
+                          max: 1080,
+                          divisions: 1079,
+                          label: _goalMinutes >= 60
+                              ? '${(_goalMinutes / 60).toStringAsFixed(1)}h'
+                              : '${_goalMinutes}min',
+                          onChanged: (value) {
+                            setState(() {
+                              _goalMinutes = value.round();
+                            });
+                          },
                         ),
                       ),
-                      const Spacer(),
                       Text(
-                        '1 min – 18h',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
+                        '18h',
+                        style: theme.textTheme.bodySmall,
                       ),
                     ],
                   ),
-                  Slider(
-                    value: _goalMinutes.toDouble(),
-                    min: 1,
-                    max: 1080,
-                    divisions: 1079,
-                    label: '$_goalMinutes min (${(_goalMinutes / 60).toStringAsFixed(1)}h)',
-                    onChanged: (value) {
-                      setState(() {
-                        _goalMinutes = value.round();
-                      });
-                    },
+                  const SizedBox(height: 4),
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 14,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Current goal: ${_goalMinutes >= 60 ? '${(_goalMinutes / 60).toStringAsFixed(1)}h' : '${_goalMinutes}min'}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

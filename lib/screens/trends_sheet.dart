@@ -89,30 +89,24 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
     }
     
     final weeklySuccessRate = weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
-    final weeklyTopActivity = weeklyActivityMinutes.entries.isEmpty
-        ? null
-        : weeklyActivityMinutes.entries.reduce((a, b) => a.value > b.value ? a : b).key;
-    
+
     final dailySuccessRate = dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
-    final dailyTopActivity = dailyActivityMinutes.entries.isEmpty
-        ? null
-        : dailyActivityMinutes.entries.reduce((a, b) => a.value > b.value ? a : b).key;
-    
+
     final formatter = DateFormat('MMM d');
     final weekRange = '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
     final dateFormatter = DateFormat('MMMM d, y');
     final todayRange = dateFormatter.format(now);
-    
+
     // Determine initial time range based on available data
-    final initialTimeRange = dailyMinutes > 0 
-        ? ShareTimeRange.today 
+    final initialTimeRange = dailyMinutes > 0
+        ? ShareTimeRange.today
         : ShareTimeRange.weekly;
-    
+
     // Use today's data if available, otherwise weekly
     final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
     final displaySessions = dailyMinutes > 0 ? dailySessions : weeklySessions;
     final displaySuccessRate = dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
-    final displayTopActivity = dailyMinutes > 0 ? dailyTopActivity : weeklyTopActivity;
+    final displayActivityMinutes = dailyMinutes > 0 ? dailyActivityMinutes : weeklyActivityMinutes;
     final displayDateRange = dailyMinutes > 0 ? todayRange : weekRange;
 
     showModalBottomSheet(
@@ -123,7 +117,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
         totalMinutes: displayMinutes,
         sessionCount: displaySessions,
         successRate: displaySuccessRate,
-        topActivity: displayTopActivity,
+        activityMinutes: displayActivityMinutes,
         dateRange: displayDateRange,
         initialTimeRange: initialTimeRange,
       ),
@@ -283,7 +277,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Last 12 weeks',
+                  'Recent activity',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -292,7 +286,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                 dataAsync.when(
                   data: (d) => SessionHeatmap(
                     sessions: d.recentSessions,
-                    weeks: 12,
+                    // Let heatmap determine optimal weeks (8 weeks or current month)
                   ),
                   loading: () => const SizedBox(
                     height: 120,
@@ -559,24 +553,24 @@ class _SevenDayStackedBars extends ConsumerWidget {
   Color _builtInColor(String key) {
     switch (key.toLowerCase()) {
       case 'work':
-        return const Color(0xFFED7D31);
+        return const Color(0xFFEF5350); // Material Red 400 - Bright, bold
       case 'study':
       case 'studying':
-        return const Color(0xFF8B9DC3); // Soft blue-gray
+        return const Color(0xFF2196F3); // Material Blue 500 - Bright, energetic
       case 'reading':
-        return const Color(0xFF7BA7BC); // Muted teal-blue
+        return const Color(0xFF9C27B0); // Material Purple 500 - Rich, deep
       case 'meditation':
-        return const Color(0xFF86B489); // Sage green
+        return const Color(0xFF4CAF50); // Material Green 500 - Fresh, vibrant
       case 'fitness':
-        return const Color(0xFFFA114F);
+        return const Color(0xFFFA114F); // Material Pink-Red - Energetic
       case 'family':
       case 'other':
-        return const Color(0xFFC4A57B); // Muted amber
+        return const Color(0xFFFF9800); // Material Orange 500 - Warm, bold
       case 'noise':
       case 'focus':
-        return const Color(0xFF00D9FF);
+        return const Color(0xFF00D9FF); // Material Cyan 500 - Bright, clear
       default:
-        return const Color(0xFF7BA7BC); // Muted teal-blue
+        return const Color(0xFF2196F3); // Material Blue 500 - Default vibrant
     }
   }
 

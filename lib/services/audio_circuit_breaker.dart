@@ -30,8 +30,8 @@ class AudioCircuitBreaker {
   static const Duration _bufferRecoveryTimeout = Duration(seconds: 30);
   static const Duration _flutterRecoveryTimeout = Duration(minutes: 1);
   static const Duration _immediateBlockTimeout = Duration(
-    seconds: 5,
-  ); // Immediate block after any audio activity
+    milliseconds: 500,
+  ); // Brief protection after audio activity to prevent rapid recreation
 
   int _failureCount = 0;
   DateTime? _lastFailureTime;

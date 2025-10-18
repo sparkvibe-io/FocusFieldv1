@@ -12,13 +12,17 @@ class UserPreferences {
   // Advanced mode: per-activity goals (optional)
   final bool perActivityGoalsEnabled;
   final Map<String, int>? perActivityGoals; // profileId -> minutes
-  
+
+  // Focus Mode: minimal distraction during sessions
+  final bool focusModeEnabled;
+
   const UserPreferences({
     required this.enabledProfiles,
     required this.globalDailyQuietGoalMinutes,
     required this.lastDurationByProfile,
     this.perActivityGoalsEnabled = false,
     this.perActivityGoals,
+    this.focusModeEnabled = false,
   });
   
   // Default preferences (core 3 activities enabled, 10 min goal per activity)
@@ -28,6 +32,7 @@ class UserPreferences {
     lastDurationByProfile: {},
     perActivityGoalsEnabled: false,
     perActivityGoals: null,
+    focusModeEnabled: false,
   );
   
   UserPreferences copyWith({
@@ -36,12 +41,14 @@ class UserPreferences {
     Map<String, int>? lastDurationByProfile,
     bool? perActivityGoalsEnabled,
     Map<String, int>? perActivityGoals,
+    bool? focusModeEnabled,
   }) => UserPreferences(
     enabledProfiles: enabledProfiles ?? this.enabledProfiles,
     globalDailyQuietGoalMinutes: globalDailyQuietGoalMinutes ?? this.globalDailyQuietGoalMinutes,
     lastDurationByProfile: lastDurationByProfile ?? this.lastDurationByProfile,
     perActivityGoalsEnabled: perActivityGoalsEnabled ?? this.perActivityGoalsEnabled,
     perActivityGoals: perActivityGoals ?? this.perActivityGoals,
+    focusModeEnabled: focusModeEnabled ?? this.focusModeEnabled,
   );
   
   Map<String, dynamic> toJson() => {
@@ -50,6 +57,7 @@ class UserPreferences {
     'lastDurationByProfile': lastDurationByProfile,
     'perActivityGoalsEnabled': perActivityGoalsEnabled,
     'perActivityGoals': perActivityGoals,
+    'focusModeEnabled': focusModeEnabled,
   };
   
   factory UserPreferences.fromJson(Map<String, dynamic> json) {
@@ -67,6 +75,7 @@ class UserPreferences {
           ? (json['perActivityGoals'] as Map<String, dynamic>)
               .map((k, v) => MapEntry(k, v as int))
           : null,
+      focusModeEnabled: json['focusModeEnabled'] as bool? ?? false,
     );
   }
 }

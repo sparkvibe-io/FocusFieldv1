@@ -26,6 +26,16 @@ class InlineNoisePanel extends HookConsumerWidget {
     final current = useState<double>(0);
     final smoothed = useState<double>(0);
 
+    // Pulse animation controller for threshold exceeded state
+    final animationController = useAnimationController(
+      duration: const Duration(milliseconds: 1500),
+    );
+    final pulseAnimation = useAnimation(
+      Tween<double>(begin: 0.3, end: 1.0).animate(
+        CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+      ),
+    );
+
     useEffect(() {
       final sub = controller.stream.listen((d) {
         if (d.isNaN || d.isInfinite) return;
@@ -36,6 +46,17 @@ class InlineNoisePanel extends HookConsumerWidget {
       });
       return () => sub.cancel();
     }, [controller]);
+
+    // Start/stop pulse animation based on threshold exceeded state
+    useEffect(() {
+      if (!isListening && smoothed.value > threshold) {
+        animationController.repeat(reverse: true);
+      } else {
+        animationController.stop();
+        animationController.reset();
+      }
+      return null;
+    }, [smoothed.value, threshold, isListening]);
 
     // Start ambient monitoring when not in an active session
     // This effect runs whenever the widget rebuilds to ensure monitoring is always active
@@ -69,20 +90,29 @@ class InlineNoisePanel extends HookConsumerWidget {
       };
     }); // No dependencies - runs on every build to handle detector recreation
 
-    // Calculate suggested threshold: current dB + 5, rounded to nearest 5
-    int calculateSuggestedThreshold() {
-      final raw = (smoothed.value + 5).round();
-      return ((raw / 5).round() * 5).clamp(20, 80);
-    }
-
     // Determine if room is too noisy (high threshold warning level)
     final isHighNoise = smoothed.value >= 70.0;
 
     // Active session state: show chart
     if (isListening) {
+      // Vibrant tint for active listening (use primary color)
+      final isDark = theme.brightness == Brightness.dark;
+      final tintColor = theme.colorScheme.primary; // Use theme primary color
+      final baseDecoration = context.cardDecoration;
+
       return Container(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        decoration: context.subtleCardDecoration,
+        decoration: baseDecoration.copyWith(
+          color: isDark
+              ? Color.alphaBlend(
+                  tintColor.withValues(alpha: 0.18),
+                  theme.colorScheme.surfaceContainerHighest,
+                )
+              : Color.alphaBlend(
+                  tintColor.withValues(alpha: 0.12),
+                  theme.colorScheme.surfaceContainerHighest,
+                ),
+        ),
         child: Row(
           children: [
             // Left: dB display
@@ -141,79 +171,151 @@ class InlineNoisePanel extends HookConsumerWidget {
       );
     }
 
-    // Default state: smart threshold suggestions
-    final suggestedThreshold = calculateSuggestedThreshold();
+    // Determine color based on noise levels
+    final isExceeding = smoothed.value > threshold;
+    Color getLoudnessColor() {
+      if (isHighNoise) return theme.colorScheme.error;
+      if (isExceeding) return Colors.orange;
+      return theme.colorScheme.primary;
+    }
+
+    // Vibrant tint for room loudness widget (use primary color)
+    final isDark = theme.brightness == Brightness.dark;
+    final tintColor = theme.colorScheme.primary; // Use theme primary color
+    final baseDecoration = context.cardDecoration;
 
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: context.subtleCardDecoration,
+      decoration: baseDecoration.copyWith(
+        color: isDark
+            ? Color.alphaBlend(
+                tintColor.withValues(alpha: 0.18),
+                theme.colorScheme.surfaceContainerHighest,
+              )
+            : Color.alphaBlend(
+                tintColor.withValues(alpha: 0.12),
+                theme.colorScheme.surfaceContainerHighest,
+              ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row with title and current threshold badge
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left: dB display
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Room Loudness',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${smoothed.value.toStringAsFixed(1)}dB',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: isHighNoise
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              // Left: Title
+              Text(
+                'Room Loudness',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-              // Right: threshold suggestion button
-              OutlinedButton(
-                onPressed: () async {
-                  await settingsNotifier.updateSetting('decibelThreshold', suggestedThreshold.toDouble());
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Threshold set to $suggestedThreshold dB'),
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 2),
+              // Right: Current threshold badge (pulses when exceeded)
+              Opacity(
+                opacity: isExceeding ? pulseAnimation : 1.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isExceeding
+                        ? Colors.orange.withValues(alpha: 0.15)
+                        : theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isExceeding
+                          ? Colors.orange.withValues(alpha: 0.5)
+                          : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      width: isExceeding ? 1.5 : 1,
                     ),
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isExceeding) ...[
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          size: 14,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                      Text(
+                        'Threshold: ${threshold.round()}dB',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isExceeding
+                              ? Colors.orange
+                              : theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Text('Set Threshold: ${suggestedThreshold}dB'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Compact row: Current loudness + threshold selector buttons
+          Row(
+            children: [
+              // Left: Current loudness reading (slightly smaller to fit buttons)
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: getLoudnessColor(),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${smoothed.value.toStringAsFixed(1)}dB',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: getLoudnessColor(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              // Right: Text-only threshold selector buttons (compact spacing)
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    for (final db in const [30, 40, 50, 60, 80])
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: _buildTextThresholdButton(
+                          context,
+                          theme,
+                          db,
+                          threshold.round() == db,
+                          () async {
+                            await settingsNotifier.updateSetting('decibelThreshold', db.toDouble());
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Threshold set to $db dB'),
+                                behavior: SnackBarBehavior.floating,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
           // High noise warning (only shown when noise >= 70dB)
           if (isHighNoise) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -244,6 +346,32 @@ class InlineNoisePanel extends HookConsumerWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  /// Build text-only threshold button (matches duration selector style: 1m, 5m, etc.)
+  Widget _buildTextThresholdButton(
+    BuildContext context,
+    ThemeData theme,
+    int db,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+        child: Text(
+          '${db}dB',
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          ),
+        ),
       ),
     );
   }

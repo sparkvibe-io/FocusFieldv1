@@ -52,48 +52,76 @@ class QuestCapsule extends ConsumerWidget {
 
     final message = _getDailyMessage();
 
-    // Inverse background: lighter in dark mode, darker in light mode
+    // HERO ELEMENT: Bold inverse contrast backgrounds with excellent text visibility
     final isDark = theme.brightness == Brightness.dark;
-    final backgroundColor = isDark
-        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
-        : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
+
+    // Call-to-action colors: lighter in dark mode, darker in light mode
+    final backgroundDecoration = isDark
+        ? BoxDecoration(
+            // Lighter gradient in dark mode (stands out from darker widgets)
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF3D5A5A), // Lighter teal-gray
+                const Color(0xFF4A6868), // Even lighter
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          )
+        : BoxDecoration(
+            // Darker solid color in light mode (like sample image)
+            color: const Color(0xFF546E7A), // Medium-dark blue-gray
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          );
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: backgroundDecoration,
       child: Column(
         children: [
           // Main row: Message + indicators + button
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Trophy motivational icon
+              // Trophy motivational icon - clean without glow
               Container(
                 width: context.iconSize * 2,
                 height: context.iconSize * 2,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
+                  color: isDark
+                      ? const Color(0xFF5A7070) // Lighter background in dark mode
+                      : const Color(0xFF78909C), // Medium gray-blue in light mode
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.emoji_events,
                   size: context.iconSize + 2,
-                  color: const Color(0xFFFFD700),
+                  color: const Color(0xFFFFD700), // Bright gold trophy
                 ),
               ),
               const SizedBox(width: 16),
-              // Simple message text
+              // Simple message text with high contrast
               Expanded(
                 child: Text(
                   message,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: theme.brightness == Brightness.dark
-                        ? Colors.white.withValues(alpha: 0.95)
-                        : Colors.black.withValues(alpha: 0.85),
+                    color: Colors.white, // Always white for high contrast
                     height: 1.3,
                   ),
                   maxLines: 3,
@@ -101,25 +129,27 @@ class QuestCapsule extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // Go button
+              // Prominent Go button matching sample design
               Material(
-                color: theme.brightness == Brightness.dark
-                    ? Colors.white.withValues(alpha: 0.2)
-                    : Colors.black.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                color: isDark
+                    ? const Color(0xFF607D8B) // Medium gray in dark mode
+                    : const Color(0xFFECEFF1), // Very light gray in light mode
+                borderRadius: BorderRadius.circular(12),
+                elevation: 2,
+                shadowColor: Colors.black.withValues(alpha: 0.2),
                 child: InkWell(
                   onTap: onNavigateToActivity,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     child: Text(
                       'Go',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: theme.brightness == Brightness.dark
+                        color: isDark
                             ? Colors.white
-                            : Colors.black.withValues(alpha: 0.8),
+                            : const Color(0xFF37474F), // Dark text on light button
                       ),
                     ),
                   ),

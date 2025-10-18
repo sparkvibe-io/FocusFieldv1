@@ -5,11 +5,27 @@
 
 A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
 
-## 🚀 Current Status (October 2025): Tablet Responsive Design Complete ✅
+## 🚀 Current Status (October 2025): Focus Mode & Progress Ring Redesign Complete ✅
 
 **Ambient Quests** is the merged, quiet-first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today's goal progress, and streaks are compassionate (2-Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
 
 **Simple & Customizable**: Users can now show/hide activities and adjust their daily quiet goal (10-60 minutes) through a polished Edit Activities sheet. Each activity tracks separate progress toward the global goal.
+
+**Success System Consolidation (Oct 17, 2025)**: Migrated to unified Ambient Score-based success determination. Sessions with ≥70% calm qualify for credit, and users earn proportional points (quiet minutes only) instead of all-or-nothing. This compassionate system encourages progress even on imperfect sessions.
+
+**Focus Mode & Progress Ring Redesign (Oct 17, 2025)**: Complete UX overhaul for cleaner, more intuitive session control - **P1 MVP-READY**:
+- ✅ **Audio Circuit Breaker Fix**: Reduced timeout from 5s to 500ms - eliminates false "temporarily disabled" errors while maintaining crash protection
+- ✅ **Focus Mode Completion State**: Session success UI with check icon and "Session Complete!" message when timer reaches zero
+- ✅ **Top-Row Control Layout**: Moved all controls above progress ring for cleaner center display
+  - **Not Running**: Duration chips (1, 5, 10, 15, 30 min + premium)
+  - **Running**: Focus Mode button (if disabled), Pause, Stop + Ambient % text
+- ✅ **Smart Focus Mode Logic**: Shows button when disabled (default), auto-activates when enabled in settings
+- ✅ **Rectangular Buttons**: Changed from rounded (radius 16) to rectangular (radius 4) for professional appearance
+- ✅ **Clean Ambient Display**: Changed from button background to plain text - reduces visual clutter
+- ✅ **Long-Press Protection**: Pause/Stop require long-press to prevent accidental session termination
+- ✅ **Material 3 Colors**: Semantic button styling (primaryContainer, secondaryContainer, errorContainer)
+
+**Note**: P2 (breathing animation, icon buttons, enhanced celebration) and P3 (lock mode, color themes, ultra-minimal) Focus Mode enhancements are deferred to post-MVP releases. Current P1 implementation is fully functional for launch.
 
 ### ✅ **P0 Implementation COMPLETE** (Oct 9-10, 2025)
 
@@ -120,11 +136,12 @@ A sophisticated Flutter app that measures silence, tracks progress, and provides
 
 ### Core Functionality
 - **Real-Time Silence Detection**: Ambient noise monitoring using device microphone
-- **Interactive Session Progress Ring**: Large countdown control with MM:SS timer
+- **Interactive Session Progress Ring**: Large countdown control with MM:SS timer and top-row control layout
+- **Focus Mode Overlay**: ✅ **NEW** Full-screen minimal distraction mode with long-press Pause/Stop, session completion state
 - **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing (1Hz aggregated controller)
 - **Quick Duration Selectors**: ✅ **NEW** Instant session length buttons (1, 5, 10, 15, 30 min + premium 1h, 1.5h, 2h)
 - **Quick Threshold Selectors**: ✅ **NEW** One-tap decibel adjustment buttons (20, 40, 60, 80 dB)
-- **Smart Point System**: Earn 1 point per minute of successful quiet time
+- **Smart Point System**: Ambient Score-based success (≥70% calm threshold) with proportional credit - earn 1 point per quiet minute
 - **Streak Analytics**: Track daily streaks, best performances, and session history
 - **Noise Floor Calibration**: Quick ambient baseline measurement (clamped 20–80 dB)
 - **Achievement System**: Visual feedback with confetti celebrations
@@ -358,7 +375,8 @@ Unit tests cover smart reminder eligibility (`shouldSendDailyReminder`) with inj
 - **Decibel Threshold**: 38 dB (adjustable 20–80)
 - **Session Duration (Free Default)**: 30 minutes (Premium configurable 1–120 minutes)
 - **Sample Interval**: 200ms (system constant)
-- **Points System**: 1 point per quiet minute
+- **Success System**: Ambient Score-based (70% calm threshold for qualification)
+- **Points Award**: 1 point per quiet minute (proportional credit based on `quietSeconds / elapsedSeconds`)
 - **Chart Smoothing**: Exponential moving average
 - **Theme**: High-contrast, modern default themes (Light & Dark).
 - **Premium Themes**: Includes `Ocean Blue`, `Forest Green`, `Cyber Neon`, and more.
@@ -533,6 +551,7 @@ lib/
 
 #### Widgets
 - `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
+- `FocusModeOverlay`: ✅ **NEW** Full-screen Focus Mode with completion states, long-press Pause/Stop controls, and minimal distractions
 - `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates + integrated quick threshold selectors
 - `AdvancedAnalyticsWidget`: Premium analytics with compact performance metrics and per-activity insights
 - `QuickDurationSelector`: ✅ **NEW** Compact session duration buttons with premium integration and paywall
@@ -544,6 +563,7 @@ lib/
 
 #### Services
 - `SilenceDetector`: Core noise monitoring, permission coalescing, circuit breaker & analysis
+- `AudioCircuitBreaker`: ✅ **NEW** Crash protection for audio access with optimized 500ms immediate timeout
 - `StorageService`: Data persistence and management
 - `PermissionHandler`: Microphone access management
 
@@ -701,7 +721,50 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
 
-### Latest Updates (v0.1.2 - Live Metrics Release - Oct 13, 2025)
+### Latest Updates (v0.1.3 - Focus Mode Redesign - Oct 17, 2025)
+
+#### 🎯 **Focus Mode & Progress Ring UX Overhaul**
+- ✅ **Audio Circuit Breaker Optimization**: Reduced immediate protection timeout from 5s to 500ms
+  - Eliminates false "Audio access temporarily disabled" errors
+  - Maintains crash protection for native audio buffer issues
+  - Improves app responsiveness during session transitions
+- ✅ **Focus Mode Overlay Completion State**: Added session success UI
+  - Check icon and "Session Complete!" message when timer reaches zero
+  - Hides Pause/Stop buttons on completion
+  - Provides clear visual feedback for session achievement
+- ✅ **Top-Row Control Layout**: Moved all session controls above progress ring
+  - **When NOT running**: Duration selector chips (1, 5, 10, 15, 30 min + premium options)
+  - **When running**: Focus Mode button (if disabled), Pause, Stop buttons + Ambient % text
+  - Center shows only time countdown (removed "Calm" subtitle for cleaner look)
+- ✅ **Smart Focus Mode Button Logic**: Reversed visibility behavior
+  - Shows button when Focus Mode is DISABLED in settings (allows manual activation)
+  - Auto-activates on Start when ENABLED in settings (reduces UI clutter)
+  - Prevents redundant button when feature is already active
+- ✅ **Rectangular Button Design**: Changed from rounded to rectangular shape
+  - Border radius reduced from 16 to 4 for more professional appearance
+  - Applies to Focus Mode, Pause, and Stop buttons
+  - Consistent with modern minimal design trends
+- ✅ **Ambient % Text-Only Display**: Removed button background from Ambient percentage
+  - Changed from Container with background to plain text
+  - Reduces visual clutter during active sessions
+  - Maintains glanceable real-time feedback
+- ✅ **Long-Press Protection**: Pause and Stop buttons require long-press to activate
+  - Prevents accidental session termination
+  - Clear hint text: "Long press to pause or stop"
+  - Better user experience during focused sessions
+- ✅ **Material 3 Color Semantics**: Consistent button coloring
+  - Focus Mode: primaryContainer (teal)
+  - Pause/Resume: secondaryContainer (gray)
+  - Stop: errorContainer (red)
+  - Provides clear visual distinction for different actions
+
+#### 🔧 **Technical Implementation**
+- ✅ Files Modified: `lib/services/audio_circuit_breaker.dart`, `lib/widgets/focus_mode_overlay.dart`, `lib/screens/home_page_elegant.dart`
+- ✅ New Helper Method: `_buildTopButton()` for consistent control button styling
+- ✅ Code Quality: Full dart format pass with flutter analyze showing 0 issues
+- ✅ Documentation: Updated CLAUDE.md and README.md with implementation details
+
+### Previous Updates (v0.1.2 - Live Metrics Release - Oct 13, 2025)
 
 #### 📊 **Dynamic Trends & Real Data**
 - ✅ **Live Metrics**: Replaced placeholder data with real calculations from session history
@@ -769,6 +832,24 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 
 ## 🗺️ Roadmap
 
+### 🚀 **MVP Status: READY FOR LAUNCH**
+
+**What's Included in MVP**:
+- ✅ Core Ambient Quests system (P0)
+- ✅ Quest Capsule, Adaptive Threshold, Activity Customization (P1)
+- ✅ Focus Mode P1 (full-screen overlay, completion states, long-press controls)
+- ✅ Tablet responsive design (phone-first, adaptive scaling)
+- ✅ RevenueCat monetization (Premium + Premium Plus)
+- ✅ AdMob banner integration
+- ✅ 7-language localization (EN, ES, DE, FR, JA, PT, PT_BR)
+- ✅ Success system (Ambient Score, compassionate streaks)
+
+**Deferred to Post-MVP**:
+- 📋 iOS Live Activities (Android notification parity exists)
+- 📋 Focus Mode P2/P3 enhancements (breathing, themes, lock mode)
+- 📋 Custom activity creation
+- 📋 Health/Calendar integrations
+
 ### Phase 1 Features (Premium Tier - $1.99/month)
 - [x] Extended sessions (up to 120 minutes)
 - [x] Advanced analytics & weekly trends
@@ -777,15 +858,50 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and upda
 - [x] Priority support
 - [x] Calibration dialog & high-threshold warnings
 
-### Phase 2 Features (Planned)
+### Phase 2 Features (Post-MVP)
+
+**Focus Mode Enhancements (P2 - Enhanced UX)**:
+- [ ] 🌬️ **Breathing Animation**: Meditation-style breathing guide (8s inhale/exhale cycle)
+  - Circular animation behind progress ring
+  - Pauses when session is paused
+  - Toggle in Settings > Focus > "Breathing Guide"
+- [ ] 🎨 **Icon Buttons**: Replace text buttons with circular icon-only buttons
+  - Cleaner minimal design
+  - Pause/Resume and Stop as circular icons
+  - "Long press" hint below buttons
+- [ ] 🎉 **Enhanced Completion Celebration**: Better success feedback
+  - Animated check icon with elastic bounce effect
+  - Display ambient score percentage in completion message
+  - Fade-in animations for text elements
+- [ ] ⚙️ **Auto Focus Mode Toggle**: Explicit settings switch
+  - Settings > Focus > "Auto Focus Mode"
+  - Logic already implemented, needs UI toggle
+
+**Focus Mode Premium Features (P3 - Premium Only)**:
+- [ ] 🔒 **Lock Mode**: Prevent exiting until session completes
+  - Premium feature with feature gating
+  - Lock indicator when active
+  - Safety: always allow exit on completion
+- [ ] 🎨 **Color Themes**: 4 personalized aesthetic themes
+  - Midnight (black + cyan - default)
+  - Ocean (deep blue + ocean blue)
+  - Forest (dark green + green)
+  - Sunset (dark red + coral)
+  - Grid-based theme selector in Settings
+- [ ] 🌑 **Ultra-Minimal Mode**: Maximum distraction reduction
+  - Ring-only display (no timer text or buttons)
+  - Long-press anywhere to reveal controls temporarily (5s timeout)
+  - Premium tier required
+
+**Other Phase 2 Features**:
 - [ ] Cloud synchronization & backup
 - [ ] AI-enhanced insights with predictive recommendations
 - [ ] Multi-environment profiles
 - [ ] Social/community features
 - [ ] Team collaboration
- - [ ] Spike / interruption detection
- - [ ] Silence quality score metric
- - [ ] Streak goal customization & reminders
+- [ ] Spike / interruption detection
+- [ ] Silence quality score metric
+- [ ] Streak goal customization & reminders
 
 ### Future Enhancements
 - [ ] Sound visualization with waveform display
@@ -961,4 +1077,4 @@ For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to re
 6. **Launch Marketing**: Execute go-to-market strategy
 
 ## Last Updated
-October 13, 2025 — Added live metrics to "Your patterns" card, enhanced session model with ambient score tracking, upgraded user preferences persistence, and completed brand alignment across all notification strings.
+October 17, 2025 — Completed Focus Mode & Progress Ring UX redesign with optimized audio circuit breaker (500ms timeout), session completion state, top-row control layout, smart Focus Mode button logic, rectangular button design, and Ambient % text-only display. All changes improve clarity, reduce visual clutter, and prevent accidental session termination.

@@ -22,7 +22,9 @@ class AdaptiveThresholdChip extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.green.withValues(alpha: 0.15),
@@ -108,6 +110,7 @@ class AdaptiveThresholdChip extends ConsumerWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

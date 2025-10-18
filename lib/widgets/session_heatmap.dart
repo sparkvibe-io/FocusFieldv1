@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/silence_data.dart';
 
-/// GitHub-style heatmap showing session activity over the past 12 weeks
+/// GitHub-style heatmap showing session activity over the past 2 months (or current month if new user)
 class SessionHeatmap extends StatelessWidget {
   final List<SessionRecord> sessions;
-  final int weeks;
+  final int? weeks;
 
   const SessionHeatmap({
     super.key,
     required this.sessions,
-    this.weeks = 12,
+    this.weeks,
   });
 
   @override
@@ -19,8 +19,12 @@ class SessionHeatmap extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
+    // Determine appropriate number of weeks to show
+    final weeksToShow = weeks ?? _determineWeeksToShow(today);
+
     // Calculate start date (weeks ago, starting from Monday)
-    final startDate = _getMondayOfWeek(today.subtract(Duration(days: weeks * 7)));
+    // Subtract (weeksToShow - 1) weeks to include the current week
+    final startDate = _getMondayOfWeek(today.subtract(Duration(days: (weeksToShow - 1) * 7)));
 
     // Build a map of date -> total minutes
     final Map<DateTime, int> dailyMinutes = {};
@@ -41,44 +45,41 @@ class SessionHeatmap extends StatelessWidget {
         : dailyMinutes.values.reduce((a, b) => a > b ? a : b);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Month labels
-        _buildMonthLabels(startDate, weeks, theme),
+        _buildMonthLabels(startDate, weeksToShow, theme),
         const SizedBox(height: 8),
 
-        // Heatmap grid
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Day labels (Mon, Wed, Fri)
-            _buildDayLabels(theme),
-            const SizedBox(width: 8),
+        // Heatmap grid - centered
+        Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Day labels (Mon, Wed, Fri)
+              _buildDayLabels(theme),
+              const SizedBox(width: 8),
 
-            // Grid of weeks
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(weeks, (weekIndex) {
-                        final weekStart = startDate.add(Duration(days: weekIndex * 7));
-                        return _buildWeekColumn(
-                          context,
-                          weekStart,
-                          dailyMinutes,
-                          maxMinutes,
-                          theme,
-                        );
-                      }),
-                    ),
-                  );
-                },
+              // Grid of weeks
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(weeksToShow, (weekIndex) {
+                    final weekStart = startDate.add(Duration(days: weekIndex * 7));
+                    return _buildWeekColumn(
+                      context,
+                      weekStart,
+                      dailyMinutes,
+                      maxMinutes,
+                      theme,
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -103,20 +104,23 @@ class SessionHeatmap extends StatelessWidget {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 40),
-      child: Row(
-        children: labels
-            .map((label) => SizedBox(
-                  width: 16,
-                  child: Text(
-                    label,
-                    style: theme.textTheme.labelSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.visible,
-                  ),
-                ))
-            .toList(),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 40),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: labels
+              .map((label) => SizedBox(
+                    width: 16,
+                    child: Text(
+                      label,
+                      style: theme.textTheme.labelSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ))
+              .toList(),
+        ),
       ),
     );
   }
@@ -176,8 +180,23 @@ class SessionHeatmap extends StatelessWidget {
     int maxMinutes,
     ThemeData theme,
   ) {
-    final intensity = minutes == 0 ? 0.0 : (minutes / maxMinutes).clamp(0.2, 1.0);
+    // More vibrant colors: higher minimum intensity and blended colors
+    final intensity = minutes == 0 ? 0.0 : (minutes / maxMinutes).clamp(0.5, 1.0);
     final dateFormat = DateFormat('MMM d, yyyy');
+
+    // Create vibrant color by blending primary with surface
+    final Color squareColor;
+    if (minutes == 0) {
+      // Empty state: subtle but visible outline style (GitHub-like)
+      squareColor = theme.colorScheme.surfaceContainerHighest;
+    } else {
+      // Blend primary color with surface for vibrant look
+      squareColor = Color.lerp(
+        theme.colorScheme.primary.withValues(alpha: 0.5),
+        theme.colorScheme.primary,
+        intensity,
+      )!;
+    }
 
     return Tooltip(
       message: '${dateFormat.format(date)}\n$minutes minutes',
@@ -186,13 +205,14 @@ class SessionHeatmap extends StatelessWidget {
         height: 12,
         margin: const EdgeInsets.all(1),
         decoration: BoxDecoration(
-          color: minutes == 0
-              ? theme.colorScheme.surfaceContainerHighest
-              : theme.colorScheme.primary.withValues(alpha: intensity),
+          color: squareColor,
           borderRadius: BorderRadius.circular(2),
           border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.1),
-            width: 0.5,
+            // Empty squares have more visible border (GitHub-style)
+            color: minutes == 0
+                ? theme.colorScheme.outline.withValues(alpha: 0.4)
+                : theme.colorScheme.outline.withValues(alpha: 0.2),
+            width: minutes == 0 ? 1.0 : 0.5,
           ),
         ),
       ),
@@ -201,7 +221,7 @@ class SessionHeatmap extends StatelessWidget {
 
   Widget _buildLegend(ThemeData theme) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           'Less',
@@ -227,21 +247,43 @@ class SessionHeatmap extends StatelessWidget {
   }
 
   Widget _legendSquare(ThemeData theme, double intensity) {
+    // Match the vibrant color scheme from _buildDaySquare
+    final Color squareColor;
+    if (intensity == 0) {
+      squareColor = theme.colorScheme.surfaceContainerHighest;
+    } else {
+      squareColor = Color.lerp(
+        theme.colorScheme.primary.withValues(alpha: 0.5),
+        theme.colorScheme.primary,
+        intensity,
+      )!;
+    }
+
     return Container(
       width: 12,
       height: 12,
       margin: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
-        color: intensity == 0
-            ? theme.colorScheme.surfaceContainerHighest
-            : theme.colorScheme.primary.withValues(alpha: intensity),
+        color: squareColor,
         borderRadius: BorderRadius.circular(2),
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 0.5,
+          // Empty legend square has more visible border
+          color: intensity == 0
+              ? theme.colorScheme.outline.withValues(alpha: 0.4)
+              : theme.colorScheme.outline.withValues(alpha: 0.2),
+          width: intensity == 0 ? 1.0 : 0.5,
         ),
       ),
     );
+  }
+
+  /// Determines optimal weeks to show: Always 12 weeks (3 months)
+  /// Shows empty squares for dates without data, providing consistent view
+  int _determineWeeksToShow(DateTime today) {
+    // Always show 12 weeks ending with current week (3-month view)
+    // New users see empty squares, established users see colored squares
+    // This provides a consistent, predictable view
+    return 12;
   }
 
   DateTime _getMondayOfWeek(DateTime date) {

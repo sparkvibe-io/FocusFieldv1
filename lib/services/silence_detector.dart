@@ -288,8 +288,8 @@ class SilenceDetector {
       // Check if we've reached the duration
       if (progress >= 1.0) {
         _stopListening();
-        final success = _checkSuccess();
-        onComplete(success);
+        // Legacy parameter - actual success determined by Ambient Score in UI layer
+        onComplete(true); // Always true here, real success calculated in home_page_elegant.dart
       }
     } catch (e) {
       DebugLog.d('DEBUG: Error processing reading safely: $e');
@@ -307,16 +307,10 @@ class SilenceDetector {
     _processReadingSafely(reading, onProgress, onComplete);
   }
 
-  /// Check if silence was maintained throughout the duration
-  bool _checkSuccess() {
-    if (_readings.isEmpty) return false;
-
-    // Calculate average decibel level
-    final averageDecibel = _readings.reduce((a, b) => a + b) / _readings.length;
-
-    // Check if average is below threshold
-    return averageDecibel <= _threshold;
-  }
+  /// Legacy success check removed - now using Ambient Score system
+  /// Success is determined by: ambientScore >= 0.70 (70% calm threshold)
+  /// Points awarded proportionally based on quiet minutes
+  /// See: lib/providers/ambient_quest_provider.dart for Ambient Score calculation
 
   /// Internal method to ensure clean state before operations
   Future<void> _ensureCleanState() async {

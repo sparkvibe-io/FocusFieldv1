@@ -47,6 +47,8 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
             const SizedBox(height: 16),
             _insights(context, insights, compact: compact),
           ],
+          // Bottom padding to ensure last insight is visible when scrolling
+          const SizedBox(height: 80),
         ],
       );
 
@@ -164,13 +166,13 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     );
   }
 
-  /// Performance Metrics as vertical list (no grid)
+  /// Performance Metrics as compact 2x2 grid
   Widget _buildPerformanceMetricsVertical(
     BuildContext context,
     PerformanceMetrics m,
   ) {
     final theme = Theme.of(context);
-    
+
     String localizedPreferredDuration(String key) {
       final l = AppLocalizations.of(context);
       if (l == null) return key;
@@ -195,45 +197,61 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
-        
-        // Vertical list of metrics
-        _buildMetricRow(
-          context,
-          icon: Icons.check_circle_outline,
-          label: AppLocalizations.of(context)!.successRate,
-          value: '${m.overallSuccessRate.toStringAsFixed(1)}%',
-          color: _successRateColor(m.overallSuccessRate),
+
+        // 2x2 Grid of compact metric cards
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactMetricCard(
+                context,
+                icon: Icons.check_circle_outline,
+                label: AppLocalizations.of(context)!.successRate,
+                value: '${m.overallSuccessRate.toStringAsFixed(1)}%',
+                color: _successRateColor(m.overallSuccessRate),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildCompactMetricCard(
+                context,
+                icon: Icons.timer_outlined,
+                label: AppLocalizations.of(context)!.avgSession,
+                value: '${m.averageSessionLength.toStringAsFixed(1)}m',
+                color: theme.colorScheme.secondary,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
-        _buildMetricRow(
-          context,
-          icon: Icons.timer_outlined,
-          label: AppLocalizations.of(context)!.avgSession,
-          value: '${m.averageSessionLength.toStringAsFixed(1)}m',
-          color: theme.colorScheme.secondary,
-        ),
-        const SizedBox(height: 8),
-        _buildMetricRow(
-          context,
-          icon: Icons.show_chart,
-          label: AppLocalizations.of(context)!.consistency,
-          value: '${(m.consistencyScore * 100).toStringAsFixed(0)}%',
-          color: _consistencyColor(m.consistencyScore),
-        ),
-        const SizedBox(height: 8),
-        _buildMetricRow(
-          context,
-          icon: Icons.hourglass_bottom,
-          label: 'Preferred Duration',
-          value: localizedPreferredDuration(m.preferredDuration),
-          color: theme.colorScheme.primary,
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactMetricCard(
+                context,
+                icon: Icons.show_chart,
+                label: AppLocalizations.of(context)!.consistency,
+                value: '${(m.consistencyScore * 100).toStringAsFixed(0)}%',
+                color: _consistencyColor(m.consistencyScore),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildCompactMetricCard(
+                context,
+                icon: Icons.hourglass_bottom,
+                label: 'Preferred Duration',
+                value: localizedPreferredDuration(m.preferredDuration),
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  /// Single metric row: icon + label + value
-  Widget _buildMetricRow(
+  /// Ultra-compact metric card with icon+title row, centered value
+  Widget _buildCompactMetricCard(
     BuildContext context, {
     required IconData icon,
     required String label,
@@ -241,49 +259,61 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     required Color color,
   }) {
     final theme = Theme.of(context);
-    return Row(
-      children: [
-        // Circular icon container
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
         ),
-        const SizedBox(width: 12),
-        // Label
-        Expanded(
-          child: Text(
-            label,
-            style: theme.textTheme.bodyMedium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon + Label on same row
+          Row(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 8),
-        // Value
-        Text(
-          value,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
+          const SizedBox(height: 8),
+          // Value centered
+          Center(
+            child: Text(
+              value,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  /// Best Time by Activity widget - shows per-activity best times
+  /// Best Time by Activity widget - compact single-row cards
   Widget _buildBestTimeByActivity(BuildContext context, Map<String, int> bestTimeByActivity) {
     final theme = Theme.of(context);
-    
+
     if (bestTimeByActivity.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -292,34 +322,22 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ...bestTimeByActivity.entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _buildActivityTimeCard(
+              context,
+              activityId: entry.key,
+              hour: entry.value,
             ),
-          ),
-          child: Column(
-            children: bestTimeByActivity.entries.map((entry) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _buildActivityTimeRow(
-                  context,
-                  activityId: entry.key,
-                  hour: entry.value,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }
 
-  /// Individual activity time row
-  Widget _buildActivityTimeRow(
+  /// Individual activity time card - compact horizontal layout
+  Widget _buildActivityTimeCard(
     BuildContext context, {
     required String activityId,
     required int hour,
@@ -328,35 +346,48 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     final icon = _getActivityIcon(activityId);
     final color = _getActivityColor(activityId);
     final name = _getActivityName(activityId);
-    
-    return Row(
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, size: 18, color: color),
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            name,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
+      ),
+      child: Row(
+        children: [
+          // Icon
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(width: 12),
+          // Activity name
+          Expanded(
+            child: Text(
+              name,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        ),
-        Text(
-          _formatHour(hour),
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
+          // Time
+          Text(
+            _formatHour(hour),
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

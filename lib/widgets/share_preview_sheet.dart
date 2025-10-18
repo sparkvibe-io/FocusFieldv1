@@ -19,7 +19,7 @@ class SharePreviewSheet extends StatefulWidget {
   final int totalMinutes;
   final int sessionCount;
   final double successRate;
-  final String? topActivity;
+  final Map<String, int>? activityMinutes; // Map of activity name -> minutes
   final String dateRange; // e.g., "Oct 7-13, 2025" or "October 13, 2025"
   final ShareTimeRange initialTimeRange;
 
@@ -28,7 +28,7 @@ class SharePreviewSheet extends StatefulWidget {
     required this.totalMinutes,
     required this.sessionCount,
     required this.successRate,
-    this.topActivity,
+    this.activityMinutes,
     required this.dateRange,
     this.initialTimeRange = ShareTimeRange.weekly,
   });
@@ -285,7 +285,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
       totalMinutes: widget.totalMinutes,
       sessionCount: widget.sessionCount,
       successRate: widget.successRate,
-      topActivity: widget.topActivity,
+      activityMinutes: widget.activityMinutes,
       timeRange: widget.dateRange,
       title: _selectedTimeRange.title,
       format: _selectedFormat,

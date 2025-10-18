@@ -835,7 +835,7 @@ class _ActivityRingsPainter extends CustomPainter {
 
 /// Minimal, elegant progress card for daily or weekly sharing.
 /// Professional design with subtle colors and generous whitespace.
-/// 
+///
 /// Perfect for:
 /// - Daily progress updates
 /// - Weekly summaries
@@ -844,7 +844,7 @@ class MinimalProgressCard extends StatelessWidget {
   final int totalMinutes;
   final int sessionCount;
   final double successRate;
-  final String? topActivity;
+  final Map<String, int>? activityMinutes; // Map of activity name -> minutes
   final String timeRange; // e.g., "Today" or "Oct 7-13, 2025"
   final String title; // e.g., "Today's Focus" or "Your Weekly Focus"
   final ShareCardFormat format;
@@ -854,7 +854,7 @@ class MinimalProgressCard extends StatelessWidget {
     required this.totalMinutes,
     required this.sessionCount,
     required this.successRate,
-    this.topActivity,
+    this.activityMinutes,
     required this.timeRange,
     required this.title,
     this.format = ShareCardFormat.post,
@@ -981,7 +981,7 @@ class MinimalProgressCard extends StatelessWidget {
 
   Widget _buildStatsGrid() {
     final stats = <Widget>[];
-    
+
     if (sessionCount > 0) {
       stats.add(_StatItem(
         icon: Icons.format_list_numbered_outlined,
@@ -989,7 +989,7 @@ class MinimalProgressCard extends StatelessWidget {
         value: sessionCount.toString(),
       ));
     }
-    
+
     if (successRate > 0) {
       stats.add(_StatItem(
         icon: Icons.check_circle_outline,
@@ -997,20 +997,137 @@ class MinimalProgressCard extends StatelessWidget {
         value: '${successRate.toStringAsFixed(0)}%',
       ));
     }
-    
-    if (topActivity != null && topActivity!.isNotEmpty && topActivity != 'None') {
-      stats.add(_StatItem(
-        icon: Icons.star_outline,
-        label: 'Top Activity',
-        value: topActivity!,
-      ));
+
+    return Column(
+      children: [
+        // Stats grid (Sessions and Success)
+        Wrap(
+          spacing: 40,
+          runSpacing: 24,
+          alignment: WrapAlignment.center,
+          children: stats,
+        ),
+
+        // Activity breakdown (if activities exist)
+        if (activityMinutes != null && activityMinutes!.isNotEmpty)
+          ...[
+            const SizedBox(height: 32),
+            _buildActivityBreakdown(),
+          ],
+      ],
+    );
+  }
+
+  Widget _buildActivityBreakdown() {
+    // Filter and sort activities by minutes (descending)
+    final activities = activityMinutes!.entries
+        .where((entry) => entry.value > 0)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    if (activities.isEmpty) return const SizedBox.shrink();
+
+    final topActivity = activities.first;
+
+    return Column(
+      children: [
+        // Row 1: Star icon + top activity name
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.star,
+              color: Color(0xFFFFA000), // Amber for star
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              topActivity.key,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 20),
+
+        // Row 2: Individual activity icons with minutes
+        Wrap(
+          spacing: 20,
+          runSpacing: 12,
+          alignment: WrapAlignment.center,
+          children: activities.map((entry) {
+            return _buildActivityChip(entry.key, entry.value);
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivityChip(String activityName, int minutes) {
+    // Map activity names to Material icons
+    IconData icon;
+    Color color;
+
+    switch (activityName.toLowerCase()) {
+      case 'study':
+        icon = Icons.school_outlined;
+        color = const Color(0xFF8B9DC3);
+        break;
+      case 'reading':
+        icon = Icons.menu_book_outlined;
+        color = const Color(0xFF7BA7BC);
+        break;
+      case 'meditation':
+        icon = Icons.self_improvement_outlined;
+        color = const Color(0xFF86B489);
+        break;
+      case 'work':
+        icon = Icons.work_outline;
+        color = const Color(0xFFC6927E);
+        break;
+      default:
+        icon = Icons.more_horiz;
+        color = const Color(0xFFC4A57B);
     }
 
-    return Wrap(
-      spacing: 40,
-      runSpacing: 24,
-      alignment: WrapAlignment.center,
-      children: stats,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            activityName,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '${minutes}m',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

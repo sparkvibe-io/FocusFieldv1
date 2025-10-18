@@ -35,7 +35,8 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
       final target = prefs.perActivityGoalsEnabled && prefs.perActivityGoals != null
           ? (prefs.perActivityGoals![profileId] ?? prefs.globalDailyQuietGoalMinutes)
           : prefs.globalDailyQuietGoalMinutes;
-      final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
+      // Allow progress to exceed 100% (up to 200%) to show when users exceed their goals
+      final progress = target > 0 ? (completed / target).clamp(0.0, 2.0) : 0.0;
 
       return {
         'id': profileId,
@@ -54,20 +55,43 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     final totalTarget = prefs.perActivityGoalsEnabled && prefs.perActivityGoals != null
         ? enabledProfileIds.fold<int>(0, (sum, id) => sum + (prefs.perActivityGoals![id] ?? 0))
         : prefs.globalDailyQuietGoalMinutes;
-    final overallProgress = totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0;
+    // If freeze token was used today, lock overall progress at 100% regardless of subsequent sessions
+    final overallProgress = questState.freezeTokenUsedToday
+        ? 1.0
+        : (totalTarget > 0 ? (totalCompleted / totalTarget).clamp(0.0, 1.0) : 0.0);
     final overallPercentage = '${(overallProgress * 100).toInt()}%';
+    
+    // Add freeze token badge to Overall label when freeze token is used
+    final overallLabel = questState.freezeTokenUsedToday ? 'Overall ❄️' : 'Overall';
 
-    // Inverse background: darker in light mode, lighter in dark mode
+    // Borderless card with vibrant, optimistic colored background
     final isDark = theme.brightness == Brightness.dark;
+
+    // Brighter, more vibrant tints for optimistic feel
+    final baseColor = theme.colorScheme.surfaceContainerHighest;
+    final tintColor = theme.colorScheme.primary;
     final backgroundColor = isDark
-        ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9)
-        : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
+        ? Color.alphaBlend(
+            tintColor.withValues(alpha: 0.20), // Much brighter 20% cyan tint
+            baseColor,
+          )
+        : Color.alphaBlend(
+            tintColor.withValues(alpha: 0.15), // Brighter 15% teal tint
+            baseColor,
+          );
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: isDark ? 0.4 : 0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,41 +109,44 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Freeze indicator
-                  if (questState.freezeTokens > 0) ...[
-                    InkWell(
-                      onTap: () => _showFreezeDialog(context),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.tertiary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
+                  // Freeze indicator (always visible for discoverability)
+                  InkWell(
+                    onTap: () => _showFreezeDialog(context),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.tertiary.withValues(
+                          alpha: questState.freezeTokens > 0 ? 0.15 : 0.08,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('❄️', style: TextStyle(fontSize: 14)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${questState.freezeTokens}',
-                              style: theme.textTheme.labelMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.tertiary,
-                              ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('❄️', style: TextStyle(fontSize: 14)),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${questState.freezeTokens}',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: questState.freezeTokens > 0
+                                  ? theme.colorScheme.tertiary
+                                  : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                  ],
+                  ),
+                  const SizedBox(width: 8),
                   TextButton.icon(
                     onPressed: () => _openEditSheet(context),
-                    icon: const Icon(Icons.tune, size: 18),
+                    icon: Icon(Icons.tune, size: 18, color: theme.colorScheme.primary),
                     label: const Text('Edit'),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      foregroundColor: theme.colorScheme.primary, // Match Settings page vibrancy
                     ),
                   ),
                 ],
@@ -128,7 +155,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           // Adaptive rings layout
-          _buildAdaptiveLayout(context, activities, overallProgress, overallPercentage),
+          _buildAdaptiveLayout(context, activities, overallProgress, overallPercentage, overallLabel),
         ],
       ),
     );
@@ -147,17 +174,53 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     List<Map<String, dynamic>> activities,
     double overallProgress,
     String overallPercentage,
+    String overallLabel,
   ) {
     final count = activities.length;
 
     if (count == 1) {
-      return _build1ActivityLayout(context, activities[0], overallProgress, overallPercentage);
+      return _build1ActivityLayout(context, activities[0], overallProgress, overallPercentage, overallLabel);
     } else if (count == 2) {
-      return _build2ActivitiesLayout(context, activities, overallProgress, overallPercentage);
+      return _build2ActivitiesLayout(context, activities, overallProgress, overallPercentage, overallLabel);
     } else if (count == 3) {
-      return _build3ActivitiesLayout(context, activities, overallProgress, overallPercentage);
+      return _build3ActivitiesLayout(context, activities, overallProgress, overallPercentage, overallLabel);
     } else {
-      return _build4ActivitiesLayout(context, activities, overallProgress, overallPercentage);
+      return _build4ActivitiesLayout(context, activities, overallProgress, overallPercentage, overallLabel);
+    }
+  }
+
+  /// Helper to build activity widget (ring or flat icon based on mode)
+  Widget _buildActivityWidget(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> activity,
+    double size,
+    double iconSize,
+  ) {
+    final prefs = ref.watch(userPreferencesProvider);
+    final isPerActivityMode = prefs.perActivityGoalsEnabled;
+
+    if (isPerActivityMode) {
+      return _buildRing(
+        context: context,
+        icon: activity['icon'] as IconData,
+        label: activity['label'] as String,
+        progress: activity['progress'] as double,
+        color: activity['color'] as Color,
+        size: size,
+        iconSize: iconSize,
+        showStats: false,
+      );
+    } else {
+      return _buildFlatIcon(
+        context: context,
+        icon: activity['icon'] as IconData,
+        label: activity['label'] as String,
+        color: activity['color'] as Color,
+        size: size,
+        iconSize: iconSize,
+        completedMinutes: activity['completed'] as int,
+      );
     }
   }
 
@@ -167,32 +230,35 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     Map<String, dynamic> activity,
     double overallProgress,
     String overallPercentage,
+    String overallLabel,
   ) {
     final multiplier = _getSizeMultiplier(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildRing(
-          context: context,
-          icon: activity['icon'] as IconData,
-          label: activity['label'] as String,
-          progress: activity['progress'] as double,
-          color: activity['color'] as Color,
-          size: 155 * multiplier,
-          iconSize: 56 * multiplier,
-          showStats: false,
-        ),
-        _buildRing(
-          context: context,
-          label: 'Overall',
-          progress: overallProgress,
-          color: Theme.of(context).colorScheme.primary,
-          size: 155 * multiplier,
-          iconSize: 52 * multiplier,
-          showStats: true,
-          statsText: overallPercentage,
-        ),
-      ],
+
+    return Consumer(
+      builder: (context, ref, _) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // Activity: Show ring if per-activity mode, flat icon if global mode
+          _buildActivityWidget(
+            context,
+            ref,
+            activity,
+            155 * multiplier,
+            56 * multiplier,
+          ),
+          // Overall: Always show ring
+          _buildRing(
+            context: context,
+            label: overallLabel,
+            progress: overallProgress,
+            color: Theme.of(context).colorScheme.primary,
+            size: 155 * multiplier,
+            iconSize: 52 * multiplier,
+            showStats: true,
+            statsText: overallPercentage,
+          ),
+        ],
+      ),
     );
   }
 
@@ -202,40 +268,40 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     List<Map<String, dynamic>> activities,
     double overallProgress,
     String overallPercentage,
+    String overallLabel,
   ) {
     final multiplier = _getSizeMultiplier(context);
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: activities.map((activity) {
-              return _buildRing(
-                context: context,
-                icon: activity['icon'] as IconData,
-                label: activity['label'] as String,
-                progress: activity['progress'] as double,
-                color: activity['color'] as Color,
-                size: 86 * multiplier,
-                iconSize: 38 * multiplier,
-                showStats: false,
-              );
-            }).toList(),
+    return Consumer(
+      builder: (context, ref, _) => Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: activities.map((activity) {
+                return _buildActivityWidget(
+                  context,
+                  ref,
+                  activity,
+                  86 * multiplier,
+                  38 * multiplier,
+                );
+              }).toList(),
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        _buildRing(
-          context: context,
-          label: 'Overall',
-          progress: overallProgress,
-          color: Theme.of(context).colorScheme.primary,
-          size: 138 * multiplier,
-          iconSize: 46 * multiplier,
-          showStats: true,
-          statsText: overallPercentage,
-        ),
-      ],
+          const SizedBox(width: 16),
+          _buildRing(
+            context: context,
+            label: overallLabel,
+            progress: overallProgress,
+            color: Theme.of(context).colorScheme.primary,
+            size: 138 * multiplier,
+            iconSize: 46 * multiplier,
+            showStats: true,
+            statsText: overallPercentage,
+          ),
+        ],
+      ),
     );
   }
 
@@ -245,40 +311,40 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     List<Map<String, dynamic>> activities,
     double overallProgress,
     String overallPercentage,
+    String overallLabel,
   ) {
     final multiplier = _getSizeMultiplier(context);
-    return Row(
-      children: [
-        Expanded(
-          flex: 5,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: activities.map((activity) {
-              return _buildRing(
-                context: context,
-                icon: activity['icon'] as IconData,
-                label: activity['label'] as String,
-                progress: activity['progress'] as double,
-                color: activity['color'] as Color,
-                size: 60 * multiplier,
-                iconSize: 26 * multiplier,
-                showStats: false,
-              );
-            }).toList(),
+    return Consumer(
+      builder: (context, ref, _) => Row(
+        children: [
+          Expanded(
+            flex: 5,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: activities.map((activity) {
+                return _buildActivityWidget(
+                  context,
+                  ref,
+                  activity,
+                  60 * multiplier,
+                  26 * multiplier,
+                );
+              }).toList(),
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        _buildRing(
-          context: context,
-          label: 'Overall',
-          progress: overallProgress,
-          color: Theme.of(context).colorScheme.primary,
-          size: 125 * multiplier,
-          iconSize: 38 * multiplier,
-          showStats: true,
-          statsText: overallPercentage,
-        ),
-      ],
+          const SizedBox(width: 16),
+          _buildRing(
+            context: context,
+            label: overallLabel,
+            progress: overallProgress,
+            color: Theme.of(context).colorScheme.primary,
+            size: 125 * multiplier,
+            iconSize: 38 * multiplier,
+            showStats: true,
+            statsText: overallPercentage,
+          ),
+        ],
+      ),
     );
   }
 
@@ -288,81 +354,72 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     List<Map<String, dynamic>> activities,
     double overallProgress,
     String overallPercentage,
+    String overallLabel,
   ) {
     final multiplier = _getSizeMultiplier(context);
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildRing(
-                    context: context,
-                    icon: activities[0]['icon'] as IconData,
-                    label: activities[0]['label'] as String,
-                    progress: activities[0]['progress'] as double,
-                    color: activities[0]['color'] as Color,
-                    size: 76 * multiplier,
-                    iconSize: 34 * multiplier,
-                    showStats: false,
-                  ),
-                  _buildRing(
-                    context: context,
-                    icon: activities[1]['icon'] as IconData,
-                    label: activities[1]['label'] as String,
-                    progress: activities[1]['progress'] as double,
-                    color: activities[1]['color'] as Color,
-                    size: 76 * multiplier,
-                    iconSize: 34 * multiplier,
-                    showStats: false,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildRing(
-                    context: context,
-                    icon: activities[2]['icon'] as IconData,
-                    label: activities[2]['label'] as String,
-                    progress: activities[2]['progress'] as double,
-                    color: activities[2]['color'] as Color,
-                    size: 76 * multiplier,
-                    iconSize: 34 * multiplier,
-                    showStats: false,
-                  ),
-                  _buildRing(
-                    context: context,
-                    icon: activities[3]['icon'] as IconData,
-                    label: activities[3]['label'] as String,
-                    progress: activities[3]['progress'] as double,
-                    color: activities[3]['color'] as Color,
-                    size: 76 * multiplier,
-                    iconSize: 34 * multiplier,
-                    showStats: false,
-                  ),
-                ],
-              ),
-            ],
+    return Consumer(
+      builder: (context, ref, _) => Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildActivityWidget(
+                      context,
+                      ref,
+                      activities[0],
+                      76 * multiplier,
+                      34 * multiplier,
+                    ),
+                    _buildActivityWidget(
+                      context,
+                      ref,
+                      activities[1],
+                      76 * multiplier,
+                      34 * multiplier,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildActivityWidget(
+                      context,
+                      ref,
+                      activities[2],
+                      76 * multiplier,
+                      34 * multiplier,
+                    ),
+                    _buildActivityWidget(
+                      context,
+                      ref,
+                      activities[3],
+                      76 * multiplier,
+                      34 * multiplier,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        _buildRing(
-          context: context,
-          label: 'Overall',
-          progress: overallProgress,
-          color: Theme.of(context).colorScheme.primary,
-          size: 138 * multiplier,
-          iconSize: 46 * multiplier,
-          showStats: true,
-          statsText: overallPercentage,
-        ),
-      ],
+          const SizedBox(width: 16),
+          _buildRing(
+            context: context,
+            label: overallLabel,
+            progress: overallProgress,
+            color: Theme.of(context).colorScheme.primary,
+            size: 138 * multiplier,
+            iconSize: 46 * multiplier,
+            showStats: true,
+            statsText: overallPercentage,
+          ),
+        ],
+      ),
     );
   }
 
@@ -423,8 +480,15 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
                   width: size * 0.70,
                   height: size * 0.70,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.85),
+                    color: color, // Full saturation, no alpha reduction
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.4),
+                        blurRadius: size * 0.15,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
                   child: Icon(
                     icon,
@@ -443,6 +507,81 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
             color: theme.colorScheme.onSurface,
           ),
           textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  /// Build flat icon (no progress ring) for Global Mode
+  /// Same container size as ring to maintain horizontal proportions
+  Widget _buildFlatIcon({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required Color color,
+    required double size,
+    required double iconSize,
+    required int completedMinutes,
+  }) {
+    final theme = Theme.of(context);
+    final isUsed = completedMinutes > 0;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: size,
+          height: size,
+          child: Center(
+            child: Container(
+              width: size * 0.82, // Slightly larger than ring's inner icon (0.70)
+              height: size * 0.82,
+              decoration: BoxDecoration(
+                color: color, // Full saturation
+                shape: BoxShape.circle,
+                // No boxShadow - clean flat appearance
+              ),
+              child: Icon(
+                icon,
+                size: iconSize * 1.15, // Slightly larger icon
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        // Activity label
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 2),
+        // Minute badge
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isUsed) ...[
+              Icon(
+                Icons.check_circle,
+                size: 12,
+                color: color,
+              ),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              '$completedMinutes min',
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isUsed ? color : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                fontSize: 11,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ],
     );
@@ -496,13 +635,13 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
   Color _getActivityColor(String profileId) {
     switch (profileId) {
       case 'study':
-        return const Color(0xFF8B9DC3); // Soft blue-gray
+        return const Color(0xFF2196F3); // Material Blue 500 - Bright, energetic
       case 'reading':
-        return const Color(0xFF7BA7BC); // Muted teal-blue
+        return const Color(0xFF9C27B0); // Material Purple 500 - Rich, deep
       case 'meditation':
-        return const Color(0xFF86B489); // Sage green
+        return const Color(0xFF4CAF50); // Material Green 500 - Fresh, vibrant
       case 'other':
-        return const Color(0xFFC4A57B); // Muted amber
+        return const Color(0xFFFF9800); // Material Orange 500 - Warm, bold
       default:
         return Colors.grey;
     }
@@ -521,48 +660,116 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) {
-        final theme = Theme.of(context);
-        return AlertDialog(
-          title: Row(
-            children: [
-              const Text('❄️', style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 8),
-              Text(
-                'Use Freeze Token',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            'Freeze tokens protect your streak when you miss a day. '
-            'Using a freeze will save your streak even if you don\'t complete your daily goal.\n\n'
-            'Do you want to use a freeze token now?',
-            style: theme.textTheme.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                // TODO: Implement freeze usage logic
-                // - Decrement freeze token count
-                // - Apply freeze to current/previous day
-                // - Update quest state
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Freeze token used successfully'),
-                    backgroundColor: theme.colorScheme.tertiary,
+        return Consumer(
+          builder: (context, ref, _) {
+            final theme = Theme.of(context);
+            final questState = ref.watch(questStateProvider);
+
+            if (questState == null) {
+              return AlertDialog(
+                title: const Text('Error'),
+                content: const Text('Quest state not available'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
                   ),
-                );
-              },
-              child: const Text('Use Freeze'),
-            ),
-          ],
+                ],
+              );
+            }
+
+            final hasTokens = questState.freezeTokens > 0;
+            final goalMet = questState.progressQuietMinutes >= questState.goalQuietMinutes;
+
+            // Three states
+            String title;
+            String message;
+            List<Widget> actions;
+
+            if (!hasTokens) {
+              // State 1: No tokens available
+              title = 'No Freeze Tokens';
+              message = 'You don\'t have any freeze tokens available. '
+                  'You earn 1 freeze token per week (max 4).';
+              actions = [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ];
+            } else if (goalMet) {
+              // State 2: Goal already met (prevent double-use)
+              title = 'Goal Already Completed';
+              message = 'Your daily goal is already complete! '
+                  'Freeze tokens can only be used when you haven\'t met your goal yet.';
+              actions = [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ];
+            } else {
+              // State 3: Can use freeze token
+              title = 'Use Freeze Token';
+              message = 'Freeze tokens protect your streak when you miss a day. '
+                  'Using a freeze will count as completing your daily goal.\n\n'
+                  'You have ${questState.freezeTokens} token(s). Use one now?';
+              actions = [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    // Use freeze token
+                    final success = await ref.read(questStateProvider.notifier).freezeToday();
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('✅ Freeze token used! Goal marked as complete.'),
+                            backgroundColor: theme.colorScheme.tertiary,
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('❌ Failed to use freeze token'),
+                            backgroundColor: theme.colorScheme.error,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Use Freeze'),
+                ),
+              ];
+            }
+
+            return AlertDialog(
+              title: Row(
+                children: [
+                  const Text('❄️', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              content: Text(
+                message,
+                style: theme.textTheme.bodyMedium,
+              ),
+              actions: actions,
+            );
+          },
         );
       },
     );

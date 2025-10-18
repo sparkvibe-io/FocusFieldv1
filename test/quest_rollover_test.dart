@@ -14,6 +14,7 @@ void main() {
         streakCount: 5,
         freezeTokens: 1,
         lastUpdatedAt: DateTime.now(),
+        lastFreezeReplenishment: DateTime.now(),
         missedYesterday: false,
       );
 
@@ -32,6 +33,7 @@ void main() {
         streakCount: 5,
         freezeTokens: 1,
         lastUpdatedAt: DateTime.now(),
+        lastFreezeReplenishment: DateTime.now(),
         missedYesterday: true, // already missed yesterday
       );
 
@@ -51,6 +53,7 @@ void main() {
         streakCount: 2,
         freezeTokens: 1,
         lastUpdatedAt: DateTime.now(),
+        lastFreezeReplenishment: DateTime.now(),
         missedYesterday: true,
       );
 
@@ -76,6 +79,7 @@ void main() {
         streakCount: 10,
         freezeTokens: 1,
         lastUpdatedAt: DateTime(2025, 10, 15, 10, 0),
+        lastFreezeReplenishment: DateTime(2025, 10, 15, 10, 0),
         missedYesterday: true,
       );
 
@@ -97,6 +101,7 @@ void main() {
         streakCount: 0,
         freezeTokens: 1,
         lastUpdatedAt: DateTime.now(),
+        lastFreezeReplenishment: DateTime.now(),
         // missedYesterday not specified
       );
 

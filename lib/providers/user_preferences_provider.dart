@@ -69,6 +69,11 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     await _persist(updated);
   }
 
+  Future<void> updateFocusModeEnabled(bool enabled) async {
+    final updated = state.copyWith(focusModeEnabled: enabled);
+    await _persist(updated);
+  }
+
   Future<void> updateUserPreferences(UserPreferences newPrefs) async {
     await _persist(newPrefs);
   }

@@ -248,6 +248,7 @@ class QuestStateController extends StateNotifier<QuestState?> {
         streakCount: 0,
         freezeTokens: 1,
         lastUpdatedAt: now,
+        lastFreezeReplenishment: now,
       );
       await save();
     }
@@ -260,7 +261,7 @@ class QuestStateController extends StateNotifier<QuestState?> {
     }
   }
 
-  // Handles day/month rollover, resets daily progress and replenishes monthly freeze token (max 1)
+  // Handles day/month rollover, resets daily progress and replenishes weekly freeze tokens (1 per week, max 4)
   // Implements permissive 2-Day Rule: only reset streak if two consecutive days are missed
   Future<void> _rolloverIfNeeded() async {
     final qs = state;
@@ -269,7 +270,19 @@ class QuestStateController extends StateNotifier<QuestState?> {
     final currentCycleId = '${now.year}-${now.month.toString().padLeft(2, '0')}'
         ;
     var updated = qs;
-    // Month change -> reset cycle, keep streak, replenish freeze token to 1
+
+    // Check if a week has passed since last freeze replenishment (rolling 7-day window)
+    final daysSinceLastReplenishment = now.difference(qs.lastFreezeReplenishment).inDays;
+    if (daysSinceLastReplenishment >= 7) {
+      // Add 1 token per week, capped at 4 max
+      final newTokens = (qs.freezeTokens + 1).clamp(0, 4);
+      updated = updated.copyWith(
+        freezeTokens: newTokens,
+        lastFreezeReplenishment: now,
+      );
+    }
+
+    // Month change -> reset cycle, keep streak and freeze tokens
     if (qs.cycleId != currentCycleId) {
       updated = updated.copyWith(
         cycleId: currentCycleId,
@@ -278,8 +291,8 @@ class QuestStateController extends StateNotifier<QuestState?> {
         studyMinutes: 0,
         readingMinutes: 0,
         meditationMinutes: 0,
-        freezeTokens: 1, // one freeze token per month
         missedYesterday: false, // fresh month
+        freezeTokenUsedToday: false, // Reset freeze token lock for new month
         lastUpdatedAt: now,
       );
     }
@@ -299,6 +312,7 @@ class QuestStateController extends StateNotifier<QuestState?> {
         meditationMinutes: 0,
         streakCount: resetStreak ? 0 : qs.streakCount,
         missedYesterday: yesterdayMissed, // track for next rollover
+        freezeTokenUsedToday: false, // Reset freeze token lock for new day
         lastUpdatedAt: now,
       );
     }
@@ -313,7 +327,7 @@ class QuestStateController extends StateNotifier<QuestState?> {
     final qs = state;
     if (qs == null) return;
     final now = DateTime.now();
-    
+
     // Calculate credited minutes if ambient score qualifies
     int credited = 0;
     bool qualifies = false;
@@ -321,12 +335,12 @@ class QuestStateController extends StateNotifier<QuestState?> {
       qualifies = session.ambientScore! >= qs.requiredScore;
       credited = qualifies ? (session.quietSeconds ~/ 60) : 0;
     }
-    
+
     // Track per-activity minutes based on profileId
     int newStudyMinutes = qs.studyMinutes;
     int newReadingMinutes = qs.readingMinutes;
     int newMeditationMinutes = qs.meditationMinutes;
-    
+
     switch (session.profileId) {
       case 'study':
         newStudyMinutes = qs.studyMinutes + credited;
@@ -338,11 +352,14 @@ class QuestStateController extends StateNotifier<QuestState?> {
         newMeditationMinutes = qs.meditationMinutes + credited;
         break;
     }
-    
+
     // Calculate total progress as sum of all activities (capped at goal)
+    // IMPORTANT: If freeze token was used today, keep progress locked at goal value
     final totalMinutes = newStudyMinutes + newReadingMinutes + newMeditationMinutes;
-    final newProgress = min(qs.goalQuietMinutes, totalMinutes);
-    
+    final newProgress = qs.freezeTokenUsedToday
+        ? qs.progressQuietMinutes  // Keep locked at 100% when freeze token used
+        : min(qs.goalQuietMinutes, totalMinutes);
+
     int newStreak = qs.streakCount;
     bool clearMissed = false;
 
@@ -378,11 +395,12 @@ class QuestStateController extends StateNotifier<QuestState?> {
     final qs = state;
     if (qs == null) return false;
     if (qs.freezeTokens <= 0) return false;
-    // Freeze counts as goal completion: clear missedYesterday flag
+    // Freeze counts as goal completion: clear missedYesterday flag and set freezeTokenUsedToday
     state = qs.copyWith(
       progressQuietMinutes: qs.goalQuietMinutes,
       freezeTokens: qs.freezeTokens - 1,
       missedYesterday: false, // freeze protects streak
+      freezeTokenUsedToday: true, // Lock day at 100% completion
       lastUpdatedAt: DateTime.now(),
     );
     await save();
