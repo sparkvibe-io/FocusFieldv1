@@ -95,12 +95,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               SnackBar(
                 content: Row(
                   children: [
-                    Icon(Icons.celebration_rounded, color: Colors.white),
+                    const Icon(Icons.celebration_rounded, color: Colors.white),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Welcome! Ready to start your first session? 🚀',
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -237,8 +237,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.primaryContainer.withOpacity(0.5),
-            theme.colorScheme.secondaryContainer.withOpacity(0.4),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+            theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
             theme.colorScheme.surface,
           ],
         ),
@@ -264,7 +264,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 3,
                   ),
@@ -300,7 +300,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               'Your journey to better focus starts here!\nLet\'s build habits that stick 💪',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 height: 1.3,
               ),
               textAlign: TextAlign.center,
@@ -354,7 +354,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: iconColor.withOpacity(0.15),
+            color: iconColor.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -366,7 +366,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.2),
+              color: iconColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -391,7 +391,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 Text(
                   description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.3,
                   ),
                 ),
@@ -403,6 +403,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildFeatureItem(
     ThemeData theme,
     IconData icon,
@@ -454,7 +455,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            theme.colorScheme.primaryContainer.withOpacity(0.4),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
             theme.colorScheme.surface,
           ],
         ),
@@ -478,7 +479,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.25),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -586,7 +587,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           borderRadius: BorderRadius.circular(12),
           color: isSelected
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : null,
         ),
         child: Row(
@@ -656,8 +657,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.secondaryContainer.withOpacity(0.5),
-            theme.colorScheme.tertiaryContainer.withOpacity(0.4),
+            theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.4),
             theme.colorScheme.surface,
           ],
         ),
@@ -681,7 +682,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.colorScheme.secondary.withOpacity(0.25),
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.25),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -775,7 +776,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           borderRadius: BorderRadius.circular(12),
           color: isSelected
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : null,
         ),
         child: Row(
@@ -826,8 +827,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           colors: [
-            theme.colorScheme.tertiaryContainer.withOpacity(0.5),
-            theme.colorScheme.primaryContainer.withOpacity(0.4),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
             theme.colorScheme.surface,
           ],
         ),
@@ -851,7 +852,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.colorScheme.tertiary.withOpacity(0.25),
+                    color: theme.colorScheme.tertiary.withValues(alpha: 0.25),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -917,14 +918,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.tertiaryContainer.withOpacity(0.8),
-                    theme.colorScheme.primaryContainer.withOpacity(0.6),
+                    theme.colorScheme.tertiaryContainer.withValues(alpha: 0.8),
+                    theme.colorScheme.primaryContainer.withValues(alpha: 0.6),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: theme.colorScheme.tertiary.withOpacity(0.2),
+                    color: theme.colorScheme.tertiary.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -987,7 +988,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           borderRadius: BorderRadius.circular(12),
           color: isSelected
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : null,
         ),
         child: Row(
@@ -1047,8 +1048,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            theme.colorScheme.primaryContainer.withOpacity(0.3),
-            theme.colorScheme.tertiaryContainer.withOpacity(0.2),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.2),
             theme.colorScheme.surface,
           ],
         ),
@@ -1068,14 +1069,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        theme.colorScheme.primary.withOpacity(0.8),
-                        theme.colorScheme.tertiary.withOpacity(0.8),
+                        theme.colorScheme.primary.withValues(alpha: 0.8),
+                        theme.colorScheme.tertiary.withValues(alpha: 0.8),
                       ],
                     ),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: theme.colorScheme.primary.withOpacity(0.4),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.4),
                         blurRadius: 30,
                         spreadRadius: 5,
                       ),
@@ -1095,8 +1096,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.green.shade400,
-                          Colors.teal.shade400,
+                          theme.colorScheme.tertiary,
+                          theme.colorScheme.tertiaryContainer,
                         ],
                       ),
                       shape: BoxShape.circle,
@@ -1108,7 +1109,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     child: Icon(
                       Icons.verified_user_rounded,
                       size: 24,
-                      color: Colors.white,
+                      color: theme.colorScheme.onTertiaryContainer,
                     ),
                   ),
                 ),
@@ -1229,8 +1230,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.secondaryContainer.withOpacity(0.5),
-            theme.colorScheme.primaryContainer.withOpacity(0.4),
+            theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
             theme.colorScheme.surface,
           ],
         ),
@@ -1247,14 +1248,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.shade400,
-                    Colors.orange.shade400,
+                    theme.colorScheme.primary,
+                    theme.colorScheme.secondary,
                   ],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withOpacity(0.3),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
                     blurRadius: 20,
                     spreadRadius: 3,
                   ),
@@ -1263,7 +1264,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Icon(
                 Icons.tips_and_updates_rounded,
                 size: 40,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -1315,7 +1316,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.trending_up_rounded,
               'The 70% Rule Rocks! 📈',
               'Aim for 70% quiet time - perfect silence not required!',
-              Colors.green.withOpacity(0.2),
+              Colors.green.withValues(alpha: 0.2),
               Colors.green,
             ),
             const SizedBox(height: 16),
@@ -1324,13 +1325,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.15),
-                    theme.colorScheme.secondary.withOpacity(0.15),
+                    theme.colorScheme.primary.withValues(alpha: 0.15),
+                    theme.colorScheme.secondary.withValues(alpha: 0.15),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -1357,7 +1358,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Text(
                           'Let\'s start your first session and build amazing habits!',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                         ),
@@ -1388,7 +1389,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: iconColor.withOpacity(0.15),
+            color: iconColor.withValues(alpha: 0.15),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1400,7 +1401,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.2),
+              color: iconColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -1425,7 +1426,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 Text(
                   description,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.3,
                     fontSize: 12,
                   ),

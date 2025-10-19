@@ -214,9 +214,7 @@ class ActivityRingsWidget extends ConsumerWidget {
     final progress = target > 0 ? (completed / target).clamp(0.0, 1.0) : 0.0;
     
     // Background ring color - visible dark gray with opacity
-    final backgroundColor = theme.brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
+  final backgroundColor = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.18);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -274,9 +272,7 @@ class ActivityRingsWidget extends ConsumerWidget {
     final theme = Theme.of(context);
     
     // Background ring color - visible dark gray with opacity
-    final backgroundColor = theme.brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
+  final backgroundColor = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.18);
 
     // Adjust text size based on ring size
     final textSize = size > 150 ? theme.textTheme.displaySmall : theme.textTheme.headlineMedium;

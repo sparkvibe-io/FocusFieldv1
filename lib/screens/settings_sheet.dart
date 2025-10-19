@@ -910,10 +910,11 @@ class SettingsSheet extends ConsumerWidget {
       ref.read(silenceDataNotifierProvider.notifier).resetData();
       if (context.mounted) {
         Navigator.of(context).pop();
+        final theme = Theme.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(t.allSettingsReset),
-            backgroundColor: Colors.green,
+            backgroundColor: theme.colorScheme.primary,
           ),
         );
       }
@@ -1159,7 +1160,7 @@ class SettingsSheet extends ConsumerWidget {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.error, size: 48, color: Colors.red),
+  Icon(Icons.error, size: 48, color: Theme.of(context).colorScheme.error),
         const SizedBox(height: 16),
         Text(AppLocalizations.of(context)!.errorLoadingSettings(e.toString())),
         const SizedBox(height: 16),

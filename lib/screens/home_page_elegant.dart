@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
-import '../l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'dart:math' as math;
 import 'dart:async';
@@ -33,8 +32,7 @@ import 'package:focus_field/models/ambient_models.dart';
 import '../services/tip_service.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/banner_ad_footer.dart';
-// import '../providers/mission_provider.dart';
-// import '../models/mission.dart';
+// AnimatedNeonBackground is deprecated in favor of global DramaticBackdrop.
 
 /// Elegant home screen inspired by Apple Fitness with modern Material Design
 class HomePageElegant extends ConsumerStatefulWidget {
@@ -268,30 +266,35 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       });
     }
 
+    final dramatic = theme.extension<DramaticThemeStyling>();
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      // Let the global DramaticBackdrop show through for premium themes
+      backgroundColor:
+          (dramatic?.appBackgroundGradient != null)
+              ? Colors.transparent
+              : theme.colorScheme.surface,
       body: Stack(
         children: [
-          // Gradient background
+          // Background layer: use animated neon if enabled, else subtle scheme wash
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(
-                      0xFF8B9DC3,
-                    ).withValues(alpha: 0.08), // Soft blue-gray
-                    const Color(
-                      0xFF86B489,
-                    ).withValues(alpha: 0.04), // Sage green
-                    theme.colorScheme.surface,
-                  ],
-                  stops: const [0.0, 0.3, 1.0],
-                ),
-              ),
-            ),
+            child:
+                // If dramatic gradient is present, we rely on the global DramaticBackdrop
+                (dramatic?.appBackgroundGradient != null)
+                    ? const SizedBox.shrink()
+                    : Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            theme.colorScheme.primary.withValues(alpha: 0.08),
+                            theme.colorScheme.tertiary.withValues(alpha: 0.04),
+                            theme.colorScheme.surface,
+                          ],
+                          stops: const [0.0, 0.3, 1.0],
+                        ),
+                      ),
+                    ),
           ),
           // Confetti overlay
           Align(
@@ -873,7 +876,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                               color: color,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(icon, color: Colors.white, size: 28),
+                            child: Icon(
+                              icon,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           // Label
@@ -1222,7 +1229,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           width: c.maxWidth,
                           decoration: BoxDecoration(
                             color: Color.alphaBlend(
-                              Colors.black.withValues(alpha: 0.45),
+                              theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.28),
                               theme.colorScheme.surfaceContainerHighest,
                             ),
                             borderRadius: const BorderRadius.all(radius),
@@ -1269,7 +1276,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Icon(
               activity['icon'] as IconData,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
               size: 14,
             ),
           ),
@@ -1336,7 +1343,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             width: 48,
             height: 48,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Icon(icon ?? Icons.error, color: Colors.white, size: 24),
+            child: Icon(
+              icon ?? Icons.error,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -2649,62 +2660,63 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   List<Map<String, dynamic>> _getActivitiesData() {
+    final cs = Theme.of(context).colorScheme;
     return [
       {
         'icon': Icons.school_outlined,
         'label': 'Study',
         'completed': 30,
         'target': 60,
-        'color': const Color(0xFF7F6BB0),
+        'color': cs.primary,
       },
       {
         'icon': Icons.menu_book_outlined,
         'label': 'Reading',
         'completed': 45,
         'target': 60,
-        'color': const Color(0xFF5B9BD5),
+        'color': cs.secondary,
       },
       {
         'icon': Icons.self_improvement_outlined,
         'label': 'Meditation',
         'completed': 20,
         'target': 20,
-        'color': const Color(0xFF70AD47),
+        'color': cs.tertiary,
       },
       {
         'icon': Icons.fitness_center_outlined,
         'label': 'Gym',
         'completed': 15,
         'target': 30,
-        'color': const Color(0xFFFA114F),
+        'color': cs.secondaryContainer,
       },
       {
         'icon': Icons.work_outline,
         'label': 'Work',
         'completed': 120,
         'target': 180,
-        'color': const Color(0xFFED7D31),
+        'color': cs.primaryContainer,
       },
       {
         'icon': Icons.directions_run,
         'label': 'Running',
         'completed': 0,
         'target': 30,
-        'color': const Color(0xFF9B59B6),
+        'color': cs.inversePrimary,
       },
       {
         'icon': Icons.people_outline,
         'label': 'Family',
         'completed': 60,
         'target': 60,
-        'color': const Color(0xFFFFC000),
+        'color': cs.tertiaryContainer,
       },
       {
         'icon': Icons.volume_off_outlined,
         'label': 'Focus',
         'completed': 10,
         'target': 30,
-        'color': const Color(0xFF00D9FF),
+  'color': cs.primaryFixedDim,
       },
     ];
   }
@@ -2944,12 +2956,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.rocket_launch,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
               size: 24,
             ),
           ),
@@ -2962,13 +2974,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   'Today\'s Goals',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   'Complete 15 min of Focus',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -2978,8 +2990,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           ElevatedButton(
             onPressed: () => _tabController.animateTo(1),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withValues(alpha: 0.25),
-              foregroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.25),
+              foregroundColor: theme.colorScheme.onSurface,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
               elevation: 0,
               shape: RoundedRectangleBorder(
@@ -3008,6 +3020,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     return silenceDataAsync.when(
       data: (data) {
+        final theme = Theme.of(context);
         return Row(
           children: [
             Expanded(
@@ -3016,7 +3029,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 'Points',
                 data.totalPoints.toString(),
                 Icons.star_rounded,
-                Colors.amber,
+                theme.colorScheme.primary,
               ),
             ),
             const SizedBox(width: 12),
@@ -3026,7 +3039,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 'Streak',
                 '${data.currentStreak}',
                 Icons.local_fire_department_rounded,
-                Colors.orange,
+                theme.colorScheme.secondary,
               ),
             ),
             const SizedBox(width: 12),
@@ -3036,7 +3049,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 'Sessions',
                 '${data.totalSessions}',
                 Icons.timelapse_rounded,
-                Colors.blue,
+                theme.colorScheme.tertiary,
               ),
             ),
           ],
@@ -3445,22 +3458,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   Widget _buildSessionControlCard(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
-    // Ambient score subtitle shown for quiet-required activities when enabled
-    String? ambientSubtitle;
+    // Live ambient calm percent shown when applicable (quiet-required activities)
     double? calmPercent;
     if (AmbientFlags.ambientScore) {
       final activeProfile = ref.watch(activeProfileProvider);
       if (activeProfile.usesNoise) {
         final liveCalm = ref.watch(liveCalmPercentProvider);
-        if (silenceState.isListening && (liveCalm != null)) {
-          ambientSubtitle = l10n.calmPercent(liveCalm.round());
-          calmPercent = liveCalm; // Pass to progress ring for top-right display
-        } else {
-          ambientSubtitle = l10n.calmLabel;
+        if (silenceState.isListening && liveCalm != null) {
+          calmPercent = liveCalm; // Pass to top-right display
         }
       }
     }
@@ -3549,7 +3557,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   // Right side: Ambient % (plain text, no background)
                   if (calmPercent != null)
                     Text(
-                      'Ambient: ${calmPercent!.round()}%',
+                      'Ambient: ${calmPercent.round()}%',
                       style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.onSurface,
@@ -3676,7 +3684,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       icon: Icon(
         Icons.star,
         size: 14,
-        color: isSelected ? theme.colorScheme.primary : Colors.amber,
+        color: isSelected
+            ? theme.colorScheme.primary
+            : theme.colorScheme.secondary,
       ),
       label: Text(
         label,

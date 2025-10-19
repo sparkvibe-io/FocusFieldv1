@@ -52,8 +52,9 @@ class _ShareableCardPreviewState extends State<ShareableCardPreview> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(widget.title ?? 'Share Card'),
         backgroundColor: Colors.transparent,
@@ -65,7 +66,7 @@ class _ShareableCardPreviewState extends State<ShareableCardPreview> {
             shareText: widget.shareText,
             subject: widget.subject,
             isCompact: true,
-            color: Colors.white,
+            color: theme.colorScheme.onSurface,
           ),
         ],
       ),

@@ -25,7 +25,7 @@ This plan documents what is already integrated on the finalized Home (Summary/Ac
   - Session success triggers confetti and accessibility announcements
   - Per-activity Daily Goal (Today) compact bar under chips (X/Y minutes, slim progress, percent chip; micro‑win glow at 5m)
 - Summary tab
-  - Compact Today’s Focus card (merge path with Mission capsule behind flag)
+  - Compact Today’s Focus card (QuestCapsule is canonical; mission capsule removed)
   - Activity Progress mocks present; overflow issues resolved in recent compaction
 - System updates
   - RevenueCat API v9 migration and UI purchase flows

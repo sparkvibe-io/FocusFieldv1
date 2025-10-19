@@ -59,15 +59,12 @@ class InlineNoisePanel extends HookConsumerWidget {
     }, [smoothed.value, threshold, isListening]);
 
     // Start ambient monitoring when not in an active session
-    // This effect runs whenever the widget rebuilds to ensure monitoring is always active
-    // The silenceDetector provider recreates when threshold changes, so we need to restart monitoring
+    // Only runs when isListening changes, not on every build
     useEffect(() {
       if (!isListening) {
-        // Get fresh reference to silenceDetector on each rebuild
         final silenceDetector = ref.read(silenceDetectorProvider);
 
-        // Always try to start ambient monitoring when not in a session
-        // The detector safely ignores duplicate start requests if already monitoring
+        // Start ambient monitoring when not in a session
         try {
           silenceDetector.startAmbientMonitoring(
             onError: (error) {
@@ -88,7 +85,7 @@ class InlineNoisePanel extends HookConsumerWidget {
           } catch (_) {}
         }
       };
-    }); // No dependencies - runs on every build to handle detector recreation
+    }, [isListening]); // FIXED: Only re-run when listening state changes, not on every build
 
     // Determine if room is too noisy (high threshold warning level)
     final isHighNoise = smoothed.value >= 70.0;
@@ -145,8 +142,8 @@ class InlineNoisePanel extends HookConsumerWidget {
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: smoothed.value > threshold
-                            ? theme.colorScheme.error
-                            : theme.colorScheme.primary,
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -174,8 +171,9 @@ class InlineNoisePanel extends HookConsumerWidget {
     // Determine color based on noise levels
     final isExceeding = smoothed.value > threshold;
     Color getLoudnessColor() {
+      final sc = context.semanticColors;
       if (isHighNoise) return theme.colorScheme.error;
-      if (isExceeding) return Colors.orange;
+      if (isExceeding) return sc.warning;
       return theme.colorScheme.primary;
     }
 
@@ -219,14 +217,14 @@ class InlineNoisePanel extends HookConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isExceeding
-                        ? Colors.orange.withValues(alpha: 0.15)
-                        : theme.colorScheme.surfaceContainerHighest,
+          color: isExceeding
+            ? context.semanticColors.warning.withValues(alpha: 0.15)
+            : theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isExceeding
-                          ? Colors.orange.withValues(alpha: 0.5)
-                          : theme.colorScheme.outline.withValues(alpha: 0.3),
+            color: isExceeding
+              ? context.semanticColors.warning.withValues(alpha: 0.5)
+              : theme.colorScheme.outline.withValues(alpha: 0.3),
                       width: isExceeding ? 1.5 : 1,
                     ),
                   ),
@@ -237,7 +235,7 @@ class InlineNoisePanel extends HookConsumerWidget {
                         Icon(
                           Icons.warning_amber_rounded,
                           size: 14,
-                          color: Colors.orange,
+                          color: context.semanticColors.onWarning,
                         ),
                         const SizedBox(width: 4),
                       ],
@@ -245,9 +243,9 @@ class InlineNoisePanel extends HookConsumerWidget {
                         'Threshold: ${threshold.round()}dB',
                         style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isExceeding
-                              ? Colors.orange
-                              : theme.colorScheme.onSurfaceVariant,
+              color: isExceeding
+                ? context.semanticColors.onWarning
+                : theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -276,7 +274,7 @@ class InlineNoisePanel extends HookConsumerWidget {
                     '${smoothed.value.toStringAsFixed(1)}dB',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: getLoudnessColor(),
+                      color: isExceeding ? theme.colorScheme.error : theme.colorScheme.onSurface,
                     ),
                   ),
                 ],

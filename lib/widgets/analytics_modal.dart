@@ -150,7 +150,7 @@ class AnalyticsModal extends ConsumerWidget {
                       icon: Icons.star,
                       label: 'Points',
                       value: '${data.totalPoints}',
-                      color: Colors.amber,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     const SizedBox(width: 12),
                     _buildMetricCard(
@@ -158,7 +158,7 @@ class AnalyticsModal extends ConsumerWidget {
                       icon: Icons.local_fire_department,
                       label: 'Streak',
                       value: '${data.currentStreak}',
-                      color: Colors.orange,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     const SizedBox(width: 12),
                     _buildMetricCard(
@@ -166,7 +166,7 @@ class AnalyticsModal extends ConsumerWidget {
                       icon: Icons.check_circle,
                       label: 'Sessions',
                       value: '${data.totalSessions}',
-                      color: Colors.green,
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
                   ],
                 ),

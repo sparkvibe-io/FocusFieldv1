@@ -908,7 +908,7 @@ class MinimalProgressCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF6366F1).withOpacity(0.6),
+                        color: const Color(0xFF6366F1).withValues(alpha: 0.6),
                         letterSpacing: 1,
                       ),
                     ),
@@ -944,7 +944,7 @@ class MinimalProgressCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFF6366F1).withOpacity(0.2),
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.2),
                     width: 1.5,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -1097,10 +1097,10 @@ class MinimalProgressCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),

@@ -12,9 +12,10 @@ Welcome to the Focus Field documentation hub. This directory contains comprehens
 - Recent cleanup: removed committed coverage artifact; added `.gitignore` entries for coverage & Flutter ephemeral dirs.
 - Large formatting pass applied across codebase (Dart formatter).
 - Android emulator launch issues under investigation (Pixel Tablet AVD failing to start locally).
-- Final product direction: Ambient Quests (quiet-first profiles, Ambient Score, Quest capsule, compassionate streaks). Mission/Habit docs have been archived.
+- Final product direction: Ambient Quests (quiet-first profiles, Ambient Score, Quest capsule, compassionate streaks). Mission/Habit docs have been removed from code and archived in docs.
 - Implemented: Adaptive threshold suggestion provider (±2 dB after 3 wins/losses), debug-only long-press to cycle overrides, inline apply hint with auto-clear, and a 24-hour cooldown for suggestions. Unit tests cover wins/losses/neutral, override precedence, and cooldown behavior.
-- Implemented: Minimal AmbientSessionEngine and Quest state providers; Quest capsule scaffold and ring subtitle wiring in progress.
+- Implemented: Minimal AmbientSessionEngine and Quest state providers; Quest capsule adopted as Today center widget.
+- Premium themes updated: Global DramaticBackdrop provides animated gradients (respecting reduced motion); Cyber Neon tuned for higher glow; Midnight Teal uses calmer teal/blue accents.
 - Next focus: move Quest application into the session engine (remove UI-side apply), expose a live calm-percent stream for ring subtitle, and add hysteresis/cooldown tuning behind flags.
 
 See also: the up-to-date Feature Inventory and status tracker in [development/feature-inventory.md](development/feature-inventory.md).
@@ -152,7 +153,7 @@ The **[assets/](assets/)** directory contains:
 ---
 
 ## Last Updated
-October 7, 2025
+October 19, 2025
 
 **Documentation Version**: 1.0.0  
 **Project Version**: 1.0.0

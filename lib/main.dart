@@ -9,6 +9,7 @@ import 'package:focus_field/screens/splash_screen.dart';
 import 'package:focus_field/screens/home_page_elegant.dart';
 import 'package:focus_field/theme/app_theme.dart';
 import 'package:focus_field/services/navigation_service.dart';
+import 'package:focus_field/widgets/dramatic_backdrop.dart';
 // RevenueCat (purchases_flutter) is configured inside SubscriptionService during provider initialization.
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
@@ -107,25 +108,31 @@ class FocusFieldApp extends ConsumerWidget {
     // Kick off subscription initialization (non-blocking)
     ref.watch(startupSubscriptionInitProvider);
 
+    // Build ThemeData based on current selection. For non-system modes, we
+    // supply the same ThemeData as both theme and darkTheme so MaterialApp
+    // doesn't override (e.g., CyberNeon being replaced by generic dark).
+    final themeForCurrent = AppTheme.getThemeForMode(
+      currentTheme,
+      enableHighContrast: enableHighContrast,
+    );
+    final lightSystemTheme = AppTheme.getThemeForMode(
+      AppThemeMode.light,
+      enableHighContrast: enableHighContrast,
+    );
+    final darkSystemTheme = AppTheme.getThemeForMode(
+      AppThemeMode.dark,
+      enableHighContrast: enableHighContrast,
+    );
+
+    final useSystem = currentTheme == AppThemeMode.system;
+
     return MaterialApp(
       onGenerateTitle:
           (ctx) => AppLocalizations.of(ctx)?.appTitle ?? 'Focus Field',
       navigatorKey: NavigationService.navigatorKey,
-      theme: AppTheme.getThemeForMode(
-        currentTheme,
-        enableHighContrast: enableHighContrast,
-      ),
-      darkTheme:
-          currentTheme == AppThemeMode.purpleNight
-              ? AppTheme.getThemeForMode(
-                AppThemeMode.purpleNight,
-                enableHighContrast: enableHighContrast,
-              )
-              : AppTheme.getThemeForMode(
-                AppThemeMode.dark,
-                enableHighContrast: enableHighContrast,
-              ),
-      themeMode: currentTheme.themeMode,
+      theme: useSystem ? lightSystemTheme : themeForCurrent,
+      darkTheme: useSystem ? darkSystemTheme : themeForCurrent,
+      themeMode: useSystem ? ThemeMode.system : currentTheme.themeMode,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -155,7 +162,9 @@ class FocusFieldApp extends ConsumerWidget {
           data: MediaQuery.of(
             context,
           ).copyWith(textScaler: TextScaler.linear(finalScale)),
-          child: OrientationLocker(child: child!),
+          child: DramaticBackdrop(
+            child: OrientationLocker(child: child!),
+          ),
         );
       },
     );

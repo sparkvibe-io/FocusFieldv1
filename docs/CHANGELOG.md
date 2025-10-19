@@ -111,6 +111,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Portuguese**: "Silenciar dicas" for mute button, "Dicas silenciadas" for toast
 - **Portuguese Brazil**: "Silenciar dicas" for mute button, "Dicas silenciadas" for toast
 
+## [0.1.6] - 2025-10-19 - Today & Theme Cleanup
+
+### 🧹 Removed - Legacy Mission System
+- Removed Rocket Mission UI and legacy mission artifacts:
+	- Deleted `lib/widgets/rocket_mission_capsule.dart`
+	- Deleted `lib/widgets/mission_capsule.dart`
+	- Deleted `lib/providers/mission_provider.dart`
+	- Deleted `lib/models/mission.dart`
+- Removed deprecated animated background:
+	- Deleted `lib/widgets/animated_neon_background.dart`
+- Cleaned up Today page backups:
+	- Deleted `lib/screens/home_page_elegant_backup.dart`
+	- Deleted `lib/screens/home_page_elegant.dart.bak`
+
+### 🎨 Changed - Premium Theme Backdrop
+- Introduced global `DramaticBackdrop` wrapper; premium themes render animated gradients/blobs app-wide
+- Tuned premium themes to be more distinct:
+	- Cyber Neon: higher glow strength and accent pop
+	- Midnight Teal: gentle motion with teal/blue neon accents
+- Ensured MaterialApp theme wiring respects selected premium themes (no unintended dark override)
+
+### ✅ Today Screen Polish
+- QuestCapsule is the single center widget (Ambient Quests direction)
+- Slightly reduced motivational text size for better balance
+- Patterns widget wired to live data; Ambient Score surfaced consistently with lowercase units
+
+### 🚀 Deploy Notes
+- iOS device runs: prefer `run_ios_revenuecat.sh` which provides `REVENUECAT_API_KEY` via `--dart-define`
+- Example: `./run_ios_revenuecat.sh --release -d <UDID>`
+- For direct flutter run, include `--dart-define=REVENUECAT_API_KEY=appl_xxx` and set `IS_DEVELOPMENT` appropriately
+
 ### ✅ Verified - Test Coverage
 - All 32 tests passing including 7 localization tests
 - Tip service tests specifically verified (3/3 passed)

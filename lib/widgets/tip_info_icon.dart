@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:focus_field/providers/accessibility_provider.dart';
 import 'package:focus_field/services/accessibility_service.dart';
 
@@ -27,15 +28,15 @@ class TipInfoIcon extends HookConsumerWidget {
         duration: const Duration(milliseconds: 200),
         child: Stack(
           children: [
-            Icon(
-              Icons.lightbulb_outline,
-              color:
-                  isEnabled
-                      ? (hasNewTips
-                          ? Colors.amber.shade600
-                          : theme.colorScheme.onSurface)
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
+      Icon(
+        Icons.lightbulb_outline,
+        color:
+          isEnabled
+            ? (hasNewTips
+              ? context.semanticColors.info
+              : theme.colorScheme.onSurface)
+            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
             if (hasNewTips && isEnabled)
               Positioned(
                 right: 0,
@@ -109,7 +110,7 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
               if (hasNewTips && isEnabled)
                 Icon(
                   Icons.lightbulb_outline,
-                  color: Colors.amber.withValues(
+                  color: context.semanticColors.info.withValues(
                     alpha: 0.2 * (0.5 + 0.5 * animationController.value),
                   ),
                   size: 26, // Slightly larger for glow effect
@@ -121,8 +122,8 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
                     isEnabled
                         ? (hasNewTips
                             ? Color.lerp(
-                              Colors.amber.shade600,
-                              Colors.amber.shade400,
+                              context.semanticColors.info,
+                              context.semanticColors.info.withValues(alpha: 0.8),
                               animationController.value,
                             )
                             : theme.colorScheme.onSurface)

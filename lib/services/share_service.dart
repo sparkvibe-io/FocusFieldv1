@@ -43,15 +43,15 @@ class ShareService {
       await imageFile.writeAsBytes(imageBytes);
 
       // Share using native platform dialog
-      final result = await Share.shareXFiles(
-        [XFile(imagePath)],
+      final params = ShareParams(
+        files: [XFile(imagePath)],
         text: text,
         subject: subject,
       );
+      await SharePlus.instance.share(params);
 
-      debugPrint('✅ ShareService: Share initiated (status: ${result.status})');
-      return result.status == ShareResultStatus.success ||
-          result.status == ShareResultStatus.unavailable; // unavailable means dismissed, still valid
+      debugPrint('✅ ShareService: Share initiated successfully');
+      return true;
 
     } catch (e, st) {
       debugPrint('❌ ShareService: Error sharing widget: $e\n$st');
@@ -96,9 +96,12 @@ class ShareService {
     String? subject,
   }) async {
     try {
-      final result = await Share.share(text, subject: subject);
-      return result.status == ShareResultStatus.success ||
-          result.status == ShareResultStatus.unavailable;
+      final params = ShareParams(
+        text: text,
+        subject: subject,
+      );
+      await SharePlus.instance.share(params);
+      return true;
     } catch (e) {
       debugPrint('❌ ShareService: Error sharing text: $e');
       return false;

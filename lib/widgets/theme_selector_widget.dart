@@ -166,7 +166,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     color: themeMode.primaryColor,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(themeMode.icon, color: Colors.white, size: 14),
+                  child: Icon(themeMode.icon, color: Theme.of(context).colorScheme.onPrimary, size: 14),
                 ),
                 // Premium lock overlay
                 if (isPremium && !hasPremiumAccess)
@@ -174,12 +174,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.lock,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 12,
                     ),
                   ),
@@ -189,12 +189,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 16,
                     ),
                   ),

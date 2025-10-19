@@ -88,10 +88,11 @@ class FocusModeOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final scheme = Theme.of(context).colorScheme;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light, // White status bar icons on black background
+      value: SystemUiOverlayStyle.light, // Light status bar icons on dark surface
       child: Material(
-        color: Colors.black,
+        color: scheme.surface, // immersive surface color
         child: Stack(
           children: [
             // Main content - centered
@@ -102,12 +103,11 @@ class FocusModeOverlay extends ConsumerWidget {
                   // Countdown timer above ring
                   Text(
                     _getDiscretTimeDisplay(),
-                    style: const TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white,
-                      letterSpacing: 2.0,
-                    ),
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.w300,
+                          color: scheme.onSurface,
+                          letterSpacing: 2.0,
+                        ),
                   ),
                   const SizedBox(height: 40),
 
@@ -125,15 +125,15 @@ class FocusModeOverlay extends ConsumerWidget {
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.black.withValues(alpha: 0.6),
+                            color: scheme.surface.withValues(alpha: 0.6),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: scheme.onSurface.withValues(alpha: 0.3),
                               width: 2,
                             ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.pause,
-                            color: Colors.white,
+                            color: scheme.onSurface,
                             size: 48,
                           ),
                         ),
@@ -148,28 +148,26 @@ class FocusModeOverlay extends ConsumerWidget {
                       children: [
                         Icon(
                           Icons.check_circle,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: scheme.primary,
                           size: 64,
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Session Complete!',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
-                            color: Colors.white,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 1.2,
+                                color: scheme.onSurface,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Great focus session',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white.withValues(alpha: 0.6),
-                            letterSpacing: 0.5,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w300,
+                                color: scheme.onSurfaceVariant,
+                                letterSpacing: 0.5,
+                              ),
                         ),
                       ],
                     )
@@ -187,12 +185,12 @@ class FocusModeOverlay extends ConsumerWidget {
                                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                                 child: Text(
                                   isPaused ? 'Resume' : 'Pause',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1.2,
-                                    color: Colors.white,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1.2,
+                                        color: scheme.onSurface,
+                                      ),
                                 ),
                               ),
                             ),
@@ -202,14 +200,14 @@ class FocusModeOverlay extends ConsumerWidget {
                               onLongPress: onStop,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                                child: const Text(
+                                child: Text(
                                   'Stop',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1.2,
-                                    color: Colors.white,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1.2,
+                                        color: scheme.onSurface,
+                                      ),
                                 ),
                               ),
                             ),
@@ -219,12 +217,12 @@ class FocusModeOverlay extends ConsumerWidget {
                         // Hint text
                         Text(
                           'Long press to pause or stop',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white.withValues(alpha: 0.4),
-                            letterSpacing: 0.5,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
+                                color: scheme.onSurfaceVariant,
+                                letterSpacing: 0.5,
+                              ),
                         ),
                       ],
                     ),
@@ -238,9 +236,9 @@ class FocusModeOverlay extends ConsumerWidget {
               right: 16,
               child: IconButton(
                 onPressed: onExit,
-                icon: const Icon(
+                icon: Icon(
                   Icons.close,
-                  color: Colors.white,
+                  color: scheme.onSurface,
                   size: 28,
                 ),
                 padding: const EdgeInsets.all(12),
@@ -266,9 +264,11 @@ class _FocusModeRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Cyan color for the glowing ring effect
-    const ringColor = Color(0xFF00F5FF); // Bright cyan
-    const glowColor = Color(0xFF00D4FF); // Slightly darker cyan for depth
+  // Theme-aware ring/glow colors: prefer primary/tertiary accents
+  final cs = Theme.of(context).colorScheme;
+  final ringColor = cs.primary;
+  final glowColor = cs.primary.withValues(alpha: 0.8);
+  final bgColor = cs.onSurfaceVariant.withValues(alpha: 0.14);
 
     return SizedBox(
       width: size,
@@ -278,6 +278,7 @@ class _FocusModeRing extends StatelessWidget {
           progress: progress.clamp(0.0, 1.0),
           ringColor: ringColor,
           glowColor: glowColor,
+          backgroundColor: bgColor,
         ),
       ),
     );
@@ -289,11 +290,13 @@ class _FocusModeRingPainter extends CustomPainter {
   final double progress;
   final Color ringColor;
   final Color glowColor;
+  final Color backgroundColor;
 
   _FocusModeRingPainter({
     required this.progress,
     required this.ringColor,
     required this.glowColor,
+    required this.backgroundColor,
   });
 
   @override
@@ -366,9 +369,9 @@ class _FocusModeRingPainter extends CustomPainter {
       mainRingPaint,
     );
 
-    // Background ring (very subtle dark gray)
+    // Background ring (very subtle neutral)
     final bgPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.08)
+      ..color = backgroundColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;

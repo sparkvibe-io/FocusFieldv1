@@ -148,7 +148,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
           } catch (_) {}
         }
       };
-    }, [isListening, hasPermission.value, noiseController]);
+    }, [isListening, hasPermission.value]);  // Removed noiseController - stream subscription handles updates
 
     // Clean up old data points periodically with error handling
     useEffect(() {

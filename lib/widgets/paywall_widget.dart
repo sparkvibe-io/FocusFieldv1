@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // Removed explicit HostedPaywallService import (no direct usage after redesign)
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -580,9 +581,10 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     }
     final selected = _isYearly ? (yearly ?? monthly ?? offering.availablePackages.first) : (monthly ?? yearly ?? offering.availablePackages.first);
 
-    // Debug surface what we're showing
-    // ignore: avoid_print
-    print('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
+    // Debug surface what we're showing (development only)
+    if (kDebugMode) {
+      debugPrint('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
+    }
 
     final priceString = selected.storeProduct.priceString;
     return Card(

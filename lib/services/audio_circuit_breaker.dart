@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:focus_field/utils/debug_log.dart';
 
 /// Circuit breaker states
@@ -217,12 +218,12 @@ class AudioCircuitBreaker {
     _lastAudioActivity = now;
     _immediateBlockActive = true;
 
-    DebugLog.d('DEBUG: Audio activity detected - immediate protection activated for ${_immediateBlockTimeout.inSeconds}s');
+    // Removed noisy debug log - this happens on every audio operation
 
     // Schedule deactivation of immediate block
     Timer(_immediateBlockTimeout, () {
       _immediateBlockActive = false;
-      DebugLog.d('DEBUG: Immediate audio protection deactivated');
+      // Removed noisy debug log - this Timer fires constantly
     });
   }
 
@@ -305,7 +306,9 @@ class SafeAudioExecutor {
     }
 
     try {
-      DebugLog.d('DEBUG: SafeAudioExecutor: executing $operation');
+      if (!kReleaseMode) {
+        DebugLog.d('DEBUG: SafeAudioExecutor: executing $operation');
+      }
 
       // Record audio activity to trigger immediate protection
       _circuitBreaker.recordAudioActivity();
@@ -313,7 +316,9 @@ class SafeAudioExecutor {
       final result = await audioFunction();
       _circuitBreaker.recordSuccess();
 
-      DebugLog.d('DEBUG: SafeAudioExecutor: $operation completed successfully');
+      if (!kReleaseMode) {
+        DebugLog.d('DEBUG: SafeAudioExecutor: $operation completed successfully');
+      }
 
       return result;
     } catch (e) {

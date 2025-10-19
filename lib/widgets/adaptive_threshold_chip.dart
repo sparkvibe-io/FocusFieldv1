@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:focus_field/providers/adaptive_threshold_provider.dart';
 import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 /// Ultra-minimal adaptive threshold suggestion chip
 /// Shows after 3 consecutive wins, suggests +2 dB increase
@@ -27,19 +28,19 @@ class AdaptiveThresholdChip extends ConsumerWidget {
       child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.green.withValues(alpha: 0.15),
+        color: context.semanticColors.success.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.green.withValues(alpha: 0.3),
+          color: context.semanticColors.success.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
       child: Row(
         children: [
           // Icon
-          const Icon(
+          Icon(
             Icons.trending_up,
-            color: Colors.green,
+            color: context.semanticColors.onSuccess,
             size: 20,
           ),
           const SizedBox(width: 10),
@@ -49,7 +50,7 @@ class AdaptiveThresholdChip extends ConsumerWidget {
               l10n.adaptiveThresholdSuggestion(suggestedThreshold),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.green.shade700,
+                color: context.semanticColors.onSuccess,
               ),
             ),
           ),
@@ -66,7 +67,7 @@ class AdaptiveThresholdChip extends ConsumerWidget {
             child: Text(
               l10n.adaptiveThresholdNotNow,
               style: TextStyle(
-                color: Colors.green.shade700,
+                color: context.semanticColors.onSuccess,
                 fontSize: 13,
               ),
             ),
@@ -93,8 +94,8 @@ class AdaptiveThresholdChip extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
+              backgroundColor: context.semanticColors.success,
+              foregroundColor: context.semanticColors.onSuccess,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,

@@ -403,10 +403,8 @@ class ActivityRingsTestShowcase extends ConsumerWidget {
     required double iconSize,
     required bool showStats,
   }) {
-    final theme = Theme.of(context);
-    final backgroundColor = theme.brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
+  final theme = Theme.of(context);
+  final backgroundColor = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.18);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -461,7 +459,7 @@ class ActivityRingsTestShowcase extends ConsumerWidget {
                   child: Icon(
                     icon,
                     size: iconSize,
-                    color: Colors.white,
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? theme.colorScheme.onPrimary,
                   ),
                 ),
             ],

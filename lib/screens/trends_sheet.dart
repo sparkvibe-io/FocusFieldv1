@@ -10,6 +10,8 @@ import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:focus_field/widgets/share_preview_sheet.dart';
+import 'package:focus_field/widgets/weekly_recap_card.dart';
+import 'package:focus_field/providers/weekly_recap_provider.dart';
 
 /// Bottom sheet showing insights and analytics.
 /// Mirrors Settings sheet style for consistency.
@@ -234,6 +236,61 @@ class _TrendsBasicTab extends ConsumerWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                // Weekly Recap card (fetch latest or generate if missing)
+                Consumer(builder: (context, ref, _) {
+                  final latestRecapAsync = ref.watch(latestWeeklyRecapProvider);
+                  return latestRecapAsync.when(
+                    data: (recap) {
+                      if (recap != null) {
+                        return WeeklyRecapCard(
+                          recap: recap,
+                        );
+                      }
+                      // No cached recap, attempt to generate one on the fly (best effort)
+                      final genAsync = ref.watch(generateWeeklyRecapProvider(null));
+                      return genAsync.when(
+                        data: (newRecap) => WeeklyRecapCard(
+                          recap: newRecap,
+                        ),
+                        loading: () => Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: context.subtleCardDecoration,
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              const SizedBox(width: 12),
+                              Text('Preparing your weekly recap...', style: theme.textTheme.bodyMedium),
+                            ],
+                          ),
+                        ),
+                        error: (e, st) => const SizedBox.shrink(),
+                      );
+                    },
+                    loading: () => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: context.subtleCardDecoration,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          const SizedBox(width: 12),
+                          Text('Loading recap...', style: theme.textTheme.bodyMedium),
+                        ],
+                      ),
+                    ),
+                    error: (e, st) => const SizedBox.shrink(),
+                  );
+                }),
                 const SizedBox(height: 8),
                 SizedBox(
                   height: context.chartHeight + 30,
@@ -546,31 +603,31 @@ class _SevenDayStackedBars extends ConsumerWidget {
   }
 
   Color? _activityColor(BuildContext context, WidgetRef ref, String activityId) {
-    // P0: Use built-in color mapping for the 3 quiet-first profiles
-    return _builtInColor(activityId);
+    final cs = Theme.of(context).colorScheme;
+    return _builtInColor(cs, activityId);
   }
 
-  Color _builtInColor(String key) {
+  Color _builtInColor(ColorScheme cs, String key) {
     switch (key.toLowerCase()) {
       case 'work':
-        return const Color(0xFFEF5350); // Material Red 400 - Bright, bold
+        return cs.primary;
       case 'study':
       case 'studying':
-        return const Color(0xFF2196F3); // Material Blue 500 - Bright, energetic
+        return cs.primary;
       case 'reading':
-        return const Color(0xFF9C27B0); // Material Purple 500 - Rich, deep
+        return cs.secondary;
       case 'meditation':
-        return const Color(0xFF4CAF50); // Material Green 500 - Fresh, vibrant
+        return cs.tertiary;
       case 'fitness':
-        return const Color(0xFFFA114F); // Material Pink-Red - Energetic
+        return cs.secondaryContainer;
       case 'family':
       case 'other':
-        return const Color(0xFFFF9800); // Material Orange 500 - Warm, bold
+        return cs.tertiaryContainer;
       case 'noise':
       case 'focus':
-        return const Color(0xFF00D9FF); // Material Cyan 500 - Bright, clear
+        return cs.primaryContainer;
       default:
-        return const Color(0xFF2196F3); // Material Blue 500 - Default vibrant
+        return cs.primary;
     }
   }
 

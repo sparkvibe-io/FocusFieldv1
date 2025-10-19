@@ -434,10 +434,8 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     required bool showStats,
     String? statsText,
   }) {
-    final theme = Theme.of(context);
-    final backgroundColor = theme.brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
+  final theme = Theme.of(context);
+  final backgroundColor = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.18);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

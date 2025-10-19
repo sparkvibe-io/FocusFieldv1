@@ -345,10 +345,11 @@ class AppInitializer extends ConsumerWidget {
                         ref.invalidate(silenceDataNotifierProvider);
 
                         if (context.mounted) {
+                          final theme = Theme.of(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('App data has been reset'),
-                              backgroundColor: Colors.green,
+                            SnackBar(
+                              content: const Text('App data has been reset'),
+                              backgroundColor: theme.colorScheme.primary,
                             ),
                           );
                         }

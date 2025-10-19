@@ -5,6 +5,7 @@ import 'package:focus_field/models/silence_data.dart';
 import 'package:focus_field/services/advanced_analytics_service.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
+// keep single import of theme_extensions.dart
 import 'package:focus_field/utils/debug_log.dart';
 
 class AdvancedAnalyticsWidget extends ConsumerWidget {
@@ -68,7 +69,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -207,7 +208,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 icon: Icons.check_circle_outline,
                 label: AppLocalizations.of(context)!.successRate,
                 value: '${m.overallSuccessRate.toStringAsFixed(1)}%',
-                color: _successRateColor(m.overallSuccessRate),
+                color: _successRateColor(context, m.overallSuccessRate),
               ),
             ),
             const SizedBox(width: 8),
@@ -231,7 +232,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 icon: Icons.show_chart,
                 label: AppLocalizations.of(context)!.consistency,
                 value: '${(m.consistencyScore * 100).toStringAsFixed(0)}%',
-                color: _consistencyColor(m.consistencyScore),
+                color: _consistencyColor(context, m.consistencyScore),
               ),
             ),
             const SizedBox(width: 8),
@@ -705,6 +706,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
   Widget _insightCard(BuildContext context, AnalyticsInsight insight) {
     final color = _insightColor(context, insight.type);
     final icon = _insightIcon(insight.type);
+  final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -720,7 +722,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               color: color,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 16, color: Colors.white),
+            child: Icon(icon, size: 16, color: context.onColorFor(color, scheme)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -773,24 +775,26 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         ),
       );
 
-  Color _successRateColor(double v) =>
-      v >= 80
-          ? Colors.green
-          : v >= 60
-          ? Colors.orange
-          : Colors.red;
-  Color _consistencyColor(double c) =>
-      c >= 0.8
-          ? Colors.green
-          : c >= 0.5
-          ? Colors.orange
-          : Colors.red;
+  Color _successRateColor(BuildContext context, double v) {
+    final sem = context.semanticColors;
+    final scheme = Theme.of(context).colorScheme;
+    if (v >= 80) return sem.success;
+    if (v >= 60) return sem.warning;
+    return scheme.error;
+  }
+  Color _consistencyColor(BuildContext context, double c) {
+    final sem = context.semanticColors;
+    final scheme = Theme.of(context).colorScheme;
+    if (c >= 0.8) return sem.success;
+    if (c >= 0.5) return sem.warning;
+    return scheme.error;
+  }
   Color _insightColor(BuildContext context, InsightType t) => switch (t) {
-    InsightType.achievement => Colors.green,
-    InsightType.improvement => Colors.blue,
-    InsightType.warning => Colors.orange,
+    InsightType.achievement => context.semanticColors.success,
+    InsightType.improvement => Theme.of(context).colorScheme.primary,
+    InsightType.warning => context.semanticColors.warning,
     InsightType.recommendation => Theme.of(context).colorScheme.primary,
-    InsightType.trend => Colors.purple,
+    InsightType.trend => Theme.of(context).colorScheme.tertiary,
   };
   IconData _insightIcon(InsightType t) => switch (t) {
     InsightType.achievement => Icons.emoji_events,

@@ -130,7 +130,7 @@ Last updated: 2025-10-13
    - [ ] Move session ring + timer controls
    - [ ] Move quick duration selector
    - [ ] Add today's session summary (points, sessions, streak)
-   - [ ] Keep mission capsule if active
+  - [ ] Replace mission capsule references with QuestCapsule (mission system removed)
 
 3. **Create Sessions Tab** (~1.5 hours)
    - [ ] Session history list

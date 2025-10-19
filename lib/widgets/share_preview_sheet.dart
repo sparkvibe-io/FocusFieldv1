@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:focus_field/widgets/shareable_cards.dart';
 import 'package:focus_field/services/share_service.dart';
-import 'package:flutter/rendering.dart';
 
 /// Time range for progress sharing
 enum ShareTimeRange {
@@ -97,7 +96,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
             ),
           ),
 
-          Divider(height: 1, color: theme.colorScheme.outline.withOpacity(0.2)),
+          Divider(height: 1, color: theme.colorScheme.outline.withValues(alpha: 0.2)),
 
           // Content
           Expanded(
@@ -235,7 +234,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
             Text(
               'Pinch to zoom',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -252,7 +251,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),

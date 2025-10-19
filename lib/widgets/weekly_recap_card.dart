@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/weekly_recap.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
 
 /// Beautiful card displaying weekly recap statistics and achievements
 class WeeklyRecapCard extends StatelessWidget {
@@ -108,8 +109,8 @@ class WeeklyRecapCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
           color: recap.streakAtEnd > recap.streakAtStart
-            ? Colors.green.withValues(alpha: 0.1)
-            : Colors.orange.withValues(alpha: 0.1),
+            ? Theme.of(context).extension<SemanticColors>()?.success.withValues(alpha: 0.1) ?? Theme.of(context).colorScheme.tertiaryContainer.withValues(alpha: 0.1)
+            : Theme.of(context).extension<SemanticColors>()?.warning.withValues(alpha: 0.1) ?? Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -120,18 +121,18 @@ class WeeklyRecapCard extends StatelessWidget {
                             ? Icons.trending_up
                             : Icons.trending_down,
                         size: 20,
-                        color: recap.streakAtEnd > recap.streakAtStart
-                            ? Colors.green
-                            : Colors.orange,
+            color: recap.streakAtEnd > recap.streakAtStart
+              ? Theme.of(context).extension<SemanticColors>()?.onSuccess ?? Theme.of(context).colorScheme.onTertiaryContainer
+              : Theme.of(context).extension<SemanticColors>()?.onWarning ?? Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Streak: ${recap.streakAtStart} → ${recap.streakAtEnd} days',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: recap.streakAtEnd > recap.streakAtStart
-                              ? Colors.green
-                              : Colors.orange,
+              color: recap.streakAtEnd > recap.streakAtStart
+                ? Theme.of(context).extension<SemanticColors>()?.onSuccess ?? Theme.of(context).colorScheme.onTertiaryContainer
+                : Theme.of(context).extension<SemanticColors>()?.onWarning ?? Theme.of(context).colorScheme.onSecondaryContainer,
                         ),
                       ),
                     ],
