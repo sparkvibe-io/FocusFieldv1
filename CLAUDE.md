@@ -30,17 +30,29 @@ flutter format . && flutter analyze
 
 ---
 
-## 🚀 Current Status (Oct 19, 2025)
+## 🚀 Current Status (Oct 20, 2025)
 
 **MVP Complete - Ready for Platform Configuration**
+
+### ✅ Completed Today (Oct 20)
+- **i18n Cleanup**: Removed 93 unused FAQ localization keys (31 from EN, 11 from each non-EN language)
+- **FAQ System**: Restored comprehensive FAQ with 20 Q&A entries in Settings > About > Help & Support
+  - Includes search functionality, Material 3 design, bottom sheet modal
+  - English-only content (translations can be added later)
+  - Covers all core features: Ambient Score, streaks, freeze tokens, Focus Mode, etc.
+- **UI Polish**: Redesigned Help & Support section
+  - Changed from 2x2 grid to single-row layout (4 buttons side-by-side)
+  - Increased icon size from 24px → 32px (33% larger, better tap targets)
+  - Improved spacing and text alignment
 
 ### What Works Now
 - ✅ Ambient Quests system (70% threshold, compassionate credit, 2-day streaks)
 - ✅ Focus Mode (full-screen overlay, completion states, long-press controls)
 - ✅ Monetization (RevenueCat + AdMob integrated, feature gating complete)
 - ✅ Responsive design (phone-first, tablet-adaptive with landscape split-screen)
-- ✅ 7 languages (EN, ES, DE, FR, JA, PT, PT_BR)
+- ✅ 7 languages (EN, ES, DE, FR, JA, PT, PT_BR) - all core strings localized
 - ✅ Onboarding flow (6 screens)
+- ✅ **FAQ System** (20 comprehensive Q&A entries with search)
 
 ### Next Actions
 1. Configure App Store Connect & Google Play Console subscriptions
@@ -51,7 +63,8 @@ flutter format . && flutter analyze
 - iOS Live Activities (Android notification works)
 - Focus Mode P2/P3 enhancements (breathing animation, themes)
 - Custom activity creation (3 default profiles sufficient)
-- FAQ/Help Center (email support available)
+- FAQ translations (English version complete, other languages can be added post-launch)
+- 71 hardcoded UI strings (non-critical, have fallback text)
 
 ---
 
