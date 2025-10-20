@@ -14,7 +14,11 @@ class InlineNoisePanel extends HookConsumerWidget {
   final double threshold;
   final bool isListening;
 
-  const InlineNoisePanel({super.key, required this.threshold, required this.isListening});
+  const InlineNoisePanel({
+    super.key,
+    required this.threshold,
+    required this.isListening,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +46,8 @@ class InlineNoisePanel extends HookConsumerWidget {
         final clamped = d.clamp(0.0, 120.0);
         current.value = clamped;
         final s = smoothed.value;
-        smoothed.value = (s.isNaN || s.isInfinite) ? clamped : s * 0.7 + clamped * 0.3;
+        smoothed.value =
+            (s.isNaN || s.isInfinite) ? clamped : s * 0.7 + clamped * 0.3;
       });
       return () => sub.cancel();
     }, [controller]);
@@ -60,32 +65,35 @@ class InlineNoisePanel extends HookConsumerWidget {
 
     // Start ambient monitoring when not in an active session
     // Only runs when isListening changes, not on every build
-    useEffect(() {
-      if (!isListening) {
-        final silenceDetector = ref.read(silenceDetectorProvider);
-
-        // Start ambient monitoring when not in a session
-        try {
-          silenceDetector.startAmbientMonitoring(
-            onError: (error) {
-              // Silently handle errors - user will see them if they try to start a session
-            },
-          );
-        } catch (e) {
-          // Ignore startup errors
-        }
-      }
-
-      // Cleanup: stop ambient monitoring when widget unmounts or session starts
-      return () {
+    useEffect(
+      () {
         if (!isListening) {
+          final silenceDetector = ref.read(silenceDetectorProvider);
+
+          // Start ambient monitoring when not in a session
           try {
-            final detector = ref.read(silenceDetectorProvider);
-            detector.stopAmbientMonitoring();
-          } catch (_) {}
+            silenceDetector.startAmbientMonitoring(
+              onError: (error) {
+                // Silently handle errors - user will see them if they try to start a session
+              },
+            );
+          } catch (e) {
+            // Ignore startup errors
+          }
         }
-      };
-    }, [isListening]); // FIXED: Only re-run when listening state changes, not on every build
+
+        // Cleanup: stop ambient monitoring when widget unmounts or session starts
+        return () {
+          if (!isListening) {
+            try {
+              final detector = ref.read(silenceDetectorProvider);
+              detector.stopAmbientMonitoring();
+            } catch (_) {}
+          }
+        };
+      },
+      [isListening],
+    ); // FIXED: Only re-run when listening state changes, not on every build
 
     // Determine if room is too noisy (high threshold warning level)
     final isHighNoise = smoothed.value >= 70.0;
@@ -100,15 +108,16 @@ class InlineNoisePanel extends HookConsumerWidget {
       return Container(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
         decoration: baseDecoration.copyWith(
-          color: isDark
-              ? Color.alphaBlend(
-                  tintColor.withValues(alpha: 0.18),
-                  theme.colorScheme.surfaceContainerHighest,
-                )
-              : Color.alphaBlend(
-                  tintColor.withValues(alpha: 0.12),
-                  theme.colorScheme.surfaceContainerHighest,
-                ),
+          color:
+              isDark
+                  ? Color.alphaBlend(
+                    tintColor.withValues(alpha: 0.18),
+                    theme.colorScheme.surfaceContainerHighest,
+                  )
+                  : Color.alphaBlend(
+                    tintColor.withValues(alpha: 0.12),
+                    theme.colorScheme.surfaceContainerHighest,
+                  ),
         ),
         child: Row(
           children: [
@@ -141,9 +150,10 @@ class InlineNoisePanel extends HookConsumerWidget {
                         '${smoothed.value.toStringAsFixed(1)}dB',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: smoothed.value > threshold
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.onSurface,
+                          color:
+                              smoothed.value > threshold
+                                  ? theme.colorScheme.error
+                                  : theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -185,15 +195,16 @@ class InlineNoisePanel extends HookConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: baseDecoration.copyWith(
-        color: isDark
-            ? Color.alphaBlend(
-                tintColor.withValues(alpha: 0.18),
-                theme.colorScheme.surfaceContainerHighest,
-              )
-            : Color.alphaBlend(
-                tintColor.withValues(alpha: 0.12),
-                theme.colorScheme.surfaceContainerHighest,
-              ),
+        color:
+            isDark
+                ? Color.alphaBlend(
+                  tintColor.withValues(alpha: 0.18),
+                  theme.colorScheme.surfaceContainerHighest,
+                )
+                : Color.alphaBlend(
+                  tintColor.withValues(alpha: 0.12),
+                  theme.colorScheme.surfaceContainerHighest,
+                ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,20 +222,29 @@ class InlineNoisePanel extends HookConsumerWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              // Right: Current threshold badge (pulses when exceeded)
+              // Right: Current threshold badge (pulses RED when exceeded)
               Opacity(
                 opacity: isExceeding ? pulseAnimation : 1.0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-          color: isExceeding
-            ? context.semanticColors.warning.withValues(alpha: 0.15)
-            : theme.colorScheme.surfaceContainerHighest,
+                    color:
+                        isExceeding
+                            ? theme.colorScheme.errorContainer.withValues(
+                              alpha: 0.20,
+                            )
+                            : theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-            color: isExceeding
-              ? context.semanticColors.warning.withValues(alpha: 0.5)
-              : theme.colorScheme.outline.withValues(alpha: 0.3),
+                      color:
+                          isExceeding
+                              ? theme.colorScheme.error.withValues(alpha: 0.6)
+                              : theme.colorScheme.outline.withValues(
+                                alpha: 0.3,
+                              ),
                       width: isExceeding ? 1.5 : 1,
                     ),
                   ),
@@ -233,9 +253,9 @@ class InlineNoisePanel extends HookConsumerWidget {
                     children: [
                       if (isExceeding) ...[
                         Icon(
-                          Icons.warning_amber_rounded,
+                          Icons.error_outline,
                           size: 14,
-                          color: context.semanticColors.onWarning,
+                          color: theme.colorScheme.error,
                         ),
                         const SizedBox(width: 4),
                       ],
@@ -243,9 +263,10 @@ class InlineNoisePanel extends HookConsumerWidget {
                         'Threshold: ${threshold.round()}dB',
                         style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-              color: isExceeding
-                ? context.semanticColors.onWarning
-                : theme.colorScheme.onSurfaceVariant,
+                          color:
+                              isExceeding
+                                  ? theme.colorScheme.error
+                                  : theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -274,39 +295,48 @@ class InlineNoisePanel extends HookConsumerWidget {
                     '${smoothed.value.toStringAsFixed(1)}dB',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: isExceeding ? theme.colorScheme.error : theme.colorScheme.onSurface,
+                      color:
+                          isExceeding
+                              ? theme.colorScheme.error
+                              : theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(width: 12),
-              // Right: Text-only threshold selector buttons (compact spacing)
+              const SizedBox(width: 8),
+              // Right: Scrollable threshold selector buttons to prevent overflow
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    for (final db in const [30, 40, 50, 60, 80])
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: _buildTextThresholdButton(
-                          context,
-                          theme,
-                          db,
-                          threshold.round() == db,
-                          () async {
-                            await settingsNotifier.updateSetting('decibelThreshold', db.toDouble());
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Threshold set to $db dB'),
-                                behavior: SnackBarBehavior.floating,
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          },
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      for (final db in const [30, 40, 50, 60, 80])
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: _buildTextThresholdButton(
+                            context,
+                            theme,
+                            db,
+                            threshold.round() == db,
+                            () async {
+                              await settingsNotifier.updateSetting(
+                                'decibelThreshold',
+                                db.toDouble(),
+                              );
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Threshold set to $db dB'),
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -349,6 +379,7 @@ class InlineNoisePanel extends HookConsumerWidget {
   }
 
   /// Build text-only threshold button (matches duration selector style: 1m, 5m, etc.)
+  /// Ensures minimum 48x48dp touch target for accessibility (WCAG 2.1 AAA)
   Widget _buildTextThresholdButton(
     BuildContext context,
     ThemeData theme,
@@ -356,18 +387,29 @@ class InlineNoisePanel extends HookConsumerWidget {
     bool isSelected,
     VoidCallback onTap,
   ) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        child: Text(
-          '${db}dB',
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          constraints: const BoxConstraints(
+            minWidth: 48, // Minimum touch target width
+            minHeight: 48, // Minimum touch target height
+          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            '${db}dB',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color:
+                  isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.7,
+                      ),
+            ),
           ),
         ),
       ),

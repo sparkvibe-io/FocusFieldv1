@@ -95,12 +95,10 @@ class QuestCapsule extends ConsumerWidget {
               Expanded(
                 child: Text(
                   message,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: foregroundOnCTA,
                     height: 1.25,
-                    // Slightly reduce font size for better balance
-                    fontSize: (theme.textTheme.titleMedium?.fontSize ?? 16) - 1,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.visible,

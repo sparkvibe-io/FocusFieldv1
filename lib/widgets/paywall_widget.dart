@@ -85,13 +85,16 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Background gradient (replace with DecorationImage for starry asset if added)
+                    // Background gradient (theme-aware colors for dark/light mode)
                     Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0xFF0D0D17), Color(0xFF111A2A)],
+                          colors: [
+                            Theme.of(context).colorScheme.surface,
+                            Theme.of(context).colorScheme.surfaceContainerHighest,
+                          ],
                         ),
                       ),
                     ),

@@ -9,6 +9,7 @@ import '../providers/notification_provider.dart';
 import '../services/accessibility_service.dart';
 import '../models/silence_data.dart';
 import '../constants/app_constants.dart';
+import '../constants/ui_constants.dart';
 import '../widgets/inline_noise_panel.dart';
 import '../widgets/quest_capsule.dart';
 import '../widgets/adaptive_threshold_chip.dart';
@@ -37,7 +38,7 @@ import '../widgets/banner_ad_footer.dart';
 /// Elegant home screen inspired by Apple Fitness with modern Material Design
 class HomePageElegant extends ConsumerStatefulWidget {
   final int initialTab;
-  
+
   const HomePageElegant({super.key, this.initialTab = 0});
 
   @override
@@ -78,7 +79,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialTab);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTab,
+    );
     _currentTab = widget.initialTab;
     _confetti = ConfettiController(duration: const Duration(seconds: 2));
     _tabController.addListener(() {
@@ -120,28 +125,32 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   /// Shows share options with preview bottom sheet.
   /// Calculates both daily and weekly stats for user to choose.
-  void _showShareOptions(BuildContext context, WidgetRef ref, SilenceData data) {
+  void _showShareOptions(
+    BuildContext context,
+    WidgetRef ref,
+    SilenceData data,
+  ) {
     final sessions = data.recentSessions;
     final now = DateTime.now();
-    
+
     // Calculate weekly stats
     final startOfWeek = now.subtract(Duration(days: now.weekday % 7));
     final endOfWeek = startOfWeek.add(const Duration(days: 6));
-    
+
     int weeklyMinutes = 0;
     int weeklySessions = 0;
     int weeklySuccessCount = 0;
     final weeklyActivityMinutes = <String, int>{};
-    
+
     // Calculate today's stats
     final todayStart = DateTime(now.year, now.month, now.day);
     final todayEnd = todayStart.add(const Duration(days: 1));
-    
+
     int dailyMinutes = 0;
     int dailySessions = 0;
     int dailySuccessCount = 0;
     final dailyActivityMinutes = <String, int>{};
-    
+
     for (final session in sessions) {
       // Weekly calculation
       if (session.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
@@ -149,55 +158,62 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         weeklyMinutes += session.duration ~/ 60;
         weeklySessions++;
         if (session.completed) weeklySuccessCount++;
-        
+
         final activity = session.activity ?? 'Other';
-        weeklyActivityMinutes[activity] = (weeklyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+        weeklyActivityMinutes[activity] =
+            (weeklyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
       }
-      
+
       // Daily calculation
       if (session.date.isAfter(todayStart) && session.date.isBefore(todayEnd)) {
         dailyMinutes += session.duration ~/ 60;
         dailySessions++;
         if (session.completed) dailySuccessCount++;
-        
+
         final activity = session.activity ?? 'Other';
-        dailyActivityMinutes[activity] = (dailyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+        dailyActivityMinutes[activity] =
+            (dailyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
       }
     }
-    
-    final weeklySuccessRate = weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
 
-    final dailySuccessRate = dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
+    final weeklySuccessRate =
+        weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
+
+    final dailySuccessRate =
+        dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
 
     final formatter = DateFormat('MMM d');
-    final weekRange = '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
+    final weekRange =
+        '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
     final dateFormatter = DateFormat('MMMM d, y');
     final todayRange = dateFormatter.format(now);
 
     // Determine initial time range based on available data
-    final initialTimeRange = dailyMinutes > 0
-        ? ShareTimeRange.today
-        : ShareTimeRange.weekly;
+    final initialTimeRange =
+        dailyMinutes > 0 ? ShareTimeRange.today : ShareTimeRange.weekly;
 
     // Use today's data if available, otherwise weekly
     final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
     final displaySessions = dailyMinutes > 0 ? dailySessions : weeklySessions;
-    final displaySuccessRate = dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
-    final displayActivityMinutes = dailyMinutes > 0 ? dailyActivityMinutes : weeklyActivityMinutes;
+    final displaySuccessRate =
+        dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
+    final displayActivityMinutes =
+        dailyMinutes > 0 ? dailyActivityMinutes : weeklyActivityMinutes;
     final displayDateRange = dailyMinutes > 0 ? todayRange : weekRange;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => SharePreviewSheet(
-        totalMinutes: displayMinutes,
-        sessionCount: displaySessions,
-        successRate: displaySuccessRate,
-        activityMinutes: displayActivityMinutes,
-        dateRange: displayDateRange,
-        initialTimeRange: initialTimeRange,
-      ),
+      builder:
+          (_) => SharePreviewSheet(
+            totalMinutes: displayMinutes,
+            sessionCount: displaySessions,
+            successRate: displaySuccessRate,
+            activityMinutes: displayActivityMinutes,
+            dateRange: displayDateRange,
+            initialTimeRange: initialTimeRange,
+          ),
     );
   }
 
@@ -275,27 +291,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               : theme.colorScheme.surface,
       body: Stack(
         children: [
-          // Background layer: use animated neon if enabled, else subtle scheme wash
-          Positioned.fill(
-            child:
-                // If dramatic gradient is present, we rely on the global DramaticBackdrop
-                (dramatic?.appBackgroundGradient != null)
-                    ? const SizedBox.shrink()
-                    : Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.08),
-                            theme.colorScheme.tertiary.withValues(alpha: 0.04),
-                            theme.colorScheme.surface,
-                          ],
-                          stops: const [0.0, 0.3, 1.0],
-                        ),
-                      ),
-                    ),
-          ),
           // Confetti overlay
           Align(
             alignment: Alignment.topCenter,
@@ -335,7 +330,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 ),
 
                 // Bottom navigation bar - hide in tablet landscape and Focus Mode
-                if (!isTabletLandscape && !_focusModeActive) _buildBottomNav(context),
+                if (!isTabletLandscape && !_focusModeActive)
+                  _buildBottomNav(context),
               ],
             ),
           ),
@@ -566,7 +562,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildSessionsTab(BuildContext context, {bool showAd = true}) {
+  Widget _buildSessionsTab(
+    BuildContext context, {
+    bool showAd = true,
+    bool applyFocusOverlay = true,
+  }) {
     final horizontalPad = _getResponsivePadding(context, 12);
     final verticalPad = _getResponsivePadding(context, 8);
     final bottomPad = _getResponsivePadding(context, 100);
@@ -584,33 +584,18 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Merged: Activity chips + Today progress in single card
         Builder(
           builder: (context) {
-            final theme = Theme.of(context);
-            final isDark = theme.brightness == Brightness.dark;
-            final tintColor = theme.colorScheme.secondary; // Use theme secondary color
-            final baseDecoration = context.cardDecoration;
-
             return Container(
-              decoration: baseDecoration.copyWith(
-                color: isDark
-                    ? Color.alphaBlend(
-                        tintColor.withValues(alpha: 0.18),
-                        theme.colorScheme.surfaceContainerHighest,
-                      )
-                    : Color.alphaBlend(
-                        tintColor.withValues(alpha: 0.12),
-                        theme.colorScheme.surfaceContainerHighest,
-                      ),
-              ),
+              decoration: context.cardDecoration,
               child: Column(
-            children: [
-              _buildHorizontalActivityChips(context),
-              const Divider(height: 1),
-              Padding(
-                padding: _getCardPadding(context),
-                child: _buildDailyGoalCompactInner(context),
+                children: [
+                  _buildHorizontalActivityChips(context),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: _getCardPadding(context),
+                    child: _buildDailyGoalCompactInner(context),
+                  ),
+                ],
               ),
-            ],
-          ),
             );
           },
         ),
@@ -627,8 +612,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ],
     );
 
-    // Show Focus Mode overlay if active
-    if (_focusModeActive) {
+    // Show Focus Mode overlay if active (only for phone/portrait mode - tablet applies at layout level)
+    if (_focusModeActive && applyFocusOverlay) {
       final silenceState = ref.watch(silenceStateProvider);
       final durationSeconds = ref.watch(activeSessionDurationProvider);
 
@@ -637,7 +622,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           sessionContent,
           FocusModeOverlay(
             progress: silenceState.progress,
-            remainingSeconds: durationSeconds - (silenceState.progress * durationSeconds).toInt(),
+            remainingSeconds:
+                durationSeconds -
+                (silenceState.progress * durationSeconds).toInt(),
             isPaused: silenceState.isPaused,
             onPause: () {
               // Toggle pause state
@@ -662,7 +649,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   Widget _buildTabletLandscapeLayout(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Row(
+    final tabletContent = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Left panel: Today tab (no ad in landscape mode)
@@ -708,13 +695,50 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   ),
                 ),
               ),
-              // Sessions tab content (no ad in landscape mode)
-              Expanded(child: _buildSessionsTab(context, showAd: false)),
+              // Sessions tab content (no ad in landscape mode, no overlay - applied at layout level)
+              Expanded(
+                child: _buildSessionsTab(
+                  context,
+                  showAd: false,
+                  applyFocusOverlay: false,
+                ),
+              ),
             ],
           ),
         ),
       ],
     );
+
+    // Apply Focus Mode overlay at full-screen level for distraction-free experience
+    if (_focusModeActive) {
+      final silenceState = ref.watch(silenceStateProvider);
+      final durationSeconds = ref.watch(activeSessionDurationProvider);
+
+      return Stack(
+        children: [
+          tabletContent,
+          FocusModeOverlay(
+            progress: silenceState.progress,
+            remainingSeconds:
+                durationSeconds -
+                (silenceState.progress * durationSeconds).toInt(),
+            isPaused: silenceState.isPaused,
+            onPause: () {
+              ref.read(silenceStateProvider.notifier).togglePause();
+            },
+            onStop: () {
+              setState(() => _focusModeActive = false);
+              _stopSilenceDetection(context);
+            },
+            onExit: () {
+              setState(() => _focusModeActive = false);
+            },
+          ),
+        ],
+      );
+    }
+
+    return tabletContent;
   }
 
   // Inner content for Today's 0/1 min row; wrapper card is added by caller
@@ -729,7 +753,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final iconData = _getActivityIcon(activeProfile.id);
 
     // Determine if we're in per-activity or global goal mode
-    final isPerActivityMode = userPrefs.perActivityGoalsEnabled && userPrefs.perActivityGoals != null;
+    final isPerActivityMode =
+        userPrefs.perActivityGoalsEnabled && userPrefs.perActivityGoals != null;
 
     // Get progress and goal based on mode
     final int done;
@@ -739,18 +764,24 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     if (isPerActivityMode) {
       // Per-activity mode: show individual activity progress
       // Always show actual minutes tracked (even when freeze token used)
-      final actualMinutes = _getCompletedMinutesForActivity(activeProfile.id, questState);
-      final activityGoal = userPrefs.perActivityGoals![activeProfile.id] ?? userPrefs.globalDailyQuietGoalMinutes;
+      final actualMinutes = _getCompletedMinutesForActivity(
+        activeProfile.id,
+        questState,
+      );
+      final activityGoal =
+          userPrefs.perActivityGoals![activeProfile.id] ??
+          userPrefs.globalDailyQuietGoalMinutes;
       done = actualMinutes; // Always show actual progress
       goal = activityGoal;
       labelText = '${_getActivityName(activeProfile.id)} Today $done/$goal min';
     } else {
       // Global mode: show total progress across all activities
-      // If freeze token used, keep progress locked at goal value (100%)
-      done = (questState?.freezeTokenUsedToday ?? false)
-          ? (questState?.goalQuietMinutes ?? 0)
-          : (questState?.progressQuietMinutes ?? 0);
+      // If freeze token used, keep progress locked at 100% (use current goal for both done and goal)
       goal = userPrefs.globalDailyQuietGoalMinutes;
+      done =
+          (questState?.freezeTokenUsedToday ?? false)
+              ? goal // Use CURRENT goal value to maintain 100% even if goal changed
+              : (questState?.progressQuietMinutes ?? 0);
       labelText = 'Total Today $done/$goal min, choose any activity';
     }
 
@@ -876,11 +907,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                               color: color,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              icon,
-                              color: Colors.white,
-                              size: 28,
-                            ),
+                            child: Icon(icon, color: Colors.white, size: 28),
                           ),
                           const SizedBox(height: 6),
                           // Label
@@ -1229,7 +1256,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           width: c.maxWidth,
                           decoration: BoxDecoration(
                             color: Color.alphaBlend(
-                              theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.28),
+                              theme.colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.28,
+                              ),
                               theme.colorScheme.surfaceContainerHighest,
                             ),
                             borderRadius: const BorderRadius.all(radius),
@@ -1343,11 +1372,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             width: 48,
             height: 48,
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Icon(
-              icon ?? Icons.error,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: Icon(icon ?? Icons.error, color: Colors.white, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -2716,7 +2741,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         'label': 'Focus',
         'completed': 10,
         'target': 30,
-  'color': cs.primaryFixedDim,
+        'color': cs.primaryFixedDim,
       },
     ];
   }
@@ -2990,7 +3015,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           ElevatedButton(
             onPressed: () => _tabController.animateTo(1),
             style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.25),
+              backgroundColor: theme.colorScheme.onSurface.withValues(
+                alpha: 0.25,
+              ),
               foregroundColor: theme.colorScheme.onSurface,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
               elevation: 0,
@@ -3105,24 +3132,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     return silenceDataAsync.when(
       data: (data) {
         if (data.recentSessions.isEmpty) {
-          // Show empty state with motivating placeholder and tertiary color tint
-          final isDark = theme.brightness == Brightness.dark;
-          final tintColor = theme.colorScheme.tertiary; // Use theme tertiary color
-          final baseDecoration = context.cardDecoration;
+          // Show empty state with motivating placeholder
+          final tintColor = theme.colorScheme.tertiary; // For icon colors
 
           return Container(
             padding: _getCardPadding(context),
-            decoration: baseDecoration.copyWith(
-              color: isDark
-                  ? Color.alphaBlend(
-                      tintColor.withValues(alpha: 0.18), // Brighter for optimistic feel
-                      theme.colorScheme.surfaceContainerHighest,
-                    )
-                  : Color.alphaBlend(
-                      tintColor.withValues(alpha: 0.12), // Brighter for optimistic feel
-                      theme.colorScheme.surfaceContainerHighest,
-                    ),
-            ),
+            decoration: context.cardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3149,7 +3164,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       Icon(
                         Icons.analytics_outlined,
                         size: 48,
-                        color: tintColor.withValues(alpha: 0.6), // Vibrant color
+                        color: tintColor.withValues(
+                          alpha: 0.6,
+                        ), // Vibrant color
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -3203,10 +3220,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         );
 
         // Calculate actual active days (days with at least one session)
-        final activeDays = sessionsLast7Days
-            .map((s) => DateTime(s.date.year, s.date.month, s.date.day))
-            .toSet()
-            .length;
+        final activeDays =
+            sessionsLast7Days
+                .map((s) => DateTime(s.date.year, s.date.month, s.date.day))
+                .toSet()
+                .length;
 
         // Use actual active days for more accurate and encouraging average
         // Minimum of 1 day to avoid division by zero
@@ -3232,24 +3250,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         final avgDurationTrendUp = avgSessionDurationInMinutes > 5;
         final ambientScoreTrendUp = avgAmbientScore > 75;
 
-        // Insights card with tertiary color tint for visual personality
-        final isDark = theme.brightness == Brightness.dark;
-        final tintColor = theme.colorScheme.tertiary; // Use theme tertiary color
-        final baseDecoration = context.cardDecoration;
+        // Insights card with neutral background
+        final tintColor = theme.colorScheme.tertiary; // For icon colors
 
         return Container(
           padding: _getCardPadding(context),
-          decoration: baseDecoration.copyWith(
-            color: isDark
-                ? Color.alphaBlend(
-                    tintColor.withValues(alpha: 0.18), // Brighter for optimistic feel
-                    theme.colorScheme.surfaceContainerHighest,
-                  )
-                : Color.alphaBlend(
-                    tintColor.withValues(alpha: 0.12), // Brighter for optimistic feel
-                    theme.colorScheme.surfaceContainerHighest,
-                  ),
-          ),
+          decoration: context.cardDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -3424,7 +3430,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   /// Get completed minutes for a specific activity profile
-  int _getCompletedMinutesForActivity(String profileId, QuestState? questState) {
+  int _getCompletedMinutesForActivity(
+    String profileId,
+    QuestState? questState,
+  ) {
     if (questState == null) return 0;
 
     switch (profileId) {
@@ -3526,8 +3535,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               child: Row(
                 children: [
                   // Left side: Focus Mode, Pause, Stop buttons
-                  // Show Focus Mode button when it's DISABLED in settings (so user can manually activate)
-                  if (!showFocusMode)
+                  // Always show Focus Mode button during sessions when not already active
+                  // Setting only controls auto-activation, not button visibility
+                  if (!_focusModeActive)
                     _buildTopButton(
                       context,
                       label: 'Focus Mode',
@@ -3535,12 +3545,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       backgroundColor: theme.colorScheme.primaryContainer,
                       textColor: theme.colorScheme.onPrimaryContainer,
                     ),
-                  if (!showFocusMode) const SizedBox(width: 6),
+                  if (!_focusModeActive) const SizedBox(width: 6),
                   _buildTopButton(
                     context,
                     label: silenceState.isPaused ? 'Resume' : 'Pause',
-                    icon: silenceState.isPaused ? Icons.play_arrow : Icons.pause,
-                    onLongPress: () => ref.read(silenceStateProvider.notifier).togglePause(),
+                    icon:
+                        silenceState.isPaused ? Icons.play_arrow : Icons.pause,
+                    onLongPress:
+                        () =>
+                            ref
+                                .read(silenceStateProvider.notifier)
+                                .togglePause(),
                     backgroundColor: theme.colorScheme.secondaryContainer,
                     textColor: theme.colorScheme.onSecondaryContainer,
                   ),
@@ -3573,8 +3588,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             progress: silenceState.progress,
             isListening: silenceState.isListening,
             timeLabel: _formatTimeForSeconds(durationSeconds),
+            totalDurationSeconds: durationSeconds,
             // Never show subtitle (user requested no "Calm" text)
             subtitleText: null,
+            // Ambient % display (only for noise-requiring activities)
+            calmPercent: calmPercent,
+            showCalmPercent: calmPercent != null,
             onStart: () {
               if (silenceState.isListening) {
                 _stopSilenceDetection(context);
@@ -3643,17 +3662,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
       },
       style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        // Removed minimumSize and tapTargetSize overrides to ensure 48x48dp minimum (WCAG 2.1 AAA)
       ),
       child: Text(
         '${minutes}m',
         style: theme.textTheme.bodySmall?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          color:
+              isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         ),
       ),
     );
@@ -3684,23 +3703,24 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       icon: Icon(
         Icons.star,
         size: 14,
-        color: isSelected
-            ? theme.colorScheme.primary
-            : theme.colorScheme.secondary,
+        color:
+            isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.secondary,
       ),
       label: Text(
         label,
         style: theme.textTheme.bodySmall?.copyWith(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          color:
+              isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         ),
       ),
       style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        // Removed minimumSize and tapTargetSize overrides to ensure 48x48dp minimum (WCAG 2.1 AAA)
       ),
     );
   }
@@ -3729,7 +3749,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(4), // Rectangular buttons with slight rounding
+        borderRadius: BorderRadius.circular(
+          UIConstants.buttonRadiusMedium,
+        ), // Material 3 medium radius (12dp)
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -3750,15 +3772,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
 
     if (onLongPress != null) {
-      return GestureDetector(
-        onLongPress: onLongPress,
-        child: button,
-      );
+      return GestureDetector(onLongPress: onLongPress, child: button);
     } else if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: button,
-      );
+      return GestureDetector(onTap: onTap, child: button);
     }
     return button;
   }
@@ -4167,18 +4183,25 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 class _GlowingProgressRing extends StatelessWidget {
   final double size;
   final double progress; // 0..1
-  final String timeLabel; // e.g., 01:00 or 1:30:00
+  final String timeLabel; // e.g., 01:00 or 1:30:00 (used when NOT listening)
+  final int? totalDurationSeconds; // Total session duration for countdown
   final VoidCallback onStart;
   final bool isListening;
   final String? subtitleText;
+  final double? calmPercent; // Ambient score percentage (0-100)
+  final bool
+  showCalmPercent; // Show calm% label (only for noise-requiring activities)
 
   const _GlowingProgressRing({
     required this.size,
     required this.progress,
     required this.timeLabel,
+    this.totalDurationSeconds,
     required this.onStart,
     required this.isListening,
     this.subtitleText,
+    this.calmPercent,
+    this.showCalmPercent = false,
   });
 
   @override
@@ -4239,8 +4262,23 @@ class _GlowingProgressRing extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Ambient % display (only when showCalmPercent is true and listening)
+              if (showCalmPercent && isListening && calmPercent != null) ...[
+                Text(
+                  '${calmPercent!.round()}% Calm',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+              ],
+              // Countdown timer (when listening) OR static duration (when not listening)
               Text(
-                timeLabel,
+                isListening && totalDurationSeconds != null
+                    ? _buildCountdownText()
+                    : timeLabel,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w700,
@@ -4269,22 +4307,28 @@ class _GlowingProgressRing extends StatelessWidget {
                     padding: const EdgeInsets.all(18),
                     elevation: 3,
                   ),
-                  child: const Icon(
-                    Icons.play_arrow_rounded,
-                    size: 28,
-                  ),
+                  child: const Icon(Icons.play_arrow_rounded, size: 28),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  'Start',
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text('Start', style: theme.textTheme.titleMedium),
               ],
             ],
           ),
         ],
       ),
     );
+  }
+
+  /// Calculate and format countdown text
+  String _buildCountdownText() {
+    if (totalDurationSeconds == null) return timeLabel;
+
+    // Calculate remaining time
+    final remainingSeconds = (totalDurationSeconds! * (1 - progress)).round();
+    final minutes = remainingSeconds ~/ 60;
+    final seconds = remainingSeconds % 60;
+
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 }
 

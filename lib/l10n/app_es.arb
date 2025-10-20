@@ -88,7 +88,6 @@
   ,"bundleId": "ID de paquete"
   ,"environment": "Entorno"
   ,"helpSupport": "Ayuda y soporte"
-  ,"faq": "FAQ"
   ,"support": "Soporte"
   ,"rateApp": "Calificar"
   ,"errorLoadingSettings": "Error cargando ajustes: {error}"
@@ -100,7 +99,6 @@
   ,"generatingExport": "Generando exportación {format}..."
   ,"exportCompleted": "Exportación {format} completada"
   ,"exportFailed": "Fallo en exportación: {error}"
-  ,"frequentlyAskedQuestions": "Preguntas frecuentes"
   ,"close": "Cerrar"
   ,"vibrationFeedback": "Vibración"
   ,"vibrateOnSessionEvents": "Vibrar en eventos"
@@ -130,16 +128,6 @@
   ,"minutesShort": "min"
   ,"unlockAdvancedCalibration": "Desbloquea calibración avanzada de ruido"
   ,"exportNoData": "No hay datos para exportar"
-  ,"faqHowWorksQ": "¿Cómo funciona Focus Field?"
-  ,"faqHowWorksA": "Mide el ruido ambiente: el tiempo por debajo del umbral gana puntos."
-  ,"faqAudioRecordedQ": "¿Se graba audio?"
-  ,"faqAudioRecordedA": "No. Solo se toman niveles de decibelios; nunca se guarda audio."
-  ,"faqAdjustSensitivityQ": "¿Ajustar sensibilidad?"
-  ,"faqAdjustSensitivityA": "Usa Ajustes > Básico > Umbral de decibelios ({min}–{max} dB) y calibra primero."
-  ,"faqPremiumFeaturesQ": "¿Funciones Premium?"
-  ,"faqPremiumFeaturesA": "Sesiones extendidas (hasta 120m), analítica avanzada, exportación, temas."
-  ,"faqNotificationsQ": "¿Notificaciones?"
-  ,"faqNotificationsA": "Recordatorios inteligentes aprenden hábitos y celebran hitos."
   ,"supportTitle": "Soporte"
   ,"responseTimeLabel": "Tiempo de respuesta: {time}"
   ,"docs": "Docs"
@@ -346,6 +334,15 @@
   ,"@adaptiveThresholdConfirm": {
     "placeholders": {
       "threshold": {"type": "int"}
+    }
+  }
+  ,"edit": "Editar"
+  ,"start": "Iniciar"
+  ,"error": "Error"
+  ,"errorWithMessage": "Error: {message}"
+  ,"@errorWithMessage": {
+    "placeholders": {
+      "message": {"type": "String"}
     }
   }
 }

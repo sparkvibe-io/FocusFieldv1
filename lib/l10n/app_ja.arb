@@ -348,4 +348,13 @@
       "threshold": {"type": "int"}
     }
   }
+  ,"edit": "編集"
+  ,"start": "開始"
+  ,"error": "エラー"
+  ,"errorWithMessage": "エラー：{message}"
+  ,"@errorWithMessage": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  }
 }

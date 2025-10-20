@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:focus_field/widgets/shareable_cards.dart';
 import 'package:focus_field/services/share_service.dart';
+import 'package:focus_field/constants/ui_constants.dart';
+import 'package:focus_field/widgets/common/drag_handle.dart';
 
 /// Time range for progress sharing
 enum ShareTimeRange {
@@ -52,27 +54,23 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxHeight = MediaQuery.of(context).size.height * 0.85;
+    final maxHeight =
+        MediaQuery.of(context).size.height *
+        UIConstants.bottomSheetMaxHeightRatio;
 
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Drag handle
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+          const DragHandle(),
 
           // Header
           Padding(
@@ -96,7 +94,10 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
             ),
           ),
 
-          Divider(height: 1, color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+          Divider(
+            height: 1,
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          ),
 
           // Content
           Expanded(
@@ -107,7 +108,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                 children: [
                   // Time Range Toggle
                   _buildTimeRangeToggle(theme),
-                  
+
                   const SizedBox(height: 16),
 
                   // Card Format Selector
@@ -144,19 +145,20 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
         ),
         const SizedBox(height: 8),
         SegmentedButton<ShareTimeRange>(
-          segments: ShareTimeRange.values
-              .map(
-                (range) => ButtonSegment<ShareTimeRange>(
-                  value: range,
-                  label: Text(range.label),
-                  icon: Icon(
-                    range == ShareTimeRange.today
-                        ? Icons.today
-                        : Icons.date_range,
-                  ),
-                ),
-              )
-              .toList(),
+          segments:
+              ShareTimeRange.values
+                  .map(
+                    (range) => ButtonSegment<ShareTimeRange>(
+                      value: range,
+                      label: Text(range.label),
+                      icon: Icon(
+                        range == ShareTimeRange.today
+                            ? Icons.today
+                            : Icons.date_range,
+                      ),
+                    ),
+                  )
+                  .toList(),
           selected: {_selectedTimeRange},
           onSelectionChanged: (Set<ShareTimeRange> selected) {
             setState(() {
@@ -183,27 +185,25 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: ShareCardFormat.values.map((format) {
-              final isSelected = _selectedFormat == format;
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: ChoiceChip(
-                  label: Text(format.label),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedFormat = format;
-                      });
-                    }
-                  },
-                  avatar: Icon(
-                    _getFormatIcon(format),
-                    size: 18,
-                  ),
-                ),
-              );
-            }).toList(),
+            children:
+                ShareCardFormat.values.map((format) {
+                  final isSelected = _selectedFormat == format;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: ChoiceChip(
+                      label: Text(format.label),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _selectedFormat = format;
+                          });
+                        }
+                      },
+                      avatar: Icon(_getFormatIcon(format), size: 18),
+                    ),
+                  );
+                }).toList(),
           ),
         ),
         const SizedBox(height: 8),
@@ -234,7 +234,9 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
             Text(
               'Pinch to zoom',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.6,
+                ),
               ),
             ),
           ],
@@ -242,10 +244,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
         const SizedBox(height: 8),
         Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: 320,
-              maxWidth: 240,
-            ),
+            constraints: const BoxConstraints(maxHeight: 320, maxWidth: 240),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
@@ -265,10 +264,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                   boundaryMargin: const EdgeInsets.all(20),
                   child: RepaintBoundary(
                     key: _cardKey,
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: _buildCard(),
-                    ),
+                    child: FittedBox(fit: BoxFit.contain, child: _buildCard()),
                   ),
                 ),
               ),
@@ -294,13 +290,14 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
   Widget _buildShareButton(ThemeData theme) {
     return FilledButton.icon(
       onPressed: _isSharing ? null : _handleShare,
-      icon: _isSharing
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.share),
+      icon:
+          _isSharing
+              ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+              : const Icon(Icons.share),
       label: Text(_isSharing ? 'Generating...' : 'Share'),
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),

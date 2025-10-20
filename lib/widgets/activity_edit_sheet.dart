@@ -3,6 +3,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../providers/user_preferences_provider.dart';
 import '../providers/ambient_quest_provider.dart';
 import '../theme/theme_extensions.dart';
+import '../constants/ui_constants.dart';
+import 'common/drag_handle.dart';
 
 /// Bottom sheet for editing activity visibility and daily goal
 class ActivityEditSheet extends ConsumerStatefulWidget {
@@ -56,32 +58,21 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxHeight = MediaQuery.of(context).size.height * 0.85;
+    final maxHeight = MediaQuery.of(context).size.height * UIConstants.bottomSheetMaxHeightRatio;
     const maxTotalMinutes = 1080; // 18 hours total budget
-    
+
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: context.elevatedCardDecoration.copyWith(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Drag handle
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 40,
-            height: 4,
-            alignment: Alignment.center,
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.onSurfaceVariant,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
+          const DragHandle(),
           // Scrollable content
           Expanded(
             child: SingleChildScrollView(
@@ -124,8 +115,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
               Expanded(
                 child: Text(
                   'Recommended: 10+ min per activity for consistent habit building',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontSize: 11,
+                  style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary.withValues(alpha: 0.7),
                     fontStyle: FontStyle.italic,
                   ),

@@ -5,6 +5,8 @@ import '../providers/silence_provider.dart';
 import '../providers/subscription_provider.dart';
 import '../models/subscription_tier.dart';
 import '../widgets/feature_gate.dart';
+import '../constants/ui_constants.dart';
+import 'common/drag_handle.dart';
 
 /// Full-screen analytics modal with free and premium sections
 class AnalyticsModal extends ConsumerWidget {
@@ -36,20 +38,14 @@ class AnalyticsModal extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+            ),
           ),
           child: Column(
             children: [
               // Handle bar
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+              const DragHandle(),
 
               // Header
               Padding(
@@ -63,9 +59,8 @@ class AnalyticsModal extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Text(
                       'Analytics',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     IconButton(
@@ -139,8 +134,8 @@ class AnalyticsModal extends ConsumerWidget {
                 Text(
                   'Overview',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -201,16 +196,16 @@ class AnalyticsModal extends ConsumerWidget {
             Text(
               value,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -249,8 +244,8 @@ class AnalyticsModal extends ConsumerWidget {
                 Text(
                   'Last 7 Days',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -260,21 +255,22 @@ class AnalyticsModal extends ConsumerWidget {
                       alignment: BarChartAlignment.spaceAround,
                       maxY: (last7Days.reduce((a, b) => a > b ? a : b) * 1.2)
                           .clamp(10, double.infinity),
-                      barGroups: last7Days.asMap().entries.map((entry) {
-                        return BarChartGroupData(
-                          x: entry.key,
-                          barRods: [
-                            BarChartRodData(
-                              toY: entry.value,
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 20,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(4),
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                      barGroups:
+                          last7Days.asMap().entries.map((entry) {
+                            return BarChartGroupData(
+                              x: entry.key,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: entry.value,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 20,
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(4),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
                       titlesData: FlTitlesData(
                         leftTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
@@ -325,17 +321,19 @@ class AnalyticsModal extends ConsumerWidget {
         final completedSessions =
             data.recentSessions.where((s) => s.completed).length;
         final totalSessions = data.recentSessions.length;
-        final successRate = totalSessions > 0
-            ? ((completedSessions / totalSessions) * 100).toInt()
-            : 0;
+        final successRate =
+            totalSessions > 0
+                ? ((completedSessions / totalSessions) * 100).toInt()
+                : 0;
 
-        final avgDuration = completedSessions > 0
-            ? data.recentSessions
-                    .where((s) => s.completed)
-                    .fold<int>(0, (sum, s) => sum + s.duration) ~/
-                completedSessions ~/
-                60
-            : 0;
+        final avgDuration =
+            completedSessions > 0
+                ? data.recentSessions
+                        .where((s) => s.completed)
+                        .fold<int>(0, (sum, s) => sum + s.duration) ~/
+                    completedSessions ~/
+                    60
+                : 0;
 
         return Card(
           child: Padding(
@@ -346,8 +344,8 @@ class AnalyticsModal extends ConsumerWidget {
                 Text(
                   'Performance Highlights',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _buildHighlightRow(
@@ -388,24 +386,17 @@ class AnalyticsModal extends ConsumerWidget {
   ) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ),
         Text(
           value,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ],
     );
@@ -422,17 +413,16 @@ class AnalyticsModal extends ConsumerWidget {
           children: [
             Text(
               'Activity Progress',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
               'Detailed activity tracking coming soon.',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -458,8 +448,8 @@ class AnalyticsModal extends ConsumerWidget {
                 Text(
                   'Advanced Metrics',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -480,9 +470,9 @@ class AnalyticsModal extends ConsumerWidget {
           children: [
             Text(
               '30-Day Trends',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text('Premium trends chart here...'),
@@ -510,8 +500,8 @@ class AnalyticsModal extends ConsumerWidget {
                 Text(
                   'AI Insights',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -545,17 +535,17 @@ class AnalyticsModal extends ConsumerWidget {
               Text(
                 'Unlock Advanced Analytics',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 'Get detailed metrics, 30-day trends, and AI-powered insights',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

@@ -10,10 +10,11 @@ import 'package:focus_field/utils/debug_log.dart';
 
 class AdvancedAnalyticsWidget extends ConsumerWidget {
   final SilenceData silenceData;
+
   /// Whether to show the title row with "Advanced Analytics" and "PREMIUM" badge.
   /// Set to false when used within a context where the title is already shown (e.g., Advanced tab).
   final bool showTitle;
-  
+
   const AdvancedAnalyticsWidget({
     super.key,
     required this.silenceData,
@@ -40,16 +41,16 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           _buildMetricsAndTrendsRow(context, metrics, trends, compact: compact),
           // Best Time by Activity section
           if (metrics.bestTimeByActivity.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 10), // Reduced from 16
             _buildBestTimeByActivity(context, metrics.bestTimeByActivity),
           ],
           // Insights section
           if (insights.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 10), // Reduced from 16
             _insights(context, insights, compact: compact),
           ],
           // Bottom padding to ensure last insight is visible when scrolling
-          const SizedBox(height: 80),
+          const SizedBox(height: 16), // Reduced from 80 for compact layout
         ],
       );
 
@@ -69,7 +70,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
+              color: Theme.of(
+                context,
+              ).colorScheme.shadow.withValues(alpha: 0.12),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -140,7 +143,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         children: [
           _buildPerformanceMetricsVertical(context, metrics),
           if (trends.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 10), // Reduced from 16
             _buildWeeklyTrendsChart(context, trends, compact: compact),
           ],
         ],
@@ -195,7 +198,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context)!.performanceMetrics,
-          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -211,7 +216,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 color: _successRateColor(context, m.overallSuccessRate),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6), // Reduced from 8
             Expanded(
               child: _buildCompactMetricCard(
                 context,
@@ -223,7 +228,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6), // Reduced from 8
         Row(
           children: [
             Expanded(
@@ -235,7 +240,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 color: _consistencyColor(context, m.consistencyScore),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6), // Reduced from 8
             Expanded(
               child: _buildCompactMetricCard(
                 context,
@@ -266,7 +271,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for better visibility
           width: 1,
         ),
       ),
@@ -308,7 +315,10 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
   }
 
   /// Best Time by Activity widget - compact single-row cards
-  Widget _buildBestTimeByActivity(BuildContext context, Map<String, int> bestTimeByActivity) {
+  Widget _buildBestTimeByActivity(
+    BuildContext context,
+    Map<String, int> bestTimeByActivity,
+  ) {
     final theme = Theme.of(context);
 
     if (bestTimeByActivity.isEmpty) {
@@ -320,7 +330,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
       children: [
         Text(
           'Best Time by Activity',
-          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         ...bestTimeByActivity.entries.map((entry) {
@@ -354,7 +366,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for consistency
           width: 1,
         ),
       ),
@@ -467,8 +481,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     required bool compact,
   }) {
     // Limit to last 8 weeks
-    final displayTrends = trends.length > 8 ? trends.sublist(trends.length - 8) : trends;
-    
+    final displayTrends =
+        trends.length > 8 ? trends.sublist(trends.length - 8) : trends;
+
     // Calculate MA(3) moving average
     final ma = <FlSpot>[];
     for (var i = 0; i < displayTrends.length; i++) {
@@ -477,30 +492,34 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           w.map((e) => e.successRate).reduce((a, b) => a + b) / w.length;
       ma.add(FlSpot(i.toDouble(), avg));
     }
-    
+
     // Calculate overall average
     final overall =
         displayTrends.isEmpty
             ? 0.0
             : displayTrends.map((e) => e.successRate).reduce((a, b) => a + b) /
                 displayTrends.length;
-    
+
     final primary = Theme.of(context).colorScheme.primary;
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)!.weeklyTrends,
-          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         SizedBox(height: compact ? 8 : 12),
         Container(
           height: compact ? 120 : 150,
           padding: EdgeInsets.all(compact ? 8 : 12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.25),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.25,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: LineChart(
@@ -546,7 +565,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                     getTitlesWidget:
                         (v, meta) => Text(
                           '${v.toInt()}%',
-                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 9),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 9,
+                          ),
                         ),
                   ),
                 ),
@@ -557,15 +578,17 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                     interval: 1,
                     getTitlesWidget: (v, meta) {
                       final i = v.toInt();
-                      if (i < 0 || i >= displayTrends.length) return const SizedBox();
-                      
+                      if (i < 0 || i >= displayTrends.length)
+                        return const SizedBox();
+
                       // Show as W1, W2, W3, etc. (week number relative to display)
                       return Text(
                         'W${i + 1}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 9,
-                          color: theme.textTheme.bodySmall?.color
-                              ?.withValues(alpha: displayTrends[i].isMissing ? 0.35 : 1),
+                          color: theme.textTheme.bodySmall?.color?.withValues(
+                            alpha: displayTrends[i].isMissing ? 0.35 : 1,
+                          ),
                         ),
                       );
                     },
@@ -706,13 +729,17 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
   Widget _insightCard(BuildContext context, AnalyticsInsight insight) {
     final color = _insightColor(context, insight.type);
     final icon = _insightIcon(insight.type);
-  final scheme = Theme.of(context).colorScheme;
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for consistency
+        ),
       ),
       child: Row(
         children: [
@@ -722,7 +749,11 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               color: color,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 16, color: context.onColorFor(color, scheme)),
+            child: Icon(
+              icon,
+              size: 16,
+              color: context.onColorFor(color, scheme),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -782,6 +813,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     if (v >= 60) return sem.warning;
     return scheme.error;
   }
+
   Color _consistencyColor(BuildContext context, double c) {
     final sem = context.semanticColors;
     final scheme = Theme.of(context).colorScheme;
@@ -789,6 +821,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     if (c >= 0.5) return sem.warning;
     return scheme.error;
   }
+
   Color _insightColor(BuildContext context, InsightType t) => switch (t) {
     InsightType.achievement => context.semanticColors.success,
     InsightType.improvement => Theme.of(context).colorScheme.primary,

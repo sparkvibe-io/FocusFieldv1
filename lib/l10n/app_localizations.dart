@@ -674,12 +674,6 @@ abstract class AppLocalizations {
   /// **'Help & Support'**
   String get helpSupport;
 
-  /// No description provided for @faq.
-  ///
-  /// In en, this message translates to:
-  /// **'FAQ'**
-  String get faq;
-
   /// No description provided for @support.
   ///
   /// In en, this message translates to:
@@ -751,192 +745,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export failed: {error}'**
   String exportFailed(String error);
-
-  /// No description provided for @frequentlyAskedQuestions.
-  ///
-  /// In en, this message translates to:
-  /// **'Frequently Asked Questions'**
-  String get frequentlyAskedQuestions;
-
-  /// No description provided for @faqHowWorksQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How does Focus Field work?'**
-  String get faqHowWorksQ;
-
-  /// No description provided for @faqHowWorksA.
-  ///
-  /// In en, this message translates to:
-  /// **'It measures ambient noise – time below threshold earns points.'**
-  String get faqHowWorksA;
-
-  /// No description provided for @faqAudioRecordedQ.
-  ///
-  /// In en, this message translates to:
-  /// **'Is audio recorded?'**
-  String get faqAudioRecordedQ;
-
-  /// No description provided for @faqAudioRecordedA.
-  ///
-  /// In en, this message translates to:
-  /// **'No. Only decibel levels are sampled; audio is never stored.'**
-  String get faqAudioRecordedA;
-
-  /// No description provided for @faqAdjustSensitivityQ.
-  ///
-  /// In en, this message translates to:
-  /// **'Adjust sensitivity?'**
-  String get faqAdjustSensitivityQ;
-
-  /// No description provided for @faqAdjustSensitivityA.
-  ///
-  /// In en, this message translates to:
-  /// **'Use Settings > Basic > Decibel Threshold ({min}–{max} dB) and calibrate first.'**
-  String faqAdjustSensitivityA(int min, int max);
-
-  /// No description provided for @faqPremiumFeaturesQ.
-  ///
-  /// In en, this message translates to:
-  /// **'Premium features?'**
-  String get faqPremiumFeaturesQ;
-
-  /// No description provided for @faqPremiumFeaturesA.
-  ///
-  /// In en, this message translates to:
-  /// **'Extended sessions (up to 120m), advanced analytics, export, themes.'**
-  String get faqPremiumFeaturesA;
-
-  /// No description provided for @faqNotificationsQ.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications?'**
-  String get faqNotificationsQ;
-
-  /// No description provided for @faqNotificationsA.
-  ///
-  /// In en, this message translates to:
-  /// **'Smart reminders learn habits and celebrate milestones.'**
-  String get faqNotificationsA;
-
-  /// No description provided for @faqFocusMinutesQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What are focus minutes?'**
-  String get faqFocusMinutesQ;
-
-  /// No description provided for @faqFocusMinutesA.
-  ///
-  /// In en, this message translates to:
-  /// **'Focus minutes measure time spent in calm environments (≥70% quiet). They\'re earned during sessions when ambient noise stays below your threshold.'**
-  String get faqFocusMinutesA;
-
-  /// No description provided for @faqAmbientQuestQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What is the Ambient Quest system?'**
-  String get faqAmbientQuestQ;
-
-  /// No description provided for @faqAmbientQuestA.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily focus challenges that track quiet minutes across Study, Reading, and Meditation activities. Set a goal (10-60 min), build streaks, and earn freeze tokens monthly.'**
-  String get faqAmbientQuestA;
-
-  /// No description provided for @faqStreaksQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do streaks work?'**
-  String get faqStreaksQ;
-
-  /// No description provided for @faqStreaksA.
-  ///
-  /// In en, this message translates to:
-  /// **'Streaks track consecutive days of reaching your goal. The compassionate 2-Day Rule means missing one day won\'t break your streak—only two consecutive misses reset it. Use monthly freeze tokens to protect streaks on tough days.'**
-  String get faqStreaksA;
-
-  /// No description provided for @faqActivitiesQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What activities can I track?'**
-  String get faqActivitiesQ;
-
-  /// No description provided for @faqActivitiesA.
-  ///
-  /// In en, this message translates to:
-  /// **'Focus Field offers Study, Reading, and Meditation activities. Each tracks progress toward your daily goal. Enable/disable activities and adjust your goal (10-60 min) in the Activity Progress section.'**
-  String get faqActivitiesA;
-
-  /// No description provided for @faqCalibrateQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I calibrate my microphone?'**
-  String get faqCalibrateQ;
-
-  /// No description provided for @faqCalibrateA.
-  ///
-  /// In en, this message translates to:
-  /// **'Go to Settings > Advanced > Noise Calibration. The app measures your ambient baseline for 5 seconds and suggests an appropriate threshold. Recalibrate when changing environments.'**
-  String get faqCalibrateA;
-
-  /// No description provided for @faqMicTroubleshootQ.
-  ///
-  /// In en, this message translates to:
-  /// **'Why isn\'t my microphone working?'**
-  String get faqMicTroubleshootQ;
-
-  /// No description provided for @faqMicTroubleshootA.
-  ///
-  /// In en, this message translates to:
-  /// **'Check: (1) Microphone permission granted in device settings, (2) No other apps using microphone, (3) Restart app if needed. Contact support if issues persist.'**
-  String get faqMicTroubleshootA;
-
-  /// No description provided for @faqSubscriptionTiersQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What\'s the difference between subscription tiers?'**
-  String get faqSubscriptionTiersQ;
-
-  /// No description provided for @faqSubscriptionTiersA.
-  ///
-  /// In en, this message translates to:
-  /// **'Free: 30-min sessions, 7-day history, basic features. Premium (\$1.99/mo): 120-min sessions, 90-day history, analytics, export, themes. Premium Plus (\$3.99/mo): Coming soon with cloud sync and AI insights.'**
-  String get faqSubscriptionTiersA;
-
-  /// No description provided for @faqDeepFocusQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What is Deep Focus mode?'**
-  String get faqDeepFocusQ;
-
-  /// No description provided for @faqDeepFocusA.
-  ///
-  /// In en, this message translates to:
-  /// **'A Premium feature that automatically ends your session if you leave the app for more than the grace period (default 10s). Helps maintain distraction-free focus sessions.'**
-  String get faqDeepFocusA;
-
-  /// No description provided for @faqDailyGoalQ.
-  ///
-  /// In en, this message translates to:
-  /// **'How do I adjust my daily goal?'**
-  String get faqDailyGoalQ;
-
-  /// No description provided for @faqDailyGoalA.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap \'Edit\' in the Activity Progress section on the Today tab. Adjust the global daily goal slider (10-60 min) and enable/disable specific activities (Study, Reading, Meditation).'**
-  String get faqDailyGoalA;
-
-  /// No description provided for @faqCalmPercentQ.
-  ///
-  /// In en, this message translates to:
-  /// **'What does the Calm % mean?'**
-  String get faqCalmPercentQ;
-
-  /// No description provided for @faqCalmPercentA.
-  ///
-  /// In en, this message translates to:
-  /// **'The percentage of time during your session where ambient noise stayed below threshold. Sessions with ≥70% Calm qualify for quest credit. Higher percentages mean better focus environments.'**
-  String get faqCalmPercentA;
 
   /// No description provided for @close.
   ///
@@ -2149,6 +1957,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Threshold set to {threshold} dB'**
   String adaptiveThresholdConfirm(int threshold);
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @errorWithMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String errorWithMessage(String message);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

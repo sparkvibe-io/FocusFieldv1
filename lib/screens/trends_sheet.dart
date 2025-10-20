@@ -10,8 +10,10 @@ import 'package:focus_field/theme/theme_extensions.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:focus_field/widgets/share_preview_sheet.dart';
-import 'package:focus_field/widgets/weekly_recap_card.dart';
 import 'package:focus_field/providers/weekly_recap_provider.dart';
+import 'package:focus_field/models/weekly_recap.dart';
+import 'package:focus_field/constants/ui_constants.dart';
+import 'package:focus_field/widgets/common/drag_handle.dart';
 
 /// Bottom sheet showing insights and analytics.
 /// Mirrors Settings sheet style for consistency.
@@ -48,25 +50,25 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
     final data = dataAsync.value;
     final sessions = data?.recentSessions ?? [];
     final now = DateTime.now();
-    
+
     // Calculate weekly stats
     final startOfWeek = now.subtract(Duration(days: now.weekday % 7));
     final endOfWeek = startOfWeek.add(const Duration(days: 6));
-    
+
     int weeklyMinutes = 0;
     int weeklySessions = 0;
     int weeklySuccessCount = 0;
     final weeklyActivityMinutes = <String, int>{};
-    
+
     // Calculate today's stats
     final todayStart = DateTime(now.year, now.month, now.day);
     final todayEnd = todayStart.add(const Duration(days: 1));
-    
+
     int dailyMinutes = 0;
     int dailySessions = 0;
     int dailySuccessCount = 0;
     final dailyActivityMinutes = <String, int>{};
-    
+
     for (final session in sessions) {
       // Weekly calculation
       if (session.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
@@ -74,81 +76,84 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
         weeklyMinutes += session.duration ~/ 60;
         weeklySessions++;
         if (session.completed) weeklySuccessCount++;
-        
+
         final activity = session.activity ?? 'Other';
-        weeklyActivityMinutes[activity] = (weeklyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+        weeklyActivityMinutes[activity] =
+            (weeklyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
       }
-      
+
       // Daily calculation
       if (session.date.isAfter(todayStart) && session.date.isBefore(todayEnd)) {
         dailyMinutes += session.duration ~/ 60;
         dailySessions++;
         if (session.completed) dailySuccessCount++;
-        
+
         final activity = session.activity ?? 'Other';
-        dailyActivityMinutes[activity] = (dailyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
+        dailyActivityMinutes[activity] =
+            (dailyActivityMinutes[activity] ?? 0) + (session.duration ~/ 60);
       }
     }
-    
-    final weeklySuccessRate = weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
 
-    final dailySuccessRate = dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
+    final weeklySuccessRate =
+        weeklySessions > 0 ? (weeklySuccessCount / weeklySessions * 100) : 0.0;
+
+    final dailySuccessRate =
+        dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
 
     final formatter = DateFormat('MMM d');
-    final weekRange = '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
+    final weekRange =
+        '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
     final dateFormatter = DateFormat('MMMM d, y');
     final todayRange = dateFormatter.format(now);
 
     // Determine initial time range based on available data
-    final initialTimeRange = dailyMinutes > 0
-        ? ShareTimeRange.today
-        : ShareTimeRange.weekly;
+    final initialTimeRange =
+        dailyMinutes > 0 ? ShareTimeRange.today : ShareTimeRange.weekly;
 
     // Use today's data if available, otherwise weekly
     final displayMinutes = dailyMinutes > 0 ? dailyMinutes : weeklyMinutes;
     final displaySessions = dailyMinutes > 0 ? dailySessions : weeklySessions;
-    final displaySuccessRate = dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
-    final displayActivityMinutes = dailyMinutes > 0 ? dailyActivityMinutes : weeklyActivityMinutes;
+    final displaySuccessRate =
+        dailyMinutes > 0 ? dailySuccessRate : weeklySuccessRate;
+    final displayActivityMinutes =
+        dailyMinutes > 0 ? dailyActivityMinutes : weeklyActivityMinutes;
     final displayDateRange = dailyMinutes > 0 ? todayRange : weekRange;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => SharePreviewSheet(
-        totalMinutes: displayMinutes,
-        sessionCount: displaySessions,
-        successRate: displaySuccessRate,
-        activityMinutes: displayActivityMinutes,
-        dateRange: displayDateRange,
-        initialTimeRange: initialTimeRange,
-      ),
+      builder:
+          (_) => SharePreviewSheet(
+            totalMinutes: displayMinutes,
+            sessionCount: displaySessions,
+            successRate: displaySuccessRate,
+            activityMinutes: displayActivityMinutes,
+            dateRange: displayDateRange,
+            initialTimeRange: initialTimeRange,
+          ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxHeight = MediaQuery.of(context).size.height * 0.85;
+    final maxHeight =
+        MediaQuery.of(context).size.height *
+        UIConstants.bottomSheetMaxHeightRatio;
 
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+        ),
       ),
       child: Column(
         children: [
           // Drag handle
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+          const DragHandle(),
           // Header row
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
@@ -176,12 +181,12 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
               ],
             ),
           ),
-          // Tabs with icons (match Settings style)
+          // Tabs with icons only (match Settings sheet for consistency)
           TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(icon: Icon(Icons.tune), text: 'Basic'),
-              Tab(icon: Icon(Icons.engineering), text: 'Advanced'),
+              Tab(icon: Icon(Icons.tune)), // Basic
+              Tab(icon: Icon(Icons.engineering)), // Advanced
             ],
           ),
           // Content
@@ -189,10 +194,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
-              children: const [
-                _TrendsBasicTab(),
-                _TrendsAdvancedTab(),
-              ],
+              children: const [_TrendsBasicTab(), _TrendsAdvancedTab()],
             ),
           ),
         ],
@@ -210,172 +212,236 @@ class _TrendsBasicTab extends ConsumerWidget {
     final dataAsync = ref.watch(silenceDataNotifierProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8), // Reduced from 12 for compact layout
       child: Column(
         children: [
-          // 7-day stacked bars card (fixed height, minimal)
+          // Weekly Recap + 7-day chart combined card
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: context.cardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Last 7 Days',
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Minutes by activity',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Weekly Recap card (fetch latest or generate if missing)
-                Consumer(builder: (context, ref, _) {
-                  final latestRecapAsync = ref.watch(latestWeeklyRecapProvider);
-                  return latestRecapAsync.when(
-                    data: (recap) {
-                      if (recap != null) {
-                        return WeeklyRecapCard(
-                          recap: recap,
+                // Ultra-compact metrics header (replaces verbose WeeklyRecapCard)
+                Consumer(
+                  builder: (context, ref, _) {
+                    final latestRecapAsync = ref.watch(
+                      latestWeeklyRecapProvider,
+                    );
+                    return latestRecapAsync.when(
+                      data: (recap) {
+                        if (recap != null) {
+                          return _buildCompactMetricsHeader(
+                            context,
+                            theme,
+                            recap,
+                          );
+                        }
+                        // No cached recap, attempt to generate one on the fly
+                        final genAsync = ref.watch(
+                          generateWeeklyRecapProvider(null),
                         );
-                      }
-                      // No cached recap, attempt to generate one on the fly (best effort)
-                      final genAsync = ref.watch(generateWeeklyRecapProvider(null));
-                      return genAsync.when(
-                        data: (newRecap) => WeeklyRecapCard(
-                          recap: newRecap,
-                        ),
-                        loading: () => Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: context.subtleCardDecoration,
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                        return genAsync.when(
+                          data:
+                              (newRecap) => _buildCompactMetricsHeader(
+                                context,
+                                theme,
+                                newRecap,
                               ),
-                              const SizedBox(width: 12),
-                              Text('Preparing your weekly recap...', style: theme.textTheme.bodyMedium),
-                            ],
+                          loading:
+                              () => Text(
+                                'Loading...',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                          error: (e, st) => const SizedBox.shrink(),
+                        );
+                      },
+                      loading:
+                          () => Text(
+                            'Loading metrics...',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                      error: (e, st) => const SizedBox.shrink(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 8), // Compact spacing
+                SizedBox(
+                  height: context.chartHeight + 32, // 4dp grid alignment
+                  child: dataAsync.when(
+                    data:
+                        (d) => _SevenDayStackedBars(sessions: d.recentSessions),
+                    loading:
+                        () => const Center(child: CircularProgressIndicator()),
+                    error:
+                        (_, __) => Center(
+                          child: Text(
+                            'No data',
+                            style: theme.textTheme.bodySmall,
                           ),
                         ),
-                        error: (e, st) => const SizedBox.shrink(),
-                      );
-                    },
-                    loading: () => Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: context.subtleCardDecoration,
-                      child: Row(
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          const SizedBox(width: 12),
-                          Text('Loading recap...', style: theme.textTheme.bodyMedium),
-                        ],
-                      ),
-                    ),
-                    error: (e, st) => const SizedBox.shrink(),
-                  );
-                }),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: context.chartHeight + 30,
-                  child: dataAsync.when(
-                    data: (d) => _SevenDayStackedBars(sessions: d.recentSessions),
-                    loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (_, __) => Center(
-                      child: Text(
-                        'No data',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8), // Reduced from 12
           // Summary stats
           Row(
             children: [
-              _statChip(context, Icons.stacked_line_chart, 'Weekly Total',
-                  _weeklyTotalMinutes(dataAsync)),
-              const SizedBox(width: 12),
-              _statChip(context, Icons.today, 'Best Day',
-                  _bestDayLabel(context, dataAsync)),
+              _statChip(
+                context,
+                Icons.stacked_line_chart,
+                'Weekly Total',
+                _weeklyTotalMinutes(dataAsync),
+              ),
+              const SizedBox(width: 10), // Reduced from 12
+              _statChip(
+                context,
+                Icons.today,
+                'Best Day',
+                _bestDayLabel(context, dataAsync),
+              ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10), // Reduced from 16
           // 12-week activity heatmap
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10), // Reduced from 12
             decoration: context.cardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Activity Heatmap',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2), // Reduced from 4
                 Text(
                   'Recent activity',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12), // Reduced from 16
                 dataAsync.when(
-                  data: (d) => SessionHeatmap(
-                    sessions: d.recentSessions,
-                    // Let heatmap determine optimal weeks (8 weeks or current month)
-                  ),
-                  loading: () => const SizedBox(
-                    height: 120,
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                  error: (_, __) => SizedBox(
-                    height: 80,
-                    child: Center(
-                      child: Text(
-                        'Unable to load heatmap',
-                        style: theme.textTheme.bodySmall,
+                  data:
+                      (d) => SessionHeatmap(
+                        sessions: d.recentSessions,
+                        // Let heatmap determine optimal weeks (8 weeks or current month)
                       ),
-                    ),
-                  ),
+                  loading:
+                      () => const SizedBox(
+                        height: 120,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                  error:
+                      (_, __) => SizedBox(
+                        height: 80,
+                        child: Center(
+                          child: Text(
+                            'Unable to load heatmap',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
                 ),
               ],
             ),
           ),
+          const SizedBox(
+            height: 16,
+          ), // Bottom padding for comfortable scrolling
         ],
       ),
     );
   }
 
+  /// Ultra-compact metrics header showing key stats in one scannable line
+  Widget _buildCompactMetricsHeader(
+    BuildContext context,
+    ThemeData theme,
+    WeeklyRecap recap,
+  ) {
+    // Format date range (e.g., "Oct 13 - Oct 20")
+    final formatter = DateFormat('MMM d');
+    final dateRange =
+        '${formatter.format(recap.weekStartDate)} - ${formatter.format(recap.weekEndDate)}';
+
+    // Calculate streak display (show growth if changed)
+    final streakDisplay =
+        recap.streakAtEnd > recap.streakAtStart
+            ? '${recap.streakAtStart}→${recap.streakAtEnd}'
+            : '${recap.streakAtEnd}';
+
+    // Format success rate as percentage
+    final successRate = (recap.averageSuccessRate * 100).round();
+
+    // Compact metric line: "1 Points · 1 Streak · 1 Sessions · 90%"
+    final metricsText =
+        '${recap.totalPoints} Points · $streakDisplay Streak · ${recap.totalSessions} Sessions · $successRate%';
+
+    // Top activity line: "Top: meditation (1×)"
+    final topActivityText =
+        'Top Activity: ${recap.topActivity} (${recap.topActivityCount}×)';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header row: "Last 7 Days" + date range
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Last 7 Days',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              dateRange,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        // Ultra-compact metrics row
+        Text(
+          metricsText,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Top activity secondary line
+        Text(
+          topActivityText,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
   String _bestDayLabel(BuildContext context, AsyncValue<dynamic> async) {
     if (!async.hasValue) return '—';
-  final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
+    final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
     if (sessions.isEmpty) return '—';
     // Aggregate minutes per weekday (0..6)
     final Map<int, int> mins = {for (var i = 0; i < 7; i++) i: 0};
     for (final s in sessions) {
       final w = s.date.weekday % 7; // 1..7 -> 1..0 mapping
-  mins[w] = mins[w]! + ((s.duration) ~/ 60);
+      mins[w] = mins[w]! + ((s.duration) ~/ 60);
     }
     int bestIdx = 0;
     int bestVal = -1;
@@ -386,21 +452,23 @@ class _TrendsBasicTab extends ConsumerWidget {
       }
     });
     const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  return '${names[(bestIdx) % 7]} (${bestVal}m)';
+    return '${names[(bestIdx) % 7]} (${bestVal}m)';
   }
 
   String _weeklyTotalMinutes(AsyncValue<dynamic> async) {
     if (!async.hasValue) return '—';
     final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
-  int total = 0;
+    int total = 0;
     final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day).subtract(
-      const Duration(days: 6),
-    );
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(const Duration(days: 6));
     for (final s in sessions) {
       if (!s.completed) continue;
       final d = DateTime(s.date.year, s.date.month, s.date.day);
-  if (!d.isBefore(start)) total += s.duration;
+      if (!d.isBefore(start)) total += s.duration;
     }
     return '${total ~/ 60}m';
   }
@@ -485,10 +553,13 @@ class _SevenDayStackedBars extends ConsumerWidget {
         return Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final barMax = constraints.maxHeight - 28; // reserve space for label + spacing
+              final barMax =
+                  constraints.maxHeight -
+                  28; // reserve space for label + spacing
               final barHeight = total == 0 ? 0.0 : (total / maxDay) * barMax;
               // Stable ordering of segments by activity id
-              final entries = map.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+              final entries =
+                  map.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -506,9 +577,12 @@ class _SevenDayStackedBars extends ConsumerWidget {
                             alignment: Alignment.bottomCenter,
                             child: Container(
                               height: 3,
-                              margin: const EdgeInsets.symmetric(horizontal: 10),
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+                                color: theme.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.25),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -584,25 +658,32 @@ class _SevenDayStackedBars extends ConsumerWidget {
     final children = <Widget>[];
     for (final e in entries) {
       final h = (e.value / total) * targetHeight;
-      final color = _activityColor(context, ref, e.key) ?? theme.colorScheme.primary;
-      children.add(Positioned(
-        left: 10,
-        right: 10,
-        bottom: accumulated,
-        height: h,
-        child: Container(
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
+      final color =
+          _activityColor(context, ref, e.key) ?? theme.colorScheme.primary;
+      children.add(
+        Positioned(
+          left: 10,
+          right: 10,
+          bottom: accumulated,
+          height: h,
+          child: Container(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(6),
+            ),
           ),
         ),
-      ));
+      );
       accumulated += h;
     }
     return Stack(children: children);
   }
 
-  Color? _activityColor(BuildContext context, WidgetRef ref, String activityId) {
+  Color? _activityColor(
+    BuildContext context,
+    WidgetRef ref,
+    String activityId,
+  ) {
     final cs = Theme.of(context).colorScheme;
     return _builtInColor(cs, activityId);
   }
@@ -645,32 +726,38 @@ class _TrendsAdvancedTab extends ConsumerWidget {
     final dataAsync = ref.watch(silenceDataNotifierProvider);
 
     return dataAsync.when(
-      data: (data) => SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: FeatureGate(
-          featureId: 'advanced_analytics',
-          requiredTier: SubscriptionTier.premium,
-          child: AdvancedAnalyticsWidget(
-            silenceData: data,
-            showTitle: false, // Hide title since we're already in the Advanced tab
+      data:
+          (data) => SingleChildScrollView(
+            padding: const EdgeInsets.all(
+              8,
+            ), // Reduced from 12 to match Basic tab
+            child: FeatureGate(
+              featureId: 'advanced_analytics',
+              requiredTier: SubscriptionTier.premium,
+              child: AdvancedAnalyticsWidget(
+                silenceData: data,
+                showTitle:
+                    false, // Hide title since we're already in the Advanced tab
+              ),
+            ),
           ),
-        ),
-      ),
-      loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32),
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (error, stack) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            'Error loading data',
-            style: Theme.of(context).textTheme.bodyMedium,
+      loading:
+          () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32),
+              child: CircularProgressIndicator(),
+            ),
           ),
-        ),
-      ),
+      error:
+          (error, stack) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Text(
+                'Error loading data',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
     );
   }
 }

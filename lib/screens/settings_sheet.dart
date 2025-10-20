@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/constants/ui_constants.dart';
 import 'package:focus_field/providers/app_info_provider.dart';
 import 'package:focus_field/models/silence_data.dart';
 import 'package:focus_field/models/subscription_tier.dart';
@@ -14,12 +15,15 @@ import 'package:focus_field/services/rating_service.dart';
 import 'package:focus_field/widgets/feature_gate.dart';
 import 'package:focus_field/widgets/notification_settings_widget.dart';
 import 'package:focus_field/widgets/theme_selector_widget.dart';
+import 'package:focus_field/widgets/common/drag_handle.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/providers/user_preferences_provider.dart';
 import 'package:focus_field/widgets/activity_edit_sheet.dart';
 import 'package:focus_field/screens/onboarding_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io' show Platform;
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -27,7 +31,9 @@ class SettingsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsAsync = ref.watch(settingsNotifierProvider);
     final notifier = ref.read(settingsNotifierProvider.notifier);
-    final maxHeight = MediaQuery.of(context).size.height * 0.85;
+    final maxHeight =
+        MediaQuery.of(context).size.height *
+        UIConstants.bottomSheetMaxHeightRatio;
     // In test environment simplify sheet (no tabs) to make finding labels deterministic
     if (const bool.fromEnvironment('FLUTTER_TEST', defaultValue: false)) {
       final t = AppLocalizations.of(context);
@@ -36,7 +42,9 @@ class SettingsSheet extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,21 +71,15 @@ class SettingsSheet extends ConsumerWidget {
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(UIConstants.bottomSheetBorderRadius),
+        ),
       ),
       child: DefaultTabController(
         length: 3,
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
+            const DragHandle(),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
               child: Row(
@@ -85,8 +87,8 @@ class SettingsSheet extends ConsumerWidget {
                   Text(
                     AppLocalizations.of(context)!.settings,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -211,18 +213,16 @@ class SettingsSheet extends ConsumerWidget {
     return slider;
   }
 
-  Widget _dailyGoalsButton(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _dailyGoalsButton(BuildContext context, WidgetRef ref) {
     final userPrefs = ref.watch(userPreferencesProvider);
     final currentMinutes = userPrefs.globalDailyQuietGoalMinutes;
     final enabledCount = userPrefs.enabledProfiles.length;
 
     // Format display value
-    final displayValue = currentMinutes >= 60
-        ? '${(currentMinutes / 60).toStringAsFixed(1)}h'
-        : '${currentMinutes}min';
+    final displayValue =
+        currentMinutes >= 60
+            ? '${(currentMinutes / 60).toStringAsFixed(1)}h'
+            : '${currentMinutes}min';
 
     return Card(
       child: InkWell(
@@ -242,7 +242,9 @@ class SettingsSheet extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -307,13 +309,15 @@ class SettingsSheet extends ConsumerWidget {
         subtitle: const Padding(
           padding: EdgeInsets.only(left: 28),
           child: Text(
-            'Minimize distractions during sessions with a full-screen black overlay',
+            'Minimize distractions during sessions with a focused overlay',
             style: TextStyle(fontSize: 12),
           ),
         ),
         value: userPrefs.focusModeEnabled,
         onChanged: (value) {
-          ref.read(userPreferencesProvider.notifier).updateFocusModeEnabled(value);
+          ref
+              .read(userPreferencesProvider.notifier)
+              .updateFocusModeEnabled(value);
         },
       ),
     );
@@ -328,7 +332,8 @@ class SettingsSheet extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     final isSmallPhone = size.height < 760 || size.width < 380;
     final cols = size.width < 380 ? 1 : 2;
-    final tileHeight = size.width < 380 ? 220.0 : (isSmallPhone ? 260.0 : 240.0);
+    final tileHeight =
+        size.width < 380 ? 220.0 : (isSmallPhone ? 260.0 : 240.0);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: GridView(
@@ -355,7 +360,8 @@ class SettingsSheet extends ConsumerWidget {
                 showPaywall(
                   context,
                   requiredTier: SubscriptionTier.premium,
-                  featureDescription: 'Unlock Deep Focus to automatically end sessions when you leave the app',
+                  featureDescription:
+                      'Unlock Deep Focus to automatically end sessions when you leave the app',
                 );
               }
             },
@@ -374,12 +380,7 @@ class SettingsSheet extends ConsumerWidget {
             title: AppLocalizations.of(context)!.notifications,
             subtitle: AppLocalizations.of(context)!.remindersCelebrations,
             icon: Icons.notifications,
-            onTap: () => showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => const NotificationSettingsWidget(),
-            ),
+            onTap: () => _handleNotificationSettings(context),
           ),
           _advancedCard(
             context,
@@ -399,64 +400,234 @@ class SettingsSheet extends ConsumerWidget {
     Map<String, dynamic> settings,
   ) async {
     bool enabled = (settings['deepFocusEnabled'] as bool?) ?? false;
-    int grace = (settings['deepFocusGraceSeconds'] as int?)?.clamp(1, 300) ?? 10;
+    int grace =
+        (settings['deepFocusGraceSeconds'] as int?)?.clamp(1, 300) ?? 10;
 
     await showDialog<void>(
       context: context,
       builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Deep Focus'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(child: Text('Enable Deep Focus')),
+                      Switch(
+                        value: enabled,
+                        onChanged: (v) {
+                          setState(() => enabled = v);
+                          notifier.updateSetting('deepFocusEnabled', v);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text('Grace period (seconds)'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Slider(
+                          value: grace.toDouble(),
+                          min: 1,
+                          max: 120,
+                          divisions: 119,
+                          label: '$grace s',
+                          onChanged: (v) {
+                            setState(() => grace = v.round());
+                            notifier.updateSetting(
+                              'deepFocusGraceSeconds',
+                              grace,
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 44,
+                        child: Text('$grace s', textAlign: TextAlign.end),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'When enabled, leaving the app will end the session after the grace period.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _handleNotificationSettings(BuildContext context) async {
+    // Check notification permission status
+    final status = await Permission.notification.status;
+
+    if (status.isGranted) {
+      // Permission granted, show settings
+      if (context.mounted) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => const NotificationSettingsWidget(),
+        );
+      }
+    } else {
+      // Permission not granted, show guidance dialog
+      if (context.mounted) {
+        await _showNotificationPermissionDialog(context);
+      }
+    }
+  }
+
+  Future<void> _showNotificationPermissionDialog(BuildContext context) async {
+    final theme = Theme.of(context);
+    final isIOS = Platform.isIOS;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
         return AlertDialog(
-          title: const Text('Deep Focus'),
+          title: Row(
+            children: [
+              Icon(
+                Icons.notifications_active,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              const Expanded(child: Text('Enable Notifications')),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const Expanded(child: Text('Enable Deep Focus')),
-                  Switch(
-                    value: enabled,
-                    onChanged: (v) {
-                      enabled = v;
-                      notifier.updateSetting('deepFocusEnabled', v);
-                    },
-                  ),
-                ],
+              Text(
+                'Focus Field needs notification permission to send you:',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 12),
-              const Text('Grace period (seconds)'),
-              Row(
-                children: [
-                  Expanded(
-                    child: Slider(
-                      value: grace.toDouble(),
-                      min: 1,
-                      max: 120,
-                      divisions: 119,
-                      label: '$grace s',
-                      onChanged: (v) {
-                        grace = v.round();
-                        notifier.updateSetting('deepFocusGraceSeconds', grace);
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 44, child: Text('$grace s', textAlign: TextAlign.end)),
-                ],
+              _buildPermissionBenefit(
+                theme,
+                Icons.alarm,
+                'Daily focus reminders',
               ),
-              const SizedBox(height: 8),
-              Text(
-                'When enabled, leaving the app will end the session after the grace period.',
-                style: Theme.of(context).textTheme.bodySmall,
+              _buildPermissionBenefit(
+                theme,
+                Icons.celebration,
+                'Session completion alerts',
+              ),
+              _buildPermissionBenefit(
+                theme,
+                Icons.emoji_events,
+                'Achievement celebrations',
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withValues(
+                    alpha: 0.3,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isIOS
+                              ? 'How to enable on iOS:'
+                              : 'How to enable on Android:',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    if (isIOS) ...[
+                      Text(
+                        '1. Tap "Open Settings" below\n2. Tap "Notifications"\n3. Enable "Allow Notifications"',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        '1. Tap "Open Settings" below\n2. Tap "Notifications"\n3. Enable "All Focus Field notifications"',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ],
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close'),
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              icon: const Icon(Icons.settings),
+              label: const Text('Open Settings'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+              ),
             ),
           ],
         );
       },
+    );
+
+    if (result == true && context.mounted) {
+      // User chose to open settings
+      await openAppSettings();
+    }
+  }
+
+  Widget _buildPermissionBenefit(ThemeData theme, IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: theme.colorScheme.primary),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: theme.textTheme.bodySmall)),
+        ],
+      ),
     );
   }
 
@@ -603,15 +774,19 @@ class SettingsSheet extends ConsumerWidget {
                         children: [
                           Text(
                             'Replay Onboarding',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Review the app tour and setup your preferences again',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -626,6 +801,7 @@ class SettingsSheet extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -644,7 +820,7 @@ class SettingsSheet extends ConsumerWidget {
                     children: [
                       _linkButton(
                         context,
-                        AppLocalizations.of(context)!.faq,
+                        'FAQ',
                         Icons.quiz,
                         () => _openFAQ(context),
                       ),
@@ -672,6 +848,7 @@ class SettingsSheet extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 24), // Extra bottom padding for scrolling
         ],
       ),
     );
@@ -864,13 +1041,14 @@ class SettingsSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 24, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 4),
+          Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(height: 6),
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.primary,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -1090,26 +1268,25 @@ class SettingsSheet extends ConsumerWidget {
     }
   }
 
-  void _openFAQ(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder:
-          (_) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: const _FAQBottomSheet(),
-          ),
-    );
-  }
-
   void _replayOnboarding(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => OnboardingScreen(isReplay: true),
         fullscreenDialog: true,
+      ),
+    );
+  }
+
+  void _openFAQ(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: const _FAQBottomSheet(),
       ),
     );
   }
@@ -1160,7 +1337,7 @@ class SettingsSheet extends ConsumerWidget {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-  Icon(Icons.error, size: 48, color: Theme.of(context).colorScheme.error),
+        Icon(Icons.error, size: 48, color: Theme.of(context).colorScheme.error),
         const SizedBox(height: 16),
         Text(AppLocalizations.of(context)!.errorLoadingSettings(e.toString())),
         const SizedBox(height: 16),
@@ -1284,288 +1461,6 @@ class SettingsSheet extends ConsumerWidget {
 }
 
 /// FAQ Bottom Sheet with search functionality
-class _FAQBottomSheet extends StatefulWidget {
-  const _FAQBottomSheet();
-
-  @override
-  State<_FAQBottomSheet> createState() => _FAQBottomSheetState();
-}
-
-class _FAQBottomSheetState extends State<_FAQBottomSheet> {
-  final _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  // All 20 FAQ items
-  List<Map<String, String>> get _allFAQs => [
-    {
-      'q': 'What is Focus Field and how does it help me focus?',
-      'a': 'Focus Field helps you build better focus habits by monitoring ambient noise in your environment. When you start a session (Study, Reading, Meditation, or Other), the app measures how quiet your environment is. The quieter you keep it, the more "focus minutes" you earn. This encourages you to find and maintain distraction-free spaces for deep work.',
-    },
-    {
-      'q': 'How does Focus Field measure my focus?',
-      'a': 'Focus Field monitors the ambient noise level in your environment during your session. It calculates an "Ambient Score" by tracking how many seconds your environment stays below your chosen noise threshold. If your session has at least 70% quiet time (Ambient Score ≥70%), you earn full credit for those quiet minutes.',
-    },
-    {
-      'q': 'Does Focus Field record my audio or conversations?',
-      'a': 'No, absolutely not. Focus Field only measures decibel levels (loudness) - it never records, stores, or transmits any audio. Your privacy is completely protected. The app simply checks if your environment is above or below your chosen threshold.',
-    },
-    {
-      'q': 'What activities can I track with Focus Field?',
-      'a': 'Focus Field comes with four activity types: Study 📚 (for learning and research), Reading 📖 (for focused reading), Meditation 🧘 (for mindfulness practice), and Other ⭐ (for any focus-requiring activity). All activities use ambient noise monitoring to help you maintain a quiet, focused environment.',
-    },
-    {
-      'q': 'Should I use Focus Field for all my activities?',
-      'a': 'Focus Field works best for activities where ambient noise indicates your level of focus. Activities like Study, Reading, and Meditation benefit most from quiet environments. While you can track "Other" activities, we recommend using Focus Field primarily for noise-sensitive focus work.',
-    },
-    {
-      'q': 'How do I start a focus session?',
-      'a': 'Go to the Sessions tab, select your activity (Study, Reading, Meditation, or Other), choose your session duration (1, 5, 10, 15, 30 minutes, or premium options), tap the Start button on the progress ring, and keep your environment quiet!',
-    },
-    {
-      'q': 'What session durations are available?',
-      'a': 'Free users can choose: 1, 5, 10, 15, or 30-minute sessions. Premium users also get: 1 hour, 1.5 hours, and 2-hour extended sessions for longer deep work periods.',
-    },
-    {
-      'q': 'Can I pause or stop a session early?',
-      'a': 'Yes! During a session, you\'ll see Pause and Stop buttons above the progress ring. To prevent accidental taps, you need to long-press these buttons. If you stop early, you\'ll still earn points for the quiet minutes you accumulated.',
-    },
-    {
-      'q': 'How do I earn points in Focus Field?',
-      'a': 'You earn 1 point per quiet minute. During your session, Focus Field tracks how many seconds your environment stays below the noise threshold. At the end, those quiet seconds are converted to minutes. For example, if you complete a 10-minute session with 8 minutes of quiet time, you earn 8 points.',
-    },
-    {
-      'q': 'What is the 70% threshold and why does it matter?',
-      'a': 'The 70% threshold determines if your session counts toward your daily goal. If your Ambient Score (quiet time ÷ total time) is at least 70%, your session qualifies for quest credit. Even if you\'re under 70%, you still earn points for every quiet minute!',
-    },
-    {
-      'q': 'What\'s the difference between Ambient Score and points?',
-      'a': 'Ambient Score is your session quality as a percentage (quiet seconds ÷ total seconds), determining if you hit the 70% threshold. Points are the actual quiet minutes earned (1 point = 1 minute). Ambient Score = quality, Points = achievement.',
-    },
-    {
-      'q': 'How do streaks work in Focus Field?',
-      'a': 'Streaks track consecutive days of meeting your daily goal. Focus Field uses a compassionate 2-Day Rule: Your streak only breaks if you miss two consecutive days. This means you can miss one day and your streak continues if you complete your goal the next day.',
-    },
-    {
-      'q': 'What are freeze tokens and how do I use them?',
-      'a': 'Freeze tokens protect your streak when you can\'t complete your goal. You get 1 free freeze token per month. When used, your overall progress shows 100% (goal protected), your streak is safe, and individual activity tracking continues normally. Use it wisely for busy days!',
-    },
-    {
-      'q': 'Can I customize my daily focus goal?',
-      'a': 'Yes! Tap Edit on the Sessions card in the Today tab. You can set your global daily goal (10-60 minutes for free, up to 1080 minutes for premium), enable per-activity goals for separate targets, and show/hide specific activities.',
-    },
-    {
-      'q': 'What is the noise threshold and how do I adjust it?',
-      'a': 'The threshold is the maximum noise level (in decibels) that counts as "quiet." Default is 40 dB (library quiet). You can adjust it in the Sessions tab: 30 dB (very quiet), 40 dB (library quiet - recommended), 50 dB (moderate office), 60-80 dB (louder environments).',
-    },
-    {
-      'q': 'What is Adaptive Threshold and should I use it?',
-      'a': 'After 3 consecutive successful sessions at your current threshold, Focus Field suggests increasing it by 2 dB to challenge yourself. This helps you gradually improve. You can accept or dismiss the suggestion - it only appears once every 7 days.',
-    },
-    {
-      'q': 'What is Focus Mode?',
-      'a': 'Focus Mode is a full-screen distraction-free overlay during your session. It shows your countdown timer, live calm percentage, and minimal controls (Pause/Stop via long-press). It removes all other UI elements so you can concentrate fully. Enable it in Settings > Basic > Focus Mode.',
-    },
-    {
-      'q': 'Why does Focus Field need microphone permission?',
-      'a': 'Focus Field uses your device\'s microphone to measure ambient noise levels (decibels) during sessions. This is essential to calculate your Ambient Score. Remember: no audio is ever recorded - only noise levels are measured in real-time.',
-    },
-    {
-      'q': 'Can I see my focus patterns over time?',
-      'a': 'Yes! The Today tab shows your daily progress, weekly trends, 12-week activity heatmap (like GitHub contributions), and session timeline. Premium users get advanced analytics with performance metrics, moving averages, and AI-powered insights.',
-    },
-    {
-      'q': 'How do notifications work in Focus Field?',
-      'a': 'Focus Field has smart reminders: Daily Reminders (learns your preferred focus time or use a fixed time), Session Completion notifications with results, Achievement notifications for milestones, and Weekly Summary (Premium). Enable/customize in Settings > Advanced > Notifications.',
-    },
-  ];
-
-  List<Map<String, String>> get _filteredFAQs {
-    if (_searchQuery.isEmpty) return _allFAQs;
-    
-    final query = _searchQuery.toLowerCase();
-    return _allFAQs.where((faq) {
-      final question = faq['q']!.toLowerCase();
-      final answer = faq['a']!.toLowerCase();
-      return question.contains(query) || answer.contains(query);
-    }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final filteredFAQs = _filteredFAQs;
-    
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-      ),
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Drag handle
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          // Header with close button
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 16, 8),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.quiz,
-                  color: theme.colorScheme.primary,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Frequently Asked Questions',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          ),
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search FAQs...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              onChanged: (value) {
-                setState(() => _searchQuery = value);
-              },
-            ),
-          ),
-          // Results count
-          if (_searchQuery.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '${filteredFAQs.length} result${filteredFAQs.length == 1 ? '' : 's'} found',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ),
-          // Scrollable content
-          Expanded(
-            child: filteredFAQs.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 48,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No results found',
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Try a different search term',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...filteredFAQs.map((faq) => _buildFAQItem(
-                              theme,
-                              faq['q']!,
-                              faq['a']!,
-                            )),
-                        // Invisible spacer at bottom for complete scrolling
-                        const SizedBox(height: 80),
-                      ],
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFAQItem(ThemeData theme, String question, String answer) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            question,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            answer,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _SupportBottomSheet extends StatefulWidget {
   final SubscriptionTier userTier;
   const _SupportBottomSheet({required this.userTier});
@@ -1614,126 +1509,139 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.support_agent,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  t.support,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.support_agent,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        t.support,
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
                   ),
-                ),
-                const Spacer(),
-                if (widget.userTier != SubscriptionTier.free)
+                  const SizedBox(height: 20),
+                  Text(
+                    t.contactSupport,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      widget.userTier.displayName.toUpperCase(),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.3),
                       ),
                     ),
-                  ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              t.contactSupport,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.email,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      t.emailOpenDescription,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.email,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            t.emailOpenDescription,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _subject,
-              decoration: InputDecoration(
-                labelText: t.subject,
-                hintText: t.briefDescription,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.subject),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _description,
-              maxLines: 6,
-              decoration: InputDecoration(
-                labelText: t.description,
-                hintText: t.issueDescriptionHint,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.description),
-                alignLabelWithHint: true,
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _submitting ? null : _submit,
-              icon:
-                  _submitting
-                      ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : const Icon(Icons.send),
-              label: Text(_submitting ? t.openingEmail : t.openEmailApp),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-            const SizedBox(height: 16),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _subject,
+                    decoration: InputDecoration(
+                      labelText: '${t.subject} *',
+                      hintText: t.briefDescription,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Icon(Icons.subject),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _description,
+                    maxLines: 6,
+                    decoration: InputDecoration(
+                      labelText: '${t.description} *',
+                      hintText: t.issueDescriptionHint,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Icon(Icons.description),
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ValueListenableBuilder(
+                    valueListenable: _subject,
+                    builder: (context, subjectValue, _) {
+                      return ValueListenableBuilder(
+                        valueListenable: _description,
+                        builder: (context, descValue, _) {
+                          final hasSubject =
+                              subjectValue.text.trim().isNotEmpty;
+                          final hasDescription =
+                              descValue.text.trim().isNotEmpty;
+                          final canSubmit =
+                              hasSubject && hasDescription && !_submitting;
+
+                          return ElevatedButton.icon(
+                            onPressed: canSubmit ? _submit : null,
+                            icon:
+                                _submitting
+                                    ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : const Icon(Icons.send),
+                            label: Text(
+                              _submitting
+                                  ? t.openingEmail
+                                  : canSubmit
+                                  ? t.openEmailApp
+                                  : 'Fill Required Fields',
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -1745,12 +1653,7 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
 
   Future<void> _submit() async {
     final t = AppLocalizations.of(context)!;
-    if (_subject.text.trim().isEmpty || _description.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(t.fillSubjectDescription)));
-      return;
-    }
+    // Validation now handled by button state (disabled when fields empty)
     setState(() => _submitting = true);
     try {
       final service = SupportService.instance;
@@ -1810,5 +1713,304 @@ class _SupportBottomSheetState extends State<_SupportBottomSheet> {
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+}
+
+/// FAQ Bottom Sheet with search functionality
+class _FAQBottomSheet extends StatefulWidget {
+  const _FAQBottomSheet();
+
+  @override
+  State<_FAQBottomSheet> createState() => _FAQBottomSheetState();
+}
+
+class _FAQBottomSheetState extends State<_FAQBottomSheet> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // All 20 FAQ items (English only for now - translations can be added later)
+  List<Map<String, String>> get _allFAQs => [
+    {
+      'q': 'What is Focus Field and how does it help me focus?',
+      'a':
+          'Focus Field helps you build better focus habits by monitoring ambient noise in your environment. When you start a session (Study, Reading, Meditation, or Other), the app measures how quiet your environment is. The quieter you keep it, the more "focus minutes" you earn. This encourages you to find and maintain distraction-free spaces for deep work.',
+    },
+    {
+      'q': 'How does Focus Field measure my focus?',
+      'a':
+          'Focus Field monitors the ambient noise level in your environment during your session. It calculates an "Ambient Score" by tracking how many seconds your environment stays below your chosen noise threshold. If your session has at least 70% quiet time (Ambient Score ≥70%), you earn full credit for those quiet minutes.',
+    },
+    {
+      'q': 'Does Focus Field record my audio or conversations?',
+      'a':
+          'No, absolutely not. Focus Field only measures decibel levels (loudness) - it never records, stores, or transmits any audio. Your privacy is completely protected. The app simply checks if your environment is above or below your chosen threshold.',
+    },
+    {
+      'q': 'What activities can I track with Focus Field?',
+      'a':
+          'Focus Field comes with four activity types: Study 📚 (for learning and research), Reading 📖 (for focused reading), Meditation 🧘 (for mindfulness practice), and Other ⭐ (for any focus-requiring activity). All activities use ambient noise monitoring to help you maintain a quiet, focused environment.',
+    },
+    {
+      'q': 'Should I use Focus Field for all my activities?',
+      'a':
+          'Focus Field works best for activities where ambient noise indicates your level of focus. Activities like Study, Reading, and Meditation benefit most from quiet environments. While you can track "Other" activities, we recommend using Focus Field primarily for noise-sensitive focus work.',
+    },
+    {
+      'q': 'How do I start a focus session?',
+      'a':
+          'Go to the Sessions tab, select your activity (Study, Reading, Meditation, or Other), choose your session duration (1, 5, 10, 15, 30 minutes, or premium options), tap the Start button on the progress ring, and keep your environment quiet!',
+    },
+    {
+      'q': 'What session durations are available?',
+      'a':
+          'Free users can choose: 1, 5, 10, 15, or 30-minute sessions. Premium users also get: 1 hour, 1.5 hours, and 2-hour extended sessions for longer deep work periods.',
+    },
+    {
+      'q': 'Can I pause or stop a session early?',
+      'a':
+          'Yes! During a session, you\'ll see Pause and Stop buttons above the progress ring. To prevent accidental taps, you need to long-press these buttons. If you stop early, you\'ll still earn points for the quiet minutes you accumulated.',
+    },
+    {
+      'q': 'How do I earn points in Focus Field?',
+      'a':
+          'You earn 1 point per quiet minute. During your session, Focus Field tracks how many seconds your environment stays below the noise threshold. At the end, those quiet seconds are converted to minutes. For example, if you complete a 10-minute session with 8 minutes of quiet time, you earn 8 points.',
+    },
+    {
+      'q': 'What is the 70% threshold and why does it matter?',
+      'a':
+          'The 70% threshold determines if your session counts toward your daily goal. If your Ambient Score (quiet time ÷ total time) is at least 70%, your session qualifies for quest credit. Even if you\'re under 70%, you still earn points for every quiet minute!',
+    },
+    {
+      'q': 'What\'s the difference between Ambient Score and points?',
+      'a':
+          'Ambient Score is your session quality as a percentage (quiet seconds ÷ total seconds), determining if you hit the 70% threshold. Points are the actual quiet minutes earned (1 point = 1 minute). Ambient Score = quality, Points = achievement.',
+    },
+    {
+      'q': 'How do streaks work in Focus Field?',
+      'a':
+          'Streaks track consecutive days of meeting your daily goal. Focus Field uses a compassionate 2-Day Rule: Your streak only breaks if you miss two consecutive days. This means you can miss one day and your streak continues if you complete your goal the next day.',
+    },
+    {
+      'q': 'What are freeze tokens and how do I use them?',
+      'a':
+          'Freeze tokens protect your streak when you can\'t complete your goal. You get 1 free freeze token per month. When used, your overall progress shows 100% (goal protected), your streak is safe, and individual activity tracking continues normally. Use it wisely for busy days!',
+    },
+    {
+      'q': 'Can I customize my daily focus goal?',
+      'a':
+          'Yes! Tap Edit on the Sessions card in the Today tab. You can set your global daily goal (10-60 minutes for free, up to 1080 minutes for premium), enable per-activity goals for separate targets, and show/hide specific activities.',
+    },
+    {
+      'q': 'What is the noise threshold and how do I adjust it?',
+      'a':
+          'The threshold is the maximum noise level (in decibels) that counts as "quiet." Default is 40 dB (library quiet). You can adjust it in the Sessions tab: 30 dB (very quiet), 40 dB (library quiet - recommended), 50 dB (moderate office), 60-80 dB (louder environments).',
+    },
+    {
+      'q': 'What is Adaptive Threshold and should I use it?',
+      'a':
+          'After 3 consecutive successful sessions at your current threshold, Focus Field suggests increasing it by 2 dB to challenge yourself. This helps you gradually improve. You can accept or dismiss the suggestion - it only appears once every 7 days.',
+    },
+    {
+      'q': 'What is Focus Mode?',
+      'a':
+          'Focus Mode is a full-screen distraction-free overlay during your session. It shows your countdown timer, live calm percentage, and minimal controls (Pause/Stop via long-press). It removes all other UI elements so you can concentrate fully. Enable it in Settings > Basic > Focus Mode.',
+    },
+    {
+      'q': 'Why does Focus Field need microphone permission?',
+      'a':
+          'Focus Field uses your device\'s microphone to measure ambient noise levels (decibels) during sessions. This is essential to calculate your Ambient Score. Remember: no audio is ever recorded - only noise levels are measured in real-time.',
+    },
+    {
+      'q': 'Can I see my focus patterns over time?',
+      'a':
+          'Yes! The Today tab shows your daily progress, weekly trends, 12-week activity heatmap (like GitHub contributions), and session timeline. Premium users get advanced analytics with performance metrics, moving averages, and AI-powered insights.',
+    },
+    {
+      'q': 'How do notifications work in Focus Field?',
+      'a':
+          'Focus Field has smart reminders: Daily Reminders (learns your preferred focus time or use a fixed time), Session Completion notifications with results, Achievement notifications for milestones, and Weekly Summary (Premium). Enable/customize in Settings > Advanced > Notifications.',
+    },
+  ];
+
+  List<Map<String, String>> get _filteredFAQs {
+    if (_searchQuery.isEmpty) return _allFAQs;
+
+    final query = _searchQuery.toLowerCase();
+    return _allFAQs.where((faq) {
+      final question = faq['q']!.toLowerCase();
+      final answer = faq['a']!.toLowerCase();
+      return question.contains(query) || answer.contains(query);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final filteredFAQs = _filteredFAQs;
+
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onSurfaceVariant,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header with close button
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 16, 8),
+            child: Row(
+              children: [
+                Icon(Icons.quiz, color: theme.colorScheme.primary, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Frequently Asked Questions',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search FAQs...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon:
+                    _searchQuery.isNotEmpty
+                        ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        )
+                        : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() => _searchQuery = value);
+              },
+            ),
+          ),
+          // Results count
+          if (_searchQuery.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${filteredFAQs.length} result${filteredFAQs.length == 1 ? '' : 's'} found',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+          // Scrollable content
+          Expanded(
+            child:
+                filteredFAQs.isEmpty
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 48,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No results found',
+                            style: theme.textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try a different search term',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                    : SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...filteredFAQs.map(
+                            (faq) => _buildFAQItem(theme, faq['q']!, faq['a']!),
+                          ),
+                          // Invisible spacer at bottom for complete scrolling
+                          const SizedBox(height: 80),
+                        ],
+                      ),
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFAQItem(ThemeData theme, String question, String answer) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            answer,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

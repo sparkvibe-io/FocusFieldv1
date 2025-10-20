@@ -348,4 +348,13 @@
       "threshold": {"type": "int"}
     }
   }
+  ,"edit": "Editar"
+  ,"start": "Iniciar"
+  ,"error": "Erro"
+  ,"errorWithMessage": "Erro: {message}"
+  ,"@errorWithMessage": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  }
 }

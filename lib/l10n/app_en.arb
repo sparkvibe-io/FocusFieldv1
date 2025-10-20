@@ -106,7 +106,6 @@
   ,"bundleId": "Bundle ID"
   ,"environment": "Environment"
   ,"helpSupport": "Help & Support"
-  ,"faq": "FAQ"
   ,"support": "Support"
   ,"rateApp": "Rate App"
   ,"errorLoadingSettings": "Error loading settings: {error}"
@@ -119,37 +118,6 @@
   ,"generatingExport": "Generating {format} export..."
   ,"exportCompleted": "{format} export completed!"
   ,"exportFailed": "Export failed: {error}"
-  ,"frequentlyAskedQuestions": "Frequently Asked Questions"
-  ,"faqHowWorksQ": "How does Focus Field work?"
-  ,"faqHowWorksA": "It measures ambient noise – time below threshold earns points."
-  ,"faqAudioRecordedQ": "Is audio recorded?"
-  ,"faqAudioRecordedA": "No. Only decibel levels are sampled; audio is never stored."
-  ,"faqAdjustSensitivityQ": "Adjust sensitivity?"
-  ,"faqAdjustSensitivityA": "Use Settings > Basic > Decibel Threshold ({min}–{max} dB) and calibrate first."
-  ,"faqPremiumFeaturesQ": "Premium features?"
-  ,"faqPremiumFeaturesA": "Extended sessions (up to 120m), advanced analytics, export, themes."
-  ,"faqNotificationsQ": "Notifications?"
-  ,"faqNotificationsA": "Smart reminders learn habits and celebrate milestones."
-  ,"faqFocusMinutesQ": "What are focus minutes?"
-  ,"faqFocusMinutesA": "Focus minutes measure time spent in calm environments (≥70% quiet). They're earned during sessions when ambient noise stays below your threshold."
-  ,"faqAmbientQuestQ": "What is the Ambient Quest system?"
-  ,"faqAmbientQuestA": "Daily focus challenges that track quiet minutes across Study, Reading, and Meditation activities. Set a goal (10-60 min), build streaks, and earn freeze tokens monthly."
-  ,"faqStreaksQ": "How do streaks work?"
-  ,"faqStreaksA": "Streaks track consecutive days of reaching your goal. The compassionate 2-Day Rule means missing one day won't break your streak—only two consecutive misses reset it. Use monthly freeze tokens to protect streaks on tough days."
-  ,"faqActivitiesQ": "What activities can I track?"
-  ,"faqActivitiesA": "Focus Field offers Study, Reading, and Meditation activities. Each tracks progress toward your daily goal. Enable/disable activities and adjust your goal (10-60 min) in the Activity Progress section."
-  ,"faqCalibrateQ": "How do I calibrate my microphone?"
-  ,"faqCalibrateA": "Go to Settings > Advanced > Noise Calibration. The app measures your ambient baseline for 5 seconds and suggests an appropriate threshold. Recalibrate when changing environments."
-  ,"faqMicTroubleshootQ": "Why isn't my microphone working?"
-  ,"faqMicTroubleshootA": "Check: (1) Microphone permission granted in device settings, (2) No other apps using microphone, (3) Restart app if needed. Contact support if issues persist."
-  ,"faqSubscriptionTiersQ": "What's the difference between subscription tiers?"
-  ,"faqSubscriptionTiersA": "Free: 30-min sessions, 7-day history, basic features. Premium ($1.99/mo): 120-min sessions, 90-day history, analytics, export, themes. Premium Plus ($3.99/mo): Coming soon with cloud sync and AI insights."
-  ,"faqDeepFocusQ": "What is Deep Focus mode?"
-  ,"faqDeepFocusA": "A Premium feature that automatically ends your session if you leave the app for more than the grace period (default 10s). Helps maintain distraction-free focus sessions."
-  ,"faqDailyGoalQ": "How do I adjust my daily goal?"
-  ,"faqDailyGoalA": "Tap 'Edit' in the Activity Progress section on the Today tab. Adjust the global daily goal slider (10-60 min) and enable/disable specific activities (Study, Reading, Meditation)."
-  ,"faqCalmPercentQ": "What does the Calm % mean?"
-  ,"faqCalmPercentA": "The percentage of time during your session where ambient noise stayed below threshold. Sessions with ≥70% Calm qualify for quest credit. Higher percentages mean better focus environments."
   ,"close": "Close"
   ,"supportTitle": "Support"
   ,"responseTimeLabel": "Response Time: {time}"
@@ -405,6 +373,15 @@
   ,"@adaptiveThresholdConfirm": {
     "placeholders": {
       "threshold": {"type": "int"}
+    }
+  }
+  ,"edit": "Edit"
+  ,"start": "Start"
+  ,"error": "Error"
+  ,"errorWithMessage": "Error: {message}"
+  ,"@errorWithMessage": {
+    "placeholders": {
+      "message": {"type": "String"}
     }
   }
 }

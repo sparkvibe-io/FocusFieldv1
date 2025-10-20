@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:focus_field/widgets/banner_ad_footer.dart';
 import 'dart:math' as math;
 
 /// Full-screen black overlay for minimal distraction during sessions
@@ -49,9 +50,10 @@ class FocusModeOverlay extends ConsumerWidget {
       final calculatedTotal = remainingSeconds / progressDivisor;
 
       // Safety check for Infinity/NaN
-      totalSeconds = calculatedTotal.isFinite && calculatedTotal > 0
-          ? calculatedTotal.round()
-          : actualRemaining;
+      totalSeconds =
+          calculatedTotal.isFinite && calculatedTotal > 0
+              ? calculatedTotal.round()
+              : actualRemaining;
     }
 
     // Determine update interval based on total session duration
@@ -71,14 +73,16 @@ class FocusModeOverlay extends ConsumerWidget {
     }
 
     // Round remaining time to nearest interval
-    final discreteRemaining = ((actualRemaining / intervalSeconds).round() * intervalSeconds)
+    final discreteRemaining = ((actualRemaining / intervalSeconds).round() *
+            intervalSeconds)
         .clamp(0, totalSeconds);
 
     // If discrete calculation results in 0 but we still have remaining time,
     // show the actual remaining time (happens at very end of session)
-    final displayTime = discreteRemaining == 0 && actualRemaining > 0
-        ? actualRemaining
-        : discreteRemaining;
+    final displayTime =
+        discreteRemaining == 0 && actualRemaining > 0
+            ? actualRemaining
+            : discreteRemaining;
 
     final minutes = displayTime ~/ 60;
     final seconds = displayTime % 60;
@@ -90,7 +94,8 @@ class FocusModeOverlay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light, // Light status bar icons on dark surface
+      value:
+          SystemUiOverlayStyle.light, // Light status bar icons on dark surface
       child: Material(
         color: scheme.surface, // immersive surface color
         child: Stack(
@@ -104,10 +109,10 @@ class FocusModeOverlay extends ConsumerWidget {
                   Text(
                     _getDiscretTimeDisplay(),
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          fontWeight: FontWeight.w300,
-                          color: scheme.onSurface,
-                          letterSpacing: 2.0,
-                        ),
+                      fontWeight: FontWeight.w300,
+                      color: scheme.onSurface,
+                      letterSpacing: 2.0,
+                    ),
                   ),
                   const SizedBox(height: 40),
 
@@ -115,10 +120,7 @@ class FocusModeOverlay extends ConsumerWidget {
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      _FocusModeRing(
-                        progress: progress,
-                        size: 280,
-                      ),
+                      _FocusModeRing(progress: progress, size: 280),
                       // Show pause icon at center when paused
                       if (isPaused)
                         Container(
@@ -154,20 +156,24 @@ class FocusModeOverlay extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           'Session Complete!',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 1.2,
-                                color: scheme.onSurface,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
+                            color: scheme.onSurface,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Great focus session',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.w300,
-                                color: scheme.onSurfaceVariant,
-                                letterSpacing: 0.5,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w300,
+                            color: scheme.onSurfaceVariant,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ],
                     )
@@ -182,15 +188,20 @@ class FocusModeOverlay extends ConsumerWidget {
                             GestureDetector(
                               onLongPress: onPause,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
                                 child: Text(
                                   isPaused ? 'Resume' : 'Pause',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1.2,
-                                        color: scheme.onSurface,
-                                      ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                    color: scheme.onSurface,
+                                  ),
                                 ),
                               ),
                             ),
@@ -199,15 +210,20 @@ class FocusModeOverlay extends ConsumerWidget {
                             GestureDetector(
                               onLongPress: onStop,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
                                 child: Text(
                                   'Stop',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1.2,
-                                        color: scheme.onSurface,
-                                      ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall?.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                    color: scheme.onSurface,
+                                  ),
                                 ),
                               ),
                             ),
@@ -217,12 +233,14 @@ class FocusModeOverlay extends ConsumerWidget {
                         // Hint text
                         Text(
                           'Long press to pause or stop',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                                color: scheme.onSurfaceVariant,
-                                letterSpacing: 0.5,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            color: scheme.onSurfaceVariant,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ],
                     ),
@@ -236,13 +254,17 @@ class FocusModeOverlay extends ConsumerWidget {
               right: 16,
               child: IconButton(
                 onPressed: onExit,
-                icon: Icon(
-                  Icons.close,
-                  color: scheme.onSurface,
-                  size: 28,
-                ),
+                icon: Icon(Icons.close, color: scheme.onSurface, size: 28),
                 padding: const EdgeInsets.all(12),
               ),
+            ),
+
+            // Banner ad - bottom center
+            Positioned(
+              bottom: MediaQuery.of(context).padding.bottom,
+              left: 0,
+              right: 0,
+              child: const Center(child: FooterBannerAd()),
             ),
           ],
         ),
@@ -257,18 +279,15 @@ class _FocusModeRing extends StatelessWidget {
   final double progress;
   final double size;
 
-  const _FocusModeRing({
-    required this.progress,
-    required this.size,
-  });
+  const _FocusModeRing({required this.progress, required this.size});
 
   @override
   Widget build(BuildContext context) {
-  // Theme-aware ring/glow colors: prefer primary/tertiary accents
-  final cs = Theme.of(context).colorScheme;
-  final ringColor = cs.primary;
-  final glowColor = cs.primary.withValues(alpha: 0.8);
-  final bgColor = cs.onSurfaceVariant.withValues(alpha: 0.14);
+    // Theme-aware ring/glow colors: prefer primary/tertiary accents
+    final cs = Theme.of(context).colorScheme;
+    final ringColor = cs.primary;
+    final glowColor = cs.primary.withValues(alpha: 0.8);
+    final bgColor = cs.onSurfaceVariant.withValues(alpha: 0.14);
 
     return SizedBox(
       width: size,
@@ -307,12 +326,13 @@ class _FocusModeRingPainter extends CustomPainter {
 
     // Draw multiple layers for glow effect (from outer to inner)
     // Outermost glow - very subtle
-    final outerGlowPaint = Paint()
-      ..color = glowColor.withValues(alpha: 0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 32
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 35);
+    final outerGlowPaint =
+        Paint()
+          ..color = glowColor.withValues(alpha: 0.15)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth + 32
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 35);
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -323,12 +343,13 @@ class _FocusModeRingPainter extends CustomPainter {
     );
 
     // Middle glow - more visible
-    final middleGlowPaint = Paint()
-      ..color = glowColor.withValues(alpha: 0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 16
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
+    final middleGlowPaint =
+        Paint()
+          ..color = glowColor.withValues(alpha: 0.3)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth + 16
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -339,12 +360,13 @@ class _FocusModeRingPainter extends CustomPainter {
     );
 
     // Inner glow - bright
-    final innerGlowPaint = Paint()
-      ..color = ringColor.withValues(alpha: 0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth + 8
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+    final innerGlowPaint =
+        Paint()
+          ..color = ringColor.withValues(alpha: 0.5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth + 8
+          ..strokeCap = StrokeCap.round
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -355,11 +377,12 @@ class _FocusModeRingPainter extends CustomPainter {
     );
 
     // Main ring - sharp and bright
-    final mainRingPaint = Paint()
-      ..color = ringColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
+    final mainRingPaint =
+        Paint()
+          ..color = ringColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -370,11 +393,12 @@ class _FocusModeRingPainter extends CustomPainter {
     );
 
     // Background ring (very subtle neutral)
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
+    final bgPaint =
+        Paint()
+          ..color = backgroundColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..strokeCap = StrokeCap.round;
 
     canvas.drawCircle(center, radius, bgPaint);
   }

@@ -312,9 +312,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get helpSupport => 'Ajuda e suporte';
 
   @override
-  String get faq => 'FAQ';
-
-  @override
   String get support => 'Suporte';
 
   @override
@@ -359,101 +356,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String exportFailed(String error) {
     return 'Falha exportação: $error';
   }
-
-  @override
-  String get frequentlyAskedQuestions => 'Perguntas frequentes';
-
-  @override
-  String get faqHowWorksQ => 'Como o Focus Field funciona?';
-
-  @override
-  String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
-
-  @override
-  String get faqAudioRecordedQ => 'Áudio é gravado?';
-
-  @override
-  String get faqAudioRecordedA => 'Não. Apenas níveis de dB; áudio nunca é salvo.';
-
-  @override
-  String get faqAdjustSensitivityQ => 'Ajustar sensibilidade?';
-
-  @override
-  String faqAdjustSensitivityA(int min, int max) {
-    return 'Configurações > Básico > Limite ($min–$max dB) e calibre primeiro.';
-  }
-
-  @override
-  String get faqPremiumFeaturesQ => 'Recursos Premium?';
-
-  @override
-  String get faqPremiumFeaturesA => 'Sessões estendidas (até 120m), análises, exportação, temas.';
-
-  @override
-  String get faqNotificationsQ => 'Notificações?';
-
-  @override
-  String get faqNotificationsA => 'Lembretes inteligentes aprendem hábitos e celebram marcos.';
-
-  @override
-  String get faqFocusMinutesQ => 'What are focus minutes?';
-
-  @override
-  String get faqFocusMinutesA => 'Focus minutes measure time spent in calm environments (≥70% quiet). They\'re earned during sessions when ambient noise stays below your threshold.';
-
-  @override
-  String get faqAmbientQuestQ => 'What is the Ambient Quest system?';
-
-  @override
-  String get faqAmbientQuestA => 'Daily focus challenges that track quiet minutes across Study, Reading, and Meditation activities. Set a goal (10-60 min), build streaks, and earn freeze tokens monthly.';
-
-  @override
-  String get faqStreaksQ => 'How do streaks work?';
-
-  @override
-  String get faqStreaksA => 'Streaks track consecutive days of reaching your goal. The compassionate 2-Day Rule means missing one day won\'t break your streak—only two consecutive misses reset it. Use monthly freeze tokens to protect streaks on tough days.';
-
-  @override
-  String get faqActivitiesQ => 'What activities can I track?';
-
-  @override
-  String get faqActivitiesA => 'Focus Field offers Study, Reading, and Meditation activities. Each tracks progress toward your daily goal. Enable/disable activities and adjust your goal (10-60 min) in the Activity Progress section.';
-
-  @override
-  String get faqCalibrateQ => 'How do I calibrate my microphone?';
-
-  @override
-  String get faqCalibrateA => 'Go to Settings > Advanced > Noise Calibration. The app measures your ambient baseline for 5 seconds and suggests an appropriate threshold. Recalibrate when changing environments.';
-
-  @override
-  String get faqMicTroubleshootQ => 'Why isn\'t my microphone working?';
-
-  @override
-  String get faqMicTroubleshootA => 'Check: (1) Microphone permission granted in device settings, (2) No other apps using microphone, (3) Restart app if needed. Contact support if issues persist.';
-
-  @override
-  String get faqSubscriptionTiersQ => 'What\'s the difference between subscription tiers?';
-
-  @override
-  String get faqSubscriptionTiersA => 'Free: 30-min sessions, 7-day history, basic features. Premium (\$1.99/mo): 120-min sessions, 90-day history, analytics, export, themes. Premium Plus (\$3.99/mo): Coming soon with cloud sync and AI insights.';
-
-  @override
-  String get faqDeepFocusQ => 'What is Deep Focus mode?';
-
-  @override
-  String get faqDeepFocusA => 'A Premium feature that automatically ends your session if you leave the app for more than the grace period (default 10s). Helps maintain distraction-free focus sessions.';
-
-  @override
-  String get faqDailyGoalQ => 'How do I adjust my daily goal?';
-
-  @override
-  String get faqDailyGoalA => 'Tap \'Edit\' in the Activity Progress section on the Today tab. Adjust the global daily goal slider (10-60 min) and enable/disable specific activities (Study, Reading, Meditation).';
-
-  @override
-  String get faqCalmPercentQ => 'What does the Calm % mean?';
-
-  @override
-  String get faqCalmPercentA => 'The percentage of time during your session where ambient noise stayed below threshold. Sessions with ≥70% Calm qualify for quest credit. Higher percentages mean better focus environments.';
 
   @override
   String get close => 'Fechar';
@@ -1096,6 +998,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String adaptiveThresholdConfirm(int threshold) {
     return 'Limiar definido para $threshold dB';
   }
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String get start => 'Iniciar';
+
+  @override
+  String get error => 'Erro';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'Erro: $message';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1406,9 +1322,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get helpSupport => 'Ajuda e suporte';
 
   @override
-  String get faq => 'FAQ';
-
-  @override
   String get support => 'Suporte';
 
   @override
@@ -1453,41 +1366,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String exportFailed(String error) {
     return 'Falha exportação: $error';
   }
-
-  @override
-  String get frequentlyAskedQuestions => 'Perguntas frequentes';
-
-  @override
-  String get faqHowWorksQ => 'Como o Focus Field funciona?';
-
-  @override
-  String get faqHowWorksA => 'Mede o ruído ambiente – tempo abaixo do limite gera pontos.';
-
-  @override
-  String get faqAudioRecordedQ => 'Áudio é gravado?';
-
-  @override
-  String get faqAudioRecordedA => 'Não. Apenas níveis de dB; áudio nunca é salvo.';
-
-  @override
-  String get faqAdjustSensitivityQ => 'Ajustar sensibilidade?';
-
-  @override
-  String faqAdjustSensitivityA(int min, int max) {
-    return 'Configurações > Básico > Limite ($min–$max dB) e calibre primeiro.';
-  }
-
-  @override
-  String get faqPremiumFeaturesQ => 'Recursos Premium?';
-
-  @override
-  String get faqPremiumFeaturesA => 'Sessões estendidas (até 120m), análises, exportação, temas.';
-
-  @override
-  String get faqNotificationsQ => 'Notificações?';
-
-  @override
-  String get faqNotificationsA => 'Lembretes inteligentes aprendem hábitos e celebram marcos.';
 
   @override
   String get close => 'Fechar';
@@ -2129,5 +2007,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String adaptiveThresholdConfirm(int threshold) {
     return 'Limiar definido para $threshold dB';
+  }
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String get start => 'Iniciar';
+
+  @override
+  String get error => 'Erro';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'Erro: $message';
   }
 }

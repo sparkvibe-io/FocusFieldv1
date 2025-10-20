@@ -3,1096 +3,416 @@
 ![CI](https://github.com/sparkvibe-io/FocusField/actions/workflows/ci.yml/badge.svg)
 ![Release Build](https://github.com/sparkvibe-io/FocusField/actions/workflows/release-build.yml/badge.svg)
 
-A sophisticated Flutter app that measures silence, tracks progress, and provides detailed analytics for mindfulness and focus sessions. Features real-time noise monitoring, comprehensive statistics, achievement system, calibration, and advanced customization options.
+**A sophisticated Flutter app that measures ambient silence and helps you build focus habits through compassionate quest-based progression.**
 
-## 🚀 Current Status (October 2025): Onboarding System & UX Polish Complete ✅
+First-to-market in the silence measurement category, combining productivity technology with environmental monitoring for deep work sessions.
 
-**Ambient Quests** is the merged, quiet-first direction: pick an Activity Profile (Study, Reading, Meditation), start a session, and earn Quiet Minutes when your environment stays under a threshold. A small Quest capsule shows today's goal progress, and streaks are compassionate (2-Day Rule + monthly freeze token). All analysis is local; no audio is recorded.
+---
 
-**Simple & Customizable**: Users can now show/hide activities and adjust their daily quiet goal (10-60 minutes) through a polished Edit Activities sheet. Each activity tracks separate progress toward the global goal.
+## 🚀 Current Status
 
-**New User Onboarding (Oct 18, 2025)**: Complete 6-screen onboarding flow for first-time users - **P1 MVP-READY**:
-- ✅ **Screen 1: Welcome** - Introduces app concept with 3 key features
-- ✅ **Screen 2: Environment** - Helps users select appropriate noise threshold
-- ✅ **Screen 3: Goals** - Daily goal setting with personalized advice
-- ✅ **Screen 4: Activities** - Multi-select activities with benefit descriptions
-- ✅ **Screen 5: Permission** - Microphone access request with clear explanation
-- ✅ **Screen 6: Pro Tips** - 4 essential tips for success
-- ✅ **Playful Design**: Colorful gradients, Material 3 icons, motivational messaging
-- ✅ **Space Optimized**: All screens fit without scrolling (compact layouts, reduced spacing)
-- ✅ **Dark Mode Compatible**: Fixed visibility issues with adaptive color schemes
-- ✅ **Smart Navigation**: Directs to Sessions tab after completion (reduces confusion)
-- ✅ **Replay Option**: Available in Settings > About for returning users
-- ✅ **Persistence**: Uses SharedPreferences to track completion
+**MVP Complete - Ready for Platform Configuration (October 2025)**
 
-**Bug Fixes (Oct 18, 2025)**:
-- ✅ **Session Completion Message**: Fixed "0 focus minutes" display for short sessions - now shows actual duration
-- ✅ **Dark Mode**: Fixed invisible text on green tip card in Pro Tips screen
+### ✅ What's Working
+- Ambient Quests system with compassionate streaks (2-day rule + freeze tokens)
+- Focus Mode with full-screen overlay and completion states
+- RevenueCat + AdMob monetization fully integrated
+- Responsive design (phone-first, tablet-adaptive with landscape split-screen)
+- 7 languages (EN, ES, DE, FR, JA, PT, PT_BR)
+- 6-screen onboarding flow
 
-**Success System Consolidation (Oct 17, 2025)**: Migrated to unified Ambient Score-based success determination. Sessions with ≥70% calm qualify for credit, and users earn proportional points (quiet minutes only) instead of all-or-nothing. This compassionate system encourages progress even on imperfect sessions.
+### 📋 Next Steps
+1. Configure App Store Connect & Google Play Console subscriptions
+2. Create app icons and store screenshots
+3. Finalize legal documents (privacy policy, terms)
 
-**Focus Mode & Progress Ring Redesign (Oct 17, 2025)**: Complete UX overhaul for cleaner, more intuitive session control - **P1 MVP-READY**:
-- ✅ **Audio Circuit Breaker Fix**: Reduced timeout from 5s to 500ms - eliminates false "temporarily disabled" errors while maintaining crash protection
-- ✅ **Focus Mode Completion State**: Session success UI with check icon and "Session Complete!" message when timer reaches zero
-- ✅ **Top-Row Control Layout**: Moved all controls above progress ring for cleaner center display
-  - **Not Running**: Duration chips (1, 5, 10, 15, 30 min + premium)
-  - **Running**: Focus Mode button (if disabled), Pause, Stop + Ambient % text
-- ✅ **Smart Focus Mode Logic**: Shows button when disabled (default), auto-activates when enabled in settings
-- ✅ **Rectangular Buttons**: Changed from rounded (radius 16) to rectangular (radius 4) for professional appearance
-- ✅ **Clean Ambient Display**: Changed from button background to plain text - reduces visual clutter
-- ✅ **Long-Press Protection**: Pause/Stop require long-press to prevent accidental session termination
-- ✅ **Material 3 Colors**: Semantic button styling (primaryContainer, secondaryContainer, errorContainer)
+> **Detailed changelog**: See [`docs/development/CHANGELOG.md`](docs/development/CHANGELOG.md)
 
-**Note**: P2 (breathing animation, icon buttons, enhanced celebration) and P3 (lock mode, color themes, ultra-minimal) Focus Mode enhancements are deferred to post-MVP releases. Current P1 implementation is fully functional for launch.
+---
 
-### ✅ **P0 Implementation COMPLETE** (Oct 9-10, 2025)
-
-**Core Engine**:
-- ✅ Activity Profiles with per-profile `usesNoise` and `thresholdDb`
-- ✅ Ambient Score: `quietSeconds / actualSeconds` calculated in real-time (1Hz ticks)
-- ✅ Quest State Management: daily goals, streak tracking, freeze tokens
-- ✅ Compassionate Streaks: Permissive 2-Day Rule + monthly freeze token replenishment
-- ✅ Session Lifecycle: Full integration (start → tick → end)
-- ✅ Background Safety: Android STOP action & Deep Focus breach handlers
-
-**Analytics & Visualization**:
-- ✅ 12-week Activity Heatmap (GitHub-style contribution graph)
-- ✅ Today Timeline (24-hour micro-chart with session dots)
-- ✅ Weekly Target Line overlay on 7-day trends chart
-- ✅ Unified Trends Sheet (heatmap integrated into "Show More")
-
-### ✅ **P1 Implementation COMPLETE** (Oct 10-11, 2025)
-
-**Quest Features**:
-- ✅ Quest Capsule UI on Activity tab (progress bar, streak, freeze token)
-- ✅ Ambient Score display inside progress ring (live calm% during sessions)
-- ✅ Adaptive Threshold suggestions (after 3 consecutive wins, 7-day cooldown)
-- ✅ Full localization (7 languages: EN, ES, DE, FR, JA, PT, PT_BR)
-
-**Activity Customization** (Oct 11, 2025):
-- ✅ **Per-Activity Tracking**: Study, Reading, Meditation tracked separately
-- ✅ **Edit Activities Sheet**: Show/hide activities, adjust daily goal (10-60 min)
-- ✅ **User Preferences**: Persisted settings for enabled activities and goals
-- ✅ **Material Design 3**: Consistent icons throughout (replaced emojis)
-- ✅ **UI Polish**: All bottom sheets match (85% height, drag handles, scrollable)
-- ✅ **Activity Filtering**: Summary displays only enabled activities
-
-### ✅ **Tablet & Responsive Design Complete** (Oct 12, 2025)
-
-**Responsive System**:
-- ✅ Breakpoint-based responsive utilities (phone/small tablet/large tablet)
-- ✅ Adaptive text scaling (1.0x → 1.15x → 1.25x)
-- ✅ Proportional widget sizing (progress rings, charts, buttons)
-- ✅ Orientation locking (portrait-only <840dp, all orientations ≥840dp)
-
-**Tablet Landscape Layout (≥840dp)**:
-- ✅ Split-screen: Today panel (left) + Sessions panel (right)
-- ✅ Single ad placement strategy (only in Today panel)
-- ✅ 50/50 split with vertical divider
-- ✅ Simultaneous access to progress tracking and session controls
-
-### ✅ **HOME DASHBOARD & LIVE METRICS COMPLETE** (Oct 13, 2025)
-
-**Dynamic Trends Display**:
-- ✅ Real-time metrics calculated from actual session data
-- ✅ "Your patterns" card shows live stats (Focus Time, Sessions, Average, Ambient Score)
-- ✅ Trend indicators based on performance thresholds (e.g., >15 min/day = up arrow)
-- ✅ Session model enhanced with `ambientScore` field for quiet session tracking
-- ✅ Storage service upgraded with `saveUserPreferences/loadUserPreferences` helpers
-- ✅ User preferences provider refactored with cleaner persistence methods
-- ✅ Responsive padding system unified across all widgets
-- ✅ Animated tab-aware header with dynamic quest subtitle
-
-**Technical Improvements**:
-- ✅ Null-safe disposal methods with proper error handling
-- ✅ Enhanced light/dark theme palettes for better contrast
-- ✅ Full code formatting and analyzer verification (0 issues)
-
-### 🔄 **Remaining Work (P1)**
-
-- ⏳ iOS Live Activities (Lock Screen + Dynamic Island) - **Deferred to post-launch** for platform parity with Android
-
-**Implementation Docs**:
-- `docs/development/AmbientQuests_Dev_Spec.md` (Gherkin acceptance tests)
-- `docs/development/AmbientQuests_Copy_and_MicroInteractions.md` (UX specifications)
-- `docs/development/Ambient_Quests_P0_Implementation_Summary.md` (✨ NEW - completed work summary)
-- `docs/development/iOS_Live_Activities_Plan.md` (iOS implementation guide)
-
-**Feature Flags**: see `lib/constants/ambient_flags.dart` (P0 flags enabled by default)
-
-## 📱 Platform Support
-
-**Phones (Primary):**
-- Optimized for 4.7"-6.7" smartphones (iOS & Android)
-- Single-column layout with compact widgets
-- All features accessible without scrolling
-
-**Tablets (Adaptive):**
-- Intelligent scaling for 7"-13" tablets
-- **Portrait Mode**: Phone layout with proportional scaling (fonts +15-25%, widgets +20-35%)
-- **Landscape Mode (≥840dp only)**: Split-Screen layout
-  - Left panel (50%): Today tab with sessions, quest progress, patterns - **ad at bottom**
-  - Right panel (50%): Sessions tab with activity controls, progress ring - **no ad**
-  - Single ad placement strategy (only in Today panel)
-  - Simultaneous access to progress tracking and session controls
-  - 50/50 split with vertical divider for clear separation
-
-**Orientation Policy:**
-- **Phones & Small Tablets (<840dp)**: Portrait-only (landscape disabled to protect ad visibility)
-- **Large Tablets (≥840dp)**: All orientations allowed
-
-**Responsive Design:**
-- Breakpoints: Phone (<600dp), Small Tablet (600-840dp), Large Tablet (>840dp)
-- Adaptive typography and touch targets (scaling up to 1.25x on large tablets)
-- Proportional widget sizing (progress rings, charts, buttons scale 20-36%)
-- Orientation locking via `OrientationLocker` widget (`lib/main.dart`)
-- Responsive utilities: `lib/utils/responsive_utils.dart`
-- Tablet landscape layout: `lib/screens/home_page_elegant.dart` (_buildTabletLandscapeLayout)
-- See `CLAUDE.md` for detailed implementation strategy
-
-## 🌟 Features
-
-### Core Functionality
-- **Real-Time Silence Detection**: Ambient noise monitoring using device microphone
-- **Interactive Session Progress Ring**: Large countdown control with MM:SS timer and top-row control layout
-- **Focus Mode Overlay**: ✅ **NEW** Full-screen minimal distraction mode with long-press Pause/Stop, session completion state
-- **Real-Time Noise Chart**: Live decibel visualization with threshold indicators & smoothing (1Hz aggregated controller)
-- **Quick Duration Selectors**: ✅ **NEW** Instant session length buttons (1, 5, 10, 15, 30 min + premium 1h, 1.5h, 2h)
-- **Quick Threshold Selectors**: ✅ **NEW** One-tap decibel adjustment buttons (20, 40, 60, 80 dB)
-- **Smart Point System**: Ambient Score-based success (≥70% calm threshold) with proportional credit - earn 1 point per quiet minute
-- **Streak Analytics**: Track daily streaks, best performances, and session history
-- **Noise Floor Calibration**: Quick ambient baseline measurement (clamped 20–80 dB)
-- **Achievement System**: Visual feedback with confetti celebrations
-
-### Advanced Analytics
-- **Tabbed Overview Widget**: ✅ Space-optimized interface combining Practice Overview + Advanced Analytics
-- **Live Pattern Analysis**: ✅ **NEW** Real metrics calculated from session history
-  - Average daily focus time from last 7 days of sessions
-  - Weekly session frequency tracking
-  - Average session duration across all recent sessions
-  - Ambient score percentage from noise-monitored sessions
-- **Trend Indicators**: ✅ **NEW** Up/down arrows showing performance vs smart thresholds (e.g., >15 min/day focus time = up)
-- **Performance Metrics**: 6 comprehensive metrics (Success Rate, Avg Session, Consistency, Best Time, Preferred Duration, Total Points)
-- **Weekly Trends**: Advanced trend chart with moving averages, overall average line, and interactive tooltips
-- **12-Week Activity Heatmap**: ✅ GitHub-style contribution graph showing session intensity over 12 weeks
-- **Today Timeline**: ✅ 24-hour horizontal timeline with session dots positioned by time of day
-- **Weekly Target Line**: ✅ Visual goal reference (30min default) overlaid on 7-day trends
-- **Insights**: Color-coded insights with achievement, improvement, warning, and recommendation types based on session analytics
-- **Session History Graph**: Visual representation of quiet progress
-- **7-Day Activity Chart**: Real-time stacked bar chart showing minutes by activity with per-activity colors
-
-### Customization & Settings
-- **Activity Customization**: ✅ **NEW** Show/hide activities (Study, Reading, Meditation), adjust daily goal (10-60 min)
-- **Per-Activity Tracking**: ✅ **NEW** Separate progress tracking for each activity toward global goal
-- **Tabbed Settings Interface**: Basic, Advanced, About
-- **Adjustable Decibel Threshold**: 20–80 dB (default 38) with high-threshold warning ≥70 dB
-- **Session Duration**: Free up to 30 minutes; Premium up to 120 minutes
-- **Calibration Dialog**: Previous vs new threshold, ambient warnings
-- **Theme System**: Modern, high-contrast default themes (Light & Dark), plus premium options.
-- **Accessibility Settings**: High contrast, large text, vibration feedback
-
-### User Experience
-- **Progress Ring Control**: Start/stop & visual completion
-- **Smooth Visual Updates**: Smoothing filters + aggregated controller reduce jitter & frame drops
-- **Confetti Celebrations**: Successful session reward
-- **Material Design 3**: ✅ **NEW** Consistent Material icons throughout (Study 🎓→📚, Reading 📖→📕, Meditation 🧘→🧘‍♀️)
-- **Consistent Bottom Sheets**: ✅ **NEW** All sheets match (85% height, drag handles, scrollable overflow protection)
-- **Permission Guidance**: Microphone access onboarding
-- **Compact Layout**: Key controls on one screen
-- **Calm Home**: Activity‑aware noise widget (compact by default); Quest capsule as the focal point
-
-### Data & Privacy
-- **Local Storage Only**: No audio recorded or transmitted
-- **Data Export (Premium)**: CSV & PDF reports
-- **Reset Option**: Wipes all local settings & history
-
-> Note: Cloud backup / sync is not yet available (local-only).
-
-## 📱 Screenshots
-
-*[Screenshots will be added here]*
-
-## 🚀 Getting Started
+## 🎯 Quick Start
 
 ### Prerequisites
-
-- Flutter 3.x or higher
-- Dart 3.x or higher
-- iOS 15.0+ (raised due to Firebase/Firestore & RevenueCat SDK requirements) or Android API level 21+
+- Flutter 3.x+, Dart 3.x+
+- iOS 15.0+ or Android API 21+
+- Microphone access (no audio recording, only decibel measurement)
 
 ### Installation
 
-1. Clone the repository:
 ```bash
+# 1. Clone repository
 git clone https://github.com/sparkvibe-io/FocusField.git
 cd FocusField
-```
 
-2. Install dependencies:
-```bash
+# 2. Install dependencies
 flutter pub get
-```
 
-3. **Configure Environment** (Important):
-```bash
-# Copy the example environment file
+# 3. Configure environment (copy and edit .env file)
 cp .env.example .env
+# Edit .env with your RevenueCat API keys
 
-# Edit .env with your actual API keys
-# Get RevenueCat API key from: https://app.revenuecat.com/projects
-vim .env
-```
-
-4. Run the app:
-```bash
-# Development build (with mock subscriptions)
+# 4. Run development build (with mock subscriptions)
 ./scripts/build/build-dev.sh
 
-# Or run directly with Flutter (iOS)
-flutter run --dart-define=REVENUECAT_API_KEY=appl_qoFokYDCMBFZLyKXTulaPFkjdME
+# OR run directly on device
+./scripts/run/ios.sh --debug       # iOS
+./scripts/run/android.sh --debug   # Android
 
-# Or run directly with Flutter (Android)
-flutter run --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
+# OR run with Flutter directly
+flutter run --dart-define=REVENUECAT_API_KEY=appl_qoFokYDCMBFZLyKXTulaPFkjdME  # iOS
+flutter run --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf  # Android
 ```
 
-### Environment Configuration
+### Production Builds
 
-The app uses environment variables for secure API key management:
-
-- **Development**: Uses `.env` file and mock subscriptions by default
-- **Production**: Requires actual API keys and disables mocks
-
-**Environment Variables:**
-- `REVENUECAT_API_KEY`: RevenueCat subscription management (platform-specific)
-  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
-  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
-- `FIREBASE_API_KEY`: Firebase services (optional)
-- `IS_DEVELOPMENT`: Enable/disable development mode
-- `ENABLE_MOCK_SUBSCRIPTIONS`: Use mock payments for testing
-
-### Building for Production
-
-#### Android
 ```bash
-# Using the secure build script (recommended)
+# Android
 export REVENUECAT_API_KEY="goog_HNKHzGPIWgDdqihvtZrmgTdMSzf"
 ./scripts/build/build-prod.sh
 
-# Or manually with dart-define
-flutter build apk --release --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
-flutter build appbundle --release --dart-define=REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
-```
-
-#### iOS
-```bash
-# Set environment variables
+# iOS
 export REVENUECAT_API_KEY="appl_qoFokYDCMBFZLyKXTulaPFkjdME"
-
-# Build for iOS
-flutter build ios --release \
-  --dart-define=REVENUECAT_API_KEY="$REVENUECAT_API_KEY" \
-  --dart-define=IS_DEVELOPMENT=false \
-  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+flutter build ios --release --dart-define=REVENUECAT_API_KEY="$REVENUECAT_API_KEY"
 ```
 
-#### Development Builds
-```bash
-# Quick development build with environment file
-./scripts/build/build-dev.sh
+---
 
-# Or run in debug mode
-flutter run
-```
+## 🌟 Core Features
 
-## 🔐 Permissions
+### Ambient Quest System
+- **Ambient Score**: Real-time silence quality metric (`quietSeconds / actualSeconds`)
+- **Compassionate Credit**: Earn points proportionally (1 point per quiet minute)
+- **70% Threshold**: Sessions with ≥70% calm qualify for quest credit
+- **Streak System**: Permissive 2-day rule + monthly freeze token
+- **Activity Profiles**: Study, Reading, Meditation (customizable goals 10-60 min)
 
-The app requires microphone access to measure ambient noise levels:
+### Session Management
+- **Interactive Progress Ring**: Large countdown control with MM:SS timer
+- **Focus Mode**: Full-screen minimal distraction mode with long-press Pause/Stop
+- **Quick Selectors**: Instant duration (1-30 min) and threshold (20-80 dB) buttons
+- **Real-Time Monitoring**: Live decibel visualization with smoothing algorithms
+- **Session History**: 12-week activity heatmap, daily timeline, trend charts
 
-- **iOS**: Added `NSMicrophoneUsageDescription` in Info.plist
-- **Android**: Added `RECORD_AUDIO` permission in AndroidManifest.xml
+### Analytics & Insights
+- **Live Metrics**: Real-time calculations from session history
+  - Average daily focus time (last 7 days)
+  - Weekly session frequency
+  - Ambient score percentage
+  - Performance trends with moving averages
+- **Advanced Analytics** (Premium): 6 performance metrics, trend charts, data-driven insights
+- **Weekly Recap**: Visual summary with achievements
 
-**Privacy Note**: No audio is recorded or stored - the app only measures decibel levels in real-time for silence detection. A shared cached permission Future prevents duplicate OS dialogs.
+### Customization
+- **Activity Management**: Show/hide activities, adjust daily goals (10-60 min)
+- **Per-Activity Tracking**: Separate progress for each activity toward global goal
+- **Theme System**: High-contrast Light/Dark modes + premium themes
+- **Accessibility**: High contrast, large text, vibration feedback
+- **Responsive Design**: Optimized for phones (4.7"-6.7") and tablets (7"-13")
 
-## 🔔 Notification System
+### Premium Features
+| Feature | Free | Premium ($1.99/mo) | Premium Plus ($3.99/mo) |
+|---------|------|-------------------|------------------------|
+| Session length | 30 min | 120 min | 120 min |
+| History | 7 days | 90 days | Unlimited |
+| Analytics | Basic | Advanced | AI insights |
+| Export | No | CSV/PDF | Cloud sync |
+| Focus durations | 1-30 min | + 1h, 1.5h, 2h | + All |
 
-Focus Field includes a flexible, privacy‑friendly local notification system designed to reinforce habit formation without being spammy.
+---
 
-### Architecture
-| Component | Responsibility |
-|-----------|----------------|
-| `NotificationService` | Core API: smart reminder logic, scheduling (daily / weekly), achievement & session notifications |
-| `NotificationPermissionHandler` | Isolated permission checks & requests (Android 13+ POST_NOTIFICATIONS, iOS alert/badge/sound) |
-| `notification_settings_widget.dart` | User interface for enabling features & picking schedule overrides |
-| SharedPreferences (StorageService) | Persists user scheduling overrides (daily time, weekly weekday/time) & last reminder sent date |
+## 📱 Platform Support
 
-### Features
-1. Smart Daily Reminders
-  - Learns your preferred practice window from recent session start times (keeps last 30) and triggers within ±30 minutes of the most common time.
-  - Optional explicit time override: user can pick a fixed daily reminder time; reverting to Smart re-enables adaptive behavior.
-2. Weekly Progress Summary (Premium)
-  - User‑selectable weekday + time (default Monday @ 09:00) summarizing weekly engagement.
-3. Session Completion Notifications
-  - Instant feedback when a session finishes (success vs incomplete messaging).
-4. Achievement Notifications
-  - Milestone unlock messages (first session, streaks, perfect/long sessions, etc.).
-5. Adaptive Messaging
-  - Reminder & streak copy adjusts to current streak length and total session count.
-6. Testability
-  - Injected `NowProvider` enables deterministic unit tests; separate permission handler allows logic testing without platform channels.
+### Phones (Primary)
+- Optimized for 4.7"-6.7" smartphones (iOS & Android)
+- Single-column layout, all features accessible without scrolling
 
-### Scheduling Behavior
-Daily: Uses user override (if set) else computed optimal hour/minute; scheduled with `matchDateTimeComponents: time` so it repeats daily.  
-Weekly: Uses stored weekday & time with `matchDateTimeComponents: dayOfWeekAndTime`.  
-Both rely on the `timezone` package; zones initialized on service init (skipped in tests).
+### Tablets (Adaptive)
+- Intelligent scaling for 7"-13" tablets
+- **Portrait**: Phone layout with proportional scaling (+15-25% fonts, +20-35% widgets)
+- **Landscape (≥840dp)**: Split-screen 50/50
+  - Left: Today tab + ad footer
+  - Right: Sessions tab (no ad)
+- **Orientation Policy**: Portrait-only for <840dp (protects ad visibility)
 
-### Persistence Keys
-`dailyReminderHour`, `dailyReminderMinute`, `weeklySummaryWeekday`, `weeklySummaryHour`, `weeklySummaryMinute`, and `last_reminder` (for per‑day guard).
+### Responsive Breakpoints
+- Phone: <600dp
+- Small Tablet: 600-840dp
+- Large Tablet: >840dp
 
-### User Flow
-1. User opens Notification Settings sheet; if permission missing, a banner prompts enablement.  
-2. Toggling Daily Reminders or Weekly Summary triggers (re) scheduling immediately.  
-3. Selecting a time or weekday updates SharedPreferences and reschedules.  
-4. Choosing "Use Smart" clears daily fixed time keys and reverts to adaptive reminder scheduling.
+---
 
-### Future Enhancements (Not Yet Implemented)
-- Dynamic weekly summary body generation at fire time (currently placeholder text).  
-- Advanced analytics injection for richer weekly insights.  
-- Quiet hours / do-not-disturb awareness.  
-- A/B messaging variants & localization coverage expansion.
+## 🔐 Permissions & Privacy
 
-### Testing
-Unit tests cover smart reminder eligibility (`shouldSendDailyReminder`) with injected clock and controlled session history. Additional scheduling tests verify that enabling features with overrides places correct schedule parameters (see `test/notification_service_test.dart`).
+### Microphone Access
+- **Required**: For ambient noise monitoring
+- **iOS**: `NSMicrophoneUsageDescription` in Info.plist
+- **Android**: `RECORD_AUDIO` in AndroidManifest.xml
 
+### Privacy Commitment
+- ✅ **No audio recording** - Only decibel level measurements
+- ✅ **Local storage only** - No cloud transmission (optional Premium sync)
+- ✅ **Data export** - CSV/PDF for Premium users
+- ✅ **Reset option** - Wipe all local data anytime
+
+---
 
 ## 🏗️ Architecture
 
-### State Management
-- **Riverpod**: Modern state management with hooks_riverpod
-- **Provider Pattern**: Clean separation of concerns with dedicated providers
-- **Async State Handling**: Robust error handling and loading states
-
-### Core Services
-- **Silence Detection**: Advanced noise_meter integration with ambient monitoring & circuit breaker safeguards
-- **Data Persistence**: Shared preferences with JSON serialization
-- **Permission Handling**: Shared-single-flight permission request + caching with fallback strategies
-
-### UI Components
-- **Material 3**: Latest Material Design with dynamic color support
-- **Custom Widgets**: Progress rings, charts, score cards, and session displays
-- **Responsive Layout**: Adaptive design for various screen sizes
-- **Animation System**: Smooth transitions and celebratory animations
-
-### Testing
-- **Unit Tests**: Comprehensive silence detection logic testing
-- **Widget Tests**: UI component validation
-- **Integration Testing**: End-to-end user flow validation
-
-## ⚙️ Configuration
-
-### Default Settings
-- **Decibel Threshold**: 38 dB (adjustable 20–80)
-- **Session Duration (Free Default)**: 30 minutes (Premium configurable 1–120 minutes)
-- **Sample Interval**: 200ms (system constant)
-- **Success System**: Ambient Score-based (70% calm threshold for qualification)
-- **Points Award**: 1 point per quiet minute (proportional credit based on `quietSeconds / elapsedSeconds`)
-- **Chart Smoothing**: Exponential moving average
-- **Theme**: High-contrast, modern default themes (Light & Dark).
-- **Premium Themes**: Includes `Ocean Blue`, `Forest Green`, `Cyber Neon`, and more.
-
-### Advanced Configuration
-- **Calibration**: Ambient baseline sets initial threshold
-- **High Threshold Warning**: Shown at ≥70 dB to discourage overly permissive settings
-- **Export Formats**: CSV raw data, PDF formatted report (Premium)
-- **Accessibility**: High contrast mode & scalable text
-
-## 🛠️ Development
-### Internationalization (i18n)
-
-The app uses Flutter `gen-l10n` with multiple fully integrated locales.
-
-Supported locales: `en`, `es`, `fr`, `de`, `pt`, `pt_BR`, `ja`.
-
-#### Notification & Dynamic Message Localization
-All notification strings (settings UI, reminders, achievements, weekly summaries, streak copy) are fully localized across supported locales.
-
-#### Tip System Localization
-The tip system is fully internationalized with proper localization keys:
-- **Tip Window**: `tipsTitle` for window title, `muteTips` for mute button
-- **Toast Messages**: `tipsMuted` for confirmation message after muting
-- **Tip Content**: 30 localized tips (`tip01` through `tip30`) with contextual instructions
-- **Instructions**: Contextual help text (`tipInstruction*` keys) for each tip
-- **Tip Info Icon**: `tipInfoTooltip` for lightbulb icon tooltip
-
-All tip-related UI elements are properly localized across all 7 supported languages.
-
-#### Tip System Features
-- **Manual-Only Display**: Tips only show when user actively clicks the lightbulb icon
-- **Lightbulb Icon**: Intuitive lightbulb icon with amber glow effect for new tips
-- **Smart Timing**: Same tip shown for 5 minutes, updates only when user has seen it
-- **Session Tracking**: Prevents showing same tip twice in one session
-- **Muted Override**: Info button works even when tips are muted
-- **Gentle Animation**: Subtle 3-second pulsing glow effect
-- **Theme Adaptive**: Amber glow works well in both light and dark themes
-- **No Interruptions**: Tips never appear automatically, respecting user workflow
-
-Dynamic strings with placeholders use explicit metadata blocks in each non‑English ARB (e.g. `@reminderStreakShort`, `@weeklyProgressFew`) to ensure typed method generation (`int streak`, `int count`). This avoids accidental `Object` parameter generation and keeps runtime type safety.
-
-Streak tiers implemented:
-- `reminderStreakShort` – early streak encouragement
-- `reminderStreakMedium` – mid milestone motivation
-- `reminderStreakLong` – long streak celebration
-
-Weekly progress variants:
-- `weeklyProgressFew`
-- `weeklyProgressSome`
-- `weeklyProgressPerfect`
-
-Fixed two‑day copy (`reminderDayTwo`) intentionally kept static (no placeholder) to remove unnecessary function signatures.
-
-#### Adding / Updating Translations
-1. Add or edit keys in `app_en.arb` (source of truth). Include `@key` metadata for any placeholder variables.
-2. Copy the new key to every other `app_<locale>.arb` with either a real translation or temporary English placeholder.
-3. If the string has placeholders, also add the matching `@key` metadata in each locale (copy from English, do not translate placeholder names).
-4. Run:
-  ```bash
-  flutter gen-l10n
-  ```
-5. Run tests (includes interpolation + completeness checks):
-  ```bash
-  flutter test
-  ```
-6. Replace any temporary placeholders with real translations before release.
-
-#### Translation Quality & Style
-- Keep punctuation and emoji usage parallel to English where culturally appropriate.
-- Avoid translating variable names.
-- Preserve capitalization segmentation if it impacts accessibility (screen readers often break on emoji + punctuation).
-- Prefer concise motivational tone for reminders; avoid overly formal phrasing.
-
-#### Validation Tests
-Added dedicated tests to guard localization integrity:
-- `localization_smoke_test.dart` (English interpolation)
-- `localization_de_test.dart`, `localization_es_test.dart`, `localization_pt_test.dart`, `localization_pt_br_test.dart`, `localization_ja_test.dart` (per‑locale interpolation checks)
-- `localization_completeness_test.dart` ensures every locale ARB contains all keys from English (excludes metadata keys starting with `@`).
-
-If a new locale is introduced without all keys, the completeness test will fail, preventing silent partial localization regressions.
-
-#### Common Pitfalls Prevented
-- Missing placeholder metadata → would generate `Object` parameter types (guarded by convention + tests).
-- Untranslated new key in one locale → caught by completeness test.
-- Placeholder name mismatch → `flutter gen-l10n` failure (resolve by copying `@key` entry exactly).
-
-#### Future i18n Enhancements
-- Automated extraction & translation pipeline (e.g. using a script to diff new keys and produce a translator handoff JSON/CSV).
-- Pluralization for weekly summaries if variant granularity increases.
-- Fallback locale smoke test during CI launch build.
-
-Key files:
-- `l10n/l10n.yaml` – configuration
-- `lib/l10n/app_en.arb` – source of truth
-- `lib/l10n/app_*.arb` – translated locale files
-- Generated: `lib/l10n/app_localizations.dart` (do not edit manually)
-
-Add a new locale:
-1. Duplicate `app_en.arb` to `app_xx.arb`.
-2. Translate values; preserve placeholder keys.
-3. Run `flutter gen-l10n` (or just `flutter run`).
-4. Ensure the new locale is included in `supportedLocales` if not auto-wired.
-5. Validate UI for overflow & multi-byte glyph rendering.
-6. Provide translation metadata (`@key` objects) for complex strings / achievements.
-
-Notes:
-- Placeholders must match exactly; don't translate variable names.
-- Avoid hard-coded text in widgets; everything user-facing should be localized.
-- Use plural formatting where counts vary (see `minutesOfSilenceCongrats`).
- - Run `flutter gen-l10n` after any ARB change; commit regenerated files.
- - Completeness & interpolation tests enforce consistency—keep them green before merging.
-
-Translation backlog (if any) is tracked via `untranslated_messages.txt` when running `flutter gen-l10n`.
-
-## 📣 Ads (AdMob) Integration
-
-Focus Field uses a single bottom banner via Google Mobile Ads. Integration follows Google’s guidelines and is wired for safe development defaults.
-
-### Dev vs Release behavior
-- Development (debug/profile or `IS_DEVELOPMENT=true`): always uses Google’s official test banner ad unit.
-- Release (`IS_DEVELOPMENT=false`): uses production ad unit per platform. If you set `ADS_FALLBACK_TEST_ON_FAIL=true`, the app retries once with the Google test unit when a production request fails to help verify integration.
-
-### Platform configuration
-- Android App ID (AndroidManifest): `ca-app-pub-2086096819226646~6517708516`
-- iOS App ID (Info.plist): `ca-app-pub-2086096819226646~9627636327`
-
-### Default production banner units (override-able)
-- Android: `ca-app-pub-2086096819226646/3553182566`
-- iOS: `ca-app-pub-2086096819226646/9050063581`
-
-Override at runtime using dart-defines:
-- `ANDROID_BANNER_AD_UNIT_ID=<your_android_banner_id>`
-- `IOS_BANNER_AD_UNIT_ID=<your_ios_banner_id>`
-- `ADS_FALLBACK_TEST_ON_FAIL=true` (optional, release QA)
-
-### Quick runs
-```bash
-# Android (dev-safe test ads)
-./run_android_revenuecat.sh --debug -d <device_id>
-
-# Android (release with prod ads)
-./run_android_revenuecat.sh --release -d <device_id>
-
-# iOS (dev-safe test ads)
-./run_ios_revenuecat.sh --debug -d <device_id_or_ios>
-
-# iOS (release with prod ads)
-./run_ios_revenuecat.sh --release -d <device_id_or_ios>
-
-# iOS (release with one-time fallback to test if prod fails)
-ADS_FALLBACK_TEST_ON_FAIL=true ./run_ios_revenuecat.sh --release -d <device_id>
-```
-
-Banner rendering is deferred until `onAdLoaded` to prevent crashes; if a request fails or returns no fill, the banner area collapses.
-
+### Tech Stack
+- **Framework**: Flutter 3.x with Dart 3.x
+- **State Management**: Riverpod with hooks_riverpod
+- **Noise Detection**: noise_meter package with circuit breaker safeguards
+- **Persistence**: SharedPreferences with JSON serialization
+- **Monetization**: RevenueCat (subscriptions) + AdMob (banners)
+- **Localization**: Flutter gen-l10n (7 languages)
 
 ### Project Structure
 ```
 lib/
-├── constants/          # App constants and configuration
-├── models/            # Data models and serialization
-├── providers/         # Riverpod state management
-├── screens/           # Main UI screens and navigation
-├── services/          # Business logic and external integrations
-├── theme/             # App theming and design system
-├── widgets/           # Reusable UI components
-└── main.dart          # App entry point and initialization
+├── constants/     # Feature flags, config
+├── models/        # Data models (JSON serialization)
+├── providers/     # Riverpod state management
+├── screens/       # Main UI screens
+├── services/      # Business logic, APIs
+├── theme/         # Design system
+├── widgets/       # Reusable components
+└── main.dart      # App entry point
 ```
 
 ### Key Components
+- **Services**: `SilenceDetector`, `AudioCircuitBreaker`, `StorageService`, `SubscriptionService`
+- **Providers**: `questStateProvider`, `silenceDataProvider`, `userPreferencesProvider`, `subscriptionProvider`
+- **Widgets**: `ProgressRing`, `FocusModeOverlay`, `RealTimeNoiseChart`, `QuestCapsule`
 
-#### Widgets
-- `ProgressRing`: Interactive countdown control with MM:SS timer and session progress
-- `FocusModeOverlay`: ✅ **NEW** Full-screen Focus Mode with completion states, long-press Pause/Stop controls, and minimal distractions
-- `RealTimeNoiseChart`: Live decibel visualization with smoothing, throttled logging & 1Hz aggregated updates + integrated quick threshold selectors
-- `AdvancedAnalyticsWidget`: Premium analytics with compact performance metrics and per-activity insights
-- `QuickDurationSelector`: ✅ **NEW** Compact session duration buttons with premium integration and paywall
-- `QuickDecibelSelector`: ✅ **NEW** Instant threshold adjustment buttons (20, 40, 60, 80 dB)
-- `SessionHistoryGraph`: Historical performance tracking with visual trends
-- `CompactPointsDisplay`: Streamlined statistics overview with points, streaks, and totals
-- `SessionHistoryCard`: Detailed session records with achievements (legacy)
-- `ScoreCard`: Comprehensive statistics display (legacy)
+---
 
-#### Services
-- `SilenceDetector`: Core noise monitoring, permission coalescing, circuit breaker & analysis
-- `AudioCircuitBreaker`: ✅ **NEW** Crash protection for audio access with optimized 500ms immediate timeout
-- `StorageService`: Data persistence and management
-- `PermissionHandler`: Microphone access management
+## 🔧 Development
 
-#### Providers
-- `SilenceDataNotifier`: Session data and statistics management
-- `SilenceStateProvider`: Real-time session state and progress tracking
-- `activeSessionDurationProvider`: ✅ **NEW** Temporary session duration overrides for quick selectors
-- `activeDecibelThresholdProvider`: ✅ **NEW** Temporary threshold overrides for quick selectors
-- `SettingsNotifier`: Configuration and preferences with tabbed interface
-- `ThemeProvider`: Dynamic theme switching (System/Light/Dark modes)
-
-### Running Tests
+### Common Commands
 ```bash
-# Unit tests for silence detection
-flutter test test/silence_detector_test.dart
+# Run tests
+./scripts/testing/test.sh
+./scripts/testing/test.sh --coverage
 
-# Widget tests for UI components
-flutter test test/widget_test.dart
+# Tools
+./scripts/tools/check-localizations.sh
+./scripts/tools/coverage-summary.sh
+./scripts/tools/fix-lint.sh
 
-# All tests with coverage
-flutter test --coverage
-```
-
-### Code Quality
-The project follows Dart and Flutter best practices:
-```bash
-# Format code (CI-safe)
-dart format --output=none --set-exit-if-changed .
+# Format code
+flutter format .
 
 # Analyze code
 flutter analyze
 
-# Run linter
-flutter analyze --no-fatal-infos
+# Generate localizations
+flutter gen-l10n
+
+# Clean build
+flutter clean && flutter pub get
 ```
 
-### Recent UI Improvements (Notifications)
-- Smart Daily Reminders and Weekly Progress Summary now display their scheduling controls within each tile footer. This prevents horizontal overflows on small screens and makes the selection more discoverable.
-- The Notification Settings bottom sheet now has a solid background with a clearly visible close (X) icon and title.
+### Environment Variables
+```bash
+# Development (mock subscriptions)
+REVENUECAT_API_KEY=REVENUECAT_API_KEY_NOT_SET
+IS_DEVELOPMENT=true
+ENABLE_MOCK_SUBSCRIPTIONS=true
 
-## ✨ Latest UI/UX Enhancements
+# Production
+REVENUECAT_API_KEY=<platform_specific_key>  # See .env.example
+IS_DEVELOPMENT=false
+ENABLE_MOCK_SUBSCRIPTIONS=false
+```
 
-### Quick Selector System ✅ **NEW**
-- **Duration Selectors**: Instant access buttons positioned above the progress ring
-  - Free durations: 1, 5, 10, 15, 30 minutes (single-line responsive layout)
-  - Premium durations: 1h, 1.5h, 2h (show professional paywall for free users)
-  - Temporary override pattern: Uses `activeSessionDurationProvider` for real-time changes without affecting persistent settings
-  - Premium integration: Seamlessly integrated with existing paywall system
+### AdMob Configuration
+```bash
+# Android
+App ID: ca-app-pub-2086096819226646~6517708516
+Banner: ca-app-pub-2086096819226646/3553182566
 
-- **Decibel Selectors**: Quick threshold adjustment buttons integrated in noise level widget header
-  - One-tap presets: 20, 40, 60, 80 dB for instant environment adaptation
-  - Visual feedback: Selected threshold highlighted with primary color styling
-  - Real-time updates: Immediately affects silence detection without settings navigation
-  - Responsive design: Compact layout that works across all screen sizes
+# iOS
+App ID: ca-app-pub-2086096819226646~9627636327
+Banner: ca-app-pub-2086096819226646/9050063581
+```
 
-### Tabbed Overview Widget - Space Optimization
-- **Combined Interface**: Merges Practice Overview and Advanced Analytics into elegant tabbed container
-- **Space Savings**: Frees ~80px of vertical space for advertisement placement (free users)
-- **Overview Tab**:
-  - Horizontal layout with compact stats (Points, Streak, Sessions) alongside 7-day activity chart
-  - Real-time bar chart showing actual daily points from session data
-  - Efficient 80px height for overview content
-- **Analytics Tab (Premium)**:
-  - Complete advanced analytics experience for premium subscribers
-  - 6 comprehensive performance metrics in 2x3 grid layout
-  - Full trends chart with moving averages, overall average lines, and interactive tooltips
-  - Data-driven insights with color-coded achievement, improvement, warning, and recommendation types
-  - Dynamic 500px height to accommodate rich analytics content
-- **Premium Integration**: Analytics tab shows upgrade prompt for free users, full content for premium subscribers
-- **Smooth Transitions**: TabController with proper state management and automatic height adjustment
+---
 
-### Enhanced User Experience
-- **Professional Paywall Integration**: Consistent upgrade flow using existing `showPaywall()` system across all premium features
-- **Real-time Visual Feedback**: Immediate response to threshold and duration changes with highlighted selection states
-- **No Advertisement Interference**: Premium users get full screen real estate without space constraints for ads
-- **Responsive Design**: All components adapt to different screen sizes while maintaining single-line layouts
-- **Accessibility Compliant**: Follows Material 3 design guidelines with proper contrast ratios and touch targets
-- **Data-driven Visualizations**: Charts and metrics show actual user data instead of placeholder content
+## 🌍 Internationalization
 
-## 🎯 Advanced Features
+### Supported Languages
+- English (en)
+- Spanish (es)
+- French (fr)
+- German (de)
+- Portuguese (pt)
+- Brazilian Portuguese (pt_BR)
+- Japanese (ja)
 
-### Calibration & Threshold Intelligence
-- **Noise Floor Calibration**: ~5s ambient measure; clamps extremes
-- **High Ambient Warning**: Alerts on ≥70 dB baseline
-- **Manual Fine-Tuning**: Slider always available post-calibration
+### Adding Translations
+1. Edit `lib/l10n/app_en.arb` (source of truth)
+2. Copy keys to all other `app_<locale>.arb` files
+3. Add `@key` metadata for placeholders
+4. Run `flutter gen-l10n`
+5. Validate with completeness tests: `flutter test test/localization_*`
 
-### Real-Time Monitoring
-- **Ambient Noise Tracking**: Continuous background monitoring when not in session
-- **Live Visualization**: Real-time decibel level charts with intelligent smoothing algorithms
-- **Visual Noise Reduction**: Exponential moving average + aggregation prevents flicker & reduces work
-- **Threshold Indicators**: Dynamic visual feedback for noise level status with color-coded responses
-- **Performance Optimized**: Aggregated 1Hz stream + throttled logger drastically lowers rebuild pressure
+> **Translation guide**: See [`docs/development/INTERNATIONALIZATION.md`](docs/development/) (to be created)
 
-### Interactive Controls
-- **Primary Progress Ring**: Large, always-visible control serving as main session interface
-- **Countdown Timer**: Real-time MM:SS display showing remaining session time
-- **Visual Session State**: Clear start/stop indicators with dynamic sizing and spacing
-- **One-Touch Control**: Single tap to start/stop sessions with immediate visual feedback
-- **Gesture Optimization**: Entire progress ring area is touch-responsive
+---
 
-_Section de-duplicated; previous duplicate removed._
+## 🔔 Notification System
 
-### User Interface
-- **Tabbed Settings**: Organized interface with Basic, Advanced, and About sections
-- **Theme Management**: Quick theme cycling with visual feedback (System/Light/Dark).
-- **Premium Themes**: A variety of exclusive themes for subscribed users.
-- **Compact Layout**: Single-screen design eliminating scroll requirements
-- **Modern Controls**: Visual sliders with live value indicators and smooth animations
-- **Intelligent Spacing**: Optimized component positioning for better user interaction
+### Features
+- **Smart Daily Reminders**: Learns your preferred practice time (±30 min window)
+- **Weekly Progress Summary** (Premium): User-selectable weekday + time
+- **Session Completion**: Instant feedback when sessions finish
+- **Achievement Notifications**: Milestone unlocks (streaks, perfect sessions)
+- **Adaptive Messaging**: Copy adjusts to streak length and session count
 
-### Analytics & Insights
-- **Performance Metrics**: Success rates, average scores, and trends
-- **Session Analytics**: Detailed breakdown of each silence session
-- **Progress Tracking**: Visual representation of improvement over time
+### Privacy
+- All notifications are local (no server communication)
+- Scheduling uses device timezone
+- Optional time overrides or smart adaptive mode
 
-### Achievement System
-- **Milestone Badges**: Unlock achievements for consistent practice
-- **Streak Rewards**: Special recognition for maintaining daily habits
-- **Progress Celebrations**: Animated rewards for accomplishments
-
-### Data Management
-- **Export Functionality**: Download session history and statistics (Premium)
-- **Backup/Restore (Planned)**: Cloud sync & cross‑device backup not yet implemented
-- **Data Reset**: Clear all data with confirmation dialogs
-
-### Accessibility
-- **Screen Reader Support**: Full accessibility for visually impaired users
-- **High Contrast Mode**: Enhanced visibility options
-- **Large Text Support**: Scalable typography for better readability
-- **Optimized Settings Layout**: Space-efficient design with inline values for better accessibility
-- **Compact UI**: Values displayed in titles (e.g., "Decibel Threshold (60dB)") to save space
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes following the existing code style
-4. Add comprehensive tests for new functionality
-5. Run the test suite and ensure all tests pass
-6. Update documentation for any new features
-7. Submit a pull request with detailed description
-
-### Development Guidelines
-- Follow Dart formatting standards
-- Write comprehensive tests for new features
-- Update documentation for API changes
-- Ensure accessibility compliance
-- Test on both iOS and Android platforms
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📋 Changelog
-
-See [docs/CHANGELOG.md](docs/CHANGELOG.md) for detailed version history and updates.
-
-### Latest Updates (v0.1.3 - Focus Mode Redesign - Oct 17, 2025)
-
-#### 🎯 **Focus Mode & Progress Ring UX Overhaul**
-- ✅ **Audio Circuit Breaker Optimization**: Reduced immediate protection timeout from 5s to 500ms
-  - Eliminates false "Audio access temporarily disabled" errors
-  - Maintains crash protection for native audio buffer issues
-  - Improves app responsiveness during session transitions
-- ✅ **Focus Mode Overlay Completion State**: Added session success UI
-  - Check icon and "Session Complete!" message when timer reaches zero
-  - Hides Pause/Stop buttons on completion
-  - Provides clear visual feedback for session achievement
-- ✅ **Top-Row Control Layout**: Moved all session controls above progress ring
-  - **When NOT running**: Duration selector chips (1, 5, 10, 15, 30 min + premium options)
-  - **When running**: Focus Mode button (if disabled), Pause, Stop buttons + Ambient % text
-  - Center shows only time countdown (removed "Calm" subtitle for cleaner look)
-- ✅ **Smart Focus Mode Button Logic**: Reversed visibility behavior
-  - Shows button when Focus Mode is DISABLED in settings (allows manual activation)
-  - Auto-activates on Start when ENABLED in settings (reduces UI clutter)
-  - Prevents redundant button when feature is already active
-- ✅ **Rectangular Button Design**: Changed from rounded to rectangular shape
-  - Border radius reduced from 16 to 4 for more professional appearance
-  - Applies to Focus Mode, Pause, and Stop buttons
-  - Consistent with modern minimal design trends
-- ✅ **Ambient % Text-Only Display**: Removed button background from Ambient percentage
-  - Changed from Container with background to plain text
-  - Reduces visual clutter during active sessions
-  - Maintains glanceable real-time feedback
-- ✅ **Long-Press Protection**: Pause and Stop buttons require long-press to activate
-  - Prevents accidental session termination
-  - Clear hint text: "Long press to pause or stop"
-  - Better user experience during focused sessions
-- ✅ **Material 3 Color Semantics**: Consistent button coloring
-  - Focus Mode: primaryContainer (teal)
-  - Pause/Resume: secondaryContainer (gray)
-  - Stop: errorContainer (red)
-  - Provides clear visual distinction for different actions
-
-#### 🔧 **Technical Implementation**
-- ✅ Files Modified: `lib/services/audio_circuit_breaker.dart`, `lib/widgets/focus_mode_overlay.dart`, `lib/screens/home_page_elegant.dart`
-- ✅ New Helper Method: `_buildTopButton()` for consistent control button styling
-- ✅ Code Quality: Full dart format pass with flutter analyze showing 0 issues
-- ✅ Documentation: Updated CLAUDE.md and README.md with implementation details
-
-### Previous Updates (v0.1.2 - Live Metrics Release - Oct 13, 2025)
-
-#### 📊 **Dynamic Trends & Real Data**
-- ✅ **Live Metrics**: Replaced placeholder data with real calculations from session history
-  - Focus Time: Average daily minutes from last 7 days
-  - Sessions: Weekly session count tracking
-  - Average Duration: Calculated across all recent sessions
-  - Ambient Score: Average calm percentage from quiet sessions
-- ✅ **Ambient Score Tracking**: Added `ambientScore` field to `SessionRecord` model for persistent storage
-- ✅ **User Preferences Enhancement**: Upgraded storage service with dedicated `saveUserPreferences/loadUserPreferences` methods
-- ✅ **Provider Refactoring**: Streamlined `UserPreferencesNotifier` with `_persist` helper and cleaner setters
-- ✅ **Responsive Design**: Unified `_getResponsivePadding` helper across all widgets for consistent spacing
-- ✅ **Header Refinement**: Animated tab-aware header with dynamic quest subtitle showing real-time calm percentage
-- ✅ **Theme Improvements**: Enhanced light/dark color palettes for better contrast and readability
-
-#### 🎨 **Brand Alignment Complete**
-- ✅ **Terminology Shift**: Updated 84 strings from "silence" to "focus" terminology across 7 languages
-- ✅ **Focus Minutes**: Changed from "quiet minutes" to "focus minutes" throughout the app
-- ✅ **Empowering Language**: "silence master" → "focus champion", reinforcing productivity focus
-- ✅ **Localization**: All notification strings updated in EN, ES, DE, FR, JA, PT, PT_BR
-
-#### 🔧 **Technical Polish**
-- ✅ **Code Quality**: Full `dart format` pass with `flutter analyze` showing 0 issues
-- ✅ **Null Safety**: Proper error handling in disposal methods
-- ✅ **Type Safety**: All preference mutations use sanitized/clamped values
-- ✅ **Documentation**: Updated CLAUDE.md and README.md with latest implementation details
-
-### Recent Major Updates (v0.1.1 - Stability Release)
-
-#### 🛡️ **Critical Stability Fixes**
-- ✅ **Memory Leak Resolution**: Fixed chart widget memory leaks and resource cleanup
-- ✅ **Data Validation**: Comprehensive NaN/infinite value handling prevents crashes
-- ✅ **Stream Management**: Resolved concurrent stream conflicts in audio processing
-- ✅ **Error Boundaries**: Added graceful error handling for critical components
-- ✅ **App Initialization**: Fixed race conditions and permission flow timing
-- ✅ **Resource Disposal**: Proper cleanup of audio resources and timers
-
-#### 🎯 **Performance Improvements**
-- ✅ **Chart Optimization**: Aggregated 1Hz controller + sliding window memory trimming
-- ✅ **Logging Throttling**: High-frequency sensor debug output collapsed (ThrottledLogger)
-- ✅ **Permission Coalescing**: Single-flight microphone permission Future prevents duplicates
-- ✅ **Audio Processing**: Improved microphone access reliability and error handling
-- ✅ **State Management**: Better concurrent operation handling and cleanup
-- ✅ **UI Responsiveness**: Error boundaries prevent widget crashes from affecting app
-
-#### 📱 **User Experience Enhancements**
-- ✅ **Permission Handling**: More user-friendly permission requests and guidance
-- ✅ **Error Recovery**: Automatic component recovery from temporary failures
-- ✅ **Graceful Degradation**: App continues functioning even with component errors
-- ✅ **Debug Improvements**: Better error reporting for development troubleshooting
-
-### Previous Updates (v0.1.0)
-- ✅ **Enhanced Progress Ring**: Always-visible interactive control with real-time countdown
-- ✅ **Real-Time Noise Chart**: Live visualization with smoothing algorithms
-- ✅ **Advanced Theme System**: High-contrast default themes (Light/Dark) and exclusive premium themes.
-- ✅ **Tabbed Settings**: Organized interface with Basic, Advanced, and About sections
-- ✅ **Performance Optimization**: Reduced blinking and improved battery efficiency
-- ✅ **Compact UI Design**: Single-screen layout with optimized spacing
-
-### Development Files
-**Legacy/Backup Files Created During Development:**
-- `lib/screens/home_page_backup.dart` - Original home page before major redesign
-- `lib/widgets/progress_ring_old.dart` - Previous progress ring implementation
-
-*These backup files are maintained for reference and can be safely removed in production builds.*
+---
 
 ## 🗺️ Roadmap
 
-### 🚀 **MVP Status: READY FOR LAUNCH**
+### ✅ MVP (Current - Ready for Launch)
+- Core Ambient Quests system
+- Focus Mode P1 (overlay, completion states, controls)
+- Tablet responsive design
+- RevenueCat + AdMob monetization
+- 7-language localization
+- Onboarding flow
 
-**What's Included in MVP**:
-- ✅ Core Ambient Quests system (P0)
-- ✅ Quest Capsule, Adaptive Threshold, Activity Customization (P1)
-- ✅ Focus Mode P1 (full-screen overlay, completion states, long-press controls)
-- ✅ Tablet responsive design (phone-first, adaptive scaling)
-- ✅ RevenueCat monetization (Premium + Premium Plus)
-- ✅ AdMob banner integration
-- ✅ 7-language localization (EN, ES, DE, FR, JA, PT, PT_BR)
-- ✅ Success system (Ambient Score, compassionate streaks)
+### 📋 Post-MVP (P2)
+- **iOS Live Activities** (Android notification parity exists)
+- **Focus Mode Enhancements**:
+  - Breathing animation (8s inhale/exhale cycle)
+  - Icon-only buttons
+  - Enhanced completion celebration
+- **Activity System Expansion**: Custom activity creation
+- **Support Resources**: In-app FAQ, help center
 
-**Deferred to Post-MVP**:
-- 📋 iOS Live Activities (Android notification parity exists)
-- 📋 Focus Mode P2/P3 enhancements (breathing, themes, lock mode)
-- 📋 Custom activity creation
-- 📋 Health/Calendar integrations
+### 🔮 Premium Features (P3)
+- **Focus Mode Lock**: Prevent exit until completion (Premium)
+- **Color Themes**: 4 personalized themes (Midnight/Ocean/Forest/Sunset)
+- **Ultra-Minimal Mode**: Ring-only display with long-press reveal
+- **Cloud Sync**: Cross-device backup (Premium Plus)
+- **AI Insights**: Predictive recommendations (Premium Plus)
 
-### Phase 1 Features (Premium Tier - $1.99/month)
-- [x] Extended sessions (up to 120 minutes)
-- [x] Advanced analytics & weekly trends
-- [x] Data export (CSV/PDF)
-- [x] Premium themes & customization
-- [x] Priority support
-- [x] Calibration dialog & high-threshold warnings
+> **Detailed roadmap**: See [`docs/business/roadmap.md`](docs/business/roadmap.md)
 
-### Phase 2 Features (Post-MVP)
+---
 
-**Focus Mode Enhancements (P2 - Enhanced UX)**:
-- [ ] 🌬️ **Breathing Animation**: Meditation-style breathing guide (8s inhale/exhale cycle)
-  - Circular animation behind progress ring
-  - Pauses when session is paused
-  - Toggle in Settings > Focus > "Breathing Guide"
-- [ ] 🎨 **Icon Buttons**: Replace text buttons with circular icon-only buttons
-  - Cleaner minimal design
-  - Pause/Resume and Stop as circular icons
-  - "Long press" hint below buttons
-- [ ] 🎉 **Enhanced Completion Celebration**: Better success feedback
-  - Animated check icon with elastic bounce effect
-  - Display ambient score percentage in completion message
-  - Fade-in animations for text elements
-- [ ] ⚙️ **Auto Focus Mode Toggle**: Explicit settings switch
-  - Settings > Focus > "Auto Focus Mode"
-  - Logic already implemented, needs UI toggle
+## 🤝 Contributing
 
-**Focus Mode Premium Features (P3 - Premium Only)**:
-- [ ] 🔒 **Lock Mode**: Prevent exiting until session completes
-  - Premium feature with feature gating
-  - Lock indicator when active
-  - Safety: always allow exit on completion
-- [ ] 🎨 **Color Themes**: 4 personalized aesthetic themes
-  - Midnight (black + cyan - default)
-  - Ocean (deep blue + ocean blue)
-  - Forest (dark green + green)
-  - Sunset (dark red + coral)
-  - Grid-based theme selector in Settings
-- [ ] 🌑 **Ultra-Minimal Mode**: Maximum distraction reduction
-  - Ring-only display (no timer text or buttons)
-  - Long-press anywhere to reveal controls temporarily (5s timeout)
-  - Premium tier required
+We welcome contributions! Please follow these steps:
 
-**Other Phase 2 Features**:
-- [ ] Cloud synchronization & backup
-- [ ] AI-enhanced insights with predictive recommendations
-- [ ] Multi-environment profiles
-- [ ] Social/community features
-- [ ] Team collaboration
-- [ ] Spike / interruption detection
-- [ ] Silence quality score metric
-- [ ] Streak goal customization & reminders
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Follow Dart/Flutter best practices and existing code style
+4. Add tests for new functionality
+5. Run `flutter analyze` and `flutter test` (all tests must pass)
+6. Update documentation for new features
+7. Submit a pull request with detailed description
 
-### Future Enhancements
-- [ ] Sound visualization with waveform display
-- [ ] Multiple challenge modes (endurance, precision, etc.)
-- [ ] Social sharing and leaderboards
-- [ ] Advanced achievement system with unlockable content
-- [ ] Background noise calibration wizard
-- [ ] Integration with health apps (Apple Health, Google Fit)
-- [ ] Custom notification schedules
-- [ ] Multi-language support
-- [ ] Advanced analytics dashboard
+### Development Guidelines
+- Follow Dart formatting standards (`dart format .`)
+- Write comprehensive tests (unit + widget)
+- Ensure accessibility compliance
+- Test on both iOS and Android
+- Update localization for user-facing strings
 
-### Ambient Quests Scope Notes
+---
 
-- Ambient Quests supersedes earlier “Mission/Mission Capsule” docs, which are archived.
-- Optional P2 integrations are feature‑flagged: Health sync, Calendar export.
-- See the Dev Spec for acceptance tests and rollout plan.
+## 📚 Documentation
 
-### Technical Improvements
-- [ ] Flutter Sound integration for enhanced audio processing
-- [ ] Machine learning for adaptive threshold adjustment
-- [ ] Cloud backup and cross-device sync
-- [ ] Performance optimizations for older devices
-- [ ] Enhanced accessibility features
-- [ ] Comprehensive integration testing
- - [ ] Naming migration: Replace legacy "Silence*" prefixes (files, classes, providers, and docs) with "Focus*" to reflect the app rename from SilenceScore → Focus Field (e.g., SilenceDetector → FocusDetector, SilenceDataNotifier → FocusDataNotifier, file names like silence_*.dart → focus_*.dart).
+### For Developers
+- [`CLAUDE.md`](CLAUDE.md) - Development guide for Claude Code
+- [`docs/development/CHANGELOG.md`](docs/development/CHANGELOG.md) - Historical completion logs
+- [`docs/development/AmbientQuests_Dev_Spec.md`](docs/development/AmbientQuests_Dev_Spec.md) - Quest system specification
+- [`docs/MONETIZATION_SETUP.md`](docs/MONETIZATION_SETUP.md) - Subscription setup guide
+- [`docs/architecture/`](docs/architecture/) - System design documentation
+
+### For Business
+- [`docs/business/phase1-launch-plan.md`](docs/business/phase1-launch-plan.md) - Launch timeline
+- [`docs/business/revenue-strategy.md`](docs/business/revenue-strategy.md) - Financial projections
+- [`docs/business/roadmap.md`](docs/business/roadmap.md) - 24-month product roadmap
+
+### For Users
+- [`docs/user/`](docs/user/) - User guides and tutorials (to be created)
+
+---
 
 ## 🔧 Troubleshooting
 
-### Common Issues and Solutions
+### Common Issues
 
-#### App Crashes on Startup
-- **Cause**: Usually related to permission handling or initialization
-- **Solution**: Clear app data, restart device, ensure microphone permissions are granted
-- **Prevention**: v0.1.1 includes comprehensive fixes for startup crashes
+**App crashes on startup**
+- Clear app data, restart device
+- Ensure microphone permissions granted
+- Check iOS Settings > Privacy > Microphone > Focus Field
+- Check Android Settings > Apps > Focus Field > Permissions
 
-#### Real-Time Chart Not Working
-- **Cause**: Memory issues or invalid data processing
-- **Solution**: Chart will show "temporarily unavailable" and auto-recover
-- **Prevention**: v0.1.1 includes chart stability improvements and error boundaries
+**Audio processing errors**
+- App includes automatic recovery (shows "recovering" message)
+- Circuit breaker protects against native buffer crashes
+- Check microphone isn't in use by another app
 
-#### Microphone Permission Issues
-- **iOS**: Settings > Privacy & Security > Microphone > Focus Field
-- **Android**: Settings > Apps > Focus Field > Permissions > Microphone
-- **Note**: App now provides better guidance for permission setup
-
-#### Audio Processing Errors & Native Buffer Crashes
-- **Cause**: Native audio buffer errors from underlying noise_meter package
-- **Symptoms**: App crashes with "AudioReaderError" or similar native errors
-- **Solution**: App now includes automatic recovery - chart shows "recovering" message
-- **Prevention**: v0.1.1 includes comprehensive audio crash protection with:
-  - Native error detection and graceful handling
-  - Automatic component recovery with exponential backoff
-  - Audio resource management and cleanup
-  - Fallback UI when audio processing fails
-
-#### Memory Usage
-- **Optimized**: Chart data is now limited and cleaned up automatically
-- **Background**: Ambient monitoring uses reduced frequency updates
-- **Resources**: Proper disposal prevents memory leaks
-
-### Development Issues
-
-#### Build Errors
+**Build errors**
 ```bash
-# Clean and rebuild
 flutter clean
 flutter pub get
 flutter run
 ```
 
-#### Permission Testing
+**Reset permissions for testing**
 ```bash
-# Reset app permissions (iOS Simulator)
+# iOS Simulator
 xcrun simctl privacy booted reset all io.sparkvibe.focusfield
 
-# Reset app data (Android)
+# Android
 adb shell pm clear io.sparkvibe.focusfield
 ```
 
-### Getting Help
+> **More help**: See [`docs/TROUBLESHOOTING.md`](docs/) (to be created) or open an issue
 
-## 🗺️ Roadmap (focused)
+---
 
-- P0: Profiles, Ambient Score, Quest capsule, compassionate streaks, adaptive threshold, live surfaces
-- P1: Micro-haptics, weekly share card, “Best Space & Time” insight
-- P2: Health/Health Connect write, Calendar export (feature‑flagged)
-- **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
-- Tiered access: Free, Premium, Premium Plus (future expansion)
-- Feature gating with `FeatureGate` + Riverpod providers
-- Custom paywall (`PaywallWidget`) currently showing dynamic prices when offerings load
-- Mock mode (`ENABLE_MOCK_SUBSCRIPTIONS=true`) for development without store connections
+## 📊 Business Context
 
-#### Product Identifiers (Current)
-```
-premium.tier.monthly
-premium.tier.yearly
-```
+### Market Position
+- **First-to-Market**: Creating the silence measurement app category
+- **Target Markets**: US, Canada, UK, Australia (English-speaking)
+- **Revenue Model**: Freemium SaaS with dual-tier subscriptions
+- **Year 1 Goal**: 15,000 downloads, 8% conversion, $19,080 ARR
 
-#### Pricing (Live via RevenueCat)
-- Prices and localized currency are pulled dynamically from RevenueCat Paywall/Offerings.
-- Legacy fallback values (1.99 / 19.99) remain in code only if offerings fail to load.
+### Launch Timeline (6 Weeks)
+- **Week 1**: ✅ Monetization infrastructure (COMPLETE)
+- **Week 2**: Platform configuration, visual assets
+- **Week 3**: Legal docs, store submission
+- **Week 4-6**: Marketing, user acquisition
 
-#### Key Environment Flags
-- `REVENUECAT_API_KEY` (platform-specific, required for production builds)
-  - **iOS**: `appl_qoFokYDCMBFZLyKXTulaPFkjdME`
-  - **Android**: `goog_HNKHzGPIWgDdqihvtZrmgTdMSzf`
-- `IS_DEVELOPMENT` (default false for production)
-- `ENABLE_MOCK_SUBSCRIPTIONS` (default false for real purchases)
+---
 
-#### Launch Readiness Checklist (Remaining)
-1. Add legal links (Privacy Policy, Terms) to paywall footer
-2. Confirm introductory offers / trials (if desired) configured in stores & RevenueCat
-3. Turn off mock mode in production build scripts
-4. QA sandbox purchases on iOS & internal testing on Android
-5. Add refund / manage subscription help link (store-specific deep link)
+## 📄 License
 
-#### Premium (Phase 1 Active)
-- Extended sessions (120m vs 30m free)
-- Advanced analytics
-- Data export (CSV/PDF)
-- Premium themes & customization
-- Priority support
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-#### Future Higher Tier (Deferred)
-- Cloud sync, AI-enhanced insights, multi-environments, social features (not active yet)
+---
 
-#### Notes
-- Migration to the official RevenueCat Paywall (for localization & trials) is planned; current widget is an interim custom layout showing dynamic prices.
-- Static numeric pricing in `SubscriptionTier` remains only as a fallback.
+## 🙏 Acknowledgments
 
-For detailed setup steps see `docs/MONETIZATION_SETUP.md` (will be updated to reflect the above identifiers and pricing alignment).
+Built with Flutter and powered by:
+- [noise_meter](https://pub.dev/packages/noise_meter) - Ambient noise detection
+- [Riverpod](https://riverpod.dev/) - State management
+- [RevenueCat](https://www.revenuecat.com/) - Subscription infrastructure
+- [fl_chart](https://pub.dev/packages/fl_chart) - Data visualization
 
-## 🔧 Project Status & Development Progress
+---
 
-### ✅ **Completed Core Features**
-- **Silence Detection**: Advanced noise monitoring with `noise_meter` integration
-- **Real-Time UI**: Interactive progress ring, live noise charts, countdown timers
-- **Session Management**: Configurable durations, point scoring, streak tracking
-- **Analytics**: Session history, performance metrics, visual trends
-- **Settings System**: Tabbed interface with Basic/Advanced/About sections
-- **Theme System**: System/Light/Dark modes with quick switching
-- **Data Persistence**: Local storage with SharedPreferences
-- **Permissions**: Intelligent microphone access management
+**Last Updated**: October 19, 2025 - Code optimization & performance improvements complete
 
-### ✅ **Completed Monetization System**
-- **Subscription Service**: RevenueCat integration with purchase flows
-- **Feature Gating**: Premium access control with `FeatureGate` widgets
-- **Paywall UI**: Professional subscription interface with billing toggles
-- **State Management**: Riverpod providers for subscription state
-- **Product Configuration**: Premium ($1.99) and Premium Plus ($3.99) tiers
-- **Development Testing**: Mock subscription flows working
-
-### ✅ **Completed Technical Infrastructure**
-- **Package Updates**: Bundle ID changed to `io.sparkvibe.focusfield`
-- **Build System**: Production-ready with environment variable management
-- **API Integration**: RevenueCat, Firebase, notification services
-- **Code Quality**: Comprehensive linting, testing, documentation
-- **Platform Support**: iOS and Android builds verified
-
-### 📋 **Pending Platform Configuration**
-- **App Store Connect**: Subscription product configuration
-- **Google Play Console**: Subscription product configuration
-- **Store Assets**: App icons, screenshots, metadata preparation
-- **Legal Documents**: Privacy policy and terms of service finalization
-
-### 🎯 **Next Immediate Priorities**
-1. **Native Paywall Polishing**: Document new dismissal behavior (no forced fallback sheet)
-2. **Platform Setup**: Configure App Store and Play Console subscriptions
-3. **Visual Assets**: Create app icons and store screenshots
-4. **Legal Documents**: Finalize privacy policy and terms
-5. **Store Submission**: Submit for app store review
-6. **Launch Marketing**: Execute go-to-market strategy
-
-## Last Updated
-October 17, 2025 — Completed Focus Mode & Progress Ring UX redesign with optimized audio circuit breaker (500ms timeout), session completion state, top-row control layout, smart Focus Mode button logic, rectangular button design, and Ambient % text-only display. All changes improve clarity, reduce visual clutter, and prevent accidental session termination.
+For detailed version history, see [`docs/development/CHANGELOG.md`](docs/development/CHANGELOG.md)

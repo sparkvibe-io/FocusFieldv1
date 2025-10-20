@@ -312,9 +312,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get helpSupport => 'Hilfe & Support';
 
   @override
-  String get faq => 'FAQ';
-
-  @override
   String get support => 'Support';
 
   @override
@@ -359,101 +356,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String exportFailed(String error) {
     return 'Export fehlgeschlagen: $error';
   }
-
-  @override
-  String get frequentlyAskedQuestions => 'Häufige Fragen';
-
-  @override
-  String get faqHowWorksQ => 'Wie funktioniert Focus Field?';
-
-  @override
-  String get faqHowWorksA => 'Misst Umgebungsgeräusch – Zeit unter Schwelle bringt Punkte.';
-
-  @override
-  String get faqAudioRecordedQ => 'Wird Audio aufgenommen?';
-
-  @override
-  String get faqAudioRecordedA => 'Nein. Nur Dezibelwerte; kein Audio gespeichert.';
-
-  @override
-  String get faqAdjustSensitivityQ => 'Empfindlichkeit anpassen?';
-
-  @override
-  String faqAdjustSensitivityA(int min, int max) {
-    return 'Einstellungen > Basis > Dezibel-Schwelle ($min–$max dB) und zuerst kalibrieren.';
-  }
-
-  @override
-  String get faqPremiumFeaturesQ => 'Premium-Funktionen?';
-
-  @override
-  String get faqPremiumFeaturesA => 'Verl. Sitzungen (bis 120m), Analytik, Export, Themes.';
-
-  @override
-  String get faqNotificationsQ => 'Benachrichtigungen?';
-
-  @override
-  String get faqNotificationsA => 'Intelligente Erinnerungen lernen Gewohnheiten und feiern Meilensteine.';
-
-  @override
-  String get faqFocusMinutesQ => 'What are focus minutes?';
-
-  @override
-  String get faqFocusMinutesA => 'Focus minutes measure time spent in calm environments (≥70% quiet). They\'re earned during sessions when ambient noise stays below your threshold.';
-
-  @override
-  String get faqAmbientQuestQ => 'What is the Ambient Quest system?';
-
-  @override
-  String get faqAmbientQuestA => 'Daily focus challenges that track quiet minutes across Study, Reading, and Meditation activities. Set a goal (10-60 min), build streaks, and earn freeze tokens monthly.';
-
-  @override
-  String get faqStreaksQ => 'How do streaks work?';
-
-  @override
-  String get faqStreaksA => 'Streaks track consecutive days of reaching your goal. The compassionate 2-Day Rule means missing one day won\'t break your streak—only two consecutive misses reset it. Use monthly freeze tokens to protect streaks on tough days.';
-
-  @override
-  String get faqActivitiesQ => 'What activities can I track?';
-
-  @override
-  String get faqActivitiesA => 'Focus Field offers Study, Reading, and Meditation activities. Each tracks progress toward your daily goal. Enable/disable activities and adjust your goal (10-60 min) in the Activity Progress section.';
-
-  @override
-  String get faqCalibrateQ => 'How do I calibrate my microphone?';
-
-  @override
-  String get faqCalibrateA => 'Go to Settings > Advanced > Noise Calibration. The app measures your ambient baseline for 5 seconds and suggests an appropriate threshold. Recalibrate when changing environments.';
-
-  @override
-  String get faqMicTroubleshootQ => 'Why isn\'t my microphone working?';
-
-  @override
-  String get faqMicTroubleshootA => 'Check: (1) Microphone permission granted in device settings, (2) No other apps using microphone, (3) Restart app if needed. Contact support if issues persist.';
-
-  @override
-  String get faqSubscriptionTiersQ => 'What\'s the difference between subscription tiers?';
-
-  @override
-  String get faqSubscriptionTiersA => 'Free: 30-min sessions, 7-day history, basic features. Premium (\$1.99/mo): 120-min sessions, 90-day history, analytics, export, themes. Premium Plus (\$3.99/mo): Coming soon with cloud sync and AI insights.';
-
-  @override
-  String get faqDeepFocusQ => 'What is Deep Focus mode?';
-
-  @override
-  String get faqDeepFocusA => 'A Premium feature that automatically ends your session if you leave the app for more than the grace period (default 10s). Helps maintain distraction-free focus sessions.';
-
-  @override
-  String get faqDailyGoalQ => 'How do I adjust my daily goal?';
-
-  @override
-  String get faqDailyGoalA => 'Tap \'Edit\' in the Activity Progress section on the Today tab. Adjust the global daily goal slider (10-60 min) and enable/disable specific activities (Study, Reading, Meditation).';
-
-  @override
-  String get faqCalmPercentQ => 'What does the Calm % mean?';
-
-  @override
-  String get faqCalmPercentA => 'The percentage of time during your session where ambient noise stayed below threshold. Sessions with ≥70% Calm qualify for quest credit. Higher percentages mean better focus environments.';
 
   @override
   String get close => 'Schließen';
@@ -1095,5 +997,19 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String adaptiveThresholdConfirm(int threshold) {
     return 'Schwellenwert auf $threshold dB gesetzt';
+  }
+
+  @override
+  String get edit => 'Bearbeiten';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get error => 'Fehler';
+
+  @override
+  String errorWithMessage(String message) {
+    return 'Fehler: $message';
   }
 }

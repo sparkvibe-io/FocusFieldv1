@@ -90,15 +90,15 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.forestGreen:
         return Icons.forest;
       case AppThemeMode.purpleNight:
-        return Icons.nightlight;
+        return Icons.auto_awesome; // Sparkle/nightlife icon for mystical purple
       case AppThemeMode.goldLuxury:
         return Icons.diamond;
       case AppThemeMode.solarSunrise:
         return Icons.wb_sunny;
       case AppThemeMode.cyberNeon:
-        return Icons.bolt;
+        return Icons.flash_on; // Electric bolt for futuristic neon
       case AppThemeMode.midnightTeal:
-        return Icons.dark_mode;
+        return Icons.waves; // Wave icon for deep teal ocean theme
     }
   }
 

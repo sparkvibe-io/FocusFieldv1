@@ -53,28 +53,30 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Future<void> _completeOnboarding() async {
     // Save user preferences
     final prefs = ref.read(userPreferencesProvider);
-    
+
     // Set threshold based on environment
     final thresholds = [30, 40, 50, 60];
     final threshold = thresholds[_selectedEnvironment];
-    
+
     // Set goal based on selection
     final goals = [10, 20, 40, 60];
     final goal = goals[_selectedGoal];
-    
+
     // Update preferences
-    await ref.read(userPreferencesProvider.notifier).updateUserPreferences(
-      prefs.copyWith(
-        globalDailyQuietGoalMinutes: goal,
-        enabledProfiles: _selectedActivities.toList(),
-      ),
-    );
-    
+    await ref
+        .read(userPreferencesProvider.notifier)
+        .updateUserPreferences(
+          prefs.copyWith(
+            globalDailyQuietGoalMinutes: goal,
+            enabledProfiles: _selectedActivities.toList(),
+          ),
+        );
+
     // Save default threshold and onboarding status to SharedPreferences
     final sharedPrefs = await SharedPreferences.getInstance();
     await sharedPrefs.setInt('defaultThreshold', threshold);
     await sharedPrefs.setBool('onboardingCompleted', true);
-    
+
     if (mounted) {
       if (widget.isReplay) {
         // If replaying, just go back
@@ -87,7 +89,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             builder: (context) => const HomePageElegant(initialTab: 1),
           ),
         );
-        
+
         // Show welcome message after navigation
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
@@ -123,7 +125,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     // Use default settings and mark as completed
     final sharedPrefs = await SharedPreferences.getInstance();
     await sharedPrefs.setBool('onboardingCompleted', true);
-    
+
     if (mounted) {
       if (widget.isReplay) {
         Navigator.of(context).pop();
@@ -141,7 +143,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -155,12 +157,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   // Back button (hidden on first page)
                   SizedBox(
                     width: 80,
-                    child: _currentPage > 0
-                        ? TextButton(
-                            onPressed: _previousPage,
-                            child: const Text('Back'),
-                          )
-                        : null,
+                    child:
+                        _currentPage > 0
+                            ? TextButton(
+                              onPressed: _previousPage,
+                              child: const Text('Back'),
+                            )
+                            : null,
                   ),
                   // Page indicator
                   SmoothPageIndicator(
@@ -232,68 +235,36 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Screen 1: Welcome
   Widget _buildWelcomeScreen(ThemeData theme) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
-            theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Hero icon with gradient and glow
+            // Hero icon with solid background
             Container(
               width: 140,
               height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.colorScheme.primary,
-                    theme.colorScheme.secondary,
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 3,
-                  ),
-                ],
+                color: theme.colorScheme.primary,
               ),
               child: Icon(
                 Icons.headphones_rounded,
                 size: 70,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             const SizedBox(height: 20),
-            // Title with gradient
-            ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                colors: [
-                  theme.colorScheme.primary,
-                  theme.colorScheme.secondary,
-                ],
-              ).createShader(bounds),
-              child: Text(
-                'Welcome to\nFocus Field! 🎯',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  height: 1.1,
-                ),
-                textAlign: TextAlign.center,
+            // Title with solid color
+            Text(
+              'Welcome to\nFocus Field! 🎯',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+                height: 1.1,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             // Subtitle
@@ -312,7 +283,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.analytics_rounded,
               'Track Your Focus',
               'See your progress in real-time as you build your focus superpower! 📊',
-              theme.colorScheme.primaryContainer,
+              theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
             const SizedBox(height: 12),
@@ -321,8 +292,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.emoji_events_rounded,
               'Earn Rewards',
               'Every quiet minute counts! Collect points and celebrate your wins 🏆',
-              theme.colorScheme.secondaryContainer,
-              theme.colorScheme.secondary,
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.primary,
             ),
             const SizedBox(height: 12),
             _buildFeatureCard(
@@ -330,8 +301,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.local_fire_department_rounded,
               'Build Streaks',
               'Keep the momentum going! Our compassionate system keeps you motivated 🔥',
-              theme.colorScheme.tertiaryContainer,
-              theme.colorScheme.tertiary,
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.primary,
             ),
           ],
         ),
@@ -369,11 +340,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               color: iconColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 28,
-              color: iconColor,
-            ),
+            child: Icon(icon, size: 28, color: iconColor),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -450,45 +417,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Screen 2: Environment Assessment
   Widget _buildEnvironmentScreen(ThemeData theme) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Larger, colorful icon
+            // Icon with solid background
             Container(
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.primary,
-                    theme.colorScheme.secondary,
-                  ],
-                ),
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.25),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
-                ],
               ),
               child: Icon(
                 Icons.location_on_rounded,
                 size: 45,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -509,39 +455,39 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 20),
             _buildEnvironmentOption(
-            theme,
-            0,
-            Icons.home_rounded,
-            'Quiet Home',
-            'Bedroom, quiet home office',
-            '30 dB - Very quiet',
+              theme,
+              0,
+              Icons.home_rounded,
+              'Quiet Home',
+              'Bedroom, quiet home office',
+              '30 dB - Very quiet',
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
-            theme,
-            1,
-            Icons.business_rounded,
-            'Typical Office',
-            'Standard office, library',
-            '40 dB - Library quiet (Recommended)',
+              theme,
+              1,
+              Icons.business_rounded,
+              'Typical Office',
+              'Standard office, library',
+              '40 dB - Library quiet (Recommended)',
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
-            theme,
-            2,
-            Icons.local_cafe_rounded,
-            'Busy Space',
-            'Coffee shop, shared workspace',
-            '50 dB - Moderate noise',
+              theme,
+              2,
+              Icons.local_cafe_rounded,
+              'Busy Space',
+              'Coffee shop, shared workspace',
+              '50 dB - Moderate noise',
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
-            theme,
-            3,
-            Icons.public_rounded,
-            'Noisy Environment',
-            'Open office, public space',
-            '60 dB - Higher noise',
+              theme,
+              3,
+              Icons.public_rounded,
+              'Noisy Environment',
+              'Open office, public space',
+              '60 dB - Higher noise',
             ),
             const SizedBox(height: 16),
             Padding(
@@ -570,7 +516,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     String threshold,
   ) {
     final isSelected = _selectedEnvironment == index;
-    
+
     return InkWell(
       onTap: () {
         setState(() => _selectedEnvironment = index);
@@ -580,53 +526,52 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline,
+            color:
+                isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: isSelected
-              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-              : null,
         ),
         child: Row(
           children: [
             Icon(
               icon,
               size: 28,
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant,
+              color:
+                  isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? theme.colorScheme.primary : null,
+                  Text(
+                    title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? theme.colorScheme.primary : null,
+                    ),
                   ),
-                ),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 12,
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  threshold,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 11,
+                  const SizedBox(height: 2),
+                  Text(
+                    threshold,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                    ),
                   ),
-                ),
                 ],
               ),
             ),
@@ -650,48 +595,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       'Ambitious! 💪 You\'re ready to level up your focus game!',
       'Wow! 🏆 Deep work mode activated! Remember to take breaks!',
     ];
-    
+
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
-            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.4),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Animated goal icon
+            // Goal icon with solid background
             Container(
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.secondary,
-                    theme.colorScheme.tertiary,
-                  ],
-                ),
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.secondary.withValues(alpha: 0.25),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
-                ],
               ),
               child: Icon(
                 Icons.flag_rounded,
                 size: 45,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -711,11 +634,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            _buildGoalOption(theme, 0, '🌱', 'Getting Started', '10-15 minutes'),
+            _buildGoalOption(
+              theme,
+              0,
+              '🌱',
+              'Getting Started',
+              '10-15 minutes',
+            ),
             const SizedBox(height: 10),
             _buildGoalOption(theme, 1, '🎯', 'Building Habit', '20-30 minutes'),
             const SizedBox(height: 10),
-            _buildGoalOption(theme, 2, '💪', 'Regular Practice', '40-60 minutes'),
+            _buildGoalOption(
+              theme,
+              2,
+              '💪',
+              'Regular Practice',
+              '40-60 minutes',
+            ),
             const SizedBox(height: 10),
             _buildGoalOption(theme, 3, '🏆', 'Deep Work', '60+ minutes'),
             const SizedBox(height: 16),
@@ -723,14 +658,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.secondaryContainer,
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: theme.colorScheme.outline, width: 1),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.lightbulb_rounded,
-                    color: theme.colorScheme.onSecondaryContainer,
+                    color: theme.colorScheme.primary,
                     size: 20,
                   ),
                   const SizedBox(width: 10),
@@ -738,7 +674,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     child: Text(
                       advice[_selectedGoal],
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSecondaryContainer,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -759,7 +695,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     String duration,
   ) {
     final isSelected = _selectedGoal == index;
-    
+
     return InkWell(
       onTap: () {
         setState(() => _selectedGoal = index);
@@ -769,22 +705,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline,
+            color:
+                isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: isSelected
-              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-              : null,
         ),
         child: Row(
           children: [
-            Text(
-              emoji,
-              style: const TextStyle(fontSize: 28),
-            ),
+            Text(emoji, style: const TextStyle(fontSize: 28)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -822,46 +753,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Screen 4: Activity Selection
   Widget _buildActivitiesScreen(ThemeData theme) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Colorful activity icon
+            // Activity icon with solid background
             Container(
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.tertiary,
-                    theme.colorScheme.primary,
-                  ],
-                ),
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.tertiary.withValues(alpha: 0.25),
-                    blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
-                ],
               ),
               child: Icon(
                 Icons.auto_awesome_rounded,
                 size: 45,
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -916,38 +825,27 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.tertiaryContainer.withValues(alpha: 0.8),
-                    theme.colorScheme.primaryContainer.withValues(alpha: 0.6),
-                  ],
-                ),
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.tertiary.withValues(alpha: 0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                border: Border.all(color: theme.colorScheme.outline, width: 1),
               ),
               child: Row(
                 children: [
-                Icon(
-                  Icons.lightbulb_rounded,
-                  color: theme.colorScheme.tertiary,
-                  size: 24,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Pro tip: Focus Field shines when quiet = focused! 🤫✨',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w500,
+                  Icon(
+                    Icons.lightbulb_rounded,
+                    color: theme.colorScheme.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Pro tip: Focus Field shines when quiet = focused! 🤫✨',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
                 ],
               ),
             ),
@@ -965,7 +863,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     String description,
   ) {
     final isSelected = _selectedActivities.contains(id);
-    
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -981,24 +879,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline,
+            color:
+                isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
-          color: isSelected
-              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-              : null,
         ),
         child: Row(
           children: [
             Icon(
               icon,
               size: 28,
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant,
+              color:
+                  isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1043,23 +940,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Screen 5: Permission
   Widget _buildPermissionScreen(ThemeData theme) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.2),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
             const SizedBox(height: 30),
-            // Microphone icon with privacy shield - larger and more colorful
+            // Microphone icon with privacy shield - simplified
             Stack(
               alignment: Alignment.center,
               children: [
@@ -1067,26 +954,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   width: 140,
                   height: 140,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary.withValues(alpha: 0.8),
-                        theme.colorScheme.tertiary.withValues(alpha: 0.8),
-                      ],
-                    ),
+                    color: theme.colorScheme.primary,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.4),
-                        blurRadius: 30,
-                        spreadRadius: 5,
-                      ),
-                    ],
                   ),
-                ),
-                Icon(
-                  Icons.mic_rounded,
-                  size: 70,
-                  color: Colors.white,
+                  child: Icon(
+                    Icons.mic_rounded,
+                    size: 70,
+                    color: theme.colorScheme.onPrimary,
+                  ),
                 ),
                 Positioned(
                   right: 5,
@@ -1094,12 +969,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          theme.colorScheme.tertiary,
-                          theme.colorScheme.tertiaryContainer,
-                        ],
-                      ),
+                      color: theme.colorScheme.secondary,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: theme.colorScheme.surface,
@@ -1109,7 +979,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     child: Icon(
                       Icons.verified_user_rounded,
                       size: 24,
-                      color: theme.colorScheme.onTertiaryContainer,
+                      color: theme.colorScheme.onSecondary,
                     ),
                   ),
                 ),
@@ -1188,14 +1058,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: theme.colorScheme.secondaryContainer,
+            color: theme.colorScheme.primary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: theme.colorScheme.onSecondaryContainer,
-          ),
+          child: Icon(icon, size: 20, color: theme.colorScheme.primary),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -1225,41 +1091,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // Screen 6: Quick Tips
   Widget _buildQuickTipsScreen(ThemeData theme) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
-            theme.colorScheme.surface,
-          ],
-        ),
-      ),
+      color: theme.colorScheme.surface,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 100), // Bottom padding for button
+        padding: const EdgeInsets.fromLTRB(
+          20,
+          12,
+          20,
+          96,
+        ), // Bottom padding for button (4dp grid)
         child: Column(
           children: [
             const SizedBox(height: 4),
-            // Glowing bulb icon
+            // Bulb icon with solid background
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.primary,
-                    theme.colorScheme.secondary,
-                  ],
-                ),
+                color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 3,
-                  ),
-                ],
               ),
               child: Icon(
                 Icons.tips_and_updates_rounded,
@@ -1289,7 +1138,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.timer_rounded,
               'Start Small, Win Big! 🌱',
               'Begin with 5-10 minute sessions. Consistency beats perfection!',
-              theme.colorScheme.primaryContainer,
+              theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
             const SizedBox(height: 8),
@@ -1298,8 +1147,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.fullscreen_rounded,
               'Activate Focus Mode! 🎯',
               'Tap Focus Mode for immersive, distraction-free experience.',
-              theme.colorScheme.secondaryContainer,
-              theme.colorScheme.secondary,
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.primary,
             ),
             const SizedBox(height: 8),
             _buildTipCard(
@@ -1307,8 +1156,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.ac_unit_rounded,
               'Freeze Token = Safety Net! ❄️',
               'Use your monthly token on busy days to protect your streak.',
-              theme.colorScheme.tertiaryContainer,
-              theme.colorScheme.tertiary,
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.primary,
             ),
             const SizedBox(height: 8),
             _buildTipCard(
@@ -1316,24 +1165,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Icons.trending_up_rounded,
               'The 70% Rule Rocks! 📈',
               'Aim for 70% quiet time - perfect silence not required!',
-              Colors.green.withValues(alpha: 0.2),
-              Colors.green,
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.primary,
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.primary.withValues(alpha: 0.15),
-                    theme.colorScheme.secondary.withValues(alpha: 0.15),
-                  ],
-                ),
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  width: 2,
-                ),
+                border: Border.all(color: theme.colorScheme.outline, width: 1),
               ),
               child: Row(
                 children: [
@@ -1358,7 +1199,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Text(
                           'Let\'s start your first session and build amazing habits!',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.8,
+                            ),
                             fontSize: 12,
                           ),
                         ),
@@ -1404,11 +1247,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               color: iconColor.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 22,
-              color: iconColor,
-            ),
+            child: Icon(icon, size: 22, color: iconColor),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1428,7 +1267,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.3,
-                    fontSize: 12,
                   ),
                 ),
               ],
@@ -1439,4 +1277,3 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 }
-
