@@ -4,6 +4,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Service responsible for fetching and caching the RevenueCat Hosted Paywall JSON.
 /// Falls back silently if the hosted paywall is unavailable or disabled (e.g. mock mode).
@@ -22,7 +23,7 @@ class HostedPaywallService {
     if (AppConstants.enableMockSubscriptions) {
       // Helpful diagnostic so devs know why hosted paywall is absent.
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           'HostedPaywallService: returning null (mock subscriptions enabled)',
         );
       }
@@ -30,7 +31,7 @@ class HostedPaywallService {
     }
     if (!AppConstants.isValidRevenueCatKey) {
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           'HostedPaywallService: returning null (RevenueCat API key not set)',
         );
       }
@@ -66,7 +67,7 @@ class HostedPaywallService {
       final current = offerings.current;
       if (current == null) {
         if (!kReleaseMode) {
-          debugPrint(
+          DebugLog.d(
             'HostedPaywallService: current offering is null. Offerings all keys: ${offerings.all.keys.toList()}',
           );
         }
@@ -90,7 +91,7 @@ class HostedPaywallService {
                 .toList(),
       };
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           'HostedPaywallService: constructed pseudo-hosted paywall with ${current.availablePackages.length} packages',
         );
       }
@@ -103,7 +104,7 @@ class HostedPaywallService {
       return _cachedPaywall;
     } catch (e) {
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           'HostedPaywallService: failed to fetch offerings/paywall: $e',
         );
       }

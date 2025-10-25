@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../models/ambient_models.dart';
@@ -8,23 +9,68 @@ import '../providers/silence_provider.dart';
 import 'package:focus_field/constants/ambient_flags.dart';
 import 'adaptive_tuning_provider.dart';
 import 'user_preferences_provider.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 const _uuid = Uuid();
 
+// Helper function to get localized activity name
+String getLocalizedActivityName(BuildContext context, String activityId) {
+  final l10n = AppLocalizations.of(context)!;
+  switch (activityId) {
+    case 'study':
+      return l10n.activityStudy;
+    case 'reading':
+      return l10n.activityReading;
+    case 'meditation':
+      return l10n.activityMeditation;
+    case 'other':
+      return l10n.activityOther;
+    default:
+      return activityId; // Fallback to ID if unknown
+  }
+}
+
 // Default quiet-first profiles (now includes "other" for 4 activities)
+// NOTE: The 'name' field contains the English fallback. Use getLocalizedActivityName()
+// in UI code to display the localized name.
 final defaultProfilesProvider = Provider<List<ActivityProfile>>((ref) {
   return const [
-    ActivityProfile(id: 'study', name: 'Study', icon: '🎓', usesNoise: true, thresholdDb: 38),
-    ActivityProfile(id: 'reading', name: 'Reading', icon: '📖', usesNoise: true, thresholdDb: 38),
-    ActivityProfile(id: 'meditation', name: 'Meditation', icon: '🧘', usesNoise: true, thresholdDb: 38),
-    ActivityProfile(id: 'other', name: 'Other', icon: '⭐', usesNoise: true, thresholdDb: 38),
+    ActivityProfile(
+      id: 'study',
+      name: 'Study',
+      icon: '🎓',
+      usesNoise: true,
+      thresholdDb: 38,
+    ),
+    ActivityProfile(
+      id: 'reading',
+      name: 'Reading',
+      icon: '📖',
+      usesNoise: true,
+      thresholdDb: 38,
+    ),
+    ActivityProfile(
+      id: 'meditation',
+      name: 'Meditation',
+      icon: '🧘',
+      usesNoise: true,
+      thresholdDb: 38,
+    ),
+    ActivityProfile(
+      id: 'other',
+      name: 'Other',
+      icon: '⭐',
+      usesNoise: true,
+      thresholdDb: 38,
+    ),
   ];
 });
 
 // Selected profile ID with persistence
-final selectedProfileIdProvider = StateNotifierProvider<SelectedProfileNotifier, String>((ref) {
-  return SelectedProfileNotifier(ref);
-});
+final selectedProfileIdProvider =
+    StateNotifierProvider<SelectedProfileNotifier, String>((ref) {
+      return SelectedProfileNotifier(ref);
+    });
 
 class SelectedProfileNotifier extends StateNotifier<String> {
   final Ref _ref;
@@ -83,26 +129,30 @@ class AmbientSessionState {
     bool? running,
     bool? sessionUsesNoise,
   }) => AmbientSessionState(
-        sessionId: sessionId ?? this.sessionId,
-        elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
-        quietSeconds: quietSeconds ?? this.quietSeconds,
-        violations: violations ?? this.violations,
-        ambientScore: ambientScore ?? this.ambientScore,
-        running: running ?? this.running,
-        sessionUsesNoise: sessionUsesNoise ?? this.sessionUsesNoise,
-      );
+    sessionId: sessionId ?? this.sessionId,
+    elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+    quietSeconds: quietSeconds ?? this.quietSeconds,
+    violations: violations ?? this.violations,
+    ambientScore: ambientScore ?? this.ambientScore,
+    running: running ?? this.running,
+    sessionUsesNoise: sessionUsesNoise ?? this.sessionUsesNoise,
+  );
 }
 
-final ambientSessionEngineProvider = StateNotifierProvider<AmbientSessionEngine, AmbientSessionState>((ref) {
-  return AmbientSessionEngine(ref);
-});
+final ambientSessionEngineProvider =
+    StateNotifierProvider<AmbientSessionEngine, AmbientSessionState>((ref) {
+      return AmbientSessionEngine(ref);
+    });
 
 class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
   final Ref _ref;
   DateTime? _start;
   AmbientSessionEngine(this._ref) : super(const AmbientSessionState());
 
-  Future<String> start({required int plannedSeconds, required bool usesNoise}) async {
+  Future<String> start({
+    required int plannedSeconds,
+    required bool usesNoise,
+  }) async {
     final id = _uuid.v4();
     _start = DateTime.now();
     state = state.copyWith(
@@ -118,7 +168,13 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
   }
 
   // Minimal tick; UI should call at 1s cadence (reuse RealTimeNoiseController externally)
-  void tick({required bool usesNoise, required double currentDb, required int thresholdDb, int deltaSeconds = 1, int spikeGraceMs = 3000}) {
+  void tick({
+    required bool usesNoise,
+    required double currentDb,
+    required int thresholdDb,
+    int deltaSeconds = 1,
+    int spikeGraceMs = 3000,
+  }) {
     if (!state.running) return;
     final elapsed = state.elapsedSeconds + deltaSeconds;
     bool isQuietNow = true;
@@ -128,11 +184,20 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
     final quiet = state.quietSeconds + (isQuietNow ? deltaSeconds : 0);
     final violations = state.violations + (isQuietNow ? 0 : 1);
     final score = elapsed > 0 ? quiet / max(1, elapsed) : 0.0;
-    state = state.copyWith(elapsedSeconds: elapsed, quietSeconds: quiet, violations: violations, ambientScore: score);
+    state = state.copyWith(
+      elapsedSeconds: elapsed,
+      quietSeconds: quiet,
+      violations: violations,
+      ambientScore: score,
+    );
   }
 
-  Future<AmbientSession?> end({String reason = 'completed', int plannedSeconds = 0}) async {
-    if (!state.running || _start == null || state.sessionId == null) return null;
+  Future<AmbientSession?> end({
+    String reason = 'completed',
+    int plannedSeconds = 0,
+  }) async {
+    if (!state.running || _start == null || state.sessionId == null)
+      return null;
     final ended = DateTime.now();
     final profile = _ref.read(activeProfileProvider);
     final session = AmbientSession(
@@ -216,8 +281,8 @@ class LiveCalmPercentNotifier extends StateNotifier<double?> {
 
 final liveCalmPercentProvider =
     StateNotifierProvider<LiveCalmPercentNotifier, double?>((ref) {
-  return LiveCalmPercentNotifier(ref);
-});
+      return LiveCalmPercentNotifier(ref);
+    });
 
 class QuestStateController extends StateNotifier<QuestState?> {
   final Ref _ref;
@@ -257,7 +322,10 @@ class QuestStateController extends StateNotifier<QuestState?> {
   Future<void> save() async {
     final storage = await _ref.read(storageServiceProvider.future);
     if (state != null) {
-      await storage.setString('ambient_quest_state', jsonEncode(state!.toJson()));
+      await storage.setString(
+        'ambient_quest_state',
+        jsonEncode(state!.toJson()),
+      );
     }
   }
 
@@ -267,12 +335,13 @@ class QuestStateController extends StateNotifier<QuestState?> {
     final qs = state;
     if (qs == null) return;
     final now = DateTime.now();
-    final currentCycleId = '${now.year}-${now.month.toString().padLeft(2, '0')}'
-        ;
+    final currentCycleId =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}';
     var updated = qs;
 
     // Check if a week has passed since last freeze replenishment (rolling 7-day window)
-    final daysSinceLastReplenishment = now.difference(qs.lastFreezeReplenishment).inDays;
+    final daysSinceLastReplenishment =
+        now.difference(qs.lastFreezeReplenishment).inDays;
     if (daysSinceLastReplenishment >= 7) {
       // Add 1 token per week, capped at 4 max
       final newTokens = (qs.freezeTokens + 1).clamp(0, 4);
@@ -297,12 +366,17 @@ class QuestStateController extends StateNotifier<QuestState?> {
       );
     }
     // Day change within same month
-    final last = DateTime(qs.lastUpdatedAt.year, qs.lastUpdatedAt.month, qs.lastUpdatedAt.day);
+    final last = DateTime(
+      qs.lastUpdatedAt.year,
+      qs.lastUpdatedAt.month,
+      qs.lastUpdatedAt.day,
+    );
     final today = DateTime(now.year, now.month, now.day);
     if (today.isAfter(last)) {
       // Permissive 2-Day Rule: only reset streak if BOTH yesterday AND the day before were missed
       final yesterdayMissed = qs.progressQuietMinutes < qs.goalQuietMinutes;
-      final resetStreak = yesterdayMissed && qs.missedYesterday; // two days in a row
+      final resetStreak =
+          yesterdayMissed && qs.missedYesterday; // two days in a row
 
       updated = updated.copyWith(
         dayIndex: now.day,
@@ -355,10 +429,13 @@ class QuestStateController extends StateNotifier<QuestState?> {
 
     // Calculate total progress as sum of all activities (capped at goal)
     // IMPORTANT: If freeze token was used today, keep progress locked at goal value
-    final totalMinutes = newStudyMinutes + newReadingMinutes + newMeditationMinutes;
-    final newProgress = qs.freezeTokenUsedToday
-        ? qs.progressQuietMinutes  // Keep locked at 100% when freeze token used
-        : min(qs.goalQuietMinutes, totalMinutes);
+    final totalMinutes =
+        newStudyMinutes + newReadingMinutes + newMeditationMinutes;
+    final newProgress =
+        qs.freezeTokenUsedToday
+            ? qs
+                .progressQuietMinutes // Keep locked at 100% when freeze token used
+            : min(qs.goalQuietMinutes, totalMinutes);
 
     int newStreak = qs.streakCount;
     bool clearMissed = false;
@@ -408,9 +485,10 @@ class QuestStateController extends StateNotifier<QuestState?> {
   }
 }
 
-final questStateProvider = StateNotifierProvider<QuestStateController, QuestState?>((ref) {
-  return QuestStateController(ref);
-});
+final questStateProvider =
+    StateNotifierProvider<QuestStateController, QuestState?>((ref) {
+      return QuestStateController(ref);
+    });
 
 /// Debug-only: force an adaptive threshold suggestion value (null = off)
 final debugAdaptiveOverrideProvider = StateProvider<int?>((ref) => null);
@@ -427,18 +505,27 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
   try {
     final storage = await ref.watch(storageServiceProvider.future);
     // Cooldown: suggest at most once per 24 hours. Consider last suggested or last applied time.
-  DateTime? parseMs(String? v) {
+    DateTime? parseMs(String? v) {
       if (v == null || v.isEmpty) return null;
       final ms = int.tryParse(v);
       if (ms == null) return null;
       return DateTime.fromMillisecondsSinceEpoch(ms);
     }
+
     final now = DateTime.now();
-  final lastSuggested = parseMs(await storage.getString('ambient_adaptive_last_suggest_ms'));
-  final lastApplied = parseMs(await storage.getString('ambient_adaptive_last_applied_ms'));
-    final lastEvent = [lastSuggested, lastApplied]
-        .whereType<DateTime>()
-        .fold<DateTime?>(null, (prev, e) => prev == null ? e : (e.isAfter(prev) ? e : prev));
+    final lastSuggested = parseMs(
+      await storage.getString('ambient_adaptive_last_suggest_ms'),
+    );
+    final lastApplied = parseMs(
+      await storage.getString('ambient_adaptive_last_applied_ms'),
+    );
+    final lastEvent = [
+      lastSuggested,
+      lastApplied,
+    ].whereType<DateTime>().fold<DateTime?>(
+      null,
+      (prev, e) => prev == null ? e : (e.isAfter(prev) ? e : prev),
+    );
     // Read tuning values; fall back to flags if provider not ready
     int cooldownHours = AmbientFlags.defaultAdaptiveCooldownHours;
     int baseStreak = AmbientFlags.adaptiveBaseStreak;
@@ -449,7 +536,8 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
       baseStreak = tuning.baseStreak;
       reverseBonus = tuning.reverseBonus;
     } catch (_) {}
-    if (lastEvent != null && now.difference(lastEvent) < Duration(hours: cooldownHours)) {
+    if (lastEvent != null &&
+        now.difference(lastEvent) < Duration(hours: cooldownHours)) {
       return null;
     }
     final jsonString = await storage.getString('ambient_sessions_list');
@@ -457,10 +545,11 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
 
     final raw = jsonDecode(jsonString);
     if (raw is! List) return null;
-    final sessions = raw
-        .map((e) => AmbientSession.fromJson(e as Map<String, dynamic>))
-        .where((s) => s.ambientScore != null)
-        .toList();
+    final sessions =
+        raw
+            .map((e) => AmbientSession.fromJson(e as Map<String, dynamic>))
+            .where((s) => s.ambientScore != null)
+            .toList();
     if (sessions.isEmpty) return null;
 
     // Newest first
@@ -497,7 +586,9 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
     // Hysteresis: require an extra streak if reversing from last suggestion direction
     int requiredWins = baseStreak;
     int requiredLosses = baseStreak;
-    final lastDir = await storage.getString('ambient_adaptive_last_dir'); // 'up' or 'down'
+    final lastDir = await storage.getString(
+      'ambient_adaptive_last_dir',
+    ); // 'up' or 'down'
     if (lastDir == 'up') {
       // Last we suggested increasing threshold; to reverse, require a bit more proof to go down
       requiredWins += reverseBonus;
@@ -509,7 +600,10 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
     if (consecWins >= requiredWins) {
       final suggested = (currentThreshold - 2).clamp(28, 60);
       if (suggested != currentThreshold) {
-        await storage.setString('ambient_adaptive_last_suggest_ms', now.millisecondsSinceEpoch.toString());
+        await storage.setString(
+          'ambient_adaptive_last_suggest_ms',
+          now.millisecondsSinceEpoch.toString(),
+        );
         await storage.setString('ambient_adaptive_last_dir', 'down');
         return suggested;
       }
@@ -519,7 +613,10 @@ final adaptiveThresholdProvider = FutureProvider<int?>((ref) async {
     if (consecLosses >= requiredLosses) {
       final suggested = (currentThreshold + 2).clamp(28, 60);
       if (suggested != currentThreshold) {
-        await storage.setString('ambient_adaptive_last_suggest_ms', now.millisecondsSinceEpoch.toString());
+        await storage.setString(
+          'ambient_adaptive_last_suggest_ms',
+          now.millisecondsSinceEpoch.toString(),
+        );
         await storage.setString('ambient_adaptive_last_dir', 'up');
         return suggested;
       }

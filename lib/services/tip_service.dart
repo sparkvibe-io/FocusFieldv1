@@ -140,8 +140,8 @@ class TipService {
     final hasPremiumAccess = _ref.read(premiumAccessProvider);
     final showPremiumChip = isPremiumFeature && !hasPremiumAccess;
     final instruction = _getInstructionsForTip(context, tipId);
-  final isEnabled = await getEnabled();
-  if (!context.mounted) return;
+    final isEnabled = await getEnabled();
+    if (!context.mounted) return;
 
     final overlay = OverlayEntry(
       builder:
@@ -166,8 +166,8 @@ class TipService {
           ),
     );
 
-  if (!context.mounted) return;
-  Overlay.of(context, rootOverlay: true).insert(overlay);
+    if (!context.mounted) return;
+    Overlay.of(context, rootOverlay: true).insert(overlay);
     _current = overlay;
 
     // Auto-dismiss after 10s and mark as seen
@@ -183,13 +183,15 @@ class TipService {
   }
 
   void _showMutedToast(BuildContext context, bool isNowHidden) {
-  final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     final message =
         isNowHidden
             ? (l10n?.tipsHidden ?? 'Tips hidden')
             : (l10n?.tipsShown ?? 'Tips shown');
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _getTipText(BuildContext context, int id) {
@@ -313,10 +315,10 @@ class TipService {
         return 'Activity tab → Quest Capsule shows your streak';
       // 2 Try activity profiles → Activity tab
       case 2:
-        return 'Activity tab → tap Edit to show/hide activities';
+        return l10n?.tipInstructionEditActivities;
       // 3 12-week Heatmap → Trends
       case 3:
-        return 'Summary tab → Show More → Heatmap';
+        return l10n?.tipInstructionHeatmap;
       // 4 Live Calm % → start a session
       case 4:
         return l10n?.tipInstructionStartNow;
@@ -349,10 +351,10 @@ class TipService {
         return l10n?.tipInstructionStartNow;
       // 14 Try different times
       case 14:
-        return 'Summary tab → Show More → Today Timeline';
+        return l10n?.tipInstructionTodayTimeline;
       // 15 Quest Capsule → Activity tab
       case 15:
-        return 'Activity tab → Quest Capsule → tap Go';
+        return l10n?.tipInstructionQuestGo;
       // 16 Per-activity tracking → Edit Activities
       case 16:
         return 'Activity tab → Edit to see individual progress';
@@ -367,7 +369,7 @@ class TipService {
         return l10n?.tipInstructionCalibrate;
       // 20 7-Day Trends → Summary
       case 20:
-        return 'Summary tab → Show More → 7-Day Trends';
+        return l10n?.tipInstruction7DayTrends;
       // 21 Upgrade duration (Premium)
       case 21:
         return l10n?.tipInstructionUpgradeDuration;
@@ -385,7 +387,7 @@ class TipService {
         return l10n?.tipInstructionAccessibility;
       // 26 Today Timeline → Trends
       case 26:
-        return 'Summary tab → Show More → Today Timeline';
+        return l10n?.tipInstructionTodayTimeline;
       // 27 Shorter sessions mean more completions
       case 27:
         return l10n?.tipInstructionSetTime;
@@ -459,8 +461,8 @@ class TipService {
     }
 
     // Show the current tip (no session restrictions for manual viewing)
-  if (!context.mounted) return;
-  await _showSpecificTip(context, currentTip);
+    if (!context.mounted) return;
+    await _showSpecificTip(context, currentTip);
   }
 
   Future<void> markCurrentTipAsSeen() async {

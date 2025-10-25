@@ -108,6 +108,10 @@ class FocusFieldApp extends ConsumerWidget {
     // Kick off subscription initialization (non-blocking)
     ref.watch(startupSubscriptionInitProvider);
 
+    // Optional: TEST_LOCALE for i18n verification (passed via --dart-define=TEST_LOCALE=xx)
+    const testLocale = String.fromEnvironment('TEST_LOCALE', defaultValue: '');
+    final Locale? forcedLocale = testLocale.isNotEmpty ? _parseLocale(testLocale) : null;
+
     // Build ThemeData based on current selection. For non-system modes, we
     // supply the same ThemeData as both theme and darkTheme so MaterialApp
     // doesn't override (e.g., CyberNeon being replaced by generic dark).
@@ -133,6 +137,7 @@ class FocusFieldApp extends ConsumerWidget {
       theme: useSystem ? lightSystemTheme : themeForCurrent,
       darkTheme: useSystem ? darkSystemTheme : themeForCurrent,
       themeMode: useSystem ? ThemeMode.system : currentTheme.themeMode,
+      locale: forcedLocale,  // Override locale for testing if TEST_LOCALE provided
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -146,6 +151,7 @@ class FocusFieldApp extends ConsumerWidget {
         Locale('de'),
         Locale('pt', 'BR'),
         Locale('ja'),
+        Locale('zh'),
       ],
       // Start with splash screen which transitions to AppInitializer
       home: const SplashScreen(),
@@ -169,4 +175,18 @@ class FocusFieldApp extends ConsumerWidget {
       },
     );
   }
+}
+
+/// Parse locale code string to Locale object
+/// Supports: en, es, de, fr, ja, pt, pt_BR
+Locale? _parseLocale(String localeCode) {
+  if (localeCode.isEmpty) return null;
+
+  // Handle pt_BR special case
+  if (localeCode == 'pt_BR') {
+    return const Locale('pt', 'BR');
+  }
+
+  // Single language code (en, es, de, fr, ja, pt)
+  return Locale(localeCode);
 }

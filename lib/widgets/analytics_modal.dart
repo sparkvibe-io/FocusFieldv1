@@ -7,6 +7,7 @@ import '../models/subscription_tier.dart';
 import '../widgets/feature_gate.dart';
 import '../constants/ui_constants.dart';
 import 'common/drag_handle.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Full-screen analytics modal with free and premium sections
 class AnalyticsModal extends ConsumerWidget {
@@ -23,6 +24,7 @@ class AnalyticsModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final subscription = ref.watch(subscriptionTierProvider);
     final isPremium = subscription.when(
       data: (tier) => tier != SubscriptionTier.free,
@@ -58,7 +60,7 @@ class AnalyticsModal extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Analytics',
+                      l10n.analyticsTitle,
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -121,6 +123,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildOverviewSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return silenceDataAsync.when(
@@ -132,7 +135,7 @@ class AnalyticsModal extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Overview',
+                  l10n.analyticsOverview,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -143,7 +146,7 @@ class AnalyticsModal extends ConsumerWidget {
                     _buildMetricCard(
                       context,
                       icon: Icons.star,
-                      label: 'Points',
+                      label: l10n.analyticsPoints,
                       value: '${data.totalPoints}',
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -151,7 +154,7 @@ class AnalyticsModal extends ConsumerWidget {
                     _buildMetricCard(
                       context,
                       icon: Icons.local_fire_department,
-                      label: 'Streak',
+                      label: l10n.analyticsStreak,
                       value: '${data.currentStreak}',
                       color: Theme.of(context).colorScheme.secondary,
                     ),
@@ -159,7 +162,7 @@ class AnalyticsModal extends ConsumerWidget {
                     _buildMetricCard(
                       context,
                       icon: Icons.check_circle,
-                      label: 'Sessions',
+                      label: l10n.analyticsSessions,
                       value: '${data.totalSessions}',
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
@@ -214,6 +217,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _build7DayChart(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return silenceDataAsync.when(
@@ -242,7 +246,7 @@ class AnalyticsModal extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Last 7 Days',
+                  l10n.analyticsLast7Days,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -314,6 +318,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildPerformanceHighlights(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return silenceDataAsync.when(
@@ -342,7 +347,7 @@ class AnalyticsModal extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Performance Highlights',
+                  l10n.analyticsPerformanceHighlights,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -350,21 +355,21 @@ class AnalyticsModal extends ConsumerWidget {
                 const SizedBox(height: 16),
                 _buildHighlightRow(
                   context,
-                  'Success Rate',
+                  l10n.analyticsSuccessRate,
                   '$successRate%',
                   Icons.trending_up,
                 ),
                 const SizedBox(height: 12),
                 _buildHighlightRow(
                   context,
-                  'Avg Session',
+                  l10n.analyticsAvgSession,
                   '$avgDuration min',
                   Icons.timer,
                 ),
                 const SizedBox(height: 12),
                 _buildHighlightRow(
                   context,
-                  'Best Streak',
+                  l10n.analyticsBestStreak,
                   '${data.bestStreak} days',
                   Icons.military_tech,
                 ),
@@ -403,6 +408,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildActivityProgress(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // TODO: Wire up real activity tracking provider when available.
     // Temporarily show placeholder to keep build green.
     return Card(
@@ -412,14 +418,14 @@ class AnalyticsModal extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Activity Progress',
+              l10n.analyticsActivityProgress,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
-              'Detailed activity tracking coming soon.',
+              l10n.analyticsComingSoon,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -431,6 +437,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildAdvancedMetrics(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -446,7 +453,7 @@ class AnalyticsModal extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Advanced Metrics',
+                  l10n.analyticsAdvancedMetrics,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -454,7 +461,7 @@ class AnalyticsModal extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const Text('Premium advanced analytics content here...'),
+            Text(l10n.analyticsPremiumContent),
           ],
         ),
       ),
@@ -462,6 +469,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildTrendsChart(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -469,13 +477,13 @@ class AnalyticsModal extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '30-Day Trends',
+              l10n.analytics30DayTrends,
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text('Premium trends chart here...'),
+            Text(l10n.analyticsTrendsChart),
           ],
         ),
       ),
@@ -483,6 +491,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildAIInsights(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -498,7 +507,7 @@ class AnalyticsModal extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'AI Insights',
+                  l10n.analyticsAIInsights,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -506,7 +515,7 @@ class AnalyticsModal extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const Text('AI-powered insights coming soon...'),
+            Text(l10n.analyticsAIComingSoon),
           ],
         ),
       ),
@@ -514,6 +523,7 @@ class AnalyticsModal extends ConsumerWidget {
   }
 
   Widget _buildPremiumUpsell(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: InkWell(
@@ -533,7 +543,7 @@ class AnalyticsModal extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Unlock Advanced Analytics',
+                l10n.analyticsUnlock,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onPrimaryContainer,

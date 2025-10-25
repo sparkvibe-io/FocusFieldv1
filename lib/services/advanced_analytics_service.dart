@@ -5,18 +5,20 @@ import 'package:focus_field/models/silence_data.dart';
 enum InsightType { achievement, improvement, warning, recommendation, trend }
 
 class AnalyticsInsight {
-  final String title;
-  final String description;
+  final String titleKey;       // Localization key for title
+  final String descriptionKey; // Localization key for description
   final String value;
   final InsightType type;
   final double confidence; // 0-1 relative strength
+  final Map<String, dynamic>? params; // Optional parameters for translations
 
   const AnalyticsInsight({
-    required this.title,
-    required this.description,
+    required this.titleKey,
+    required this.descriptionKey,
     required this.value,
     required this.type,
     required this.confidence,
+    this.params,
   });
 }
 
@@ -206,8 +208,8 @@ class AdvancedAnalyticsService {
     if (sessions.isEmpty) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Get Started',
-          description: 'Complete your first session to unlock insights',
+          titleKey: 'insightNoRecentSessionsTitle',
+          descriptionKey: 'insightNoRecentSessionsDesc',
           value: 'Begin now',
           type: InsightType.recommendation,
           confidence: 1.0,
@@ -218,8 +220,8 @@ class AdvancedAnalyticsService {
     if (metrics.overallSuccessRate >= 80) {
       insights.add(
         AnalyticsInsight(
-          title: 'High Success Rate',
-          description: 'You are maintaining strong silent sessions.',
+          titleKey: 'insightHighSuccessRateTitle',
+          descriptionKey: 'insightHighSuccessRateDesc',
           value: '${metrics.overallSuccessRate.toStringAsFixed(1)}%',
           type: InsightType.achievement,
           confidence: .9,
@@ -228,9 +230,8 @@ class AdvancedAnalyticsService {
     } else if (metrics.overallSuccessRate < 50) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Improve Consistency',
-          description:
-              'Try adjusting environment or threshold for more completed sessions.',
+          titleKey: 'insightLowAmbientScoreTitle',
+          descriptionKey: 'insightLowAmbientScoreDesc',
           value: 'Tip',
           type: InsightType.recommendation,
           confidence: .8,
@@ -240,8 +241,8 @@ class AdvancedAnalyticsService {
     if (metrics.improvementTrend > 15) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Trending Up',
-          description: 'Recent sessions show noticeable improvement.',
+          titleKey: 'insightConsistentPracticeTitle',
+          descriptionKey: 'insightConsistentPracticeDesc',
           value: '+Improving',
           type: InsightType.improvement,
           confidence: .85,
@@ -251,9 +252,8 @@ class AdvancedAnalyticsService {
     if (metrics.improvementTrend < -10) {
       insights.add(
         AnalyticsInsight(
-          title: 'Declining Trend',
-          description:
-              'Performance has dipped recently compared to earlier sessions.',
+          titleKey: 'insightIrregularScheduleTitle',
+          descriptionKey: 'insightIrregularScheduleDesc',
           value: '${metrics.improvementTrend.toStringAsFixed(1)} pts',
           type: InsightType.warning,
           confidence: .8,
@@ -263,8 +263,8 @@ class AdvancedAnalyticsService {
     if (data.currentStreak >= 5) {
       insights.add(
         AnalyticsInsight(
-          title: 'Streak Strength',
-          description: 'Great streak of ${data.currentStreak} days!',
+          titleKey: 'insightConsistentPracticeTitle',
+          descriptionKey: 'insightConsistentPracticeDesc',
           value: '${data.currentStreak} days',
           type: InsightType.achievement,
           confidence: 1.0,
@@ -280,9 +280,8 @@ class AdvancedAnalyticsService {
       if (avgNoise < 35) {
         insights.add(
           AnalyticsInsight(
-            title: 'Quiet Environment',
-            description:
-                'Low ambient noise is supporting higher focus potential.',
+            titleKey: 'insightLowNoiseSuccessTitle',
+            descriptionKey: 'insightLowNoiseSuccessDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.achievement,
             confidence: 0.7,
@@ -291,9 +290,8 @@ class AdvancedAnalyticsService {
       } else if (avgNoise > 55) {
         insights.add(
           AnalyticsInsight(
-            title: 'High Ambient Noise',
-            description:
-                'Consider a quieter space or adjusting threshold for better results.',
+            titleKey: 'insightRoomTooNoisyTitle',
+            descriptionKey: 'insightRoomTooNoisyDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.recommendation,
             confidence: 0.75,
@@ -302,9 +300,8 @@ class AdvancedAnalyticsService {
       } else {
         insights.add(
           AnalyticsInsight(
-            title: 'Environment Stability',
-            description:
-                'Ambient noise is within a moderate, manageable range.',
+            titleKey: 'insightEnvironmentStabilityTitle',
+            descriptionKey: 'insightEnvironmentStabilityDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.trend,
             confidence: 0.5,

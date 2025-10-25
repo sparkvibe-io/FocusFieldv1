@@ -3,15 +3,30 @@ import 'package:focus_field/widgets/shareable_cards.dart';
 import 'package:focus_field/services/share_service.dart';
 import 'package:focus_field/constants/ui_constants.dart';
 import 'package:focus_field/widgets/common/drag_handle.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Time range for progress sharing
 enum ShareTimeRange {
-  today('Today', 'Today\'s Focus'),
-  weekly('Weekly', 'Your Weekly Focus');
+  today,
+  weekly;
 
-  const ShareTimeRange(this.label, this.title);
-  final String label;
-  final String title;
+  String getLabel(AppLocalizations l10n) {
+    switch (this) {
+      case ShareTimeRange.today:
+        return l10n.shareTodayLabel;
+      case ShareTimeRange.weekly:
+        return l10n.shareWeeklyLabel;
+    }
+  }
+
+  String getTitle(AppLocalizations l10n) {
+    switch (this) {
+      case ShareTimeRange.today:
+        return l10n.shareTodayTitle;
+      case ShareTimeRange.weekly:
+        return l10n.shareWeeklyTitle;
+    }
+  }
 }
 
 /// Bottom sheet for previewing and customizing shareable cards.
@@ -54,6 +69,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final maxHeight =
         MediaQuery.of(context).size.height *
         UIConstants.bottomSheetMaxHeightRatio;
@@ -80,7 +96,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                 Icon(Icons.share, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  'Share Your Progress',
+                  l10n.shareYourProgress,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -107,22 +123,22 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Time Range Toggle
-                  _buildTimeRangeToggle(theme),
+                  _buildTimeRangeToggle(theme, l10n),
 
                   const SizedBox(height: 16),
 
                   // Card Format Selector
-                  _buildFormatSelector(theme),
+                  _buildFormatSelector(theme, l10n),
 
                   const SizedBox(height: 16),
 
                   // Card Preview
-                  _buildCardPreview(theme),
+                  _buildCardPreview(theme, l10n),
 
                   const SizedBox(height: 16),
 
                   // Share Button
-                  _buildShareButton(theme),
+                  _buildShareButton(theme, l10n),
                 ],
               ),
             ),
@@ -132,12 +148,12 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
     );
   }
 
-  Widget _buildTimeRangeToggle(ThemeData theme) {
+  Widget _buildTimeRangeToggle(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Time Range',
+          l10n.shareTimeRange,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurfaceVariant,
@@ -150,7 +166,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                   .map(
                     (range) => ButtonSegment<ShareTimeRange>(
                       value: range,
-                      label: Text(range.label),
+                      label: Text(range.getLabel(l10n)),
                       icon: Icon(
                         range == ShareTimeRange.today
                             ? Icons.today
@@ -170,12 +186,12 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
     );
   }
 
-  Widget _buildFormatSelector(ThemeData theme) {
+  Widget _buildFormatSelector(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Card Size',
+          l10n.shareCardSize,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurfaceVariant,
@@ -208,7 +224,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
         ),
         const SizedBox(height: 8),
         Text(
-          _getFormatDescription(_selectedFormat),
+          _getFormatDescription(_selectedFormat, l10n),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -217,14 +233,14 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
     );
   }
 
-  Widget _buildCardPreview(ThemeData theme) {
+  Widget _buildCardPreview(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Text(
-              'Preview',
+              l10n.sharePreview,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.onSurfaceVariant,
@@ -232,7 +248,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
             ),
             const Spacer(),
             Text(
-              'Pinch to zoom',
+              l10n.sharePinchToZoom,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.6,
@@ -282,12 +298,12 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
       successRate: widget.successRate,
       activityMinutes: widget.activityMinutes,
       timeRange: widget.dateRange,
-      title: _selectedTimeRange.title,
+      title: _selectedTimeRange.getTitle(AppLocalizations.of(context)!),
       format: _selectedFormat,
     );
   }
 
-  Widget _buildShareButton(ThemeData theme) {
+  Widget _buildShareButton(ThemeData theme, AppLocalizations l10n) {
     return FilledButton.icon(
       onPressed: _isSharing ? null : _handleShare,
       icon:
@@ -298,7 +314,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
               : const Icon(Icons.share),
-      label: Text(_isSharing ? 'Generating...' : 'Share'),
+      label: Text(_isSharing ? l10n.shareGenerating : l10n.shareButton),
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -315,11 +331,12 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
       // Small delay to ensure card is fully rendered
       await Future.delayed(const Duration(milliseconds: 100));
 
+      final l10n = AppLocalizations.of(context)!;
       await ShareService.instance.shareWidget(
         key: _cardKey,
-        filename: 'focus_field_${_selectedTimeRange.label.toLowerCase()}',
+        filename: 'focus_field_${_selectedTimeRange.getLabel(l10n).toLowerCase()}',
         text: _generateShareText(),
-        subject: 'My Focus Field Progress',
+        subject: l10n.shareSubject,
       );
 
       if (mounted) {
@@ -362,14 +379,14 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
     }
   }
 
-  String _getFormatDescription(ShareCardFormat format) {
+  String _getFormatDescription(ShareCardFormat format, AppLocalizations l10n) {
     switch (format) {
       case ShareCardFormat.square:
-        return '1:1 ratio • Universal compatibility';
+        return l10n.shareFormatSquare;
       case ShareCardFormat.post:
-        return '4:5 ratio • Instagram/Twitter posts';
+        return l10n.shareFormatPost;
       case ShareCardFormat.story:
-        return '9:16 ratio • Instagram Stories';
+        return l10n.shareFormatStory;
     }
   }
 }

@@ -44,10 +44,18 @@ RUN_MODE="--profile"   # default to profile to avoid JIT/memory overhead on devi
 DEVICE_TARGET="ios"     # default to any connected iOS device/simulator
 # Default dev flag inferred from run mode (debug/profile -> true, release -> false)
 IS_DEVELOPMENT=true
+TEST_LOCALE=""          # Optional locale for i18n testing (e.g., es, de, fr, ja, pt)
+
+# Optional: Test locale for i18n verification
+DART_DEFINE_LOCALE=""
+if [[ -n "${TEST_LOCALE}" ]]; then
+  DART_DEFINE_LOCALE="--dart-define=TEST_LOCALE=${TEST_LOCALE}"
+fi
 
 # Basic args:
 #   --debug / --profile / --release to set run mode
 #   -d <device_id> to target a specific device
+#   --locale <code> to test specific language (en, es, de, fr, ja, pt, pt_BR)
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --debug)
@@ -58,6 +66,8 @@ while [[ $# -gt 0 ]]; do
       RUN_MODE="--release"; IS_DEVELOPMENT=false; shift ;;
     -d)
       DEVICE_TARGET="$2"; shift 2 ;;
+    --locale)
+      TEST_LOCALE="$2"; shift 2 ;;
     *)
       echo "Unknown arg: $1"; exit 2 ;;
   esac
@@ -67,6 +77,9 @@ echo "📱 Testing on iOS device/simulator..."
 echo "   Using iOS API Key: ${IOS_API_KEY:0:20}..."
 echo "   Run mode: ${RUN_MODE#--}"
 echo "   Target: ${DEVICE_TARGET}"
+if [[ -n "${TEST_LOCALE}" ]]; then
+  echo "   🌍 Testing Locale: ${TEST_LOCALE}"
+fi
 if [[ -n "${APPLE_PRODUCT_IDS:-}" ]]; then
   echo "   Apple Product IDs: ${APPLE_PRODUCT_IDS}"
 fi
@@ -94,6 +107,7 @@ flutter run \
   ${DART_DEFINE_IOS_BANNER_UNIT} \
   ${DART_DEFINE_ADS_FALLBACK} \
   ${DART_DEFINE_ENTITLEMENT_KEY} \
+  ${DART_DEFINE_LOCALE} \
   -d "${DEVICE_TARGET}"
 
 echo ""

@@ -13,6 +13,7 @@ import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/services/deep_focus_manager.dart';
 import 'package:focus_field/providers/notification_provider.dart';
 import 'package:focus_field/providers/ambient_quest_provider.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Provider to check if onboarding has been completed
 final _onboardingCompletedProvider = FutureProvider<bool>((ref) async {
@@ -26,41 +27,42 @@ class AppInitializer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch all the async providers we need to initialize
     final storageServiceAsync = ref.watch(storageServiceProvider);
     final settingsAsync = ref.watch(appSettingsProvider);
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return storageServiceAsync.when(
-      loading: () => _buildLoadingScreen(context, 'Initializing app...'),
+      loading: () => _buildLoadingScreen(context, l10n.initializingApp),
       error:
           (error, stack) =>
-              _buildErrorScreen(context, 'Initialization failed: $error', ref),
+              _buildErrorScreen(context, l10n.initializationFailed(error.toString()), ref),
       data: (storageService) {
         return settingsAsync.when(
-          loading: () => _buildLoadingScreen(context, 'Loading settings...'),
+          loading: () => _buildLoadingScreen(context, l10n.loadingSettings),
           error:
               (error, stack) => _buildErrorScreen(
                 context,
-                'Settings loading failed: $error',
+                l10n.settingsLoadingFailed(error.toString()),
                 ref,
               ),
           data: (settings) {
             return silenceDataAsync.when(
               loading:
-                  () => _buildLoadingScreen(context, 'Loading user data...'),
+                  () => _buildLoadingScreen(context, l10n.loadingUserData),
               error:
                   (error, stack) => _buildErrorScreen(
                     context,
-                    'Data loading failed: $error',
+                    l10n.dataLoadingFailed(error.toString()),
                     ref,
                   ),
               data: (silenceData) {
                 // Check if onboarding has been completed via async provider
                 final onboardingAsync = ref.watch(_onboardingCompletedProvider);
-                
+
                 return onboardingAsync.when(
-                  loading: () => _buildLoadingScreen(context, 'Loading...'),
+                  loading: () => _buildLoadingScreen(context, l10n.loading),
                   error: (e, _) {
                     // If we can't check onboarding status, show home anyway
                     return _initializeServicesAndShowHome(context, ref, silenceData);
@@ -210,7 +212,7 @@ class AppInitializer extends ConsumerWidget {
               const SizedBox(height: 8),
 
               Text(
-                '🤫 Master the Art of Silence',
+                AppLocalizations.of(context)!.taglineSilence,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -230,6 +232,7 @@ class AppInitializer extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -258,7 +261,7 @@ class AppInitializer extends ConsumerWidget {
 
                 // Error message
                 Text(
-                  'Oops! Something went wrong',
+                  l10n.errorOops,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: theme.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -287,7 +290,7 @@ class AppInitializer extends ConsumerWidget {
                       ref.invalidate(silenceDataNotifierProvider);
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
+                    label: Text(l10n.buttonRetry),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: theme.colorScheme.primary,
@@ -303,30 +306,29 @@ class AppInitializer extends ConsumerWidget {
                     final confirmed = await showDialog<bool>(
                       context: context,
                       builder:
-                          (context) => AlertDialog(
-                            title: const Text('Reset App Data'),
-                            content: const Text(
-                              'This will reset all app data and settings to their defaults. '
-                              'This action cannot be undone.\n\n'
-                              'Do you want to continue?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: const Text('Cancel'),
-                              ),
-                              ElevatedButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.error,
-                                  foregroundColor: theme.colorScheme.onError,
+                          (ctx) {
+                            final l10nDialog = AppLocalizations.of(ctx)!;
+                            return AlertDialog(
+                              title: Text(l10nDialog.resetAppData),
+                              content: Text(l10nDialog.resetAppDataMessage),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(ctx).pop(false),
+                                  child: Text(l10nDialog.cancel),
                                 ),
-                                child: const Text('Reset'),
-                              ),
-                            ],
-                          ),
+                                ElevatedButton(
+                                  onPressed:
+                                      () => Navigator.of(ctx).pop(true),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: theme.colorScheme.error,
+                                    foregroundColor: theme.colorScheme.onError,
+                                  ),
+                                  child: Text(l10nDialog.buttonReset),
+                                ),
+                              ],
+                            );
+                          },
                     );
 
                     if (confirmed == true) {
@@ -346,18 +348,20 @@ class AppInitializer extends ConsumerWidget {
 
                         if (context.mounted) {
                           final theme = Theme.of(context);
+                          final l10nMsg = AppLocalizations.of(context)!;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('App data has been reset'),
+                              content: Text(l10nMsg.messageDataReset),
                               backgroundColor: theme.colorScheme.primary,
                             ),
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
+                          final l10nMsg = AppLocalizations.of(context)!;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Failed to reset data: $e'),
+                              content: Text(l10nMsg.errorResetFailed(e.toString())),
                               backgroundColor: theme.colorScheme.error,
                             ),
                           );
@@ -366,7 +370,7 @@ class AppInitializer extends ConsumerWidget {
                     }
                   },
                   child: Text(
-                    'Reset App Data',
+                    l10n.resetAppData,
                     style: TextStyle(color: theme.colorScheme.error),
                   ),
                 ),

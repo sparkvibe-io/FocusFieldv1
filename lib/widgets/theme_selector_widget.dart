@@ -3,12 +3,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/theme_provider.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/widgets/feature_gate.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class ThemeSelectorWidget extends ConsumerWidget {
   const ThemeSelectorWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentTheme = ref.watch(themeProvider);
     final themeNotifier = ref.read(themeProvider.notifier);
     final hasPremiumAccess = ref.watch(premiumAccessProvider);
@@ -17,7 +19,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'App Theme',
+          l10n.settingsAppTheme,
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -204,7 +206,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             // Theme name - handle two words
             _buildThemeName(
               context,
-              themeMode.displayName,
+              _getLocalizedThemeName(context, themeMode),
               isSelected,
               isAccessible,
             ),
@@ -295,5 +297,31 @@ class ThemeSelectorWidget extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  String _getLocalizedThemeName(BuildContext context, AppThemeMode themeMode) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (themeMode) {
+      case AppThemeMode.system:
+        return l10n.themeSystem;
+      case AppThemeMode.light:
+        return l10n.themeLight;
+      case AppThemeMode.dark:
+        return l10n.themeDark;
+      case AppThemeMode.oceanBlue:
+        return l10n.themeOceanBlue;
+      case AppThemeMode.forestGreen:
+        return l10n.themeForestGreen;
+      case AppThemeMode.purpleNight:
+        return l10n.themePurpleNight;
+      case AppThemeMode.goldLuxury:
+        return l10n.themeGoldLuxury;
+      case AppThemeMode.solarSunrise:
+        return l10n.themeSolarSunrise;
+      case AppThemeMode.cyberNeon:
+        return l10n.themeCyberNeon;
+      case AppThemeMode.midnightTeal:
+        return l10n.themeMidnightTeal;
+    }
   }
 }

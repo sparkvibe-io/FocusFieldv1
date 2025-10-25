@@ -214,6 +214,7 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   Widget _dailyGoalsButton(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final userPrefs = ref.watch(userPreferencesProvider);
     final currentMinutes = userPrefs.globalDailyQuietGoalMinutes;
     final enabledCount = userPrefs.enabledProfiles.length;
@@ -259,7 +260,7 @@ class SettingsSheet extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Daily Goals',
+                      l10n.settingsDailyGoalsTitle,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -286,6 +287,7 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   Widget _focusModeSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final userPrefs = ref.watch(userPreferencesProvider);
     final theme = Theme.of(context);
 
@@ -303,14 +305,14 @@ class SettingsSheet extends ConsumerWidget {
               color: theme.colorScheme.primary,
             ),
             const SizedBox(width: 8),
-            const Text('Focus Mode'),
+            Text(l10n.focusModeButton),
           ],
         ),
-        subtitle: const Padding(
-          padding: EdgeInsets.only(left: 28),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(left: 28),
           child: Text(
-            'Minimize distractions during sessions with a focused overlay',
-            style: TextStyle(fontSize: 12),
+            l10n.settingsFocusModeDescription,
+            style: const TextStyle(fontSize: 12),
           ),
         ),
         value: userPrefs.focusModeEnabled,
@@ -329,6 +331,7 @@ class SettingsSheet extends ConsumerWidget {
     SettingsNotifier notifier,
     Map<String, dynamic> settings,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final size = MediaQuery.of(context).size;
     final isSmallPhone = size.height < 760 || size.width < 380;
     final cols = size.width < 380 ? 1 : 2;
@@ -348,8 +351,8 @@ class SettingsSheet extends ConsumerWidget {
         children: [
           _advancedCard(
             context,
-            title: 'Deep Focus',
-            subtitle: 'End session if app is left',
+            title: l10n.settingsDeepFocusTitle,
+            subtitle: l10n.settingsDeepFocusDescription,
             icon: Icons.lock_clock,
             isPremium: true,
             hasAccess: ref.watch(premiumAccessProvider),
@@ -406,17 +409,18 @@ class SettingsSheet extends ConsumerWidget {
     await showDialog<void>(
       context: context,
       builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx)!;
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Deep Focus'),
+              title: Text(l10n.deepFocusDialogTitle),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Expanded(child: Text('Enable Deep Focus')),
+                      Expanded(child: Text(l10n.deepFocusEnableLabel)),
                       Switch(
                         value: enabled,
                         onChanged: (v) {
@@ -427,7 +431,7 @@ class SettingsSheet extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text('Grace period (seconds)'),
+                  Text(l10n.deepFocusGracePeriodLabel),
                   Row(
                     children: [
                       Expanded(
@@ -454,7 +458,7 @@ class SettingsSheet extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'When enabled, leaving the app will end the session after the grace period.',
+                    l10n.deepFocusExplanation,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -462,7 +466,7 @@ class SettingsSheet extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Close'),
+                  child: Text(l10n.close),
                 ),
               ],
             );
@@ -495,6 +499,7 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   Future<void> _showNotificationPermissionDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isIOS = Platform.isIOS;
 
@@ -509,7 +514,7 @@ class SettingsSheet extends ConsumerWidget {
                 color: theme.colorScheme.primary,
               ),
               const SizedBox(width: 12),
-              const Expanded(child: Text('Enable Notifications')),
+              Expanded(child: Text(l10n.notificationPermissionTitle)),
             ],
           ),
           content: Column(
@@ -517,7 +522,7 @@ class SettingsSheet extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Focus Field needs notification permission to send you:',
+                l10n.notificationPermissionExplanation,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -526,17 +531,17 @@ class SettingsSheet extends ConsumerWidget {
               _buildPermissionBenefit(
                 theme,
                 Icons.alarm,
-                'Daily focus reminders',
+                l10n.notificationBenefitReminders,
               ),
               _buildPermissionBenefit(
                 theme,
                 Icons.celebration,
-                'Session completion alerts',
+                l10n.notificationBenefitCompletion,
               ),
               _buildPermissionBenefit(
                 theme,
                 Icons.emoji_events,
-                'Achievement celebrations',
+                l10n.notificationBenefitAchievements,
               ),
               const SizedBox(height: 16),
               Container(
@@ -563,8 +568,8 @@ class SettingsSheet extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Text(
                           isIOS
-                              ? 'How to enable on iOS:'
-                              : 'How to enable on Android:',
+                              ? l10n.notificationHowToEnableIos
+                              : l10n.notificationHowToEnableAndroid,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.onPrimaryContainer,
@@ -575,14 +580,14 @@ class SettingsSheet extends ConsumerWidget {
                     const SizedBox(height: 8),
                     if (isIOS) ...[
                       Text(
-                        '1. Tap "Open Settings" below\n2. Tap "Notifications"\n3. Enable "Allow Notifications"',
+                        l10n.notificationStepsIos,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ] else ...[
                       Text(
-                        '1. Tap "Open Settings" below\n2. Tap "Notifications"\n3. Enable "All Focus Field notifications"',
+                        l10n.notificationStepsAndroid,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onPrimaryContainer,
                         ),
@@ -596,12 +601,12 @@ class SettingsSheet extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton.icon(
               onPressed: () => Navigator.of(ctx).pop(true),
               icon: const Icon(Icons.settings),
-              label: const Text('Open Settings'),
+              label: Text(l10n.buttonOpenSettings),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
@@ -722,13 +727,13 @@ class SettingsSheet extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Show Tips',
+                          AppLocalizations.of(context)!.aboutShowTips,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Show helpful tips on app startup and via the lightbulb icon. Tips appear every 2-3 days.',
+                          AppLocalizations.of(context)!.aboutShowTipsDescription,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -773,13 +778,13 @@ class SettingsSheet extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Replay Onboarding',
+                            AppLocalizations.of(context)!.aboutReplayOnboarding,
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Review the app tour and setup your preferences again',
+                            AppLocalizations.of(context)!.aboutReplayOnboardingDescription,
                             style: Theme.of(
                               context,
                             ).textTheme.bodySmall?.copyWith(
@@ -820,7 +825,7 @@ class SettingsSheet extends ConsumerWidget {
                     children: [
                       _linkButton(
                         context,
-                        'FAQ',
+                        AppLocalizations.of(context)!.buttonFaq,
                         Icons.quiz,
                         () => _openFAQ(context),
                       ),
@@ -1734,109 +1739,32 @@ class _FAQBottomSheetState extends State<_FAQBottomSheet> {
     super.dispose();
   }
 
-  // All 20 FAQ items (English only for now - translations can be added later)
-  List<Map<String, String>> get _allFAQs => [
-    {
-      'q': 'What is Focus Field and how does it help me focus?',
-      'a':
-          'Focus Field helps you build better focus habits by monitoring ambient noise in your environment. When you start a session (Study, Reading, Meditation, or Other), the app measures how quiet your environment is. The quieter you keep it, the more "focus minutes" you earn. This encourages you to find and maintain distraction-free spaces for deep work.',
-    },
-    {
-      'q': 'How does Focus Field measure my focus?',
-      'a':
-          'Focus Field monitors the ambient noise level in your environment during your session. It calculates an "Ambient Score" by tracking how many seconds your environment stays below your chosen noise threshold. If your session has at least 70% quiet time (Ambient Score ≥70%), you earn full credit for those quiet minutes.',
-    },
-    {
-      'q': 'Does Focus Field record my audio or conversations?',
-      'a':
-          'No, absolutely not. Focus Field only measures decibel levels (loudness) - it never records, stores, or transmits any audio. Your privacy is completely protected. The app simply checks if your environment is above or below your chosen threshold.',
-    },
-    {
-      'q': 'What activities can I track with Focus Field?',
-      'a':
-          'Focus Field comes with four activity types: Study 📚 (for learning and research), Reading 📖 (for focused reading), Meditation 🧘 (for mindfulness practice), and Other ⭐ (for any focus-requiring activity). All activities use ambient noise monitoring to help you maintain a quiet, focused environment.',
-    },
-    {
-      'q': 'Should I use Focus Field for all my activities?',
-      'a':
-          'Focus Field works best for activities where ambient noise indicates your level of focus. Activities like Study, Reading, and Meditation benefit most from quiet environments. While you can track "Other" activities, we recommend using Focus Field primarily for noise-sensitive focus work.',
-    },
-    {
-      'q': 'How do I start a focus session?',
-      'a':
-          'Go to the Sessions tab, select your activity (Study, Reading, Meditation, or Other), choose your session duration (1, 5, 10, 15, 30 minutes, or premium options), tap the Start button on the progress ring, and keep your environment quiet!',
-    },
-    {
-      'q': 'What session durations are available?',
-      'a':
-          'Free users can choose: 1, 5, 10, 15, or 30-minute sessions. Premium users also get: 1 hour, 1.5 hours, and 2-hour extended sessions for longer deep work periods.',
-    },
-    {
-      'q': 'Can I pause or stop a session early?',
-      'a':
-          'Yes! During a session, you\'ll see Pause and Stop buttons above the progress ring. To prevent accidental taps, you need to long-press these buttons. If you stop early, you\'ll still earn points for the quiet minutes you accumulated.',
-    },
-    {
-      'q': 'How do I earn points in Focus Field?',
-      'a':
-          'You earn 1 point per quiet minute. During your session, Focus Field tracks how many seconds your environment stays below the noise threshold. At the end, those quiet seconds are converted to minutes. For example, if you complete a 10-minute session with 8 minutes of quiet time, you earn 8 points.',
-    },
-    {
-      'q': 'What is the 70% threshold and why does it matter?',
-      'a':
-          'The 70% threshold determines if your session counts toward your daily goal. If your Ambient Score (quiet time ÷ total time) is at least 70%, your session qualifies for quest credit. Even if you\'re under 70%, you still earn points for every quiet minute!',
-    },
-    {
-      'q': 'What\'s the difference between Ambient Score and points?',
-      'a':
-          'Ambient Score is your session quality as a percentage (quiet seconds ÷ total seconds), determining if you hit the 70% threshold. Points are the actual quiet minutes earned (1 point = 1 minute). Ambient Score = quality, Points = achievement.',
-    },
-    {
-      'q': 'How do streaks work in Focus Field?',
-      'a':
-          'Streaks track consecutive days of meeting your daily goal. Focus Field uses a compassionate 2-Day Rule: Your streak only breaks if you miss two consecutive days. This means you can miss one day and your streak continues if you complete your goal the next day.',
-    },
-    {
-      'q': 'What are freeze tokens and how do I use them?',
-      'a':
-          'Freeze tokens protect your streak when you can\'t complete your goal. You get 1 free freeze token per month. When used, your overall progress shows 100% (goal protected), your streak is safe, and individual activity tracking continues normally. Use it wisely for busy days!',
-    },
-    {
-      'q': 'Can I customize my daily focus goal?',
-      'a':
-          'Yes! Tap Edit on the Sessions card in the Today tab. You can set your global daily goal (10-60 minutes for free, up to 1080 minutes for premium), enable per-activity goals for separate targets, and show/hide specific activities.',
-    },
-    {
-      'q': 'What is the noise threshold and how do I adjust it?',
-      'a':
-          'The threshold is the maximum noise level (in decibels) that counts as "quiet." Default is 40 dB (library quiet). You can adjust it in the Sessions tab: 30 dB (very quiet), 40 dB (library quiet - recommended), 50 dB (moderate office), 60-80 dB (louder environments).',
-    },
-    {
-      'q': 'What is Adaptive Threshold and should I use it?',
-      'a':
-          'After 3 consecutive successful sessions at your current threshold, Focus Field suggests increasing it by 2 dB to challenge yourself. This helps you gradually improve. You can accept or dismiss the suggestion - it only appears once every 7 days.',
-    },
-    {
-      'q': 'What is Focus Mode?',
-      'a':
-          'Focus Mode is a full-screen distraction-free overlay during your session. It shows your countdown timer, live calm percentage, and minimal controls (Pause/Stop via long-press). It removes all other UI elements so you can concentrate fully. Enable it in Settings > Basic > Focus Mode.',
-    },
-    {
-      'q': 'Why does Focus Field need microphone permission?',
-      'a':
-          'Focus Field uses your device\'s microphone to measure ambient noise levels (decibels) during sessions. This is essential to calculate your Ambient Score. Remember: no audio is ever recorded - only noise levels are measured in real-time.',
-    },
-    {
-      'q': 'Can I see my focus patterns over time?',
-      'a':
-          'Yes! The Today tab shows your daily progress, weekly trends, 12-week activity heatmap (like GitHub contributions), and session timeline. Premium users get advanced analytics with performance metrics, moving averages, and AI-powered insights.',
-    },
-    {
-      'q': 'How do notifications work in Focus Field?',
-      'a':
-          'Focus Field has smart reminders: Daily Reminders (learns your preferred focus time or use a fixed time), Session Completion notifications with results, Achievement notifications for milestones, and Weekly Summary (Premium). Enable/customize in Settings > Advanced > Notifications.',
-    },
-  ];
+  // All 20 FAQ items - dynamically built from localization strings
+  List<Map<String, String>> get _allFAQs {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      {'q': l10n.faqQ01, 'a': l10n.faqA01},
+      {'q': l10n.faqQ02, 'a': l10n.faqA02},
+      {'q': l10n.faqQ03, 'a': l10n.faqA03},
+      {'q': l10n.faqQ04, 'a': l10n.faqA04},
+      {'q': l10n.faqQ05, 'a': l10n.faqA05},
+      {'q': l10n.faqQ06, 'a': l10n.faqA06},
+      {'q': l10n.faqQ07, 'a': l10n.faqA07},
+      {'q': l10n.faqQ08, 'a': l10n.faqA08},
+      {'q': l10n.faqQ09, 'a': l10n.faqA09},
+      {'q': l10n.faqQ10, 'a': l10n.faqA10},
+      {'q': l10n.faqQ11, 'a': l10n.faqA11},
+      {'q': l10n.faqQ12, 'a': l10n.faqA12},
+      {'q': l10n.faqQ13, 'a': l10n.faqA13},
+      {'q': l10n.faqQ14, 'a': l10n.faqA14},
+      {'q': l10n.faqQ15, 'a': l10n.faqA15},
+      {'q': l10n.faqQ16, 'a': l10n.faqA16},
+      {'q': l10n.faqQ17, 'a': l10n.faqA17},
+      {'q': l10n.faqQ18, 'a': l10n.faqA18},
+      {'q': l10n.faqQ19, 'a': l10n.faqA19},
+      {'q': l10n.faqQ20, 'a': l10n.faqA20},
+    ];
+  }
 
   List<Map<String, String>> get _filteredFAQs {
     if (_searchQuery.isEmpty) return _allFAQs;
@@ -1883,7 +1811,7 @@ class _FAQBottomSheetState extends State<_FAQBottomSheet> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Frequently Asked Questions',
+                    AppLocalizations.of(context)!.faqTitle,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -1902,7 +1830,7 @@ class _FAQBottomSheetState extends State<_FAQBottomSheet> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search FAQs...',
+                hintText: AppLocalizations.of(context)!.faqSearchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon:
                     _searchQuery.isNotEmpty
@@ -1934,7 +1862,7 @@ class _FAQBottomSheetState extends State<_FAQBottomSheet> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '${filteredFAQs.length} result${filteredFAQs.length == 1 ? '' : 's'} found',
+                  AppLocalizations.of(context)!.faqResultsCount(filteredFAQs.length),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -1956,12 +1884,12 @@ class _FAQBottomSheetState extends State<_FAQBottomSheet> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No results found',
+                            AppLocalizations.of(context)!.faqNoResults,
                             style: theme.textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Try a different search term',
+                            AppLocalizations.of(context)!.faqNoResultsSubtitle,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:focus_field/constants/app_constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 enum SupportPriority { standard, premium }
 
@@ -89,7 +90,7 @@ class SupportService {
         };
       }
     } catch (e) {
-      if (!kReleaseMode) debugPrint('Error getting device info: $e');
+      if (!kReleaseMode) DebugLog.d('Error getting device info: $e');
     }
 
     return appInfo;
@@ -110,41 +111,41 @@ class SupportService {
       'mailto:$email?subject=$subject&body=$body',
     );
     if (!kReleaseMode) {
-      debugPrint(
+      DebugLog.d(
         'Trying full email: subject="${ticket.subject}", body length=${body.length}',
       );
     }
 
     try {
       await launchUrl(fullEmailUri, mode: LaunchMode.externalApplication);
-      if (!kReleaseMode) debugPrint('Full email launch successful');
+      if (!kReleaseMode) DebugLog.d('Full email launch successful');
       return;
     } catch (e) {
-      if (!kReleaseMode) debugPrint('Full email failed: $e');
+      if (!kReleaseMode) DebugLog.d('Full email failed: $e');
     }
 
     // Try approach 2: Just subject, no body
     final Uri subjectOnlyUri = Uri.parse('mailto:$email?subject=$subject');
-    if (!kReleaseMode) debugPrint('Trying subject only');
+    if (!kReleaseMode) DebugLog.d('Trying subject only');
 
     try {
       await launchUrl(subjectOnlyUri, mode: LaunchMode.externalApplication);
-      if (!kReleaseMode) debugPrint('Subject-only email launch successful');
+      if (!kReleaseMode) DebugLog.d('Subject-only email launch successful');
       return;
     } catch (e) {
-      if (!kReleaseMode) debugPrint('Subject-only failed: $e');
+      if (!kReleaseMode) DebugLog.d('Subject-only failed: $e');
     }
 
     // Try approach 3: Basic mailto
     final Uri basicEmailUri = Uri.parse('mailto:$email');
-    if (!kReleaseMode) debugPrint('Trying basic mailto');
+    if (!kReleaseMode) DebugLog.d('Trying basic mailto');
 
     try {
       await launchUrl(basicEmailUri, mode: LaunchMode.externalApplication);
-      if (!kReleaseMode) debugPrint('Basic email launch successful');
+      if (!kReleaseMode) DebugLog.d('Basic email launch successful');
       return;
     } catch (e) {
-      if (!kReleaseMode) debugPrint('Basic launch failed: $e');
+      if (!kReleaseMode) DebugLog.d('Basic launch failed: $e');
     }
 
     // If all fail, throw an exception
@@ -208,12 +209,12 @@ class SupportService {
   /// Launch FAQ website
   Future<void> openFAQ() async {
     final Uri faqUri = Uri.parse(faqUrl);
-    debugPrint('Launching FAQ: $faqUri');
+    DebugLog.d('Launching FAQ: $faqUri');
     try {
       await launchUrl(faqUri, mode: LaunchMode.externalApplication);
-      debugPrint('FAQ launched successfully');
+      DebugLog.d('FAQ launched successfully');
     } catch (e) {
-      debugPrint('FAQ launch failed: $e');
+      DebugLog.d('FAQ launch failed: $e');
       throw Exception('Could not open browser. Please visit $faqUrl manually.');
     }
   }
@@ -221,12 +222,12 @@ class SupportService {
   /// Launch documentation website
   Future<void> openDocumentation() async {
     final Uri docUri = Uri.parse(documentationUrl);
-    debugPrint('Launching Documentation: $docUri');
+    DebugLog.d('Launching Documentation: $docUri');
     try {
       await launchUrl(docUri, mode: LaunchMode.externalApplication);
-      debugPrint('Documentation launched successfully');
+      DebugLog.d('Documentation launched successfully');
     } catch (e) {
-      debugPrint('Documentation launch failed: $e');
+      DebugLog.d('Documentation launch failed: $e');
       throw Exception(
         'Could not open browser. Please visit $documentationUrl manually.',
       );

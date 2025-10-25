@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 class AccessibilityService {
   static final AccessibilityService _instance =
@@ -32,7 +33,7 @@ class AccessibilityService {
 
       _isInitialized = true;
     } catch (e) {
-      debugPrint('Error initializing AccessibilityService: $e');
+      DebugLog.d('Error initializing AccessibilityService: $e');
     }
   }
 
@@ -74,7 +75,7 @@ class AccessibilityService {
           break;
       }
     } catch (e) {
-      debugPrint('Vibration error: $e');
+      DebugLog.d('Vibration error: $e');
     }
   }
 
@@ -85,7 +86,7 @@ class AccessibilityService {
     try {
       await _flutterTts!.speak(message);
     } catch (e) {
-      debugPrint('TTS error: $e');
+      DebugLog.d('TTS error: $e');
     }
   }
 

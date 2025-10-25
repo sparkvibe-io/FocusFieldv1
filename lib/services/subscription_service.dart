@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/constants/app_constants.dart';
 import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 class SubscriptionService {
   static SubscriptionService? _instance;
@@ -39,10 +40,10 @@ class SubscriptionService {
         _isInitialized = true;
         await _loadSavedTier();
         if (!kReleaseMode) {
-          debugPrint('📱 Subscription service initialized in MOCK MODE');
+          DebugLog.d('📱 Subscription service initialized in MOCK MODE');
         }
         if (!kReleaseMode) {
-          debugPrint('🔧 Environment: ${AppConstants.currentEnvironment}');
+          DebugLog.d('🔧 Environment: ${AppConstants.currentEnvironment}');
         }
         return;
       }
@@ -69,8 +70,8 @@ class SubscriptionService {
 
       await Purchases.configure(configuration);
       // Enable logging in release mode for debugging
-  debugPrint('🔧 RevenueCat: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})');
-  debugPrint('🔧 RevenueCat: API Key: ${AppConstants.revenueCatApiKey.substring(0, 10)}...');
+  DebugLog.d('🔧 RevenueCat: Purchases configured (key length ${AppConstants.revenueCatApiKey.length})');
+  DebugLog.d('🔧 RevenueCat: API Key: ${AppConstants.revenueCatApiKey.substring(0, 10)}...');
 
       // Set up listener for purchase updates
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfoUpdate);
@@ -82,25 +83,25 @@ class SubscriptionService {
       try {
         final offerings = await Purchases.getOfferings();
         if (offerings.current == null) {
-          debugPrint(
+          DebugLog.d(
             '🧪 RC Diagnostic: offerings.current is null. All offering keys: '
             '${offerings.all.keys.toList()}'.padRight(0),
           );
-          debugPrint(
+          DebugLog.d(
             '🧪 RC Diagnostic: This often means product IDs in the RC dashboard do not match '
             'App Store Connect, or IAPs/contracts are not fully configured. See https://rev.cat/why-are-offerings-empty',
           );
         } else {
-          debugPrint(
+          DebugLog.d(
             '🧪 RC Diagnostic: current offering = ${offerings.current!.identifier}; '
             'packages=${offerings.current!.availablePackages.length}',
           );
           for (final p in offerings.current!.availablePackages) {
-            debugPrint('🧪 RC Diagnostic: package productId=${p.storeProduct.identifier}');
+            DebugLog.d('🧪 RC Diagnostic: package productId=${p.storeProduct.identifier}');
           }
         }
       } catch (e) {
-        debugPrint('🧪 RC Diagnostic: getOfferings threw: $e');
+        DebugLog.d('🧪 RC Diagnostic: getOfferings threw: $e');
       }
 
       // Platform-specific product diagnostics
@@ -117,39 +118,39 @@ class SubscriptionService {
                 }.toList();
           final products = await Purchases.getProducts(productIds);
           if (products.isEmpty) {
-            debugPrint('🧪 RC Diagnostic: getProducts returned 0 items for $productIds');
+            DebugLog.d('🧪 RC Diagnostic: getProducts returned 0 items for $productIds');
           } else {
             for (final p in products) {
-              debugPrint('🧪 RC Diagnostic: product fetched id=${p.identifier} title=${p.title} price=${p.priceString}');
+              DebugLog.d('🧪 RC Diagnostic: product fetched id=${p.identifier} title=${p.title} price=${p.priceString}');
             }
           }
         } catch (e) {
-          debugPrint('🧪 RC Diagnostic: getProducts threw: $e');
+          DebugLog.d('🧪 RC Diagnostic: getProducts threw: $e');
         }
       } else if (Platform.isAndroid) {
         // On Android, log productId:basePlanId from offerings to validate mapping.
         try {
           final offerings = await Purchases.getOfferings();
           if (offerings.current == null) {
-            debugPrint('🧪 RC Diagnostic (Android): no current offering');
+            DebugLog.d('🧪 RC Diagnostic (Android): no current offering');
           } else {
             for (final p in offerings.current!.availablePackages) {
               final id = p.storeProduct.identifier; // e.g., premium:premium-tier-monthly
               final parts = id.split(':');
               final productId = parts.isNotEmpty ? parts.first : id;
               final basePlanId = parts.length > 1 ? parts.last : '';
-              debugPrint('🧪 RC Diagnostic (Android): productId=$productId basePlanId=$basePlanId title=${p.storeProduct.title} price=${p.storeProduct.priceString}');
+              DebugLog.d('🧪 RC Diagnostic (Android): productId=$productId basePlanId=$basePlanId title=${p.storeProduct.title} price=${p.storeProduct.priceString}');
             }
           }
         } catch (e) {
-          debugPrint('🧪 RC Diagnostic (Android): offerings inspection failed: $e');
+          DebugLog.d('🧪 RC Diagnostic (Android): offerings inspection failed: $e');
         }
       }
 
       _isInitialized = true;
-  debugPrint('✅ RevenueCat: Initialized successfully');
+  DebugLog.d('✅ RevenueCat: Initialized successfully');
     } catch (e) {
-  debugPrint('❌ RevenueCat: Failed to initialize: $e');
+  DebugLog.d('❌ RevenueCat: Failed to initialize: $e');
       // Continue with free tier if initialization fails
       await _setCurrentTier(SubscriptionTier.free);
       _isInitialized = true;
@@ -162,16 +163,16 @@ class SubscriptionService {
       final customerInfo = await Purchases.getCustomerInfo();
       try {
         final active = customerInfo.entitlements.active.keys.toList();
-  debugPrint('📊 RevenueCat: Active entitlements: $active');
-  debugPrint('📊 RevenueCat: Active subscriptions: ${customerInfo.activeSubscriptions}');
-  debugPrint('📊 RevenueCat: All entitlements: ${customerInfo.entitlements.all.keys}');
+  DebugLog.d('📊 RevenueCat: Active entitlements: $active');
+  DebugLog.d('📊 RevenueCat: Active subscriptions: ${customerInfo.activeSubscriptions}');
+  DebugLog.d('📊 RevenueCat: All entitlements: ${customerInfo.entitlements.all.keys}');
       } catch (e) {
-        debugPrint('⚠️ RevenueCat: Error reading entitlements: $e');
+        DebugLog.d('⚠️ RevenueCat: Error reading entitlements: $e');
       }
       final tier = _getTierFromCustomerInfo(customerInfo);
       await _setCurrentTier(tier);
     } catch (e) {
-  debugPrint('❌ RevenueCat: Failed to refresh customer info: $e');
+  DebugLog.d('❌ RevenueCat: Failed to refresh customer info: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -187,10 +188,10 @@ class SubscriptionService {
     try {
       final entitlementKeys = customerInfo.entitlements.active.keys;
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           'SubscriptionService: Evaluating entitlements: $entitlementKeys',
         );
-        debugPrint(
+        DebugLog.d(
           'SubscriptionService: Active store subscriptions: ${customerInfo.activeSubscriptions}',
         );
       }
@@ -198,7 +199,7 @@ class SubscriptionService {
       final configured = _entitlementKeyConfigured;
       for (final key in entitlementKeys) {
         if (key.toLowerCase() == configured.toLowerCase()) {
-          debugPrint('✅ RevenueCat: Found premium entitlement: $key');
+          DebugLog.d('✅ RevenueCat: Found premium entitlement: $key');
           return SubscriptionTier.premium;
         }
       }
@@ -206,16 +207,16 @@ class SubscriptionService {
       // Fallback heuristic: any entitlement containing premium (case-insensitive)
       for (final k in entitlementKeys) {
         if (k.toLowerCase().contains('premium')) {
-          debugPrint('✅ RevenueCat: Found premium entitlement via fallback: $k');
+          DebugLog.d('✅ RevenueCat: Found premium entitlement via fallback: $k');
           return SubscriptionTier.premium;
         }
       }
       
-  debugPrint('ℹ️ RevenueCat: No premium entitlements found. Expected key="$_entitlementKeyConfigured". Available: $entitlementKeys');
+  DebugLog.d('ℹ️ RevenueCat: No premium entitlements found. Expected key="$_entitlementKeyConfigured". Available: $entitlementKeys');
       // As last resort, if active subscriptions exist but no entitlements matched, stay free (avoid over-granting).
     } catch (e) {
       if (!kReleaseMode) {
-        debugPrint('SubscriptionService: Entitlement evaluation error: $e');
+        DebugLog.d('SubscriptionService: Entitlement evaluation error: $e');
       }
     }
     return SubscriptionTier.free;
@@ -232,7 +233,7 @@ class SubscriptionService {
       await prefs.setString(AppConstants.subscriptionTierKey, tier.toString());
 
       if (!kReleaseMode) {
-        debugPrint('SubscriptionService: Tier updated to ${tier.displayName}');
+        DebugLog.d('SubscriptionService: Tier updated to ${tier.displayName}');
       }
     }
   }
@@ -246,7 +247,7 @@ class SubscriptionService {
       final tier = SubscriptionTier.fromString(tierString);
       await _setCurrentTier(tier);
     } catch (e) {
-      debugPrint('SubscriptionService: Failed to load tier from storage: $e');
+      DebugLog.d('SubscriptionService: Failed to load tier from storage: $e');
       await _setCurrentTier(SubscriptionTier.free);
     }
   }
@@ -261,7 +262,7 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-        debugPrint(
+        DebugLog.d(
           '📱 MOCK: Purchasing Premium ${isYearly ? 'yearly' : 'monthly'}',
         );
         await Future.delayed(
@@ -273,14 +274,14 @@ class SubscriptionService {
 
       final offerings = await Purchases.getOfferings();
       if (!kReleaseMode) {
-        debugPrint('🧪 RC purchase: offerings keys=${offerings.all.keys.toList()}');
+        DebugLog.d('🧪 RC purchase: offerings keys=${offerings.all.keys.toList()}');
         if (offerings.current == null) {
-          debugPrint('🧪 RC purchase: offerings.current is null');
+          DebugLog.d('🧪 RC purchase: offerings.current is null');
         } else {
           final ids = offerings.current!.availablePackages
               .map((p) => p.storeProduct.identifier)
               .toList();
-          debugPrint('🧪 RC purchase: current=${offerings.current!.identifier} packages=$ids');
+          DebugLog.d('🧪 RC purchase: current=${offerings.current!.identifier} packages=$ids');
         }
       }
       final offering = offerings.current;
@@ -296,7 +297,7 @@ class SubscriptionService {
       if (package == null) {
         throw Exception('No purchasable packages in current offering');
       }
-      debugPrint('🧪 RC purchase: selected package id=${package.storeProduct.identifier} price=${package.storeProduct.priceString}');
+      DebugLog.d('🧪 RC purchase: selected package id=${package.storeProduct.identifier} price=${package.storeProduct.priceString}');
 
       // Updated to new API: use PurchaseParams with Purchases.purchase
       final purchaseResult = await Purchases.purchase(
@@ -305,7 +306,7 @@ class SubscriptionService {
       final tier = _getTierFromCustomerInfo(purchaseResult.customerInfo);
       try {
         final appUserId = await Purchases.appUserID;
-        debugPrint('🧪 RC purchase: appUserId=$appUserId');
+        DebugLog.d('🧪 RC purchase: appUserId=$appUserId');
       } catch (_) {}
       await _setCurrentTier(tier);
       return tier == SubscriptionTier.premium;
@@ -313,18 +314,18 @@ class SubscriptionService {
       if (e is PlatformException) {
         final errorCode = PurchasesErrorHelper.getErrorCode(e);
         if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
-          debugPrint('SubscriptionService: Purchase cancelled by user');
+          DebugLog.d('SubscriptionService: Purchase cancelled by user');
           return false;
         } else if (errorCode ==
             PurchasesErrorCode.productAlreadyPurchasedError) {
           // Refresh customer info to ensure entitlements are applied
-          debugPrint(
+          DebugLog.d(
             'SubscriptionService: Product already purchased – refreshing customer info',
           );
           await _refreshCustomerInfo();
           return _currentTier == SubscriptionTier.premium;
         } else if (errorCode == PurchasesErrorCode.productNotAvailableForPurchaseError && Platform.isAndroid) {
-          debugPrint(
+          DebugLog.d(
             'SubscriptionService: Product not available for purchase on Android. Ensure: '
             '1) App installed from Play Internal Testing (not sideloaded), '
             '2) Tester account is enrolled and signed into Play, '
@@ -333,7 +334,7 @@ class SubscriptionService {
           return false;
         }
       }
-      debugPrint('SubscriptionService: Purchase failed: $e');
+      DebugLog.d('SubscriptionService: Purchase failed: $e');
       rethrow;
     }
   }
@@ -345,7 +346,7 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-        debugPrint('📱 MOCK: Restoring purchases');
+        DebugLog.d('📱 MOCK: Restoring purchases');
         await Future.delayed(
           const Duration(seconds: 1),
         ); // Simulate network delay
@@ -357,13 +358,13 @@ class SubscriptionService {
       final customerInfo = await Purchases.restorePurchases();
       try {
         final appUserId = await Purchases.appUserID;
-        debugPrint('🧪 RC restore: appUserId=$appUserId');
+        DebugLog.d('🧪 RC restore: appUserId=$appUserId');
       } catch (_) {}
       final tier = _getTierFromCustomerInfo(customerInfo);
       await _setCurrentTier(tier);
       return tier != SubscriptionTier.free;
     } catch (e) {
-      debugPrint('SubscriptionService: Restore failed: $e');
+      DebugLog.d('SubscriptionService: Restore failed: $e');
       rethrow;
     }
   }
@@ -373,19 +374,19 @@ class SubscriptionService {
     try {
       // Handle mock mode
       if (AppConstants.enableMockSubscriptions) {
-        debugPrint('📱 MOCK: Getting offerings');
+        DebugLog.d('📱 MOCK: Getting offerings');
         // Return null for mock mode since we don't need offerings for testing
         return null;
       }
       final offerings = await Purchases.getOfferings();
       if (offerings.current == null) {
-        debugPrint('🧪 RC getOfferings: current is null; keys=${offerings.all.keys.toList()}');
+        DebugLog.d('🧪 RC getOfferings: current is null; keys=${offerings.all.keys.toList()}');
       } else {
-        debugPrint('🧪 RC getOfferings: current=${offerings.current!.identifier} packages=${offerings.current!.availablePackages.length}');
+        DebugLog.d('🧪 RC getOfferings: current=${offerings.current!.identifier} packages=${offerings.current!.availablePackages.length}');
       }
       return offerings;
     } catch (e) {
-      debugPrint('SubscriptionService: Failed to get offerings: $e');
+      DebugLog.d('SubscriptionService: Failed to get offerings: $e');
       return null;
     }
   }

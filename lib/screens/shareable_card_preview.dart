@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:focus_field/widgets/shareable_cards.dart';
 import 'package:focus_field/widgets/share_button.dart';
 import 'package:focus_field/services/share_service.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Screen that displays a shareable card in preview mode.
 /// Users can see what they're about to share before sharing it.
@@ -53,10 +54,11 @@ class _ShareableCardPreviewState extends State<ShareableCardPreview> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: Text(widget.title ?? 'Share Card'),
+        title: Text(widget.title ?? l10n.shareCardTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -111,6 +113,7 @@ class WeeklySummaryShareSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -127,7 +130,7 @@ class WeeklySummaryShareSheet extends StatelessWidget {
               const Icon(Icons.share, size: 28),
               const SizedBox(width: 12),
               Text(
-                'Share Your Week',
+                l10n.shareYourWeek,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -139,8 +142,8 @@ class WeeklySummaryShareSheet extends StatelessWidget {
           // Card style options
           _buildCardOption(
             context,
-            title: 'Gradient Style',
-            description: 'Bold gradient with large numbers',
+            title: l10n.shareStyleGradient,
+            description: l10n.shareStyleGradientDesc,
             icon: Icons.gradient,
             onTap: () {
               Navigator.pop(context);
@@ -161,7 +164,7 @@ class WeeklySummaryShareSheet extends StatelessWidget {
                       sessionCount: sessionCount,
                       successRate: successRate,
                     ),
-                    title: 'Weekly Summary',
+                    title: l10n.shareWeeklySummary,
                   ),
                 ),
               );
@@ -171,8 +174,8 @@ class WeeklySummaryShareSheet extends StatelessWidget {
 
           _buildCardOption(
             context,
-            title: 'Achievement Style',
-            description: 'Focus on total quiet minutes',
+            title: l10n.shareStyleAchievement,
+            description: l10n.shareStyleAchievementDesc,
             icon: Icons.emoji_events,
             onTap: () {
               Navigator.pop(context);
@@ -183,15 +186,15 @@ class WeeklySummaryShareSheet extends StatelessWidget {
                     card: AchievementCard(
                       value: totalMinutes,
                       unit: 'minutes',
-                      achievement: 'Quiet Minutes This Week',
-                      message: 'Building deeper focus,\none session at a time',
+                      achievement: l10n.shareQuietMinutesWeek,
+                      message: l10n.shareAchievementMessage,
                     ),
                     filename: 'focus_field_achievement_${DateTime.now().millisecondsSinceEpoch}',
                     shareText: ShareService.instance.generateAchievementText(
                       achievement: 'I earned $totalMinutes quiet minutes this week',
                       value: totalMinutes,
                     ),
-                    title: 'Achievement Card',
+                    title: l10n.shareAchievementCard,
                   ),
                 ),
               );
@@ -202,8 +205,8 @@ class WeeklySummaryShareSheet extends StatelessWidget {
           // Text-only option
           _buildCardOption(
             context,
-            title: 'Text Only',
-            description: 'Share as plain text (no image)',
+            title: l10n.shareTextOnly,
+            description: l10n.shareTextOnlyDesc,
             icon: Icons.text_fields,
             onTap: () async {
               Navigator.pop(context);
@@ -318,6 +321,7 @@ void showStreakShare(
   required int streakDays,
   String streakType = 'Daily Focus',
 }) {
+  final l10n = AppLocalizations.of(context)!;
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -338,7 +342,7 @@ void showStreakShare(
               const Icon(Icons.local_fire_department, size: 28),
               const SizedBox(width: 12),
               Text(
-                'Share Your Streak',
+                l10n.shareYourStreak,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -361,8 +365,8 @@ void showStreakShare(
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            title: const Text('Share as Card'),
-            subtitle: const Text('Beautiful visual card'),
+            title: Text(l10n.shareAsCard),
+            subtitle: Text(l10n.shareAsCardDesc),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.pop(context);
@@ -378,7 +382,7 @@ void showStreakShare(
                     shareText: ShareService.instance.generateStreakText(
                       streakDays: streakDays,
                     ),
-                    title: 'Streak Card',
+                    title: l10n.shareStreakCard,
                   ),
                 ),
               );
@@ -400,8 +404,8 @@ void showStreakShare(
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            title: const Text('Share as Text'),
-            subtitle: const Text('Simple text message'),
+            title: Text(l10n.shareAsText),
+            subtitle: Text(l10n.shareAsTextDesc),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () async {
               Navigator.pop(context);

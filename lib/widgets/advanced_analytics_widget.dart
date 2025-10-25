@@ -50,7 +50,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
             _insights(context, insights, compact: compact),
           ],
           // Bottom padding to ensure last insight is visible when scrolling
-          const SizedBox(height: 16), // Reduced from 80 for compact layout
+          const SizedBox(height: 100), // Increased to ensure bottom widget is fully visible
         ],
       );
 
@@ -245,7 +245,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               child: _buildCompactMetricCard(
                 context,
                 icon: Icons.hourglass_bottom,
-                label: 'Preferred Duration',
+                label: AppLocalizations.of(context)!.analyticsPreferredDuration,
                 value: localizedPreferredDuration(m.preferredDuration),
                 color: theme.colorScheme.primary,
               ),
@@ -320,6 +320,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     Map<String, int> bestTimeByActivity,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (bestTimeByActivity.isEmpty) {
       return const SizedBox.shrink();
@@ -329,7 +330,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Best Time by Activity',
+          l10n.insightsBestTimeByActivity,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -704,11 +705,12 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     List<AnalyticsInsight> insights, {
     required bool compact,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Insights',
+          l10n.insightsTitle,
           style: Theme.of(
             context,
           ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -727,9 +729,15 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
   }
 
   Widget _insightCard(BuildContext context, AnalyticsInsight insight) {
+    final l10n = AppLocalizations.of(context)!;
     final color = _insightColor(context, insight.type);
     final icon = _insightIcon(insight.type);
     final scheme = Theme.of(context).colorScheme;
+
+    // Translate insight title and description using keys
+    final title = _translateInsightKey(l10n, insight.titleKey, insight.params);
+    final description = _translateInsightKey(l10n, insight.descriptionKey, insight.params);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -764,7 +772,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        insight.title,
+                        title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: color,
@@ -782,7 +790,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  insight.description,
+                  description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -793,6 +801,31 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  // Helper to translate insight keys dynamically
+  String _translateInsightKey(AppLocalizations l10n, String key, Map<String, dynamic>? params) {
+    // Map of all insight keys to their translations
+    final translations = {
+      'insightHighSuccessRateTitle': l10n.insightHighSuccessRateTitle,
+      'insightHighSuccessRateDesc': l10n.insightHighSuccessRateDesc,
+      'insightEnvironmentStabilityTitle': l10n.insightEnvironmentStabilityTitle,
+      'insightEnvironmentStabilityDesc': l10n.insightEnvironmentStabilityDesc,
+      'insightLowNoiseSuccessTitle': l10n.insightLowNoiseSuccessTitle,
+      'insightLowNoiseSuccessDesc': l10n.insightLowNoiseSuccessDesc,
+      'insightConsistentPracticeTitle': l10n.insightConsistentPracticeTitle,
+      'insightConsistentPracticeDesc': l10n.insightConsistentPracticeDesc,
+      'insightRoomTooNoisyTitle': l10n.insightRoomTooNoisyTitle,
+      'insightRoomTooNoisyDesc': l10n.insightRoomTooNoisyDesc,
+      'insightIrregularScheduleTitle': l10n.insightIrregularScheduleTitle,
+      'insightIrregularScheduleDesc': l10n.insightIrregularScheduleDesc,
+      'insightLowAmbientScoreTitle': l10n.insightLowAmbientScoreTitle,
+      'insightLowAmbientScoreDesc': l10n.insightLowAmbientScoreDesc,
+      'insightNoRecentSessionsTitle': l10n.insightNoRecentSessionsTitle,
+      'insightNoRecentSessionsDesc': l10n.insightNoRecentSessionsDesc,
+    };
+
+    return translations[key] ?? key; // Fallback to key if not found
   }
 
   Widget _legendDot(BuildContext context, Color color, {bool dashed = false}) =>
@@ -843,42 +876,45 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return '${h - 12} PM';
   }
 
-  Widget _fallbackErrorContainer(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.4),
+  Widget _fallbackErrorContainer(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.4),
+        ),
       ),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.warning_amber_rounded,
-          color: Theme.of(context).colorScheme.error,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Analytics unavailable',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'We\'ll attempt to restore this section on the next app launch.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.warning_amber_rounded,
+            color: Theme.of(context).colorScheme.error,
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.analyticsUnavailable,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.analyticsRestoreAttempt,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:focus_field/services/ad_service.dart';
 import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Simple reusable banner ad container anchored at the bottom.
 class FooterBannerAd extends StatefulWidget {
@@ -42,7 +43,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
         onAdLoaded: (ad) {
           // Debug logging (development only)
           if (kDebugMode) {
-            debugPrint('[Ads] Banner loaded with unit: $_unitId, size: ${ad is BannerAd ? ad.size : size}');
+            DebugLog.d('[Ads] Banner loaded with unit: $_unitId, size: ${ad is BannerAd ? ad.size : size}');
           }
           if (!mounted) return;
           setState(() {
@@ -52,7 +53,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
         },
         onAdFailedToLoad: (ad, err) {
           if (kDebugMode) {
-            debugPrint('[Ads] Banner failed to load (unit: $_unitId): ${err.message} (code ${err.code})');
+            DebugLog.d('[Ads] Banner failed to load (unit: $_unitId): ${err.message} (code ${err.code})');
           }
           ad.dispose();
           if (mounted) {
@@ -82,7 +83,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
 
   Future<void> _loadTestFallback() async {
     if (kDebugMode) {
-      debugPrint('[Ads] Retrying with Google test banner unit to verify integration');
+      DebugLog.d('[Ads] Retrying with Google test banner unit to verify integration');
     }
     const size = AdSize.banner;
     final testAd = BannerAd(
@@ -91,7 +92,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           if (kDebugMode) {
-            debugPrint('[Ads] Test banner loaded (fallback). Integration verified.');
+            DebugLog.d('[Ads] Test banner loaded (fallback). Integration verified.');
           }
           if (!mounted) return;
           setState(() {
@@ -101,7 +102,7 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
         },
         onAdFailedToLoad: (ad, err) {
           if (kDebugMode) {
-            debugPrint('[Ads] Test banner also failed: ${err.message} (code ${err.code})');
+            DebugLog.d('[Ads] Test banner also failed: ${err.message} (code ${err.code})');
           }
           ad.dispose();
         },

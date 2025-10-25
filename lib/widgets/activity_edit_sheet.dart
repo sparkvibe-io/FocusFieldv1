@@ -5,6 +5,7 @@ import '../providers/ambient_quest_provider.dart';
 import '../theme/theme_extensions.dart';
 import '../constants/ui_constants.dart';
 import 'common/drag_handle.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Bottom sheet for editing activity visibility and daily goal
 class ActivityEditSheet extends ConsumerStatefulWidget {
@@ -58,6 +59,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final maxHeight = MediaQuery.of(context).size.height * UIConstants.bottomSheetMaxHeightRatio;
     const maxTotalMinutes = 1080; // 18 hours total budget
 
@@ -91,7 +93,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Edit Activities',
+                l10n.activityEditTitle,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -114,7 +116,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Recommended: 10+ min per activity for consistent habit building',
+                  l10n.activityRecommendation,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary.withValues(alpha: 0.7),
                     fontStyle: FontStyle.italic,
@@ -129,7 +131,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             context,
             'study',
             Icons.school_outlined,
-            'Study',
+            l10n.onboardingActivityStudyTitle,
             _profileEnabled['study']!,
             const Color(0xFF7F6BB0),
           ),
@@ -138,7 +140,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             context,
             'reading',
             Icons.menu_book_outlined,
-            'Reading',
+            l10n.onboardingActivityReadingTitle,
             _profileEnabled['reading']!,
             const Color(0xFF5B9BD5),
           ),
@@ -147,7 +149,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             context,
             'meditation',
             Icons.self_improvement_outlined,
-            'Meditation',
+            l10n.onboardingActivityMeditationTitle,
             _profileEnabled['meditation']!,
             const Color(0xFF70AD47),
           ),
@@ -156,7 +158,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             context,
             'other',
             Icons.star_outline,
-            'Other',
+            l10n.onboardingActivityOtherTitle,
             _profileEnabled['other']!,
             const Color(0xFFFFC000),
           ),
@@ -173,14 +175,14 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Daily Goals',
+                    l10n.activityDailyGoals,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Total: ${(_totalMinutes / 60).toStringAsFixed(1)}h / 18h',
+                    l10n.activityTotalHours((_totalMinutes / 60).toStringAsFixed(1)),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: _totalMinutes > maxTotalMinutes
                           ? theme.colorScheme.error
@@ -195,7 +197,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
               Row(
                 children: [
                   Text(
-                    'Per-Activity',
+                    l10n.activityPerActivity,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -240,7 +242,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Total exceeds 18-hour daily limit. Please reduce goals.',
+                      l10n.activityExceedsLimit,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onErrorContainer,
                       ),
@@ -262,14 +264,14 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Goal',
+                    l10n.activityGoalLabel,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Set your daily focus target (1 min - 18h)',
+                    l10n.activityGoalDescription,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -321,7 +323,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Current goal: ${_goalMinutes >= 60 ? '${(_goalMinutes / 60).toStringAsFixed(1)}h' : '${_goalMinutes}min'}',
+                            l10n.activityCurrentGoal(_goalMinutes >= 60 ? '${(_goalMinutes / 60).toStringAsFixed(1)}h' : '${_goalMinutes}min'),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -343,9 +345,9 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             width: double.infinity,
             child: FilledButton(
               onPressed: _save,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text('Save Changes'),
+                child: Text(l10n.activitySaveChanges),
               ),
             ),
           ),
@@ -463,6 +465,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
     // Validate: At least one activity must be enabled
     final enabledList = _profileEnabled.entries
         .where((e) => e.value)
@@ -471,9 +474,9 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
 
     if (enabledList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('⚠️ At least one activity must be enabled'),
-          duration: Duration(seconds: 3),
+        SnackBar(
+          content: Text(l10n.errorActivityRequired),
+          duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
@@ -483,9 +486,9 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
     // Validate total budget
     if (_totalMinutes > 1080) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Total goals exceed 18-hour daily limit. Please reduce goals.'),
-          duration: Duration(seconds: 3),
+        SnackBar(
+          content: Text(l10n.errorGoalExceeds),
+          duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
@@ -516,9 +519,9 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
     if (mounted) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Settings saved'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(l10n.messageSaved),
+          duration: const Duration(seconds: 2),
         ),
       );
     }

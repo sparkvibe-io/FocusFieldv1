@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:focus_field/providers/notification_provider.dart';
 import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class NotificationSettingsWidget extends ConsumerStatefulWidget {
   const NotificationSettingsWidget({super.key});
@@ -25,6 +26,7 @@ class _NotificationSettingsWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final notificationService = ref.watch(notificationServiceProvider);
     final settings = ref.watch(settingsNotifierProvider);
@@ -74,7 +76,7 @@ class _NotificationSettingsWidgetState
                     Icon(Icons.notifications, color: theme.colorScheme.primary),
                     const SizedBox(width: 12),
                     Text(
-                      'Notification Settings',
+                      l10n.notificationSettingsTitle,
                       style: theme.textTheme.titleLarge,
                     ),
                     const Spacer(),
@@ -108,7 +110,7 @@ class _NotificationSettingsWidgetState
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Permission required',
+                            l10n.errorPermissionRequired,
                             style: theme.textTheme.titleSmall?.copyWith(
                               color: theme.colorScheme.error,
                               fontWeight: FontWeight.w600,
@@ -118,7 +120,7 @@ class _NotificationSettingsWidgetState
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Enable notifications to receive reminders and celebrate achievements.',
+                        l10n.notificationEnableReason,
                         style: theme.textTheme.bodySmall,
                       ),
                       const SizedBox(height: 8),
@@ -141,8 +143,8 @@ class _NotificationSettingsWidgetState
                                   : const Icon(Icons.settings),
                           label: Text(
                             _isRequestingPermission
-                                ? 'Requesting...'
-                                : 'Enable Notifications',
+                                ? l10n.buttonRequesting
+                                : l10n.buttonEnableNotifications,
                           ),
                         ),
                       ),
@@ -156,7 +158,7 @@ class _NotificationSettingsWidgetState
                     children: [
                       _buildSettingsTile(
                         context: context,
-                        title: 'Enable Notifications',
+                        title: l10n.buttonEnableNotifications,
                         subtitle: 'Allow Focus Field to send notifications',
                         icon: Icons.notifications_active,
                         value: enableNotifications,
@@ -217,7 +219,7 @@ class _NotificationSettingsWidgetState
                                           WrapCrossAlignment.center,
                                       children: [
                                         Text(
-                                          'Daily Time',
+                                          l10n.notificationDailyTime,
                                           style: theme.textTheme.labelMedium,
                                         ),
                                         OutlinedButton(
@@ -258,7 +260,7 @@ class _NotificationSettingsWidgetState
                                                 ScaffoldMessenger.of(ctx).showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                      'Daily reminder at $pickedText',
+                                                      AppLocalizations.of(ctx)!.notificationDailyReminderSet(pickedText),
                                                     ),
                                                   ),
                                                 );
@@ -267,14 +269,15 @@ class _NotificationSettingsWidgetState
                                           },
                                           child: Builder(
                                             builder: (ctx) {
+                                              final l10nCtx = AppLocalizations.of(ctx)!;
                                               final smart = notificationService.getOptimalReminderTime();
                                               final smartText = (smart != null && mounted)
                                                   ? smart.format(ctx)
-                                                  : 'learning';
+                                                  : l10nCtx.notificationLearning;
                                               return Text(
                                                 dailyReminderHour != null && dailyReminderMinute != null
                                                     ? _formatTime(dailyReminderHour, dailyReminderMinute)
-                                                    : 'Smart ($smartText)',
+                                                    : l10nCtx.notificationSmart(smartText),
                                               );
                                             },
                                           ),
@@ -300,13 +303,13 @@ class _NotificationSettingsWidgetState
                                                     context: context,
                                                   );
                                             },
-                                            child: const Text('Use Smart'),
+                                            child: Text(l10n.buttonUseSmart),
                                           ),
                                       ],
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'Choose a fixed time or let Focus Field learn your pattern.',
+                                      l10n.notificationSmartExplanation,
                                       style: theme.textTheme.bodySmall,
                                     ),
                                   ],
@@ -315,8 +318,8 @@ class _NotificationSettingsWidgetState
                       ),
                       _buildSettingsTile(
                         context: context,
-                        title: 'Session Completed',
-                        subtitle: 'Celebrate completed sessions',
+                        title: l10n.notificationSessionComplete,
+                        subtitle: l10n.notificationComplete,
                         icon: Icons.check_circle,
                         value: enableSessionComplete,
                         onChanged:
@@ -336,8 +339,8 @@ class _NotificationSettingsWidgetState
                       ),
                       _buildSettingsTile(
                         context: context,
-                        title: 'Achievement Unlocked',
-                        subtitle: 'Milestone notifications',
+                        title: l10n.notificationAchievement,
+                        subtitle: l10n.notificationMilestone,
                         icon: Icons.emoji_events,
                         value: enableAchievementNotifications,
                         onChanged:
@@ -357,8 +360,8 @@ class _NotificationSettingsWidgetState
                       ),
                       _buildSettingsTile(
                         context: context,
-                        title: 'Weekly Progress Summary',
-                        subtitle: 'Weekly insights (weekday & time)',
+                        title: l10n.notificationWeekly,
+                        subtitle: l10n.notificationWeeklyInsights,
                         icon: Icons.insights,
                         value: enableWeeklyProgress,
                         onChanged:
@@ -435,7 +438,7 @@ class _NotificationSettingsWidgetState
                                           WrapCrossAlignment.center,
                                       children: [
                                         Text(
-                                          'Weekly Time',
+                                          l10n.notificationWeeklyTime,
                                           style: theme.textTheme.labelMedium,
                                         ),
                                         OutlinedButton.icon(
@@ -494,7 +497,7 @@ class _NotificationSettingsWidgetState
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Notification Preview',
+                          l10n.notificationPreview,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -502,7 +505,7 @@ class _NotificationSettingsWidgetState
                         const SizedBox(height: 12),
                         _buildNotificationPreview(
                           context: context,
-                          title: 'Daily Reminder',
+                          title: l10n.notificationDailyReminder,
                           message: notificationService.getSmartReminderMessage(
                             context,
                           ),
@@ -512,7 +515,7 @@ class _NotificationSettingsWidgetState
                           const SizedBox(height: 8),
                           _buildNotificationPreview(
                             context: context,
-                            title: 'Session Complete',
+                            title: l10n.notificationComplete,
                             message: notificationService.getCompletionMessage(
                               true,
                               5,
@@ -524,7 +527,7 @@ class _NotificationSettingsWidgetState
                           const SizedBox(height: 8),
                           _buildNotificationPreview(
                             context: context,
-                            title: 'Achievement',
+                            title: l10n.notificationAchievement,
                             message: notificationService.getAchievementMessage(
                               context,
                               'week_streak',
@@ -726,6 +729,7 @@ class _NotificationSettingsWidgetState
       final granted = await notificationService.requestNotificationPermission();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         if (granted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -737,7 +741,7 @@ class _NotificationSettingsWidgetState
                     size: 16,
                   ),
                   const SizedBox(width: 8),
-                  const Text('Notifications enabled successfully!'),
+                  Text(l10n.notificationPermissionRationale),
                 ],
               ),
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -754,12 +758,12 @@ class _NotificationSettingsWidgetState
                     size: 16,
                   ),
                   const SizedBox(width: 8),
-                  const Text('Please enable notifications in device settings'),
+                  Text(l10n.settingsSnackbar),
                 ],
               ),
               backgroundColor: Theme.of(context).colorScheme.errorContainer,
               action: SnackBarAction(
-                label: 'Settings',
+                label: l10n.settings,
                 onPressed: () => openAppSettings(),
               ),
             ),

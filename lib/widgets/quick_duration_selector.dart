@@ -79,7 +79,7 @@ class QuickDurationSelector extends ConsumerWidget {
       ) : (isDisabled ? () => showPaywall(
         context,
         requiredTier: SubscriptionTier.premium,
-        featureDescription: _getDurationFeatureDescription(minutes),
+        featureDescription: _getDurationFeatureDescription(minutes, loc),
       ) : null),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -160,7 +160,7 @@ class QuickDurationSelector extends ConsumerWidget {
       showPaywall(
         context,
         requiredTier: SubscriptionTier.premium,
-        featureDescription: _getDurationFeatureDescription(minutes),
+        featureDescription: _getDurationFeatureDescription(minutes, loc),
       );
       return;
     }
@@ -170,17 +170,17 @@ class QuickDurationSelector extends ConsumerWidget {
   }
 
   /// Get feature description for duration-based premium features
-  String _getDurationFeatureDescription(int minutes) {
+  String _getDurationFeatureDescription(int minutes, AppLocalizations? loc) {
     if (minutes == 60) {
-      return 'Sessions up to 1 hour';
+      return loc?.durationUpTo1Hour ?? 'Sessions up to 1 hour';
     } else if (minutes == 90) {
-      return 'Sessions up to 1.5 hours';
+      return loc?.durationUpTo1_5Hours ?? 'Sessions up to 1.5 hours';
     } else if (minutes == 120) {
-      return 'Sessions up to 2 hours';
+      return loc?.durationUpTo2Hours ?? 'Sessions up to 2 hours';
     } else if (minutes > 30) {
-      return 'Extended session durations';
+      return loc?.durationExtended ?? 'Extended session durations';
     }
-    return 'Extended session access';
+    return loc?.durationExtendedAccess ?? 'Extended session access';
   }
 
   /// Format duration minutes into a user-friendly string

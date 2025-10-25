@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focus_field/models/silence_data.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class PracticeOverviewWidget extends StatelessWidget {
   final SilenceData silenceData;
@@ -51,6 +52,7 @@ class PracticeOverviewWidget extends StatelessWidget {
   }
 
   Widget _buildCompactHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Icon(
@@ -60,7 +62,7 @@ class PracticeOverviewWidget extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          'Practice Overview',
+          l10n.practiceOverviewTitle,
           style: Theme.of(
             context,
           ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -72,6 +74,7 @@ class PracticeOverviewWidget extends StatelessWidget {
   Widget _buildCompactStatsAndChart(BuildContext context) {
     // Always place the chart to the right of the stats to conserve vertical space.
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final dramatic = theme.extension<DramaticThemeStyling>();
     final statsRow = Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -79,7 +82,7 @@ class PracticeOverviewWidget extends StatelessWidget {
         for (final entry in [
           (
             silenceData.totalPoints.toString(),
-            'Points',
+            l10n.statPoints,
             Icons.stars,
             (dramatic?.statAccentColors != null &&
                     dramatic!.statAccentColors!.isNotEmpty)
@@ -88,7 +91,7 @@ class PracticeOverviewWidget extends StatelessWidget {
           ),
           (
             silenceData.currentStreak.toString(),
-            'Streak',
+            l10n.statStreak,
             Icons.local_fire_department,
             (dramatic?.statAccentColors != null &&
                     dramatic!.statAccentColors!.length > 1)
@@ -97,7 +100,7 @@ class PracticeOverviewWidget extends StatelessWidget {
           ),
           (
             silenceData.totalSessions.toString(),
-            'Sessions',
+            l10n.statSessions,
             Icons.play_circle,
             (dramatic?.statAccentColors != null &&
                     dramatic!.statAccentColors!.length > 2)
@@ -174,6 +177,7 @@ class PracticeOverviewWidget extends StatelessWidget {
 
   Widget _build7DayChart(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final last7Days = _getLast7DaysActivity();
 
     // The chart previously caused a 1px vertical overflow on small layouts because
@@ -201,7 +205,7 @@ class PracticeOverviewWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Last 7 Days',
+              l10n.practiceLast7Days,
               style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 fontSize: 10,

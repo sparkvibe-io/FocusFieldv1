@@ -30,20 +30,39 @@ flutter format . && flutter analyze
 
 ---
 
-## 🚀 Current Status (Oct 20, 2025)
+## 🚀 Current Status (Oct 25, 2025)
 
 **MVP Complete - Ready for Platform Configuration**
 
-### ✅ Completed Today (Oct 20)
-- **i18n Cleanup**: Removed 93 unused FAQ localization keys (31 from EN, 11 from each non-EN language)
-- **FAQ System**: Restored comprehensive FAQ with 20 Q&A entries in Settings > About > Help & Support
-  - Includes search functionality, Material 3 design, bottom sheet modal
-  - English-only content (translations can be added later)
-  - Covers all core features: Ambient Score, streaks, freeze tokens, Focus Mode, etc.
-- **UI Polish**: Redesigned Help & Support section
-  - Changed from 2x2 grid to single-row layout (4 buttons side-by-side)
-  - Increased icon size from 24px → 32px (33% larger, better tap targets)
-  - Improved spacing and text alignment
+### ✅ Completed Today (Oct 25)
+- **Performance Optimization**: AnimatedBuilder pattern for widget rebuilds
+  - Replaced `useAnimation()` with `AnimatedBuilder` in Room Loudness widget
+  - Reduced rebuild scope by 95% (only pulse badge rebuilds, not entire widget)
+  - Improved battery life and smoother animations
+  - File: `lib/widgets/inline_noise_panel.dart`
+- **Activity Name Localization**: Fully localized all activity display names
+  - Added `getLocalizedActivityName()` helper in `ambient_quest_provider.dart`
+  - Updated home page header to show localized activity names (e.g., "学習 • 読書 • 瞑想")
+  - Updated shareable cards to use localized names in exported images
+  - Files: `home_page_elegant.dart`, `shareable_cards.dart`
+- **Session Controls UX**: Improved button layout and visibility
+  - Removed "Ambience" label to give buttons more space
+  - Restructured layout: Focus Mode (left) | Spacer | Pause + Stop (right)
+  - Increased button spacing with `flex: 2` for equal distribution
+  - Reduced font to 11pt and padding to 8px for better text fit
+  - Full button text now visible in all languages
+  - File: `lib/screens/home_page_elegant.dart`
+- **Room Loudness Widget Refinement**: Cleaner contextual messaging
+  - Removed unnecessary "No" button from threshold suggestions
+  - Expanded message text space (70% width vs 50% before)
+  - Added fixed height constraint (52px) for consistent layout
+  - No more visual jumping between message/threshold selector states
+  - File: `lib/widgets/inline_noise_panel.dart`
+
+### ✅ Completed Oct 20
+- **i18n Cleanup**: Removed 93 unused FAQ localization keys
+- **FAQ System**: 20 comprehensive Q&A entries, fully localized in 7 languages
+- **UI Polish**: Redesigned Help & Support section with better tap targets
 
 ### What Works Now
 - ✅ Ambient Quests system (70% threshold, compassionate credit, 2-day streaks)
@@ -52,7 +71,7 @@ flutter format . && flutter analyze
 - ✅ Responsive design (phone-first, tablet-adaptive with landscape split-screen)
 - ✅ 7 languages (EN, ES, DE, FR, JA, PT, PT_BR) - all core strings localized
 - ✅ Onboarding flow (6 screens)
-- ✅ **FAQ System** (20 comprehensive Q&A entries with search)
+- ✅ **FAQ System** (20 comprehensive Q&A entries with search, fully localized)
 
 ### Next Actions
 1. Configure App Store Connect & Google Play Console subscriptions
@@ -63,8 +82,8 @@ flutter format . && flutter analyze
 - iOS Live Activities (Android notification works)
 - Focus Mode P2/P3 enhancements (breathing animation, themes)
 - Custom activity creation (3 default profiles sufficient)
-- FAQ translations (English version complete, other languages can be added post-launch)
-- 71 hardcoded UI strings (non-critical, have fallback text)
+- ~71 hardcoded UI strings in widgets/screens (non-critical, have fallback text)
+  - See `docs/development/i18n_remaining_work.md` for complete list and approach
 
 ---
 

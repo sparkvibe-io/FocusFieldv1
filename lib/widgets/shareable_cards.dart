@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart';
 
 /// Card format options for sharing
 enum ShareCardFormat {
-  square(1080, 1080, 'Square'),     // 1:1 - Universal
-  post(1080, 1350, 'Post'),         // 4:5 - Instagram/Twitter posts
-  story(1080, 1920, 'Story');       // 9:16 - Instagram Stories
+  square(1080, 1080, 'Square'), // 1:1 - Universal
+  post(1080, 1350, 'Post'), // 4:5 - Instagram/Twitter posts
+  story(1080, 1920, 'Story'); // 9:16 - Instagram Stories
 
   const ShareCardFormat(this.width, this.height, this.label);
   final double width;
@@ -14,11 +16,11 @@ enum ShareCardFormat {
 
 /// Collection of beautifully designed shareable cards for social media.
 /// Cards support multiple format sizes (Square, Post, Story).
-/// 
+///
 /// Usage:
 /// 1. Wrap card in RepaintBoundary with GlobalKey
 /// 2. Use ShareService.shareWidget() to capture and share
-/// 
+///
 /// Example:
 /// ```dart
 /// final _cardKey = GlobalKey();
@@ -30,7 +32,7 @@ enum ShareCardFormat {
 /// ```
 
 /// Weekly summary card with gradient background and stats breakdown.
-/// 
+///
 /// Displays:
 /// - Total quiet minutes
 /// - Session count
@@ -61,6 +63,7 @@ class WeeklySummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: format.width,
       height: format.height,
@@ -80,7 +83,7 @@ class WeeklySummaryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Spacer(flex: 2),
-              
+
               // Main stat - hero number
               FittedBox(
                 fit: BoxFit.scaleDown,
@@ -96,39 +99,39 @@ class WeeklySummaryCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'QUIET MINUTES',
-                style: TextStyle(
+              Text(
+                l10n.shareQuietMinutes,
+                style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.w600,
                   color: Colors.white70,
                   letterSpacing: 2,
                 ),
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               // Secondary stats
               _buildStatRow(
                 icon: Icons.format_list_numbered,
-                label: 'Sessions',
+                label: l10n.statSessions,
                 value: sessionCount.toString(),
               ),
               const SizedBox(height: 28),
               _buildStatRow(
                 icon: Icons.check_circle,
-                label: 'Success Rate',
+                label: l10n.successRate,
                 value: '${successRate.toStringAsFixed(0)}%',
               ),
               const SizedBox(height: 28),
               _buildStatRow(
                 icon: Icons.star,
-                label: 'Top Activity',
+                label: l10n.shareTopActivity,
                 value: topActivity,
               ),
-              
+
               const Spacer(flex: 2),
-              
+
               // Footer
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,18 +156,18 @@ class WeeklySummaryCard extends StatelessWidget {
                       color: Colors.white24,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.flash_on,
                           color: Colors.white,
                           size: 22,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
-                          'Focus Field',
-                          style: TextStyle(
+                          l10n.appName,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -255,6 +258,7 @@ class AchievementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: format.width,
       height: format.height,
@@ -268,7 +272,7 @@ class AchievementCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(flex: 2),
-              
+
               // Icon
               Container(
                 width: 140,
@@ -277,15 +281,11 @@ class AchievementCard extends StatelessWidget {
                   color: accentColor.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  icon,
-                  size: 70,
-                  color: accentColor,
-                ),
+                child: Icon(icon, size: 70, color: accentColor),
               ),
-              
+
               const SizedBox(height: 50),
-              
+
               // Hero number
               FittedBox(
                 fit: BoxFit.scaleDown,
@@ -318,9 +318,9 @@ class AchievementCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 35),
-              
+
               // Achievement text
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -337,9 +337,9 @@ class AchievementCard extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Message
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -356,9 +356,9 @@ class AchievementCard extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const Spacer(flex: 2),
-              
+
               // Footer
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -372,14 +372,10 @@ class AchievementCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.flash_on,
-                      color: accentColor,
-                      size: 28,
-                    ),
+                    Icon(Icons.flash_on, color: accentColor, size: 28),
                     const SizedBox(width: 10),
-                    const Text(
-                      'Focus Field',
+                    Text(
+                      l10n.appName,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -415,8 +411,9 @@ class StreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final emoji = _getStreakEmoji(streakDays);
-    
+
     return Container(
       width: 1080,
       height: 1920,
@@ -437,15 +434,12 @@ class StreakCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
-              
+
               // Streak emoji
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 200),
-              ),
-              
+              Text(emoji, style: const TextStyle(fontSize: 200)),
+
               const SizedBox(height: 40),
-              
+
               // Days counter
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -475,9 +469,9 @@ class StreakCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Streak type
               Text(
                 '$streakType STREAK',
@@ -489,9 +483,9 @@ class StreakCard extends StatelessWidget {
                   letterSpacing: 2,
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Motivational message
               Text(
                 _getStreakMessage(streakDays),
@@ -503,9 +497,9 @@ class StreakCard extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Progress indicator
               Column(
                 children: [
@@ -528,17 +522,17 @@ class StreakCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.flash_on,
                           color: Colors.white,
                           size: 32,
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Text(
-                          'Focus Field',
+                          l10n.appName,
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
@@ -601,6 +595,7 @@ class ActivityRingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: 1080,
       height: 1920,
@@ -612,7 +607,7 @@ class ActivityRingsCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
-              
+
               // Title
               const Text(
                 'ACTIVITY RINGS',
@@ -623,9 +618,9 @@ class ActivityRingsCard extends StatelessWidget {
                   letterSpacing: 3,
                 ),
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               // Rings visualization
               SizedBox(
                 width: 600,
@@ -634,9 +629,9 @@ class ActivityRingsCard extends StatelessWidget {
                   painter: _ActivityRingsPainter(activityProgress),
                 ),
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               // Total minutes
               Column(
                 children: [
@@ -660,14 +655,14 @@ class ActivityRingsCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Activity legend
               ..._buildActivityLegend(),
-              
+
               const Spacer(),
-              
+
               // Footer
               Column(
                 children: [
@@ -690,17 +685,17 @@ class ActivityRingsCard extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.flash_on,
                           color: Colors.white,
                           size: 32,
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Text(
-                          'Focus Field',
+                          l10n.appName,
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
@@ -724,7 +719,7 @@ class ActivityRingsCard extends StatelessWidget {
     return activityProgress.entries.map((entry) {
       final color = colors[entry.key] ?? Colors.grey;
       final percentage = (entry.value * 100).toStringAsFixed(0);
-      
+
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
@@ -733,10 +728,7 @@ class ActivityRingsCard extends StatelessWidget {
             Container(
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 16),
             SizedBox(
@@ -786,34 +778,36 @@ class _ActivityRingsPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final colors = _getActivityColors();
     final sortedActivities = activityProgress.keys.toList();
-    
+
     // Draw rings from outside to inside
     for (var i = 0; i < sortedActivities.length; i++) {
       final activity = sortedActivities[i];
       final progress = activityProgress[activity] ?? 0.0;
       final color = colors[activity] ?? Colors.grey;
       final ringRadius = (size.width / 2) - (i * 80) - 40;
-      
+
       // Background ring (faded)
-      final bgPaint = Paint()
-        ..color = color.withValues(alpha: 0.2)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 40
-        ..strokeCap = StrokeCap.round;
-      
+      final bgPaint =
+          Paint()
+            ..color = color.withValues(alpha: 0.2)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 40
+            ..strokeCap = StrokeCap.round;
+
       canvas.drawCircle(center, ringRadius, bgPaint);
-      
+
       // Progress ring
-      final progressPaint = Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 40
-        ..strokeCap = StrokeCap.round;
-      
+      final progressPaint =
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 40
+            ..strokeCap = StrokeCap.round;
+
       final rect = Rect.fromCircle(center: center, radius: ringRadius);
       final startAngle = -90 * (3.14159 / 180); // Start at top
       final sweepAngle = progress * 2 * 3.14159; // Full circle = 360°
-      
+
       canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
     }
   }
@@ -862,6 +856,7 @@ class MinimalProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: format.width,
       height: format.height,
@@ -884,9 +879,9 @@ class MinimalProgressCard extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Hero number with unit
               FittedBox(
                 fit: BoxFit.scaleDown,
@@ -915,14 +910,14 @@ class MinimalProgressCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Stats grid
-              _buildStatsGrid(),
-              
+              _buildStatsGrid(context),
+
               const Spacer(),
-              
+
               // Time range
               Text(
                 timeRange,
@@ -933,9 +928,9 @@ class MinimalProgressCard extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Branding
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -949,17 +944,17 @@ class MinimalProgressCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.flash_on,
                       color: Color(0xFF6366F1),
                       size: 20,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
-                      'Focus Field',
+                      l10n.appName,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -970,7 +965,7 @@ class MinimalProgressCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
             ],
           ),
@@ -979,23 +974,27 @@ class MinimalProgressCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatsGrid(BuildContext context) {
     final stats = <Widget>[];
 
     if (sessionCount > 0) {
-      stats.add(_StatItem(
-        icon: Icons.format_list_numbered_outlined,
-        label: 'Sessions',
-        value: sessionCount.toString(),
-      ));
+      stats.add(
+        _StatItem(
+          icon: Icons.format_list_numbered_outlined,
+          label: 'Sessions',
+          value: sessionCount.toString(),
+        ),
+      );
     }
 
     if (successRate > 0) {
-      stats.add(_StatItem(
-        icon: Icons.check_circle_outline,
-        label: 'Success',
-        value: '${successRate.toStringAsFixed(0)}%',
-      ));
+      stats.add(
+        _StatItem(
+          icon: Icons.check_circle_outline,
+          label: 'Success',
+          value: '${successRate.toStringAsFixed(0)}%',
+        ),
+      );
     }
 
     return Column(
@@ -1009,25 +1008,27 @@ class MinimalProgressCard extends StatelessWidget {
         ),
 
         // Activity breakdown (if activities exist)
-        if (activityMinutes != null && activityMinutes!.isNotEmpty)
-          ...[
-            const SizedBox(height: 32),
-            _buildActivityBreakdown(),
-          ],
+        if (activityMinutes != null && activityMinutes!.isNotEmpty) ...[
+          const SizedBox(height: 32),
+          _buildActivityBreakdown(context),
+        ],
       ],
     );
   }
 
-  Widget _buildActivityBreakdown() {
+  Widget _buildActivityBreakdown(BuildContext context) {
     // Filter and sort activities by minutes (descending)
-    final activities = activityMinutes!.entries
-        .where((entry) => entry.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final activities =
+        activityMinutes!.entries.where((entry) => entry.value > 0).toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
     if (activities.isEmpty) return const SizedBox.shrink();
 
     final topActivity = activities.first;
+    final localizedTopActivityName = getLocalizedActivityName(
+      context,
+      topActivity.key,
+    );
 
     return Column(
       children: [
@@ -1042,7 +1043,7 @@ class MinimalProgressCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              topActivity.key,
+              localizedTopActivityName,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -1059,15 +1060,20 @@ class MinimalProgressCard extends StatelessWidget {
           spacing: 20,
           runSpacing: 12,
           alignment: WrapAlignment.center,
-          children: activities.map((entry) {
-            return _buildActivityChip(entry.key, entry.value);
-          }).toList(),
+          children:
+              activities.map((entry) {
+                return _buildActivityChip(context, entry.key, entry.value);
+              }).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildActivityChip(String activityName, int minutes) {
+  Widget _buildActivityChip(
+    BuildContext context,
+    String activityName,
+    int minutes,
+  ) {
     // Map activity names to Material icons
     IconData icon;
     Color color;
@@ -1094,15 +1100,14 @@ class MinimalProgressCard extends StatelessWidget {
         color = const Color(0xFFC4A57B);
     }
 
+    final localizedName = getLocalizedActivityName(context, activityName);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1110,7 +1115,7 @@ class MinimalProgressCard extends StatelessWidget {
           Icon(icon, color: color, size: 20),
           const SizedBox(width: 8),
           Text(
-            activityName,
+            localizedName,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -1149,11 +1154,7 @@ class _StatItem extends StatelessWidget {
       width: 140,
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 48,
-            color: const Color(0xFF6B7280),
-          ),
+          Icon(icon, size: 48, color: const Color(0xFF6B7280)),
           const SizedBox(height: 12),
           Text(
             label,

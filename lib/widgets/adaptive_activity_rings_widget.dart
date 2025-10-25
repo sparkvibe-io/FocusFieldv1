@@ -6,6 +6,7 @@ import '../providers/ambient_quest_provider.dart';
 import '../models/ambient_models.dart';
 import 'activity_edit_sheet.dart';
 import '../utils/responsive_utils.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Adaptive activity rings widget that shows 1-4 activities based on user preferences
 class AdaptiveActivityRingsWidget extends ConsumerWidget {
@@ -14,6 +15,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final prefs = ref.watch(userPreferencesProvider);
     final questState = ref.watch(questStateProvider);
 
@@ -45,7 +47,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
           return {
             'id': profileId,
             'icon': _getActivityIcon(profileId),
-            'label': _getActivityName(profileId),
+            'label': _getActivityName(profileId, context),
             'completed': completed,
             'target': target,
             'progress': progress,
@@ -74,7 +76,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
 
     // Add freeze token badge to Overall label when freeze token is used
     final overallLabel =
-        questState.freezeTokenUsedToday ? 'Overall ❄️' : 'Overall';
+        questState.freezeTokenUsedToday ? l10n.ringOverallFrozen : l10n.ringOverall;
 
     // Clean neutral card background matching industry standards
     final isDark = theme.brightness == Brightness.dark;
@@ -103,7 +105,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Sessions',
+                l10n.statSessions,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -154,7 +156,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
                       size: 18,
                       color: theme.colorScheme.primary,
                     ),
-                    label: const Text('Edit'),
+                    label: Text(l10n.buttonEdit),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -653,18 +655,19 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     }
   }
 
-  String _getActivityName(String profileId) {
+  String _getActivityName(String profileId, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (profileId) {
       case 'study':
-        return 'Study';
+        return l10n.onboardingActivityStudyTitle;
       case 'reading':
-        return 'Reading';
+        return l10n.onboardingActivityReadingTitle;
       case 'meditation':
-        return 'Meditation';
+        return l10n.onboardingActivityMeditationTitle;
       case 'other':
-        return 'Other';
+        return l10n.onboardingActivityOtherTitle;
       default:
-        return 'Unknown';
+        return l10n.activityUnknown;
     }
   }
 
@@ -714,16 +717,17 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
         return Consumer(
           builder: (context, ref, _) {
             final theme = Theme.of(context);
+            final l10n = AppLocalizations.of(context)!;
             final questState = ref.watch(questStateProvider);
 
             if (questState == null) {
               return AlertDialog(
-                title: const Text('Error'),
-                content: const Text('Quest state not available'),
+                title: Text(l10n.errorTitle),
+                content: Text(l10n.errorQuestUnavailable),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
+                    child: Text(l10n.buttonOK),
                   ),
                 ],
               );
@@ -740,39 +744,34 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
 
             if (!hasTokens) {
               // State 1: No tokens available
-              title = 'No Freeze Tokens';
-              message =
-                  'You don\'t have any freeze tokens available. '
-                  'You earn 1 freeze token per week (max 4).';
+              title = l10n.freezeTokenNoTokensTitle;
+              message = l10n.freezeTokenNoTokensMessage;
               actions = [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
+                  child: Text(l10n.buttonOK),
                 ),
               ];
             } else if (goalMet) {
               // State 2: Goal already met (prevent double-use)
-              title = 'Goal Already Completed';
-              message =
-                  'Your daily goal is already complete! '
-                  'Freeze tokens can only be used when you haven\'t met your goal yet.';
+              title = l10n.freezeTokenGoalCompleteTitle;
+              message = l10n.freezeTokenGoalCompleteMessage;
               actions = [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
+                  child: Text(l10n.buttonOK),
                 ),
               ];
             } else {
               // State 3: Can use freeze token
-              title = 'Use Freeze Token';
+              title = l10n.freezeTokenUseTitle;
               message =
-                  'Freeze tokens protect your streak when you miss a day. '
-                  'Using a freeze will count as completing your daily goal.\n\n'
+                  '${l10n.freezeTokenUseMessage}\n\n'
                   'You have ${questState.freezeTokens} token(s). Use one now?';
               actions = [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 FilledButton(
                   onPressed: () async {
@@ -786,8 +785,8 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
                       if (success) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text(
-                              '✅ Freeze token used! Goal marked as complete.',
+                            content: Text(
+                              l10n.freezeTokenUsedSuccess,
                             ),
                             backgroundColor: theme.colorScheme.tertiary,
                             duration: const Duration(seconds: 3),
@@ -796,14 +795,14 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text('❌ Failed to use freeze token'),
+                            content: Text(l10n.errorFreezeTokenFailed),
                             backgroundColor: theme.colorScheme.error,
                           ),
                         );
                       }
                     }
                   },
-                  child: const Text('Use Freeze'),
+                  child: Text(l10n.buttonUseFreeze),
                 ),
               ];
             }

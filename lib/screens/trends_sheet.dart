@@ -14,6 +14,7 @@ import 'package:focus_field/providers/weekly_recap_provider.dart';
 import 'package:focus_field/models/weekly_recap.dart';
 import 'package:focus_field/constants/ui_constants.dart';
 import 'package:focus_field/widgets/common/drag_handle.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Bottom sheet showing insights and analytics.
 /// Mirrors Settings sheet style for consistency.
@@ -138,6 +139,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final maxHeight =
         MediaQuery.of(context).size.height *
         UIConstants.bottomSheetMaxHeightRatio;
@@ -162,7 +164,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
                 Icon(Icons.insights, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  'Insights',
+                  l10n.trendsInsights,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -171,7 +173,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
                 // Share button
                 IconButton(
                   icon: const Icon(Icons.share),
-                  tooltip: 'Share weekly summary',
+                  tooltip: l10n.trendsShareWeeklySummary,
                   onPressed: () => _showShareOptions(context, ref),
                 ),
                 IconButton(
@@ -209,6 +211,7 @@ class _TrendsBasicTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final dataAsync = ref.watch(silenceDataNotifierProvider);
 
     return SingleChildScrollView(
@@ -235,6 +238,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                             context,
                             theme,
                             recap,
+                            l10n,
                           );
                         }
                         // No cached recap, attempt to generate one on the fly
@@ -247,10 +251,11 @@ class _TrendsBasicTab extends ConsumerWidget {
                                 context,
                                 theme,
                                 newRecap,
+                                l10n,
                               ),
                           loading:
                               () => Text(
-                                'Loading...',
+                                l10n.trendsLoading,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
@@ -260,7 +265,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                       },
                       loading:
                           () => Text(
-                            'Loading metrics...',
+                            l10n.trendsLoadingMetrics,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -280,7 +285,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                     error:
                         (_, __) => Center(
                           child: Text(
-                            'No data',
+                            l10n.trendsNoData,
                             style: theme.textTheme.bodySmall,
                           ),
                         ),
@@ -296,15 +301,15 @@ class _TrendsBasicTab extends ConsumerWidget {
               _statChip(
                 context,
                 Icons.stacked_line_chart,
-                'Weekly Total',
+                l10n.trendsWeeklyTotal,
                 _weeklyTotalMinutes(dataAsync),
               ),
               const SizedBox(width: 10), // Reduced from 12
               _statChip(
                 context,
                 Icons.today,
-                'Best Day',
-                _bestDayLabel(context, dataAsync),
+                l10n.trendsBestDay,
+                _bestDayLabel(context, l10n, dataAsync),
               ),
             ],
           ),
@@ -317,14 +322,14 @@ class _TrendsBasicTab extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Activity Heatmap',
+                  l10n.trendsActivityHeatmap,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 2), // Reduced from 4
                 Text(
-                  'Recent activity',
+                  l10n.trendsRecentActivity,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -346,7 +351,7 @@ class _TrendsBasicTab extends ConsumerWidget {
                         height: 80,
                         child: Center(
                           child: Text(
-                            'Unable to load heatmap',
+                            l10n.trendsHeatmapError,
                             style: theme.textTheme.bodySmall,
                           ),
                         ),
@@ -368,6 +373,7 @@ class _TrendsBasicTab extends ConsumerWidget {
     BuildContext context,
     ThemeData theme,
     WeeklyRecap recap,
+    AppLocalizations l10n,
   ) {
     // Format date range (e.g., "Oct 13 - Oct 20")
     final formatter = DateFormat('MMM d');
@@ -385,11 +391,11 @@ class _TrendsBasicTab extends ConsumerWidget {
 
     // Compact metric line: "1 Points · 1 Streak · 1 Sessions · 90%"
     final metricsText =
-        '${recap.totalPoints} Points · $streakDisplay Streak · ${recap.totalSessions} Sessions · $successRate%';
+        '${recap.totalPoints} ${l10n.trendsPoints} · $streakDisplay ${l10n.trendsStreak} · ${recap.totalSessions} ${l10n.trendsSessions} · $successRate%';
 
     // Top activity line: "Top: meditation (1×)"
     final topActivityText =
-        'Top Activity: ${recap.topActivity} (${recap.topActivityCount}×)';
+        '${l10n.trendsTopActivity}: ${recap.topActivity} (${recap.topActivityCount}×)';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,7 +405,7 @@ class _TrendsBasicTab extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Last 7 Days',
+              l10n.trendsLast7Days,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -433,7 +439,11 @@ class _TrendsBasicTab extends ConsumerWidget {
     );
   }
 
-  String _bestDayLabel(BuildContext context, AsyncValue<dynamic> async) {
+  String _bestDayLabel(
+    BuildContext context,
+    AppLocalizations l10n,
+    AsyncValue<dynamic> async,
+  ) {
     if (!async.hasValue) return '—';
     final sessions = (async.value.recentSessions as List<SessionRecord>?) ?? [];
     if (sessions.isEmpty) return '—';
@@ -451,7 +461,7 @@ class _TrendsBasicTab extends ConsumerWidget {
         bestIdx = k;
       }
     });
-    const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    final names = [l10n.daySun, l10n.dayMon, l10n.dayTue, l10n.dayWed, l10n.dayThu, l10n.dayFri, l10n.daySat];
     return '${names[(bestIdx) % 7]} (${bestVal}m)';
   }
 
@@ -516,6 +526,7 @@ class _SevenDayStackedBars extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final today = DateTime.now();
     // Prepare last 7 days normalized to midnight
     final days = List.generate(7, (i) {
@@ -549,7 +560,7 @@ class _SevenDayStackedBars extends ConsumerWidget {
       children: List.generate(7, (i) {
         final map = perDay[i];
         final total = map.values.fold<int>(0, (a, b) => a + b);
-        final label = _shortDay(days[i].weekday);
+        final label = _shortDay(days[i].weekday, l10n);
         return Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -712,8 +723,8 @@ class _SevenDayStackedBars extends ConsumerWidget {
     }
   }
 
-  String _shortDay(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  String _shortDay(int weekday, AppLocalizations l10n) {
+    final days = [l10n.dayMon, l10n.dayTue, l10n.dayWed, l10n.dayThu, l10n.dayFri, l10n.daySat, l10n.daySun];
     return days[(weekday - 1) % 7];
   }
 }
@@ -723,6 +734,7 @@ class _TrendsAdvancedTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final dataAsync = ref.watch(silenceDataNotifierProvider);
 
     return dataAsync.when(
@@ -753,7 +765,7 @@ class _TrendsAdvancedTab extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(32),
               child: Text(
-                'Error loading data',
+                l10n.trendsErrorLoading,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),

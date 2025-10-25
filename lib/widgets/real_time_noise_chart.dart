@@ -53,6 +53,14 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
     // Subscribe to real-time decibel readings with proper error handling
     useEffect(() {
+      // Skip all chart updates when Focus Mode is active (chart is hidden behind overlay)
+      if (isListening) {
+        if (!kReleaseMode) {
+          DebugLog.d('DEBUG: Chart - Skipping updates during Focus Mode (isListening: true)');
+        }
+        return null;
+      }
+
       // Common update logic used by aggregated controller and ambient fallback.
       bool isDisposed = false;
       Timer? ambientTimer;
@@ -96,7 +104,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
         },
       );
 
-      if (!isListening) {
+      // Ambient monitoring only (not during Focus Mode)
         // Start ambient monitoring (still needed to keep _currentDecibel updated)
         try {
           silenceDetector.startAmbientMonitoring(
@@ -135,18 +143,15 @@ class RealTimeNoiseChart extends HookConsumerWidget {
               35.0 + (math.sin(timeSinceStart * 0.1) * 5);
           safeUpdateDecibel(placeholderDecibel);
         });
-      }
 
       return () {
         isDisposed = true;
         sub.cancel();
         ambientTimer?.cancel();
         fallbackTimer?.cancel();
-        if (!isListening) {
-          try {
-            silenceDetector.stopAmbientMonitoring();
-          } catch (_) {}
-        }
+        try {
+          silenceDetector.stopAmbientMonitoring();
+        } catch (_) {}
       };
     }, [isListening, hasPermission.value]);  // Removed noiseController - stream subscription handles updates
 

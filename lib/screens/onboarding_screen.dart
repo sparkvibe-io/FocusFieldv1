@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 import '../providers/user_preferences_provider.dart';
 import 'home_page_elegant.dart';
 
@@ -101,7 +102,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Welcome! Ready to start your first session? 🚀',
+                        AppLocalizations.of(context)!.onboardingWelcomeMessage,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -142,6 +143,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -161,7 +163,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         _currentPage > 0
                             ? TextButton(
                               onPressed: _previousPage,
-                              child: const Text('Back'),
+                              child: Text(l10n.onboardingBack),
                             )
                             : null,
                   ),
@@ -182,7 +184,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     child: TextButton(
                       onPressed: _skipOnboarding,
                       child: Text(
-                        'Skip',
+                        l10n.onboardingSkip,
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -200,12 +202,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   setState(() => _currentPage = index);
                 },
                 children: [
-                  _buildWelcomeScreen(theme),
-                  _buildEnvironmentScreen(theme),
-                  _buildGoalScreen(theme),
-                  _buildActivitiesScreen(theme),
-                  _buildPermissionScreen(theme),
-                  _buildQuickTipsScreen(theme),
+                  _buildWelcomeScreen(theme, l10n),
+                  _buildEnvironmentScreen(theme, l10n),
+                  _buildGoalScreen(theme, l10n),
+                  _buildActivitiesScreen(theme, l10n),
+                  _buildPermissionScreen(theme, l10n),
+                  _buildQuickTipsScreen(theme, l10n),
                 ],
               ),
             ),
@@ -220,7 +222,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: Text(
-                    _currentPage == 5 ? 'Get Started' : 'Next',
+                    _currentPage == 5 ? l10n.buttonGetStarted : l10n.buttonNext,
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -233,7 +235,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 1: Welcome
-  Widget _buildWelcomeScreen(ThemeData theme) {
+  Widget _buildWelcomeScreen(ThemeData theme, AppLocalizations l10n) {
     return Container(
       color: theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -258,7 +260,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 20),
             // Title with solid color
             Text(
-              'Welcome to\nFocus Field! 🎯',
+              l10n.onboardingWelcomeTitle,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
@@ -269,7 +271,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 10),
             // Subtitle
             Text(
-              'Your journey to better focus starts here!\nLet\'s build habits that stick 💪',
+              l10n.onboardingWelcomeSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 height: 1.3,
@@ -281,8 +283,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildFeatureCard(
               theme,
               Icons.analytics_rounded,
-              'Track Your Focus',
-              'See your progress in real-time as you build your focus superpower! 📊',
+              l10n.onboardingFeatureTrackTitle,
+              l10n.onboardingFeatureTrackDesc,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -290,8 +292,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildFeatureCard(
               theme,
               Icons.emoji_events_rounded,
-              'Earn Rewards',
-              'Every quiet minute counts! Collect points and celebrate your wins 🏆',
+              l10n.onboardingFeatureEarnTitle,
+              l10n.onboardingFeatureEarnDesc,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -299,8 +301,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildFeatureCard(
               theme,
               Icons.local_fire_department_rounded,
-              'Build Streaks',
-              'Keep the momentum going! Our compassionate system keeps you motivated 🔥',
+              l10n.onboardingFeatureBuildTitle,
+              l10n.onboardingFeatureBuildDesc,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -415,7 +417,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 2: Environment Assessment
-  Widget _buildEnvironmentScreen(ThemeData theme) {
+  Widget _buildEnvironmentScreen(ThemeData theme, AppLocalizations l10n) {
     return Container(
       color: theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -439,7 +441,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Where\'s Your Focus Zone? 🎯',
+              l10n.onboardingEnvironmentTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -447,7 +449,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Choose your typical environment so we can optimize for your space!',
+              l10n.onboardingEnvironmentDescription,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -458,42 +460,42 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               theme,
               0,
               Icons.home_rounded,
-              'Quiet Home',
-              'Bedroom, quiet home office',
-              '30 dB - Very quiet',
+              l10n.onboardingEnvQuietHome,
+              l10n.onboardingEnvQuietHomeDesc,
+              l10n.onboardingEnvQuietHomeLevel,
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
               theme,
               1,
               Icons.business_rounded,
-              'Typical Office',
-              'Standard office, library',
-              '40 dB - Library quiet (Recommended)',
+              l10n.onboardingEnvOffice,
+              l10n.onboardingEnvOfficeDesc,
+              l10n.onboardingEnvOfficeLevel,
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
               theme,
               2,
               Icons.local_cafe_rounded,
-              'Busy Space',
-              'Coffee shop, shared workspace',
-              '50 dB - Moderate noise',
+              l10n.onboardingEnvBusy,
+              l10n.onboardingEnvBusyDesc,
+              l10n.onboardingEnvBusyLevel,
             ),
             const SizedBox(height: 10),
             _buildEnvironmentOption(
               theme,
               3,
               Icons.public_rounded,
-              'Noisy Environment',
-              'Open office, public space',
-              '60 dB - Higher noise',
+              l10n.onboardingEnvNoisy,
+              l10n.onboardingEnvNoisyDesc,
+              l10n.onboardingEnvNoisyLevel,
             ),
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'You can adjust this anytime in Settings',
+                l10n.onboardingAdjustAnytime,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -588,12 +590,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 3: Goal Setting
-  Widget _buildGoalScreen(ThemeData theme) {
+  Widget _buildGoalScreen(ThemeData theme, AppLocalizations l10n) {
     final advice = [
-      'Perfect start! 🌟 Small steps lead to big wins. You\'ve got this!',
-      'Excellent choice! 🎯 This sweet spot builds lasting habits!',
-      'Ambitious! 💪 You\'re ready to level up your focus game!',
-      'Wow! 🏆 Deep work mode activated! Remember to take breaks!',
+      l10n.onboardingGoalAdviceGettingStarted,
+      l10n.onboardingGoalAdviceBuildingHabit,
+      l10n.onboardingGoalAdviceRegularPractice,
+      l10n.onboardingGoalAdviceDeepWork,
     ];
 
     return Container(
@@ -619,7 +621,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Set Your Daily Goal! 🎯',
+              l10n.onboardingDailyGoalTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -627,7 +629,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'How much focused time feels right for you?\n(You can adjust this anytime!)',
+              l10n.onboardingDailyGoalSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -636,23 +638,25 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 20),
             _buildGoalOption(
               theme,
+              l10n,
               0,
               '🌱',
-              'Getting Started',
-              '10-15 minutes',
+              l10n.onboardingGoalGettingStarted,
+              l10n.onboardingDuration10to15,
             ),
             const SizedBox(height: 10),
-            _buildGoalOption(theme, 1, '🎯', 'Building Habit', '20-30 minutes'),
+            _buildGoalOption(theme, l10n, 1, '🎯', l10n.onboardingGoalBuildingHabit, l10n.onboardingDuration20to30),
             const SizedBox(height: 10),
             _buildGoalOption(
               theme,
+              l10n,
               2,
               '💪',
-              'Regular Practice',
-              '40-60 minutes',
+              l10n.onboardingGoalRegularPractice,
+              l10n.onboardingDuration40to60,
             ),
             const SizedBox(height: 10),
-            _buildGoalOption(theme, 3, '🏆', 'Deep Work', '60+ minutes'),
+            _buildGoalOption(theme, l10n, 3, '🏆', l10n.onboardingGoalDeepWork, l10n.onboardingDuration60plus),
             const SizedBox(height: 16),
             // Personalized advice
             Container(
@@ -689,6 +693,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildGoalOption(
     ThemeData theme,
+    AppLocalizations l10n,
     int index,
     String emoji,
     String title,
@@ -751,7 +756,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 4: Activity Selection
-  Widget _buildActivitiesScreen(ThemeData theme) {
+  Widget _buildActivitiesScreen(ThemeData theme, AppLocalizations l10n) {
     return Container(
       color: theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -775,7 +780,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Choose Your Activities! ✨',
+              l10n.onboardingActivitiesTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -783,7 +788,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Pick all that resonate with you!\n(You can always add more later)',
+              l10n.onboardingActivitiesSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -792,34 +797,38 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 20),
             _buildActivityOption(
               theme,
+              l10n,
               'study',
               Icons.school_rounded,
-              'Study',
-              'Learning, coursework, research',
+              l10n.activityStudy,
+              l10n.onboardingActivityStudyDesc,
             ),
             const SizedBox(height: 10),
             _buildActivityOption(
               theme,
+              l10n,
               'reading',
               Icons.menu_book_rounded,
-              'Reading',
-              'Deep reading, articles, books',
+              l10n.activityReading,
+              l10n.onboardingActivityReadingDesc,
             ),
             const SizedBox(height: 10),
             _buildActivityOption(
               theme,
+              l10n,
               'meditation',
               Icons.self_improvement_rounded,
-              'Meditation',
-              'Mindfulness, breathing exercises',
+              l10n.activityMeditation,
+              l10n.onboardingActivityMeditationDesc,
             ),
             const SizedBox(height: 10),
             _buildActivityOption(
               theme,
+              l10n,
               'other',
               Icons.star_rounded,
-              'Other',
-              'Any focus-requiring activity',
+              l10n.activityOther,
+              l10n.onboardingActivityOtherDesc,
             ),
             const SizedBox(height: 16),
             Container(
@@ -839,7 +848,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Pro tip: Focus Field shines when quiet = focused! 🤫✨',
+                      l10n.onboardingProTip,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
@@ -857,6 +866,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildActivityOption(
     ThemeData theme,
+    AppLocalizations l10n,
     String id,
     IconData icon,
     String title,
@@ -938,7 +948,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 5: Permission
-  Widget _buildPermissionScreen(ThemeData theme) {
+  Widget _buildPermissionScreen(ThemeData theme, AppLocalizations l10n) {
     return Container(
       color: theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -987,7 +997,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 32),
             Text(
-              'Your Privacy Matters! 🔒',
+              l10n.onboardingPrivacyTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -995,7 +1005,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'We need microphone access to measure ambient noise and help you focus better',
+              l10n.onboardingPrivacySubtitle,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -1005,23 +1015,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             // Privacy assurances
             _buildPrivacyItem(
               theme,
+              l10n,
               Icons.mic_off,
-              'No Recording',
-              'We only measure noise levels, never record audio',
+              l10n.onboardingPrivacyNoRecording,
+              l10n.onboardingPrivacyNoRecordingDesc,
             ),
             const SizedBox(height: 20),
             _buildPrivacyItem(
               theme,
+              l10n,
               Icons.phone_android,
-              'Local Only',
-              'All data stays on your device',
+              l10n.onboardingPrivacyLocalOnly,
+              l10n.onboardingPrivacyLocalOnlyDesc,
             ),
             const SizedBox(height: 20),
             _buildPrivacyItem(
               theme,
+              l10n,
               Icons.shield,
-              'Privacy First',
-              'Your conversations are completely private',
+              l10n.onboardingPrivacyFirst,
+              l10n.onboardingPrivacyFirstDesc,
             ),
             const SizedBox(height: 32),
             Container(
@@ -1031,7 +1044,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'You can grant permission on the next screen when starting your first session',
+                l10n.onboardingPrivacyNote,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -1047,6 +1060,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildPrivacyItem(
     ThemeData theme,
+    AppLocalizations l10n,
     IconData icon,
     String title,
     String description,
@@ -1089,7 +1103,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   // Screen 6: Quick Tips
-  Widget _buildQuickTipsScreen(ThemeData theme) {
+  Widget _buildQuickTipsScreen(ThemeData theme, AppLocalizations l10n) {
     return Container(
       color: theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -1118,7 +1132,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Pro Tips for Success! 💡',
+              l10n.onboardingTipsTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -1126,7 +1140,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'These will help you make the most of Focus Field!',
+              l10n.onboardingTipsSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -1136,8 +1150,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildTipCard(
               theme,
               Icons.timer_rounded,
-              'Start Small, Win Big! 🌱',
-              'Begin with 5-10 minute sessions. Consistency beats perfection!',
+              l10n.onboardingTip1Title,
+              l10n.onboardingTip1Description,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -1145,8 +1159,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildTipCard(
               theme,
               Icons.fullscreen_rounded,
-              'Activate Focus Mode! 🎯',
-              'Tap Focus Mode for immersive, distraction-free experience.',
+              l10n.onboardingTip2Title,
+              l10n.onboardingTip2Description,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -1154,8 +1168,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildTipCard(
               theme,
               Icons.ac_unit_rounded,
-              'Freeze Token = Safety Net! ❄️',
-              'Use your monthly token on busy days to protect your streak.',
+              l10n.onboardingTip3Title,
+              l10n.onboardingTip3Description,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -1163,8 +1177,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             _buildTipCard(
               theme,
               Icons.trending_up_rounded,
-              'The 70% Rule Rocks! 📈',
-              'Aim for 70% quiet time - perfect silence not required!',
+              l10n.onboardingTip4Title,
+              l10n.onboardingTip4Description,
               theme.colorScheme.surfaceContainerHighest,
               theme.colorScheme.primary,
             ),
@@ -1189,7 +1203,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'You\'re Ready to Launch! 🚀',
+                          l10n.onboardingLaunchTitle,
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -1197,7 +1211,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Let\'s start your first session and build amazing habits!',
+                          l10n.onboardingLaunchDescription,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.8,

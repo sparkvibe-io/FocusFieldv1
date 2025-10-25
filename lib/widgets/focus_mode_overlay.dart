@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/widgets/banner_ad_footer.dart';
 import 'dart:math' as math;
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Full-screen black overlay for minimal distraction during sessions
 /// P1 MVP: Black background, glowing progress ring, countdown, Pause/Stop buttons, X exit
@@ -93,6 +94,7 @@ class FocusModeOverlay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value:
           SystemUiOverlayStyle.light, // Light status bar icons on dark surface
@@ -155,7 +157,7 @@ class FocusModeOverlay extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Session Complete!',
+                          l10n.focusModeComplete,
                           style: Theme.of(
                             context,
                           ).textTheme.titleLarge?.copyWith(
@@ -166,7 +168,7 @@ class FocusModeOverlay extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Great focus session',
+                          l10n.focusModeGreatSession,
                           style: Theme.of(
                             context,
                           ).textTheme.bodySmall?.copyWith(
@@ -193,7 +195,7 @@ class FocusModeOverlay extends ConsumerWidget {
                                   vertical: 16,
                                 ),
                                 child: Text(
-                                  isPaused ? 'Resume' : 'Pause',
+                                  isPaused ? l10n.focusModeResume : l10n.focusModePause,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall?.copyWith(
@@ -215,7 +217,7 @@ class FocusModeOverlay extends ConsumerWidget {
                                   vertical: 16,
                                 ),
                                 child: Text(
-                                  'Stop',
+                                  l10n.sessionStop,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.titleSmall?.copyWith(
@@ -232,7 +234,7 @@ class FocusModeOverlay extends ConsumerWidget {
                         const SizedBox(height: 16),
                         // Hint text
                         Text(
-                          'Long press to pause or stop',
+                          l10n.focusModeLongPressHint,
                           style: Theme.of(
                             context,
                           ).textTheme.bodySmall?.copyWith(

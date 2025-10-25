@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/weekly_recap.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Beautiful card displaying weekly recap statistics and achievements
 class WeeklyRecapCard extends StatelessWidget {
@@ -17,6 +18,7 @@ class WeeklyRecapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final dateFormat = DateFormat('MMM d');
 
     return Card(
@@ -51,7 +53,7 @@ class WeeklyRecapCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Weekly Recap',
+                          l10n.recapWeeklyTitle,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -76,7 +78,7 @@ class WeeklyRecapCard extends StatelessWidget {
                   Expanded(
                     child: _StatTile(
                       icon: Icons.schedule_rounded,
-                      label: 'Sessions',
+                      label: l10n.statSessions,
                       value: recap.totalSessions.toString(),
                       theme: theme,
                     ),
@@ -85,7 +87,7 @@ class WeeklyRecapCard extends StatelessWidget {
                   Expanded(
                     child: _StatTile(
                       icon: Icons.stars_rounded,
-                      label: 'Points',
+                      label: l10n.statPoints,
                       value: recap.totalPoints.toString(),
                       theme: theme,
                     ),
@@ -94,7 +96,7 @@ class WeeklyRecapCard extends StatelessWidget {
                   Expanded(
                     child: _StatTile(
                       icon: Icons.timer_outlined,
-                      label: 'Minutes',
+                      label: l10n.recapMinutes,
                       value: recap.totalMinutes.toString(),
                       theme: theme,
                     ),
@@ -127,7 +129,7 @@ class WeeklyRecapCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Streak: ${recap.streakAtStart} → ${recap.streakAtEnd} days',
+                        l10n.recapStreak(recap.streakAtStart, recap.streakAtEnd),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
               color: recap.streakAtEnd > recap.streakAtStart
@@ -152,7 +154,7 @@ class WeeklyRecapCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Top Activity: ',
+                      l10n.recapTopActivity,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

@@ -19,20 +19,23 @@ import '../widgets/adaptive_activity_rings_widget.dart';
 import '../widgets/focus_mode_overlay.dart';
 import '../providers/theme_provider.dart';
 import '../providers/user_preferences_provider.dart';
+import '../providers/ambient_quest_provider.dart';
 import '../theme/theme_extensions.dart';
 import './trends_sheet.dart';
 import './settings_sheet.dart';
 import '../providers/subscription_provider.dart';
+import '../models/subscription_tier.dart';
+import '../widgets/feature_gate.dart';
 import 'package:intl/intl.dart';
 import '../widgets/share_preview_sheet.dart';
 import 'package:confetti/confetti.dart';
 // Ambient Quests flags/providers
 import 'package:focus_field/constants/ambient_flags.dart';
-import 'package:focus_field/providers/ambient_quest_provider.dart';
 import 'package:focus_field/models/ambient_models.dart';
 import '../services/tip_service.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/banner_ad_footer.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 // AnimatedNeonBackground is deprecated in favor of global DramaticBackdrop.
 
 /// Elegant home screen inspired by Apple Fitness with modern Material Design
@@ -237,6 +240,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final size = MediaQuery.sizeOf(context);
     final orientation = MediaQuery.orientationOf(context);
 
@@ -312,19 +316,23 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               children: [
                 // Header - hide when Focus Mode is active
                 if (!_focusModeActive)
-                  _buildHeader(context, isTabletLandscape: isTabletLandscape),
+                  _buildHeader(
+                    context,
+                    l10n,
+                    isTabletLandscape: isTabletLandscape,
+                  ),
 
                 // Tab content - show side-by-side in tablet landscape
                 Expanded(
                   child:
                       isTabletLandscape
-                          ? _buildTabletLandscapeLayout(context)
+                          ? _buildTabletLandscapeLayout(context, l10n)
                           : TabBarView(
                             controller: _tabController,
                             physics: const BouncingScrollPhysics(),
                             children: [
-                              _buildSummaryTab(context),
-                              _buildSessionsTab(context),
+                              _buildSummaryTab(context, l10n),
+                              _buildSessionsTab(context, l10n),
                             ],
                           ),
                 ),
@@ -340,7 +348,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildHeader(BuildContext context, {bool isTabletLandscape = false}) {
+  Widget _buildHeader(
+    BuildContext context,
+    AppLocalizations l10n, {
+    bool isTabletLandscape = false,
+  }) {
     final theme = Theme.of(context);
     final currentTheme = ref.watch(themeProvider);
     final horizontalPad = _getResponsivePadding(context, 12);
@@ -354,7 +366,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           questState?.goalQuietMinutes ?? userPrefs.globalDailyQuietGoalMinutes;
       final calmPercent = ((questState?.requiredScore ?? 0.7) * 100).round();
       final titleText =
-          isTabletLandscape ? 'Your Focus Dashboard' : 'Focus minutes today';
+          isTabletLandscape ? l10n.todayDashboardTitle : l10n.todayFocusMinutes;
 
       headerContent = KeyedSubtree(
         key: ValueKey('summary-${isTabletLandscape ? 'tablet' : 'phone'}'),
@@ -375,7 +387,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               ),
               const SizedBox(height: 2),
               Text(
-                'Goal: $goalMinutes min • Calm ≥$calmPercent%',
+                l10n.todayGoalCalm(goalMinutes, calmPercent),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
@@ -389,7 +401,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       );
     } else {
       final enabledNames = userPrefs.enabledProfiles
-          .map((id) => _capitalizeFirst(id))
+          .map((id) => getLocalizedActivityName(context, id))
           .join(' • ');
       headerContent = KeyedSubtree(
         key: const ValueKey('sessions-header'),
@@ -400,7 +412,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Pick your mode',
+                l10n.todayPickMode,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -411,7 +423,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 2),
               Text(
                 enabledNames.isEmpty
-                    ? 'Study • Reading • Meditation'
+                    ? l10n.todayDefaultActivities
                     : enabledNames,
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
@@ -455,15 +467,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   final tipService = ref.read(tipServiceProvider);
                   await tipService.showCurrentTip(context);
                 },
-                tooltip: 'Tips',
+                tooltip: l10n.todayTooltipTips,
               ),
               IconButton(
                 icon: Icon(
                   currentTheme.icon,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                onPressed: () => _toggleTheme(context),
-                tooltip: 'Theme',
+                onPressed: () => _toggleTheme(context, l10n),
+                tooltip: l10n.todayTooltipTheme,
               ),
               IconButton(
                 icon: Icon(
@@ -484,7 +496,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     builder: (context) => const SettingsSheet(),
                   );
                 },
-                tooltip: 'Settings',
+                tooltip: l10n.todayTooltipSettings,
               ),
             ],
           ),
@@ -493,7 +505,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  void _toggleTheme(BuildContext context) {
+  void _toggleTheme(BuildContext context, AppLocalizations l10n) {
     // Debounce rapid taps to avoid cycling too fast and stacking snackbars
     final now = DateTime.now();
     if (_lastThemeToggleTime != null &&
@@ -527,7 +539,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Theme changed to ${nextTheme.displayName}'),
+        content: Text(l10n.todayThemeChanged(nextTheme.displayName)),
         duration: const Duration(milliseconds: 900),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.only(bottom: 90, left: 16, right: 16),
@@ -535,7 +547,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
-  Widget _buildSummaryTab(BuildContext context, {bool showAd = true}) {
+  Widget _buildSummaryTab(
+    BuildContext context,
+    AppLocalizations l10n, {
+    bool showAd = true,
+  }) {
     final horizontalPad = _getResponsivePadding(context, 12);
     final bottomPad = _getResponsivePadding(context, 100);
     final spacing = _getResponsivePadding(context, 8);
@@ -563,7 +579,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   Widget _buildSessionsTab(
-    BuildContext context, {
+    BuildContext context,
+    AppLocalizations l10n, {
     bool showAd = true,
     bool applyFocusOverlay = true,
   }) {
@@ -604,7 +621,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         const AdaptiveThresholdChip(),
 
         SizedBox(height: spacing),
-        _buildComplementaryPanel(context),
+        _buildComplementaryPanel(context, l10n),
         SizedBox(height: spacing),
         _buildSessionControlCard(context),
         SizedBox(height: spacing),
@@ -646,7 +663,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
-  Widget _buildTabletLandscapeLayout(BuildContext context) {
+  Widget _buildTabletLandscapeLayout(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     final theme = Theme.of(context);
 
     final tabletContent = Row(
@@ -662,7 +682,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Today',
+                    l10n.sectionToday,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -670,7 +690,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 ),
               ),
               // Today tab content (with ad at bottom)
-              Expanded(child: _buildSummaryTab(context, showAd: true)),
+              Expanded(child: _buildSummaryTab(context, l10n, showAd: true)),
             ],
           ),
         ),
@@ -688,7 +708,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Sessions',
+                    l10n.sectionSessions,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -699,6 +719,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               Expanded(
                 child: _buildSessionsTab(
                   context,
+                  l10n,
                   showAd: false,
                   applyFocusOverlay: false,
                 ),
@@ -744,6 +765,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   // Inner content for Today's 0/1 min row; wrapper card is added by caller
   Widget _buildDailyGoalCompactInner(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final activeProfile = ref.watch(activeProfileProvider);
     final questState = ref.watch(questStateProvider);
     final userPrefs = ref.watch(userPreferencesProvider);
@@ -773,7 +795,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           userPrefs.globalDailyQuietGoalMinutes;
       done = actualMinutes; // Always show actual progress
       goal = activityGoal;
-      labelText = '${_getActivityName(activeProfile.id)} Today $done/$goal min';
+      labelText =
+          '${_getActivityName(activeProfile.id, context)} Today $done/$goal min';
     } else {
       // Global mode: show total progress across all activities
       // If freeze token used, keep progress locked at 100% (use current goal for both done and goal)
@@ -782,7 +805,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           (questState?.freezeTokenUsedToday ?? false)
               ? goal // Use CURRENT goal value to maintain 100% even if goal changed
               : (questState?.progressQuietMinutes ?? 0);
-      labelText = 'Total Today $done/$goal min, choose any activity';
+      labelText = l10n.sessionsTotalToday(done, goal);
     }
 
     final ratio = goal == 0 ? 0.0 : (done / goal).clamp(0.0, 1.0);
@@ -912,7 +935,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           const SizedBox(height: 6),
                           // Label
                           Text(
-                            profile.name,
+                            _getActivityName(profile.id, context),
                             style: theme.textTheme.labelMedium?.copyWith(
                               fontWeight:
                                   isSelected
@@ -1043,7 +1066,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   // _buildActivitySuggestion replaced by _buildComplementaryPanel
 
-  Widget _buildComplementaryPanel(BuildContext context) {
+  Widget _buildComplementaryPanel(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final activeProfile = ref.watch(activeProfileProvider);
     final threshold = ref.watch(decibelThresholdProvider);
@@ -1067,7 +1090,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Set your duration and track your time. Session history and analytics will appear in Summary.',
+              l10n.todayHelperText,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -1079,13 +1102,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   Widget _buildStatRingSkeleton(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStatRingRow(
           context,
           Icons.stars,
-          'Points',
+          l10n.statPoints,
           '—/—',
           '',
           0.0,
@@ -1095,9 +1119,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         _buildStatRingRow(
           context,
           Icons.local_fire_department,
-          'Streak',
+          l10n.statStreak,
           '—/—',
-          'DAYS',
+          l10n.statDays,
           0.0,
           const Color(0xFFFF9500), // Orange - distinguishable for colorblind
         ),
@@ -1105,7 +1129,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         _buildStatRingRow(
           context,
           Icons.play_circle_outline,
-          'Sessions',
+          l10n.statSessions,
           '—/—',
           '',
           0.0,
@@ -1795,7 +1819,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
           return {
             'icon': icon,
-            'label': _titleCase(profile.name),
+            'label': _titleCase(_getActivityName(profile.id, context)),
             'completed': completedMinutes,
             'target': goalMinutes,
             'color': color,
@@ -2003,7 +2027,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
           return {
             'icon': icon,
-            'label': _titleCase(profile.name),
+            'label': _titleCase(_getActivityName(profile.id, context)),
             'completed': completedMinutes,
             'target': goalMinutes,
             'color': color,
@@ -3048,12 +3072,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     return silenceDataAsync.when(
       data: (data) {
         final theme = Theme.of(context);
+        final l10n = AppLocalizations.of(context)!;
         return Row(
           children: [
             Expanded(
               child: _buildStatTile(
                 context,
-                'Points',
+                l10n.statPoints,
                 data.totalPoints.toString(),
                 Icons.star_rounded,
                 theme.colorScheme.primary,
@@ -3063,7 +3088,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             Expanded(
               child: _buildStatTile(
                 context,
-                'Streak',
+                l10n.statStreak,
                 '${data.currentStreak}',
                 Icons.local_fire_department_rounded,
                 theme.colorScheme.secondary,
@@ -3073,7 +3098,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             Expanded(
               child: _buildStatTile(
                 context,
-                'Sessions',
+                l10n.statSessions,
                 '${data.totalSessions}',
                 Icons.timelapse_rounded,
                 theme.colorScheme.tertiary,
@@ -3127,6 +3152,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildTrendsCard(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return silenceDataAsync.when(
@@ -3145,7 +3171,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Insights',
+                      l10n.insightsTitle,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -3170,7 +3196,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Complete your first session',
+                        l10n.insightsFirstSessionTitle,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: theme.colorScheme.onSurface,
@@ -3179,7 +3205,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Start tracking your focus time, session patterns,\nand ambient score trends',
+                        l10n.insightsFirstSessionSubtitle,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -3263,7 +3289,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Insights',
+                    l10n.sectionInsights,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -3288,7 +3314,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           size: 20,
                           color: tintColor, // Vibrant color to match card
                         ),
-                        tooltip: 'View detailed insights',
+                        tooltip: l10n.insightsTooltip,
                         padding: const EdgeInsets.all(8),
                         constraints: const BoxConstraints(),
                         onPressed: () {
@@ -3307,7 +3333,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 8),
               _buildTrendItem(
                 context,
-                'Focus Time',
+                l10n.insightsFocusTime,
                 // Show at least 1 min if there's any activity (be encouraging!)
                 '${avgDailyFocusTimeInMinutes >= 0.5 ? avgDailyFocusTimeInMinutes.round() : (sessionsLast7Days.isNotEmpty ? 1 : 0)} min/day',
                 focusTimeTrendUp,
@@ -3316,7 +3342,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 8),
               _buildTrendItem(
                 context,
-                'Sessions',
+                l10n.insightsSessions,
                 '$sessionsPerWeek/week',
                 sessionsTrendUp,
                 const Color(0xFF00D9FF),
@@ -3324,7 +3350,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 8),
               _buildTrendItem(
                 context,
-                'Average',
+                l10n.insightsAverage,
                 // Show at least 1 min if there are any sessions (be encouraging!)
                 '${avgSessionDurationInMinutes >= 0.5 ? avgSessionDurationInMinutes.round() : (data.recentSessions.isNotEmpty ? 1 : 0)} min',
                 avgDurationTrendUp,
@@ -3333,7 +3359,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               const SizedBox(height: 8),
               _buildTrendItem(
                 context,
-                'Ambient Score',
+                l10n.insightsAmbientScore,
                 // Show at least 1% if there's any quiet session data (be encouraging!)
                 '${avgAmbientScore >= 0.5 ? avgAmbientScore.round() : (quietSessionsLast7Days.isNotEmpty ? 1 : 0)}%/week',
                 ambientScoreTrendUp,
@@ -3451,23 +3477,25 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   /// Get display name for activity profile
-  String _getActivityName(String profileId) {
+  String _getActivityName(String profileId, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (profileId) {
       case 'study':
-        return 'Study';
+        return l10n.onboardingActivityStudyTitle;
       case 'reading':
-        return 'Reading';
+        return l10n.onboardingActivityReadingTitle;
       case 'meditation':
-        return 'Meditation';
+        return l10n.onboardingActivityMeditationTitle;
       case 'other':
-        return 'Other';
+        return l10n.onboardingActivityOtherTitle;
       default:
-        return 'Activity';
+        return l10n.activityUnknown;
     }
   }
 
   Widget _buildSessionControlCard(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
     // Live ambient calm percent shown when applicable (quiet-required activities)
@@ -3530,54 +3558,61 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             )
           else
             // Control buttons row (when session is running)
+            // Layout: Focus Mode (left) | Spacer | Pause + Stop (right)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
                 children: [
-                  // Left side: Focus Mode, Pause, Stop buttons
+                  // Left side: Focus Mode button
                   // Always show Focus Mode button during sessions when not already active
                   // Setting only controls auto-activation, not button visibility
                   if (!_focusModeActive)
-                    _buildTopButton(
-                      context,
-                      label: 'Focus Mode',
-                      onTap: () => setState(() => _focusModeActive = true),
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      textColor: theme.colorScheme.onPrimaryContainer,
-                    ),
-                  if (!_focusModeActive) const SizedBox(width: 6),
-                  _buildTopButton(
-                    context,
-                    label: silenceState.isPaused ? 'Resume' : 'Pause',
-                    icon:
-                        silenceState.isPaused ? Icons.play_arrow : Icons.pause,
-                    onLongPress:
-                        () =>
-                            ref
-                                .read(silenceStateProvider.notifier)
-                                .togglePause(),
-                    backgroundColor: theme.colorScheme.secondaryContainer,
-                    textColor: theme.colorScheme.onSecondaryContainer,
-                  ),
-                  const SizedBox(width: 6),
-                  _buildTopButton(
-                    context,
-                    label: 'Stop',
-                    icon: Icons.stop,
-                    onLongPress: () => _stopSilenceDetection(context),
-                    backgroundColor: theme.colorScheme.errorContainer,
-                    textColor: theme.colorScheme.onErrorContainer,
-                  ),
-                  const Spacer(),
-                  // Right side: Ambient % (plain text, no background)
-                  if (calmPercent != null)
-                    Text(
-                      'Ambient: ${calmPercent.round()}%',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
+                    Expanded(
+                      flex: 2, // Give Focus Mode button more space
+                      child: _buildTopButton(
+                        context,
+                        label: l10n.focusModeButton,
+                        onTap: () => setState(() => _focusModeActive = true),
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        textColor: theme.colorScheme.onPrimaryContainer,
                       ),
                     ),
+                  // Spacer between left and right groups (minimal)
+                  if (!_focusModeActive) const SizedBox(width: 6),
+                  // Right side: Pause and Stop buttons
+                  Expanded(
+                    flex: 2, // Equal space for Pause button
+                    child: _buildTopButton(
+                      context,
+                      label:
+                          silenceState.isPaused
+                              ? l10n.focusModeResume
+                              : l10n.focusModePause,
+                      icon:
+                          silenceState.isPaused
+                              ? Icons.play_arrow
+                              : Icons.pause,
+                      onLongPress:
+                          () =>
+                              ref
+                                  .read(silenceStateProvider.notifier)
+                                  .togglePause(),
+                      backgroundColor: theme.colorScheme.secondaryContainer,
+                      textColor: theme.colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    flex: 2, // Equal space for Stop button
+                    child: _buildTopButton(
+                      context,
+                      label: l10n.sessionStop,
+                      icon: Icons.stop,
+                      onLongPress: () => _stopSilenceDetection(context),
+                      backgroundColor: theme.colorScheme.errorContainer,
+                      textColor: theme.colorScheme.onErrorContainer,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -3620,6 +3655,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   Widget _buildFocusModeButton(BuildContext context) {
     final userPrefs = ref.watch(userPreferencesProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     // Only show if Focus Mode is enabled in preferences
     if (!userPrefs.focusModeEnabled) {
@@ -3637,9 +3673,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
         icon: const Icon(Icons.bedtime_outlined, size: 18),
-        label: const Text(
-          'Focus Mode',
-          style: TextStyle(
+        label: Text(
+          l10n.focusModeButton,
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
@@ -3684,29 +3720,48 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     bool isSelected,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final hasPremium = ref.watch(premiumAccessProvider);
+
     String label;
+    String featureDescription;
     if (minutes == 60) {
       label = '1hr';
+      featureDescription = l10n.durationUpTo1Hour;
     } else if (minutes == 90) {
       label = '1.5hr';
+      featureDescription = l10n.durationUpTo1_5Hours;
     } else if (minutes == 120) {
       label = '2hr';
+      featureDescription = l10n.durationUpTo2Hours;
     } else {
       label = '4hr';
+      featureDescription = l10n.durationExtended;
     }
 
     return TextButton.icon(
       onPressed: () {
+        // Check if user has premium access
+        if (!hasPremium) {
+          // Show paywall for non-premium users
+          showPaywall(
+            context,
+            requiredTier: SubscriptionTier.premium,
+            featureDescription: featureDescription,
+          );
+          return;
+        }
+        // Premium user can select duration
         setState(() => _selectedDurationMinutes = minutes);
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
       },
       icon: Icon(
-        Icons.star,
+        hasPremium ? Icons.star : Icons.star_outline,
         size: 14,
         color:
             isSelected
                 ? theme.colorScheme.primary
-                : theme.colorScheme.secondary,
+                : (hasPremium ? theme.colorScheme.secondary : Colors.amber),
       ),
       label: Text(
         label,
@@ -3746,7 +3801,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     required Color textColor,
   }) {
     final button = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(
@@ -3754,17 +3809,24 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         ), // Material 3 medium radius (12dp)
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max, // Use full available width
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (icon != null) ...[
             Icon(icon, size: 14, color: textColor),
             const SizedBox(width: 4),
           ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 11, // Slightly smaller to fit longer text
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -3781,6 +3843,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildStatusMessage(BuildContext context, SilenceState silenceState) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (silenceState.error != null) {
       return Text(
@@ -3796,7 +3859,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     if (silenceState.success == true) {
       return Text(
-        'Success',
+        l10n.sessionSuccess,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -3809,7 +3872,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     if (silenceState.success == false) {
       return Text(
-        'Failed',
+        l10n.sessionFailed,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.error,
         ),
@@ -3983,10 +4046,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               success,
               sessionMinutes, // Show actual session duration
             );
-            final message = notificationService.getCompletionMessage(
-              success,
-              sessionMinutes, // Show actual session duration
-            );
+            // Get localized completion message
+            final l10n = AppLocalizations.of(context)!;
+            final message = success
+                ? l10n.sessionCompleteSuccess(sessionMinutes)
+                : l10n.sessionCompleteFailed;
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -4102,6 +4166,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildBottomNav(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -4121,11 +4186,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           indicatorColor: theme.colorScheme.primary,
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: const [
-            Tab(icon: Icon(Icons.today_rounded), text: 'Today'),
+          tabs: [
+            Tab(icon: Icon(Icons.today_rounded), text: l10n.todayTabToday),
             Tab(
               icon: Icon(Icons.play_circle_outline_rounded),
-              text: 'Sessions',
+              text: l10n.todayTabSessions,
             ),
           ],
         ),

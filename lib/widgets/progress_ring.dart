@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class ProgressRing extends StatelessWidget {
   final double progress;
@@ -33,6 +34,7 @@ class ProgressRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final primaryColor = color ?? theme.colorScheme.primary;
     final dramatic = theme.extension<DramaticThemeStyling>();
     final bgColor =
@@ -166,7 +168,7 @@ class ProgressRing extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Calm',
+                          l10n.sessionCalm,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
@@ -192,7 +194,7 @@ class ProgressRing extends StatelessWidget {
 
                       // Text label
                       Text(
-                        isListening ? 'Stop' : 'Start',
+                        isListening ? l10n.sessionStop : l10n.sessionStart,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color:

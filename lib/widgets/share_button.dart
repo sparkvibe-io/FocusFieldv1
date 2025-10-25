@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:focus_field/services/share_service.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Reusable share button that triggers card sharing.
 /// Shows loading state during capture and handles errors gracefully.
@@ -48,9 +49,9 @@ class _ShareButtonState extends State<ShareButton> {
       if (mounted) {
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to share. Please try again.'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.shareErrorFailed),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -145,9 +146,9 @@ class _ShareFabState extends State<ShareFab> {
 
       if (mounted && !success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to share. Please try again.'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.shareErrorFailed),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -172,7 +173,7 @@ class _ShareFabState extends State<ShareFab> {
               ),
             )
           : const Icon(Icons.share),
-      label: const Text('Share'),
+      label: Text(AppLocalizations.of(context)!.buttonShare),
       backgroundColor: _isSharing
           ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.6)
           : Theme.of(context).colorScheme.primary,

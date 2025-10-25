@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/ambient_quest_provider.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Motivational daily message card with subtle progress indicators
 /// Rotating inspirational messages to encourage users and build confidence
@@ -12,46 +13,49 @@ class QuestCapsule extends ConsumerWidget {
 
   const QuestCapsule({super.key, this.onNavigateToActivity});
 
-  /// Extensible list of motivational messages
-  /// Add new messages here - they will automatically rotate
-  static const List<String> motivationalMessages = [
-    'Success is never ending and failure is never final',
-    'Progress over perfection - every minute counts',
-    'Small steps daily lead to big changes',
-    'You\'re building better habits, one session at a time',
-    'Consistency beats intensity',
-    'Every session is a win, no matter how short',
-    'Focus is a muscle - you\'re getting stronger',
-    'The journey of a thousand miles begins with a single step',
-  ];
+  /// Get list of motivational messages from localization
+  List<String> _getMotivationalMessages(AppLocalizations l10n) {
+    return [
+      l10n.questMotivation1,
+      l10n.questMotivation2,
+      l10n.questMotivation3,
+      l10n.questMotivation4,
+      l10n.questMotivation5,
+      l10n.questMotivation6,
+      l10n.questMotivation7,
+      l10n.questMotivation8,
+    ];
+  }
 
   /// Get rotating message
   /// Production: changes once per day
   /// Development: changes every hour for easier testing
-  String _getDailyMessage() {
+  String _getDailyMessage(AppLocalizations l10n) {
     final now = DateTime.now();
+    final messages = _getMotivationalMessages(l10n);
 
     if (kDebugMode) {
       // Development: change every hour
       final seed = now.day * 24 + now.hour;
-      return motivationalMessages[seed % motivationalMessages.length];
+      return messages[seed % messages.length];
     } else {
       // Production: change once per day
       final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
-      return motivationalMessages[dayOfYear % motivationalMessages.length];
+      return messages[dayOfYear % messages.length];
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final questState = ref.watch(questStateProvider);
 
     if (questState == null) {
       return const SizedBox.shrink();
     }
 
-    final message = _getDailyMessage();
+    final message = _getDailyMessage(l10n);
 
     // HERO ELEMENT: Prominent call-to-action card
     // Darker than surroundings in light theme; lighter in dark theme
@@ -117,7 +121,7 @@ class QuestCapsule extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     child: Text(
-                      'Go',
+                      l10n.questGo,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,

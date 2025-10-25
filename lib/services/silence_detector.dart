@@ -333,7 +333,9 @@ class SilenceDetector {
       if (progress >= 1.0) {
         _stopListening();
         // Legacy parameter - actual success determined by Ambient Score in UI layer
-        onComplete(true); // Always true here, real success calculated in home_page_elegant.dart
+        onComplete(
+          true,
+        ); // Always true here, real success calculated in home_page_elegant.dart
       }
     } catch (e) {
       if (!kReleaseMode) {
@@ -420,7 +422,8 @@ class SilenceDetector {
 
     try {
       if (!kReleaseMode) {
-        DebugLog.d('DEBUG: Disposing SilenceDetector');
+        DebugLog.d('🗑️ [SilenceDetector] dispose() called (hash: $hashCode)');
+        DebugLog.d('🗑️ [SilenceDetector] Stack trace:\n${StackTrace.current}');
       }
 
       _isDisposed = true;

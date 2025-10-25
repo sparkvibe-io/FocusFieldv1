@@ -8,6 +8,7 @@ import 'package:focus_field/models/subscription_tier.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:focus_field/utils/debug_log.dart';
 // NOTE: RevenueCat prebuilt UI package not available; maintaining custom paywall.
 
 // Restored custom paywall (will later be enhanced with dynamic offerings display).
@@ -586,7 +587,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
 
     // Debug surface what we're showing (development only)
     if (kDebugMode) {
-      debugPrint('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
+      DebugLog.d('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
     }
 
     final priceString = selected.storeProduct.priceString;

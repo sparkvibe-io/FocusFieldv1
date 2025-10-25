@@ -8,6 +8,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_permissions.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 typedef NowProvider = DateTime Function();
 
@@ -91,7 +92,7 @@ class NotificationService {
       }
     } else {
       if (!kReleaseMode) {
-        debugPrint(
+        DebugLog.d(
           '[NotificationService] Skipping notification plugin init in test environment',
         );
       }
@@ -129,7 +130,7 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse notificationResponse) {
     if (!kReleaseMode) {
-      debugPrint('Notification tapped: ${notificationResponse.payload}');
+      DebugLog.d('Notification tapped: ${notificationResponse.payload}');
     }
     // Dispatch action callbacks for interactive notifications
     final actionId = notificationResponse.actionId;
@@ -325,7 +326,7 @@ class NotificationService {
                 .toList();
       }
     } catch (e) {
-      debugPrint('Error loading session times: $e');
+      DebugLog.d('Error loading session times: $e');
       _sessionTimes = [];
     }
   }
@@ -338,7 +339,7 @@ class NotificationService {
       );
       await prefs.setString(_sessionTimesKey, sessionsJson);
     } catch (e) {
-      debugPrint('Error saving session times: $e');
+      DebugLog.d('Error saving session times: $e');
     }
   }
 

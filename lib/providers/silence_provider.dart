@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/constants/app_constants.dart';
 import 'package:focus_field/models/silence_data.dart';
 import 'package:focus_field/services/silence_detector.dart';
 import 'package:focus_field/services/storage_service.dart';
 import 'package:focus_field/services/real_time_noise_controller.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 // Storage service provider
 final storageServiceProvider = FutureProvider<StorageService>((ref) async {
@@ -85,6 +87,10 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
     if (!state.hasValue) return;
 
     try {
+      if (!kReleaseMode) {
+        DebugLog.d('⚙️ [SettingsNotifier] updateSetting called: $key = $value');
+      }
+
       final storageService = await _ref.read(storageServiceProvider.future);
       final currentSettings = state.value!;
       final updatedSettings = {...currentSettings, key: value};
@@ -97,8 +103,18 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         state = AsyncValue.data(updatedSettings);
       }
 
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '⚙️ [SettingsNotifier] Setting saved, invalidating appSettingsProvider...',
+        );
+      }
+
       // Invalidate the app settings provider to refresh dependent providers
       _ref.invalidate(appSettingsProvider);
+
+      if (!kReleaseMode) {
+        DebugLog.d('⚙️ [SettingsNotifier] appSettingsProvider invalidated');
+      }
     } catch (error, stackTrace) {
       if (mounted) {
         state = AsyncValue.error(error, stackTrace);
@@ -121,10 +137,32 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
 }
 
 // Silence detector provider
+// IMPORTANT: This provider should NOT dispose detectors on threshold changes
+// because ambient monitoring may be running. Instead, we create new instances
+// and let Dart GC clean up old ones when they're no longer referenced.
 final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
   final threshold = ref.watch(decibelThresholdProvider);
   final duration = ref.watch(sessionDurationProvider);
-  return SilenceDetector(threshold: threshold, durationSeconds: duration);
+
+  if (!kDebugMode) {
+    // Production: create new detector (old ones will be GC'd)
+    return SilenceDetector(threshold: threshold, durationSeconds: duration);
+  }
+
+  // Debug mode: add logging
+  DebugLog.d(
+    '🔧 [Provider] Creating new SilenceDetector (threshold: $threshold, duration: ${duration}s)',
+  );
+  final detector = SilenceDetector(
+    threshold: threshold,
+    durationSeconds: duration,
+  );
+  DebugLog.d('🔧 [Provider] Detector created with hash: ${detector.hashCode}');
+
+  // DO NOT dispose detector here - ambient monitoring may be using it
+  // The detector will be garbage collected when no longer referenced
+
+  return detector;
 });
 
 /// Aggregated real-time noise controller provider (1Hz updates)
@@ -334,7 +372,9 @@ class SilenceState {
       success: success ?? this.success,
       error: error ?? this.error,
       canStop: canStop ?? this.canStop,
-      isPaused: isPaused ?? this.isPaused, // Use the getter which safely defaults to false
+      isPaused:
+          isPaused ??
+          this.isPaused, // Use the getter which safely defaults to false
     );
   }
 }

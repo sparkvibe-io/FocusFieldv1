@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/services/silence_detector.dart';
 import 'package:focus_field/widgets/real_time_noise_chart.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Inline panel that shows room loudness with smart threshold suggestions.
 /// Three states:
@@ -23,8 +27,15 @@ class InlineNoisePanel extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final controller = ref.watch(realTimeNoiseControllerProvider);
     final settingsNotifier = ref.read(settingsNotifierProvider.notifier);
+
+    if (!kReleaseMode) {
+      DebugLog.d(
+        '🔄 [InlineNoisePanel] Widget rebuilding (isListening: $isListening, threshold: $threshold, controller: ${controller.hashCode})',
+      );
+    }
 
     // Live values
     final current = useState<double>(0);
@@ -34,13 +45,21 @@ class InlineNoisePanel extends HookConsumerWidget {
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 1500),
     );
-    final pulseAnimation = useAnimation(
-      Tween<double>(begin: 0.3, end: 1.0).animate(
+    // Create animation without useAnimation() to avoid rebuilding entire widget
+    // AnimatedBuilder will be used to isolate rebuilds to just the pulsing badge
+    final pulseAnimation = useMemoized(
+      () => Tween<double>(begin: 0.3, end: 1.0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
       ),
+      [animationController],
     );
 
     useEffect(() {
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '📊 [InlineNoisePanel] Setting up noise stream subscription (controller: ${controller.hashCode})',
+        );
+      }
       final sub = controller.stream.listen((d) {
         if (d.isNaN || d.isInfinite) return;
         final clamped = d.clamp(0.0, 120.0);
@@ -49,11 +68,23 @@ class InlineNoisePanel extends HookConsumerWidget {
         smoothed.value =
             (s.isNaN || s.isInfinite) ? clamped : s * 0.7 + clamped * 0.3;
       });
-      return () => sub.cancel();
-    }, [controller]);
+      return () {
+        if (!kReleaseMode) {
+          DebugLog.d(
+            '📊 [InlineNoisePanel] Canceling noise stream subscription (controller: ${controller.hashCode})',
+          );
+        }
+        sub.cancel();
+      };
+    }, [controller.hashCode]); // Re-subscribe when controller changes
 
     // Start/stop pulse animation based on threshold exceeded state
     useEffect(() {
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '💫 [InlineNoisePanel] Pulse animation effect triggered (smoothed: ${smoothed.value}, threshold: $threshold, isListening: $isListening)',
+        );
+      }
       if (!isListening && smoothed.value > threshold) {
         animationController.repeat(reverse: true);
       } else {
@@ -64,36 +95,89 @@ class InlineNoisePanel extends HookConsumerWidget {
     }, [smoothed.value, threshold, isListening]);
 
     // Start ambient monitoring when not in an active session
-    // Only runs when isListening changes, not on every build
+    // IMPORTANT: This needs to restart when detector changes (threshold update creates new detector)
+    final currentDetector = ref.watch(silenceDetectorProvider);
+
+    // Track the previous detector to stop it before starting new one
+    final previousDetector = usePrevious(currentDetector);
+
     useEffect(
       () {
         if (!isListening) {
-          final silenceDetector = ref.read(silenceDetectorProvider);
+          // CRITICAL: Stop old detector BEFORE starting new one to avoid conflicts
+          if (previousDetector != null &&
+              previousDetector.hashCode != currentDetector.hashCode) {
+            if (!kReleaseMode) {
+              DebugLog.d(
+                '🎤 [InlineNoisePanel] Stopping old detector (${previousDetector.hashCode}) before starting new one',
+              );
+            }
+            try {
+              previousDetector.stopAmbientMonitoring();
+            } catch (_) {}
+          }
 
-          // Start ambient monitoring when not in a session
+          // Now start ambient monitoring on the NEW detector
+          if (!kReleaseMode) {
+            DebugLog.d(
+              '🎤 [InlineNoisePanel] Starting ambient monitoring (detector: ${currentDetector.hashCode})',
+            );
+          }
+
           try {
-            silenceDetector.startAmbientMonitoring(
+            currentDetector.startAmbientMonitoring(
               onError: (error) {
                 // Silently handle errors - user will see them if they try to start a session
+                if (!kReleaseMode) {
+                  DebugLog.d(
+                    '🎤 [InlineNoisePanel] Ambient monitoring error: $error',
+                  );
+                }
               },
             );
           } catch (e) {
             // Ignore startup errors
+            if (!kReleaseMode) {
+              DebugLog.d(
+                '🎤 [InlineNoisePanel] Exception starting ambient monitoring: $e',
+              );
+            }
           }
+
+          // Cleanup: stop ambient monitoring ONLY if this detector is still current
+          // (if detector changed, we already stopped it manually above)
+          return () {
+            // Check if this is still the current detector before stopping
+            final latestDetector = ref.read(silenceDetectorProvider);
+            if (latestDetector.hashCode == currentDetector.hashCode) {
+              if (!kReleaseMode) {
+                DebugLog.d(
+                  '🎤 [InlineNoisePanel] Cleanup: stopping ambient monitoring (detector: ${currentDetector.hashCode})',
+                );
+              }
+              try {
+                currentDetector.stopAmbientMonitoring();
+              } catch (_) {}
+            } else {
+              if (!kReleaseMode) {
+                DebugLog.d(
+                  '🎤 [InlineNoisePanel] Cleanup: skipping stop (detector ${currentDetector.hashCode} already replaced by ${latestDetector.hashCode})',
+                );
+              }
+            }
+          };
         }
 
-        // Cleanup: stop ambient monitoring when widget unmounts or session starts
-        return () {
-          if (!isListening) {
-            try {
-              final detector = ref.read(silenceDetectorProvider);
-              detector.stopAmbientMonitoring();
-            } catch (_) {}
-          }
-        };
+        // No cleanup needed if already listening
+        if (!kReleaseMode) {
+          DebugLog.d(
+            '🎤 [InlineNoisePanel] isListening=true, skipping ambient monitoring',
+          );
+        }
+        return null;
       },
-      [isListening],
-    ); // FIXED: Only re-run when listening state changes, not on every build
+      [isListening, currentDetector.hashCode],
+    ); // Re-run when listening state OR detector instance changes
 
     // Determine if room is too noisy (high threshold warning level)
     final isHighNoise = smoothed.value >= 70.0;
@@ -128,7 +212,7 @@ class InlineNoisePanel extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Room Loudness',
+                    l10n.noiseRoomLoudness,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onSurface,
@@ -216,15 +300,21 @@ class InlineNoisePanel extends HookConsumerWidget {
             children: [
               // Left: Title
               Text(
-                'Room Loudness',
+                l10n.noiseRoomLoudness,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.onSurface,
                 ),
               ),
               // Right: Current threshold badge (pulses RED when exceeded)
-              Opacity(
-                opacity: isExceeding ? pulseAnimation : 1.0,
+              // Use AnimatedBuilder to isolate rebuilds to just this badge
+              AnimatedBuilder(
+                animation: pulseAnimation,
+                builder:
+                    (context, child) => Opacity(
+                      opacity: isExceeding ? pulseAnimation.value : 1.0,
+                      child: child,
+                    ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -260,7 +350,7 @@ class InlineNoisePanel extends HookConsumerWidget {
                         const SizedBox(width: 4),
                       ],
                       Text(
-                        'Threshold: ${threshold.round()}dB',
+                        l10n.noiseThresholdLabel(threshold.round()),
                         style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color:
@@ -276,105 +366,247 @@ class InlineNoisePanel extends HookConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Compact row: Current loudness + threshold selector buttons
+          // Single horizontal row: dB reading + (threshold selectors OR contextual message)
           Row(
             children: [
-              // Left: Current loudness reading (slightly smaller to fit buttons)
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: getLoudnessColor(),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${smoothed.value.toStringAsFixed(1)}dB',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color:
-                          isExceeding
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ],
+              // Left: Current loudness indicator
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: getLoudnessColor(),
+                  shape: BoxShape.circle,
+                ),
               ),
-              const SizedBox(width: 8),
-              // Right: Scrollable threshold selector buttons to prevent overflow
+              const SizedBox(width: 6),
+              Text(
+                '${smoothed.value.toStringAsFixed(1)}dB',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color:
+                      isExceeding
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Right: Contextual UI - threshold selectors OR message with buttons
+              // Fixed height to prevent layout shift between states
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      for (final db in const [30, 40, 50, 60, 80])
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: _buildTextThresholdButton(
-                            context,
-                            theme,
-                            db,
-                            threshold.round() == db,
-                            () async {
-                              await settingsNotifier.updateSetting(
-                                'decibelThreshold',
-                                db.toDouble(),
-                              );
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Threshold set to $db dB'),
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                    ],
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minHeight: 52, // Consistent height for both states
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child:
+                        isExceeding
+                            ? _buildContextualMessage(
+                              context,
+                              theme,
+                              l10n,
+                              smoothed.value,
+                              threshold,
+                              settingsNotifier,
+                              ref,
+                            )
+                            : _buildThresholdSelectors(
+                              context,
+                              theme,
+                              l10n,
+                              threshold,
+                              settingsNotifier,
+                              ref,
+                            ),
                   ),
                 ),
               ),
             ],
           ),
-          // High noise warning (only shown when noise >= 70dB)
-          if (isHighNoise) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: theme.colorScheme.error.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    size: 20,
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'High noise detected, please proceed to a quieter room for better focus',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onErrorContainer,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
+    );
+  }
+
+  /// Calculate smart threshold suggestion
+  /// Rounds up to next 10dB multiple above current noise
+  int _calculateSuggestedThreshold(double currentDb, double currentThreshold) {
+    // Round up to next 10dB multiple
+    int suggested = ((currentDb / 10).ceil() * 10);
+
+    // Ensure it's higher than current threshold
+    if (suggested <= currentThreshold.round()) {
+      suggested = currentThreshold.round() + 10;
+    }
+
+    // Cap at 80dB max
+    return suggested > 80 ? 80 : suggested;
+  }
+
+  /// Build threshold selector buttons (shown when NOT exceeding)
+  Widget _buildThresholdSelectors(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+    double threshold,
+    dynamic settingsNotifier,
+    WidgetRef ref,
+  ) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          for (final db in const [30, 40, 50, 60, 80])
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: _buildTextThresholdButton(
+                context,
+                theme,
+                db,
+                threshold.round() == db,
+                () async {
+                  SilenceDetector? detectorBefore;
+                  if (!kReleaseMode) {
+                    DebugLog.d(
+                      '🎚️ [InlineNoisePanel] Threshold button clicked: ${db}dB',
+                    );
+                    DebugLog.d(
+                      '🎚️ [InlineNoisePanel] Current threshold: ${threshold}dB',
+                    );
+                    detectorBefore = ref.read(silenceDetectorProvider);
+                    DebugLog.d(
+                      '🎚️ [InlineNoisePanel] Current detector: ${detectorBefore.hashCode}',
+                    );
+                  }
+
+                  await settingsNotifier.updateSetting(
+                    'decibelThreshold',
+                    db.toDouble(),
+                  );
+
+                  if (!kReleaseMode && detectorBefore != null) {
+                    final detectorAfter = ref.read(silenceDetectorProvider);
+                    DebugLog.d(
+                      '🎚️ [InlineNoisePanel] After update - detector: ${detectorAfter.hashCode}',
+                    );
+                    DebugLog.d(
+                      '🎚️ [InlineNoisePanel] Detector changed: ${detectorBefore.hashCode != detectorAfter.hashCode}',
+                    );
+                  }
+
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.noiseThresholdSet(db)),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Build contextual message when threshold is exceeded
+  /// Inline compact layout: message text + No/Yes buttons (single row)
+  Widget _buildContextualMessage(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+    double currentDb,
+    double threshold,
+    dynamic settingsNotifier,
+    WidgetRef ref,
+  ) {
+    final suggestedThreshold = _calculateSuggestedThreshold(
+      currentDb,
+      threshold,
+    );
+    final isAtMax = threshold.round() >= 80;
+
+    // Message text based on conditions
+    String message;
+    if (isAtMax) {
+      message = l10n.noiseAtMaxThreshold;
+    } else if (currentDb >= 70.0) {
+      message = l10n.noiseHighIncreasePrompt(suggestedThreshold);
+    } else {
+      message = l10n.noiseExceededIncreasePrompt(suggestedThreshold);
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 2, // Give more space to message text
+          child: Text(
+            message,
+            textAlign: TextAlign.right, // Right-align text to flow toward button
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.2, // Compact line height for 2 lines
+            ),
+            maxLines: 2, // Allow 2 lines to show full message
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (!isAtMax) ...[
+          const SizedBox(width: 12),
+          // Yes button (primary action)
+          FilledButton(
+            onPressed: () async {
+              SilenceDetector? detectorBefore;
+              if (!kReleaseMode) {
+                DebugLog.d(
+                  '✅ [InlineNoisePanel] Yes button clicked - increasing threshold to ${suggestedThreshold}dB',
+                );
+                detectorBefore = ref.read(silenceDetectorProvider);
+                DebugLog.d(
+                  '✅ [InlineNoisePanel] Current detector: ${detectorBefore.hashCode}',
+                );
+              }
+
+              await settingsNotifier.updateSetting(
+                'decibelThreshold',
+                suggestedThreshold.toDouble(),
+              );
+
+              if (!kReleaseMode && detectorBefore != null) {
+                final detectorAfter = ref.read(silenceDetectorProvider);
+                DebugLog.d(
+                  '✅ [InlineNoisePanel] After update - detector: ${detectorAfter.hashCode}',
+                );
+              }
+
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.noiseThresholdSet(suggestedThreshold)),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: const Size(48, 32),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              backgroundColor: theme.colorScheme.primary,
+            ),
+            child: Text(
+              l10n.noiseThresholdYes,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 

@@ -32,6 +32,7 @@ RUN_MODE="--profile"  # default to profile for near-release perf
 DEVICE_TARGET="android" # let Flutter pick the first Android device by default
 # Default dev flag inferred from run mode (debug/profile -> true, release -> false)
 IS_DEVELOPMENT=true
+TEST_LOCALE=""  # Optional locale for i18n testing (e.g., es, de, fr, ja, pt)
 
 # Optional: production banner ad unit id for AdMob (overrides app constants)
 DART_DEFINE_BANNER_UNIT=""
@@ -44,6 +45,7 @@ EXTRA_DART_DEFINES=""
 
 # Args: --debug/--profile/--release, -d <device_id>, --prod (sets IS_DEVELOPMENT=false)
 #       --missions (enables FEATURE_MISSIONS_UI)
+#       --locale <code> to test specific language (en, es, de, fr, ja, pt, pt_BR)
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --debug) RUN_MODE="--debug"; shift ;;
@@ -52,6 +54,7 @@ while [[ $# -gt 0 ]]; do
     --prod) IS_DEVELOPMENT=false; shift ;;
     --missions) EXTRA_DART_DEFINES+=" --dart-define=FEATURE_MISSIONS_UI=true"; shift ;;
     -d) DEVICE_TARGET="$2"; shift 2 ;;
+    --locale) TEST_LOCALE="$2"; shift 2 ;;
     *) echo "Unknown arg: $1"; exit 2 ;;
   esac
 done
@@ -61,6 +64,9 @@ echo "   Using Android API Key: ${ANDROID_API_KEY:0:20}..."
 echo "   Run mode: ${RUN_MODE#--}"
 echo "   Target: ${DEVICE_TARGET}"
 echo "   IS_DEVELOPMENT: ${IS_DEVELOPMENT}"
+if [[ -n "${TEST_LOCALE}" ]]; then
+  echo "   🌍 Testing Locale: ${TEST_LOCALE}"
+fi
 if [[ -n "${ANDROID_BANNER_AD_UNIT_ID:-}" ]]; then
   echo "   ANDROID_BANNER_AD_UNIT_ID: ${ANDROID_BANNER_AD_UNIT_ID}"
 fi
@@ -72,6 +78,12 @@ if [[ "${ANDROID_API_KEY}" == "goog_YOUR_ANDROID_PUBLIC_KEY_HERE" ]]; then
   echo "   3. Find your Android app configuration"
   echo "   4. Copy the PUBLIC API key (starts with 'goog_')"
   exit 1
+fi
+
+# Optional: Test locale for i18n verification
+DART_DEFINE_LOCALE=""
+if [[ -n "${TEST_LOCALE}" ]]; then
+  DART_DEFINE_LOCALE="--dart-define=TEST_LOCALE=${TEST_LOCALE}"
 fi
 
 echo ""
@@ -86,6 +98,7 @@ flutter run \
   ${DART_DEFINE_BANNER_UNIT} \
   ${EXTRA_DART_DEFINES} \
   ${DART_DEFINE_ENTITLEMENT_KEY} \
+  ${DART_DEFINE_LOCALE} \
   -d "${DEVICE_TARGET}"
 
 echo ""

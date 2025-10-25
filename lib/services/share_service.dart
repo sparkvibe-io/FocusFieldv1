@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Service for generating and sharing visual cards from app data.
 /// Supports weekly summaries, achievements, streaks, and activity rings.
@@ -32,7 +33,7 @@ class ShareService {
       // Capture the widget as an image
       final imageBytes = await _captureWidget(key);
       if (imageBytes == null) {
-        debugPrint('❌ ShareService: Failed to capture widget');
+        DebugLog.d('❌ ShareService: Failed to capture widget');
         return false;
       }
 
@@ -50,11 +51,11 @@ class ShareService {
       );
       await SharePlus.instance.share(params);
 
-      debugPrint('✅ ShareService: Share initiated successfully');
+      DebugLog.d('✅ ShareService: Share initiated successfully');
       return true;
 
     } catch (e, st) {
-      debugPrint('❌ ShareService: Error sharing widget: $e\n$st');
+      DebugLog.d('❌ ShareService: Error sharing widget: $e\n$st');
       return false;
     }
   }
@@ -69,7 +70,7 @@ class ShareService {
       // Find the RenderRepaintBoundary
       final boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) {
-        debugPrint('❌ ShareService: RenderObject not found');
+        DebugLog.d('❌ ShareService: RenderObject not found');
         return null;
       }
 
@@ -78,13 +79,13 @@ class ShareService {
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       
       if (byteData == null) {
-        debugPrint('❌ ShareService: Failed to convert image to bytes');
+        DebugLog.d('❌ ShareService: Failed to convert image to bytes');
         return null;
       }
 
       return byteData.buffer.asUint8List();
     } catch (e, st) {
-      debugPrint('❌ ShareService: Error capturing widget: $e\n$st');
+      DebugLog.d('❌ ShareService: Error capturing widget: $e\n$st');
       return null;
     }
   }
@@ -103,7 +104,7 @@ class ShareService {
       await SharePlus.instance.share(params);
       return true;
     } catch (e) {
-      debugPrint('❌ ShareService: Error sharing text: $e');
+      DebugLog.d('❌ ShareService: Error sharing text: $e');
       return false;
     }
   }

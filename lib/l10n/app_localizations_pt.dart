@@ -158,7 +158,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage => 'Focus Field precisa acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Focus Field mede os níveis de som ambiente para ajudá-lo a manter ambientes silenciosos.\n\nO aplicativo precisa de acesso ao microfone para detectar o silêncio, mas não grava nenhum áudio.';
 
   @override
   String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
@@ -719,7 +719,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get weeklyTimeLabel => 'Horário semanal';
 
   @override
-  String get notificationPreview => 'Prévia';
+  String get notificationPreview => 'Pré-visualização de Notificação';
 
   @override
   String get dailySilenceReminderTitle => 'Lembrete diário de foco';
@@ -809,94 +809,94 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hideTips => 'Ocultar dicas';
 
   @override
-  String get tip01 => 'Short sessions count—start with 2–3 minutes to build consistency.';
+  String get tip01 => 'Comece pequeno—até 2 minutos constroem seu hábito de foco.';
 
   @override
-  String get tip02 => 'Use Smart Daily Reminders to nudge you at your best time.';
+  String get tip02 => 'Sua sequência tem graça—uma falta não a quebrará com a Regra de 2 Dias.';
 
   @override
-  String get tip03 => 'Recalibrate when your environment changes for better accuracy.';
+  String get tip03 => 'Experimente atividades de Estudo, Leitura ou Meditação para combinar com seu estilo de foco.';
 
   @override
-  String get tip04 => 'Check Weekly Trends to spot your momentum over time.';
+  String get tip04 => 'Confira seu Mapa de Calor de 12 semanas para ver como pequenas vitórias se acumulam ao longo do tempo.';
 
   @override
-  String get tip05 => 'Streaks grow with daily wins—show up, even for one minute.';
+  String get tip05 => 'Observe sua % de Calma ao vivo durante as sessões—pontuações mais altas significam melhor foco!';
 
   @override
-  String get tip06 => 'High ambient noise? Raise threshold a bit to reduce false fails.';
+  String get tip06 => 'Personalize sua meta diária (10-60 min) para combinar com seu ritmo.';
 
   @override
-  String get tip07 => 'Try different times of day to find your quiet sweet spot.';
+  String get tip07 => 'Use seu Token de Congelamento mensal para proteger sua sequência em dias difíceis.';
 
   @override
-  String get tip08 => 'Session complete notifications keep motivation high—enable them!';
+  String get tip08 => 'Após 3 vitórias, o Focus Field sugere um limiar mais rigoroso—pronto para subir de nível?';
 
   @override
-  String get tip09 => 'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
+  String get tip09 => 'Ruído ambiente alto? Aumente seu limiar para permanecer na zona.';
 
   @override
-  String get tip10 => 'Use shorter sessions on busy days to keep your streak alive.';
+  String get tip10 => 'Lembretes Diários Inteligentes aprendem seu melhor momento—deixe-os guiá-lo.';
 
   @override
-  String get tip11 => 'The progress ring is tappable—start or stop with a single tap.';
+  String get tip11 => 'O anel de progresso é tocável—um toque inicia sua sessão de foco.';
 
   @override
-  String get tip12 => 'Export your data (Premium) to share progress or back it up.';
+  String get tip12 => 'Recalibre quando seu ambiente mudar para melhor precisão.';
 
   @override
-  String get tip13 => 'Average session length helps you choose the right duration.';
+  String get tip13 => 'Notificações de sessão celebram suas vitórias—ative-as para motivação!';
 
   @override
-  String get tip14 => 'Consistency beats intensity—small daily practice compounds.';
+  String get tip14 => 'Consistência vence perfeição—apareça, mesmo em dias ocupados.';
 
   @override
-  String get tip15 => 'Set a gentle goal: 5 quiet minutes is a great baseline.';
+  String get tip15 => 'Experimente diferentes momentos do dia para descobrir seu ponto doce tranquilo.';
 
   @override
-  String get tip16 => 'The noise chart helps you see spikes—aim for calmer periods.';
+  String get tip16 => 'Seu progresso diário está sempre visível—toque em Ir para começar a qualquer momento.';
 
   @override
-  String get tip17 => 'Upgrade session duration (Premium) for longer focus blocks.';
+  String get tip17 => 'Cada atividade rastreia separadamente em direção à sua meta—variedade mantém as coisas frescas.';
 
   @override
-  String get tip18 => 'High threshold warning guards accuracy—avoid setting it too high.';
+  String get tip18 => 'Exporte seus dados (Premium) para ver sua jornada de foco completa.';
 
   @override
-  String get tip19 => 'Weekdays vary—tune your weekly summary to your schedule.';
+  String get tip19 => 'Confete celebra cada conclusão—pequenas vitórias merecem reconhecimento!';
 
   @override
-  String get tip20 => 'Accessibility options: high contrast, large text, and vibration.';
+  String get tip20 => 'Sua linha de base importa—calibre ao mudar para novos espaços.';
 
   @override
-  String get tip21 => 'Ambient baseline matters—calibrate when moving to new spaces.';
+  String get tip21 => 'Suas Tendências de 7 Dias revelam padrões—confira-as semanalmente para insights.';
 
   @override
-  String get tip22 => 'Quiet wins add up—1 point per minute keeps it simple.';
+  String get tip22 => 'Atualize a duração da sessão (Premium) para blocos de foco profundo mais longos.';
 
   @override
-  String get tip23 => 'Confetti celebrates progress—small celebrations reinforce habits.';
+  String get tip23 => 'Foco é uma prática—pequenas sessões constroem o hábito que você deseja.';
 
   @override
-  String get tip24 => 'Try mornings if evenings are noisy—best time differs for everyone.';
+  String get tip24 => 'O Resumo Semanal mostra seu ritmo—ajuste-o ao seu cronograma.';
 
   @override
-  String get tip25 => 'Fine‑tune the decibel threshold for your room’s character.';
+  String get tip25 => 'Ajuste seu limiar para seu espaço—cada sala é diferente.';
 
   @override
-  String get tip26 => 'Use the moving average to smooth out noisy days.';
+  String get tip26 => 'Opções de acessibilidade ajudam todos a focar—alto contraste, texto grande, vibração.';
 
   @override
-  String get tip27 => 'Let Weekly Insights remind you of your progress rhythm.';
+  String get tip27 => 'Linha do Tempo de Hoje mostra quando você focou—encontre suas horas produtivas.';
 
   @override
-  String get tip28 => 'Finish what you start—short sessions reduce friction to begin.';
+  String get tip28 => 'Termine o que você começa—sessões mais curtas significam mais conclusões.';
 
   @override
-  String get tip29 => 'Silence is a skill—practice makes patterns, patterns make progress.';
+  String get tip29 => 'Minutos Silenciosos somam em direção à sua meta—progresso sobre perfeição.';
 
   @override
-  String get tip30 => 'You’re one tap away—start a tiny session now.';
+  String get tip30 => 'Você está a um toque de distância—comece uma pequena sessão agora.';
 
   @override
   String get tipInstructionNotifications => 'Settings → Advanced → Notifications to configure reminders and celebrations.';
@@ -942,6 +942,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tipInstructionStartNow => 'Tap Start Session on the Home screen.';
+
+  @override
+  String get tipInstructionHeatmap => 'Aba Resumo → Mostrar Mais → Mapa de Calor';
+
+  @override
+  String get tipInstructionTodayTimeline => 'Aba Resumo → Mostrar Mais → Linha do Tempo de Hoje';
+
+  @override
+  String get tipInstruction7DayTrends => 'Aba Resumo → Mostrar Mais → Tendências de 7 Dias';
+
+  @override
+  String get tipInstructionEditActivities => 'Aba Atividade → toque em Editar para mostrar/ocultar atividades';
+
+  @override
+  String get tipInstructionQuestGo => 'Aba Atividade → Cápsula de Missão → toque em Ir';
 
   @override
   String get tipInfoTooltip => 'Mostrar dica';
@@ -1012,6 +1027,1430 @@ class AppLocalizationsPt extends AppLocalizations {
   String errorWithMessage(String message) {
     return 'Erro: $message';
   }
+
+  @override
+  String get faqTitle => 'Perguntas Frequentes';
+
+  @override
+  String get faqSearchHint => 'Pesquisar perguntas...';
+
+  @override
+  String get faqNoResults => 'Nenhum resultado encontrado';
+
+  @override
+  String get faqNoResultsSubtitle => 'Tente um termo de pesquisa diferente';
+
+  @override
+  String faqResultsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count resultados encontrados',
+      one: '1 resultado encontrado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get faqQ01 => 'O que é Focus Field e como me ajuda a concentrar?';
+
+  @override
+  String get faqA01 => 'Focus Field ajuda você a desenvolver melhores hábitos de concentração monitorando o ruído ambiente em seu ambiente. Quando você inicia uma sessão (Estudo, Leitura, Meditação ou Outro), o aplicativo mede o quão silencioso está seu ambiente. Quanto mais silencioso você mantiver, mais \"minutos de concentração\" você ganha. Isso o incentiva a encontrar e manter espaços livres de distrações para trabalho profundo.';
+
+  @override
+  String get faqQ02 => 'Como o Focus Field mede minha concentração?';
+
+  @override
+  String get faqA02 => 'Focus Field monitorao nível de ruído ambiente em seu ambiente durante sua sessão. Ele calcula uma \"Pontuação Ambiente\" rastreando quantos segundos seu ambiente permanece abaixo do seu limiar de ruído escolhido. Se sua sessão tiver pelo menos 70% de tempo silencioso (Pontuação Ambiente ≥70%), você ganha crédito total por esses minutos silenciosos.';
+
+  @override
+  String get faqQ03 => 'O Focus Field grava meu áudio ou conversas?';
+
+  @override
+  String get faqA03 => 'Não, absolutamente não. Focus Field apenas mede níveis de decibéis (volume) - nunca grava, armazena ou transmite áudio. Sua privacidade está completamente protegida. O aplicativo simplesmente verifica se seu ambiente está acima ou abaixo do seu limiar escolhido.';
+
+  @override
+  String get faqQ04 => 'Quais atividades posso rastrear com Focus Field?';
+
+  @override
+  String get faqA04 => 'Focus Field vem com quatro tipos de atividade: Estudo 📚 (para aprendizado e pesquisa), Leitura 📖 (para leitura focada), Meditação 🧘 (para prática de atenção plena) e Outro ⭐ (para qualquer atividade que requer concentração). Todas as atividades usam monitoramento de ruído ambiente para ajudá-lo a manter um ambiente silencioso e focado.';
+
+  @override
+  String get faqQ05 => 'Devo usar o Focus Field para todas as minhas atividades?';
+
+  @override
+  String get faqA05 => 'Focus Field funciona melhor para atividades onde o ruído ambiente indica seu nível de concentração. Atividades como Estudo, Leitura e Meditação se beneficiam mais de ambientes silenciosos. Embora você possa rastrear atividades \"Outro\", recomendamos usar Focus Field principalmente para trabalho de concentração sensível ao ruído.';
+
+  @override
+  String get faqQ06 => 'Como iniciar uma sessão de concentração?';
+
+  @override
+  String get faqA06 => 'Vá para a aba Sessões, selecione sua atividade (Estudo, Leitura, Meditação ou Outro), escolha a duração da sua sessão (1, 5, 10, 15, 30 minutos ou opções premium), toque no botão Iniciar no anel de progresso e mantenha seu ambiente silencioso!';
+
+  @override
+  String get faqQ07 => 'Quais durações de sessão estão disponíveis?';
+
+  @override
+  String get faqA07 => 'Usuários gratuitos podem escolher: sessões de 1, 5, 10, 15 ou 30 minutos. Usuários Premium também obtêm: sessões estendidas de 1 hora, 1,5 hora e 2 horas para períodos mais longos de trabalho profundo.';
+
+  @override
+  String get faqQ08 => 'Posso pausar ou parar uma sessão mais cedo?';
+
+  @override
+  String get faqA08 => 'Sim! Durante uma sessão, você verá botões de Pausar e Parar acima do anel de progresso. Para evitar toques acidentais, você precisa pressionar longamente esses botões. Se você parar mais cedo, ainda ganhará pontos pelos minutos silenciosos que acumulou.';
+
+  @override
+  String get faqQ09 => 'Como ganho pontos no Focus Field?';
+
+  @override
+  String get faqA09 => 'Você ganha 1 ponto por minuto silencioso. Durante sua sessão, Focus Field rastreia quantos segundos seu ambiente permanece abaixo do limiar de ruído. No final, esses segundos silenciosos são convertidos em minutos. Por exemplo, se você completar uma sessão de 10 minutos com 8 minutos de tempo silencioso, ganha 8 pontos.';
+
+  @override
+  String get faqQ10 => 'O que é o limiar de 70% e por que importa?';
+
+  @override
+  String get faqA10 => 'O limiar de 70% determina se sua sessão conta para seu objetivo diário. Se sua Pontuação Ambiente (tempo silencioso ÷ tempo total) for pelo menos 70%, sua sessão qualifica para crédito de missão. Mesmo se estiver abaixo de 70%, você ainda ganha pontos por cada minuto silencioso!';
+
+  @override
+  String get faqQ11 => 'Qual é a diferença entre Pontuação Ambiente e pontos?';
+
+  @override
+  String get faqA11 => 'Pontuação Ambiente é a qualidade da sua sessão como porcentagem (segundos silenciosos ÷ segundos totais), determinando se você atinge o limiar de 70%. Pontos são os minutos silenciosos reais ganhos (1 ponto = 1 minuto). Pontuação Ambiente = qualidade, Pontos = conquista.';
+
+  @override
+  String get faqQ12 => 'Como funcionam as sequências no Focus Field?';
+
+  @override
+  String get faqA12 => 'Sequências rastreiam dias consecutivos de atingir seu objetivo diário. Focus Field usa uma Regra Compassiva de 2 Dias: Sua sequência só quebra se você perder dois dias consecutivos. Isso significa que você pode perder um dia e sua sequência continua se você completar seu objetivo no dia seguinte.';
+
+  @override
+  String get faqQ13 => 'O que são tokens de congelamento e como usá-los?';
+
+  @override
+  String get faqA13 => 'Tokens de congelamento protegem sua sequência quando você não pode completar seu objetivo. Você recebe 1 token de congelamento grátis por mês. Quando usado, seu progresso geral mostra 100% (objetivo protegido), sua sequência está segura e o rastreamento de atividades individuais continua normalmente. Use sabiamente para dias ocupados!';
+
+  @override
+  String get faqQ14 => 'Posso personalizar meu objetivo diário de concentração?';
+
+  @override
+  String get faqA14 => 'Sim! Toque em Editar no cartão de Sessões na aba Hoje. Você pode definir seu objetivo diário global (10-60 minutos gratuito, até 1080 minutos premium), ativar objetivos por atividade para alvos separados e mostrar/ocultar atividades específicas.';
+
+  @override
+  String get faqQ15 => 'O que é o limiar de ruído e como ajustá-lo?';
+
+  @override
+  String get faqA15 => 'O limiar é o nível máximo de ruído (em decibéis) que conta como \"silencioso\". O padrão é 40 dB (silêncio de biblioteca). Você pode ajustá-lo na aba Sessões: 30 dB (muito silencioso), 40 dB (silêncio de biblioteca - recomendado), 50 dB (escritório moderado), 60-80 dB (ambientes mais barulhentos).';
+
+  @override
+  String get faqQ16 => 'O que é Limiar Adaptativo e devo usá-lo?';
+
+  @override
+  String get faqA16 => 'Após 3 sessões bem-sucedidas consecutivas no seu limiar atual, Focus Field sugere aumentá-lo em 2 dB para desafiá-lo. Isso ajuda você a melhorar gradualmente. Você pode aceitar ou recusar a sugestão - ela só aparece uma vez a cada 7 dias.';
+
+  @override
+  String get faqQ17 => 'O que é o Modo de Concentração?';
+
+  @override
+  String get faqA17 => 'Modo de Concentração é uma sobreposição de tela cheia sem distrações durante sua sessão. Mostra seu cronômetro de contagem regressiva, porcentagem de calma ao vivo e controles mínimos (Pausar/Parar via pressão longa). Remove todos os outros elementos de interface para que você possa se concentrar completamente. Ative em Configurações > Básico > Modo de Concentração.';
+
+  @override
+  String get faqQ18 => 'Por que o Focus Field precisa de permissão de microfone?';
+
+  @override
+  String get faqA18 => 'Focus Field usa o microfone do seu dispositivo para medir níveis de ruído ambiente (decibéis) durante as sessões. Isso é essencial para calcular sua Pontuação Ambiente. Lembre-se: nenhum áudio é gravado - apenas níveis de ruído são medidos em tempo real.';
+
+  @override
+  String get faqQ19 => 'Posso ver meus padrões de concentração ao longo do tempo?';
+
+  @override
+  String get faqA19 => 'Sim! A aba Hoje mostra seu progresso diário, tendências semanais, mapa de calor de atividade de 12 semanas (como contribuições do GitHub) e linha do tempo de sessões. Usuários Premium obtêm análises avançadas com métricas de desempenho, médias móveis e insights impulsionados por IA.';
+
+  @override
+  String get faqQ20 => 'Como funcionam as notificações no Focus Field?';
+
+  @override
+  String get faqA20 => 'Focus Field tem lembretes inteligentes: Lembretes Diários (aprende sua hora de concentração preferida ou usa uma hora fixa), notificações de Sessão Concluída com resultados, notificações de Conquista para marcos e Resumo Semanal (Premium). Ative/personalize em Configurações > Avançado > Notificações.';
+
+  @override
+  String get microphoneSettingsTitle => 'Configurações Necessárias';
+
+  @override
+  String get microphoneSettingsMessage => 'Para ativar a detecção de silêncio, conceda manualmente a permissão do microfone:\n\n• iOS: Ajustes > Privacidade e Segurança > Microfone > Focus Field\n• Android: Configurações > Aplicativos > Focus Field > Permissões > Microfone';
+
+  @override
+  String get buttonGrantPermission => 'Conceder Permissão';
+
+  @override
+  String get buttonOk => 'OK';
+
+  @override
+  String get buttonOpenSettings => 'Abrir Configurações';
+
+  @override
+  String get onboardingBack => 'Voltar';
+
+  @override
+  String get onboardingSkip => 'Pular';
+
+  @override
+  String get onboardingNext => 'Próximo';
+
+  @override
+  String get onboardingGetStarted => 'Começar';
+
+  @override
+  String get onboardingWelcomeSnackbar => 'Bem-vindo! Pronto para iniciar sua primeira sessão? 🚀';
+
+  @override
+  String get onboardingWelcomeTitle => 'Bem-vindo ao\nFocus Field! 🎯';
+
+  @override
+  String get onboardingWelcomeSubtitle => 'A sua jornada para um melhor foco começa aqui!\nVamos construir hábitos que permanecem 💪';
+
+  @override
+  String get onboardingFeatureTrackTitle => 'Acompanhe o Seu Foco';
+
+  @override
+  String get onboardingFeatureTrackDesc => 'Veja o seu progresso em tempo real enquanto constrói o seu superpoder de foco! 📊';
+
+  @override
+  String get onboardingFeatureRewardsTitle => 'Ganhe Recompensas';
+
+  @override
+  String get onboardingFeatureRewardsDesc => 'Cada minuto silencioso conta! Colete pontos e celebre suas vitórias 🏆';
+
+  @override
+  String get onboardingFeatureStreaksTitle => 'Construa Sequências';
+
+  @override
+  String get onboardingFeatureStreaksDesc => 'Mantenha o impulso! Nosso sistema compassivo mantém você motivado 🔥';
+
+  @override
+  String get onboardingEnvironmentTitle => 'Onde está a sua Zona de Foco? 🎯';
+
+  @override
+  String get onboardingEnvironmentSubtitle => 'Escolha seu ambiente típico para que possamos otimizar seu espaço!';
+
+  @override
+  String get onboardingEnvQuietHomeTitle => 'Casa Silenciosa';
+
+  @override
+  String get onboardingEnvQuietHomeDesc => 'Quarto, escritório em casa silencioso';
+
+  @override
+  String get onboardingEnvQuietHomeDb => '30 dB - Muito silencioso';
+
+  @override
+  String get onboardingEnvOfficeTitle => 'Escritório Típico';
+
+  @override
+  String get onboardingEnvOfficeDesc => 'Escritório padrão, biblioteca';
+
+  @override
+  String get onboardingEnvOfficeDb => '40 dB - Silêncio de biblioteca (Recomendado)';
+
+  @override
+  String get onboardingEnvBusyTitle => 'Espaço Ocupado';
+
+  @override
+  String get onboardingEnvBusyDesc => 'Café, espaço de trabalho partilhado';
+
+  @override
+  String get onboardingEnvBusyDb => '50 dB - Ruído moderado';
+
+  @override
+  String get onboardingEnvNoisyTitle => 'Ambiente Barulhento';
+
+  @override
+  String get onboardingEnvNoisyDesc => 'Escritório aberto, espaço público';
+
+  @override
+  String get onboardingEnvNoisyDb => '60 dB - Ruído mais alto';
+
+  @override
+  String get onboardingEnvAdjustNote => 'Você pode ajustar isso a qualquer momento nas Configurações';
+
+  @override
+  String get onboardingGoalTitle => 'Defina Sua Meta Diária! 🎯';
+
+  @override
+  String get onboardingGoalSubtitle => 'Quanto tempo de concentração parece certo para você?\n(Você pode ajustar isso a qualquer momento!)';
+
+  @override
+  String get onboardingGoalStartingTitle => 'Começando';
+
+  @override
+  String get onboardingGoalStartingDuration => '10-15 minutos';
+
+  @override
+  String get onboardingGoalHabitTitle => 'Construindo Hábito';
+
+  @override
+  String get onboardingGoalHabitDuration => '20-30 minutos';
+
+  @override
+  String get onboardingGoalPracticeTitle => 'Prática Regular';
+
+  @override
+  String get onboardingGoalPracticeDuration => '40-60 minutos';
+
+  @override
+  String get onboardingGoalDeepWorkTitle => 'Trabalho Profundo';
+
+  @override
+  String get onboardingGoalDeepWorkDuration => '60+ minutos';
+
+  @override
+  String get onboardingGoalAdvice1 => 'Começo perfeito! 🌟 Pequenos passos levam a grandes vitórias. Você consegue!';
+
+  @override
+  String get onboardingGoalAdvice2 => 'Excelente escolha! 🎯 Este ponto ideal constrói hábitos duradouros!';
+
+  @override
+  String get onboardingGoalAdvice3 => 'Ambicioso! 💪 Você está pronto para subir de nível seu jogo de concentração!';
+
+  @override
+  String get onboardingGoalAdvice4 => 'Uau! 🏆 Modo de trabalho profundo ativado! Lembre-se de fazer pausas!';
+
+  @override
+  String get onboardingActivitiesTitle => 'Escolha Suas Atividades! ✨';
+
+  @override
+  String get onboardingActivitiesSubtitle => 'Escolha todas que ressoam com você!\n(Você sempre pode adicionar mais depois)';
+
+  @override
+  String get onboardingActivityStudyTitle => 'Estudo';
+
+  @override
+  String get onboardingActivityStudyDesc => 'Aprendizado, trabalhos de curso, pesquisa';
+
+  @override
+  String get onboardingActivityReadingTitle => 'Leitura';
+
+  @override
+  String get onboardingActivityReadingDesc => 'Leitura profunda, artigos, livros';
+
+  @override
+  String get onboardingActivityMeditationTitle => 'Meditação';
+
+  @override
+  String get onboardingActivityMeditationDesc => 'Atenção plena, exercícios de respiração';
+
+  @override
+  String get onboardingActivityOtherTitle => 'Outro';
+
+  @override
+  String get onboardingActivityOtherDesc => 'Qualquer atividade que exija concentração';
+
+  @override
+  String get onboardingActivitiesTip => 'Dica profissional: Focus Field brilha quando silêncio = concentração! 🤫✨';
+
+  @override
+  String get onboardingPermissionTitle => 'Sua Privacidade Importa! 🔒';
+
+  @override
+  String get onboardingPermissionSubtitle => 'Precisamos de acesso ao microfone para medir o ruído ambiente e ajudá-lo a se concentrar melhor';
+
+  @override
+  String get onboardingPrivacyNoRecordingTitle => 'Sem Gravação';
+
+  @override
+  String get onboardingPrivacyNoRecordingDesc => 'Medimos apenas níveis de ruído, nunca gravamos áudio';
+
+  @override
+  String get onboardingPrivacyLocalTitle => 'Apenas Local';
+
+  @override
+  String get onboardingPrivacyLocalDesc => 'Todos os dados permanecem no seu dispositivo';
+
+  @override
+  String get onboardingPrivacyFirstTitle => 'Privacidade Primeiro';
+
+  @override
+  String get onboardingPrivacyFirstDesc => 'Suas conversas são completamente privadas';
+
+  @override
+  String get onboardingPermissionNote => 'Você pode conceder permissão na próxima tela ao iniciar sua primeira sessão';
+
+  @override
+  String get onboardingTipsTitle => 'Dicas Profissionais para o Sucesso! 💡';
+
+  @override
+  String get onboardingTipsSubtitle => 'Estas ajudarão você a aproveitar ao máximo o Focus Field!';
+
+  @override
+  String get onboardingTip1Title => 'Comece Pequeno, Ganhe Grande! 🌱';
+
+  @override
+  String get onboardingTip1Desc => 'Comece com sessões de 5-10 minutos. Consistência supera perfeição!';
+
+  @override
+  String get onboardingTip2Title => 'Ative o Modo de Concentração! 🎯';
+
+  @override
+  String get onboardingTip2Desc => 'Toque no Modo de Concentração para uma experiência imersiva sem distrações.';
+
+  @override
+  String get onboardingTip3Title => 'Token de Congelamento = Rede de Segurança! ❄️';
+
+  @override
+  String get onboardingTip3Desc => 'Use seu token mensal em dias ocupados para proteger sua sequência.';
+
+  @override
+  String get onboardingTip4Title => 'A Regra dos 70% é Ótima! 📈';
+
+  @override
+  String get onboardingTip4Desc => 'Mire em 70% de tempo silencioso - silêncio perfeito não é necessário!';
+
+  @override
+  String get onboardingReadyTitle => 'Você Está Pronto para Decolar! 🚀';
+
+  @override
+  String get onboardingReadyDesc => 'Vamos começar sua primeira sessão e construir hábitos incríveis!';
+
+  @override
+  String get questMotivation1 => 'O sucesso nunca termina e o fracasso nunca é final';
+
+  @override
+  String get questMotivation2 => 'Progresso sobre perfeição - cada minuto conta';
+
+  @override
+  String get questMotivation3 => 'Pequenos passos diários levam a grandes mudanças';
+
+  @override
+  String get questMotivation4 => 'Você está construindo melhores hábitos, uma sessão de cada vez';
+
+  @override
+  String get questMotivation5 => 'Consistência supera intensidade';
+
+  @override
+  String get questMotivation6 => 'Cada sessão é uma vitória, não importa quão curta';
+
+  @override
+  String get questMotivation7 => 'Foco é um músculo - você está ficando mais forte';
+
+  @override
+  String get questMotivation8 => 'A jornada de mil milhas começa com um único passo';
+
+  @override
+  String get questGo => 'Ir';
+
+  @override
+  String get todayDashboardTitle => 'Seu Painel de Foco';
+
+  @override
+  String get todayFocusMinutes => 'Minutos de foco hoje';
+
+  @override
+  String todayGoalCalm(int goalMinutes, int calmPercent) {
+    return 'Meta: $goalMinutes min • Calma ≥$calmPercent%';
+  }
+
+  @override
+  String get todayPickMode => 'Escolha seu modo';
+
+  @override
+  String get todayDefaultActivities => 'Estudo • Leitura • Meditação';
+
+  @override
+  String get todayTooltipTips => 'Dicas';
+
+  @override
+  String get todayTooltipTheme => 'Tema';
+
+  @override
+  String get todayTooltipSettings => 'Configurações';
+
+  @override
+  String todayThemeChanged(String themeName) {
+    return 'Tema alterado para $themeName';
+  }
+
+  @override
+  String get todayTabToday => 'Hoje';
+
+  @override
+  String get todayTabSessions => 'Sessões';
+
+  @override
+  String get todayHelperText => 'Defina sua duração e acompanhe seu tempo. O histórico de sessões e análises aparecerão no Resumo.';
+
+  @override
+  String get statPoints => 'Pontos';
+
+  @override
+  String get statStreak => 'Sequência';
+
+  @override
+  String get statSessions => 'Sessões';
+
+  @override
+  String get ringProgressTitle => 'Progresso do Anel';
+
+  @override
+  String get ringOverall => 'Geral';
+
+  @override
+  String get ringOverallFrozen => 'Geral ❄️';
+
+  @override
+  String get sessionCalm => 'Calma';
+
+  @override
+  String get sessionStart => 'Iniciar';
+
+  @override
+  String get sessionStop => 'Parar';
+
+  @override
+  String get buttonEdit => 'Editar';
+
+  @override
+  String get durationUpTo1Hour => 'Sessões de até 1 hora';
+
+  @override
+  String get durationUpTo1_5Hours => 'Sessões de até 1,5 horas';
+
+  @override
+  String get durationUpTo2Hours => 'Sessões de até 2 horas';
+
+  @override
+  String get durationExtended => 'Durações de sessão estendidas';
+
+  @override
+  String get durationExtendedAccess => 'Acesso a sessões estendidas';
+
+  @override
+  String get noiseRoomLoudness => 'Volume da Sala';
+
+  @override
+  String noiseThresholdLabel(int threshold) {
+    return 'Limiar: ${threshold}dB';
+  }
+
+  @override
+  String noiseThresholdSet(int db) {
+    return 'Limiar definido para $db dB';
+  }
+
+  @override
+  String get noiseHighDetected => 'Ruído alto detectado, por favor vá para uma sala mais silenciosa para melhor foco';
+
+  @override
+  String get noiseThresholdExceededHint => 'Encontre um local mais silencioso ou aumente o limite →';
+
+  @override
+  String noiseExceededIncreasePrompt(int db) {
+    return 'Encontrar local mais silencioso ou aumentar para ${db}dB?';
+  }
+
+  @override
+  String noiseHighIncreasePrompt(int db) {
+    return 'Alto ruído detectado. Aumentar para ${db}dB?';
+  }
+
+  @override
+  String get noiseAtMaxThreshold => 'Já está no limite máximo. Por favor, encontre um local mais silencioso.';
+
+  @override
+  String get noiseThresholdYes => 'Sim';
+
+  @override
+  String get noiseThresholdNo => 'Não';
+
+  @override
+  String get trendsInsights => 'Insights';
+
+  @override
+  String get trendsLast7Days => 'Últimos 7 Dias';
+
+  @override
+  String get trendsShareWeeklySummary => 'Compartilhar resumo semanal';
+
+  @override
+  String get trendsLoading => 'Carregando...';
+
+  @override
+  String get trendsLoadingMetrics => 'Carregando métricas...';
+
+  @override
+  String get trendsNoData => 'Sem dados';
+
+  @override
+  String get trendsWeeklyTotal => 'Total Semanal';
+
+  @override
+  String get trendsBestDay => 'Melhor Dia';
+
+  @override
+  String get trendsActivityHeatmap => 'Mapa de Calor de Atividade';
+
+  @override
+  String get trendsRecentActivity => 'Atividade recente';
+
+  @override
+  String get trendsHeatmapError => 'Não foi possível carregar o mapa de calor';
+
+  @override
+  String get dayMon => 'Seg';
+
+  @override
+  String get dayTue => 'Ter';
+
+  @override
+  String get dayWed => 'Qua';
+
+  @override
+  String get dayThu => 'Qui';
+
+  @override
+  String get dayFri => 'Sex';
+
+  @override
+  String get daySat => 'Sáb';
+
+  @override
+  String get daySun => 'Dom';
+
+  @override
+  String get focusModeComplete => 'Sessão Completa!';
+
+  @override
+  String get focusModeGreatSession => 'Ótima sessão de foco';
+
+  @override
+  String get focusModeResume => 'Retomar';
+
+  @override
+  String get focusModePause => 'Pausar';
+
+  @override
+  String get focusModeLongPressHint => 'Pressione longamente para pausar ou parar';
+
+  @override
+  String get activityEditTitle => 'Editar Atividades';
+
+  @override
+  String get activityRecommendation => 'Recomendado: 10+ min por atividade para construção consistente de hábitos';
+
+  @override
+  String get activityDailyGoals => 'Metas Diárias';
+
+  @override
+  String activityTotalHours(String hours) {
+    return 'Total: ${hours}h / 18h';
+  }
+
+  @override
+  String get activityPerActivity => 'Por Atividade';
+
+  @override
+  String get activityExceedsLimit => 'O total excede o limite diário de 18 horas. Por favor, reduza as metas.';
+
+  @override
+  String get activityGoalLabel => 'Meta';
+
+  @override
+  String get activityGoalDescription => 'Defina sua meta de foco diária (1 min - 18h)';
+
+  @override
+  String get shareYourProgress => 'Compartilhe Seu Progresso';
+
+  @override
+  String get shareTimeRange => 'Intervalo de Tempo';
+
+  @override
+  String get shareCardSize => 'Tamanho do Cartão';
+
+  @override
+  String get analyticsPerformanceMetrics => 'Métricas de Desempenho';
+
+  @override
+  String get analyticsPreferredDuration => 'Duração Preferida';
+
+  @override
+  String get analyticsUnavailable => 'Análise indisponível';
+
+  @override
+  String get analyticsRestoreAttempt => 'Tentaremos restaurar esta seção na próxima inicialização do aplicativo.';
+
+  @override
+  String get audioUnavailable => 'Áudio temporariamente indisponível';
+
+  @override
+  String get audioRecovering => 'O processamento de áudio encontrou um problema. Recuperando automaticamente...';
+
+  @override
+  String get shareQuietMinutes => 'MINUTOS TRANQUILOS';
+
+  @override
+  String get shareTopActivity => 'Atividade Principal';
+
+  @override
+  String get appName => 'Focus Field';
+
+  @override
+  String get sharePreview => 'Visualizar';
+
+  @override
+  String get sharePinchToZoom => 'Apertar para ampliar';
+
+  @override
+  String get shareGenerating => 'Gerando...';
+
+  @override
+  String get shareButton => 'Compartilhar';
+
+  @override
+  String get shareTodayLabel => 'Hoje';
+
+  @override
+  String get shareWeeklyLabel => 'Semanal';
+
+  @override
+  String get shareTodayTitle => 'Seu Foco de Hoje';
+
+  @override
+  String get shareWeeklyTitle => 'Seu Foco Semanal';
+
+  @override
+  String get shareSubject => 'Meu Progresso no Focus Field';
+
+  @override
+  String get shareFormatSquare => 'Proporção 1:1 • Compatibilidade universal';
+
+  @override
+  String get shareFormatPost => 'Proporção 4:5 • Posts Instagram/Twitter';
+
+  @override
+  String get shareFormatStory => 'Proporção 9:16 • Stories do Instagram';
+
+  @override
+  String get recapWeeklyTitle => 'Resumo Semanal';
+
+  @override
+  String get recapMinutes => 'Minutos';
+
+  @override
+  String recapStreak(int start, int end) {
+    return 'Sequência: $start → $end dias';
+  }
+
+  @override
+  String get recapTopActivity => 'Atividade Principal: ';
+
+  @override
+  String get practiceOverviewTitle => 'Visão Geral da Prática';
+
+  @override
+  String get practiceLast7Days => 'Últimos 7 Dias';
+
+  @override
+  String get audioMultipleErrors => 'Múltiplos erros de áudio detectados. Componente recuperando...';
+
+  @override
+  String activityCurrentGoal(String goal) {
+    return 'Meta atual: $goal';
+  }
+
+  @override
+  String get activitySaveChanges => 'Salvar Alterações';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsTooltip => 'Ver insights detalhados';
+
+  @override
+  String get statDays => 'DIAS';
+
+  @override
+  String sessionsTotalToday(int done, int goal) {
+    return 'Total Hoje $done/$goal min, escolha qualquer atividade';
+  }
+
+  @override
+  String get premiumFeature => 'Recurso Premium';
+
+  @override
+  String get premiumFeatureAccess => 'Acesso a recurso premium';
+
+  @override
+  String get activityUnknown => 'Desconhecido';
+
+  @override
+  String get insightsFirstSessionTitle => 'Complete sua primeira sessão';
+
+  @override
+  String get insightsFirstSessionSubtitle => 'Comece a rastrear seu tempo de foco, padrões de sessão e tendências de pontuação ambiente';
+
+  @override
+  String sessionAmbientLabel(int percent) {
+    return 'Ambiente: $percent%';
+  }
+
+  @override
+  String get sessionSuccess => 'Sucesso';
+
+  @override
+  String get sessionFailed => 'Falhou';
+
+  @override
+  String get focusModeButton => 'Modo de Foco';
+
+  @override
+  String get settingsDailyGoalsTitle => 'Objetivos Diários';
+
+  @override
+  String get settingsFocusModeDescription => 'Minimize as distrações durante as sessões com uma sobreposição focada';
+
+  @override
+  String get settingsDeepFocusTitle => 'Foco Profundo';
+
+  @override
+  String get settingsDeepFocusDescription => 'Terminar sessão se a aplicação for deixada';
+
+  @override
+  String get deepFocusDialogTitle => 'Foco Profundo';
+
+  @override
+  String get deepFocusEnableLabel => 'Ativar Foco Profundo';
+
+  @override
+  String get deepFocusGracePeriodLabel => 'Período de graça (segundos)';
+
+  @override
+  String get deepFocusExplanation => 'Quando ativado, sair da aplicação terminará a sessão após o período de graça.';
+
+  @override
+  String get notificationPermissionTitle => 'Ativar Notificações';
+
+  @override
+  String get notificationPermissionExplanation => 'Focus Field precisa de permissão de notificação para lhe enviar:';
+
+  @override
+  String get notificationBenefitReminders => 'Lembretes diários de foco';
+
+  @override
+  String get notificationBenefitCompletion => 'Alertas de sessão concluída';
+
+  @override
+  String get notificationBenefitAchievements => 'Celebrações de conquistas';
+
+  @override
+  String get notificationHowToEnableIos => 'Como ativar no iOS:';
+
+  @override
+  String get notificationHowToEnableAndroid => 'Como ativar no Android:';
+
+  @override
+  String get notificationStepsIos => '1. Toque em \"Abrir Definições\" abaixo\n2. Toque em \"Notificações\"\n3. Ative \"Permitir Notificações\"';
+
+  @override
+  String get notificationStepsAndroid => '1. Toque em \"Abrir Definições\" abaixo\n2. Toque em \"Notificações\"\n3. Ative \"Todas as notificações do Focus Field\"';
+
+  @override
+  String get aboutShowTips => 'Mostrar Dicas';
+
+  @override
+  String get aboutShowTipsDescription => 'Mostra dicas úteis no arranque da aplicação e através do ícone de lâmpada. As dicas aparecem a cada 2-3 dias.';
+
+  @override
+  String get aboutReplayOnboarding => 'Repetir Introdução';
+
+  @override
+  String get aboutReplayOnboardingDescription => 'Reveja o tour da aplicação e configure as suas preferências novamente';
+
+  @override
+  String get buttonFaq => 'FAQ';
+
+  @override
+  String get onboardingWelcomeMessage => 'Bem-vindo! Pronto para começar a sua primeira sessão? 🚀';
+
+  @override
+  String get onboardingFeatureEarnTitle => 'Ganhar Recompensas';
+
+  @override
+  String get onboardingFeatureEarnDesc => 'Cada minuto silencioso conta! Colete pontos e celebre as suas vitórias 🏆';
+
+  @override
+  String get onboardingFeatureBuildTitle => 'Construir Sequências';
+
+  @override
+  String get onboardingFeatureBuildDesc => 'Mantenha o impulso! O nosso sistema compassivo mantém-no motivado 🔥';
+
+  @override
+  String get onboardingEnvironmentDescription => 'Escolha o seu ambiente típico para que possamos otimizar o seu espaço!';
+
+  @override
+  String get onboardingEnvQuietHome => 'Casa Silenciosa';
+
+  @override
+  String get onboardingEnvQuietHomeLevel => '30 dB - Muito silencioso';
+
+  @override
+  String get onboardingEnvOffice => 'Escritório Típico';
+
+  @override
+  String get onboardingEnvOfficeLevel => '40 dB - Silêncio de biblioteca (Recomendado)';
+
+  @override
+  String get onboardingEnvBusy => 'Espaço Movimentado';
+
+  @override
+  String get onboardingEnvBusyLevel => '50 dB - Ruído moderado';
+
+  @override
+  String get onboardingEnvNoisy => 'Ambiente Ruidoso';
+
+  @override
+  String get onboardingEnvNoisyLevel => '60 dB - Ruído mais alto';
+
+  @override
+  String get onboardingAdjustAnytime => 'Pode ajustar isto a qualquer momento nas Definições';
+
+  @override
+  String get buttonGetStarted => 'Começar';
+
+  @override
+  String get buttonNext => 'Seguinte';
+
+  @override
+  String get errorActivityRequired => '⚠️ Pelo menos uma atividade deve estar ativada';
+
+  @override
+  String get errorGoalExceeds => 'Os objetivos totais excedem o limite diário de 18 horas. Por favor, reduza os objetivos.';
+
+  @override
+  String get messageSaved => 'Definições guardadas';
+
+  @override
+  String get errorPermissionRequired => 'Permissão necessária';
+
+  @override
+  String get notificationEnableReason => 'Ative as notificações para receber lembretes e celebrar conquistas.';
+
+  @override
+  String get buttonEnableNotifications => 'Ativar Notificações';
+
+  @override
+  String get buttonRequesting => 'A solicitar...';
+
+  @override
+  String get notificationDailyTime => 'Hora Diária';
+
+  @override
+  String notificationDailyReminderSet(String time) {
+    return 'Lembrete diário às $time';
+  }
+
+  @override
+  String get notificationLearning => 'a aprender';
+
+  @override
+  String notificationSmart(String time) {
+    return 'Inteligente ($time)';
+  }
+
+  @override
+  String get buttonUseSmart => 'Usar Inteligente';
+
+  @override
+  String get notificationSmartExplanation => 'Escolha uma hora fixa ou deixe o Focus Field aprender o seu padrão.';
+
+  @override
+  String get notificationSessionComplete => 'Sessão Concluída';
+
+  @override
+  String get notificationSessionCompleteDesc => 'Celebrar sessões concluídas';
+
+  @override
+  String get notificationAchievement => 'Conquista Desbloqueada';
+
+  @override
+  String get notificationAchievementDesc => 'Notificações de marcos';
+
+  @override
+  String get notificationWeekly => 'Resumo Semanal de Progresso';
+
+  @override
+  String get notificationWeeklyDesc => 'Insights semanais (dia da semana e hora)';
+
+  @override
+  String get notificationWeeklyTime => 'Hora Semanal';
+
+  @override
+  String get notificationMilestone => 'Notificações de marcos';
+
+  @override
+  String get notificationWeeklyInsights => 'Insights semanais (dia da semana e hora)';
+
+  @override
+  String get notificationDailyReminder => 'Lembrete diário';
+
+  @override
+  String get notificationComplete => 'Sessão concluída';
+
+  @override
+  String get settingsSnackbar => 'Por favor, ative as notificações nas configurações do dispositivo';
+
+  @override
+  String get shareCardTitle => 'Compartilhar cartão';
+
+  @override
+  String get shareYourWeek => 'Compartilhe sua semana';
+
+  @override
+  String get shareStyleGradient => 'Estilo gradiente';
+
+  @override
+  String get shareStyleGradientDesc => 'Gradiente ousado com números grandes';
+
+  @override
+  String get shareWeeklySummary => 'Resumo semanal';
+
+  @override
+  String get shareStyleAchievement => 'Estilo de conquista';
+
+  @override
+  String get shareStyleAchievementDesc => 'Foco no total de minutos silenciosos';
+
+  @override
+  String get shareQuietMinutesWeek => 'Minutos silenciosos esta semana';
+
+  @override
+  String get shareAchievementMessage => 'Construindo foco mais profundo,\\numa sessão de cada vez';
+
+  @override
+  String get shareAchievementCard => 'Cartão de conquista';
+
+  @override
+  String get shareTextOnly => 'Apenas texto';
+
+  @override
+  String get shareTextOnlyDesc => 'Compartilhar como texto simples (sem imagem)';
+
+  @override
+  String get shareYourStreak => 'Compartilhe sua sequência';
+
+  @override
+  String get shareAsCard => 'Compartilhar como cartão';
+
+  @override
+  String get shareAsCardDesc => 'Cartão visual bonito';
+
+  @override
+  String get shareStreakCard => 'Cartão de sequência';
+
+  @override
+  String get shareAsText => 'Compartilhar como texto';
+
+  @override
+  String get shareAsTextDesc => 'Mensagem de texto simples';
+
+  @override
+  String get shareErrorFailed => 'Falha ao compartilhar. Por favor, tente novamente.';
+
+  @override
+  String get buttonShare => 'Compartilhar';
+
+  @override
+  String get initializingApp => 'Inicializando aplicativo...';
+
+  @override
+  String initializationFailed(String error) {
+    return 'Falha na inicialização: $error';
+  }
+
+  @override
+  String get loadingSettings => 'Carregando configurações...';
+
+  @override
+  String settingsLoadingFailed(String error) {
+    return 'Falha ao carregar configurações: $error';
+  }
+
+  @override
+  String get loadingUserData => 'Carregando dados do usuário...';
+
+  @override
+  String dataLoadingFailed(String error) {
+    return 'Falha ao carregar dados: $error';
+  }
+
+  @override
+  String get loading => 'Carregando...';
+
+  @override
+  String get taglineSilence => '🤫 Domine a arte do silêncio';
+
+  @override
+  String get errorOops => 'Ops! Algo deu errado';
+
+  @override
+  String get buttonRetry => 'Tentar novamente';
+
+  @override
+  String get resetAppData => 'Redefinir dados do aplicativo';
+
+  @override
+  String get resetAppDataMessage => 'Isso redefinirá todos os dados e configurações do aplicativo para seus padrões. Esta ação não pode ser desfeita.\\n\\nDeseja continuar?';
+
+  @override
+  String get buttonReset => 'Redefinir';
+
+  @override
+  String get messageDataReset => 'Os dados do aplicativo foram redefinidos';
+
+  @override
+  String errorResetFailed(String error) {
+    return 'Falha ao redefinir dados: $error';
+  }
+
+  @override
+  String get analyticsTitle => 'Análise';
+
+  @override
+  String get analyticsOverview => 'Visão geral';
+
+  @override
+  String get analyticsPoints => 'Pontos';
+
+  @override
+  String get analyticsStreak => 'Sequência';
+
+  @override
+  String get analyticsSessions => 'Sessões';
+
+  @override
+  String get analyticsLast7Days => 'Últimos 7 dias';
+
+  @override
+  String get analyticsPerformanceHighlights => 'Destaques de desempenho';
+
+  @override
+  String get analyticsSuccessRate => 'Taxa de sucesso';
+
+  @override
+  String get analyticsAvgSession => 'Sessão média';
+
+  @override
+  String get analyticsBestStreak => 'Melhor sequência';
+
+  @override
+  String get analyticsActivityProgress => 'Progresso da atividade';
+
+  @override
+  String get analyticsComingSoon => 'Rastreamento detalhado de atividades em breve.';
+
+  @override
+  String get analyticsAdvancedMetrics => 'Métricas avançadas';
+
+  @override
+  String get analyticsPremiumContent => 'Conteúdo de análise avançada premium aqui...';
+
+  @override
+  String get analytics30DayTrends => 'Tendências de 30 dias';
+
+  @override
+  String get analyticsTrendsChart => 'Gráfico de tendências premium aqui...';
+
+  @override
+  String get analyticsAIInsights => 'Insights de IA';
+
+  @override
+  String get analyticsAIComingSoon => 'Insights alimentados por IA em breve...';
+
+  @override
+  String get analyticsUnlock => 'Desbloquear análise avançada';
+
+  @override
+  String get errorTitle => 'Erro';
+
+  @override
+  String get errorQuestUnavailable => 'Estado da missão não disponível';
+
+  @override
+  String get buttonOK => 'OK';
+
+  @override
+  String get errorFreezeTokenFailed => '❌ Falha ao usar o token de congelamento';
+
+  @override
+  String get buttonUseFreeze => 'Usar congelamento';
+
+  @override
+  String get onboardingDailyGoalTitle => 'Defina sua meta diária! 🎯';
+
+  @override
+  String get onboardingDailyGoalSubtitle => 'Quanto tempo de foco parece certo para você?\\n(Você pode ajustar a qualquer momento!)';
+
+  @override
+  String get onboardingGoalGettingStarted => 'Começando';
+
+  @override
+  String get onboardingGoalBuildingHabit => 'Construindo hábito';
+
+  @override
+  String get onboardingGoalRegularPractice => 'Prática regular';
+
+  @override
+  String get onboardingGoalDeepWork => 'Trabalho profundo';
+
+  @override
+  String get onboardingProTip => 'Dica profissional: Focus Field brilha quando silêncio = foco! 🤫✨';
+
+  @override
+  String get onboardingPrivacyTitle => 'Sua privacidade importa! 🔒';
+
+  @override
+  String get onboardingPrivacySubtitle => 'Precisamos de acesso ao microfone para medir o ruído ambiente e ajudá-lo a se concentrar melhor';
+
+  @override
+  String get onboardingPrivacyNoRecording => 'Sem gravação';
+
+  @override
+  String get onboardingPrivacyLocalOnly => 'Apenas local';
+
+  @override
+  String get onboardingPrivacyLocalOnlyDesc => 'Todos os dados permanecem no seu dispositivo';
+
+  @override
+  String get onboardingPrivacyFirst => 'Privacidade em primeiro lugar';
+
+  @override
+  String get onboardingPrivacyNote => 'Você pode conceder permissão na próxima tela ao iniciar sua primeira sessão';
+
+  @override
+  String get insightsFocusTime => 'Tempo de foco';
+
+  @override
+  String get insightsSessions => 'Sessões';
+
+  @override
+  String get insightsAverage => 'Média';
+
+  @override
+  String get insightsAmbientScore => 'Pontuação ambiente';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeOceanBlue => 'Azul oceano';
+
+  @override
+  String get themeForestGreen => 'Verde floresta';
+
+  @override
+  String get themePurpleNight => 'Noite roxa';
+
+  @override
+  String get themeGoldLuxury => 'Luxo dourado';
+
+  @override
+  String get themeSolarSunrise => 'Nascer do sol solar';
+
+  @override
+  String get themeCyberNeon => 'Neon cibernético';
+
+  @override
+  String get themeMidnightTeal => 'Azul-petróleo meia-noite';
+
+  @override
+  String get settingsAppTheme => 'Tema do aplicativo';
+
+  @override
+  String get freezeTokenNoTokensTitle => 'Sem Tokens de Congelamento';
+
+  @override
+  String get freezeTokenNoTokensMessage => 'Você não tem tokens de congelamento disponíveis. Você ganha 1 token por semana (máximo 4).';
+
+  @override
+  String get freezeTokenGoalCompleteTitle => 'Meta Já Concluída';
+
+  @override
+  String get freezeTokenGoalCompleteMessage => 'Sua meta diária já está completa! Tokens de congelamento só podem ser usados quando você ainda não atingiu sua meta.';
+
+  @override
+  String get freezeTokenUseTitle => 'Usar Token de Congelamento';
+
+  @override
+  String get freezeTokenUseMessage => 'Tokens de congelamento protegem sua sequência quando você perde um dia. Usar um congelamento contará como completar sua meta diária.';
+
+  @override
+  String freezeTokenUsePrompt(Object count) {
+    return 'Você tem $count token(s). Usar um agora?';
+  }
+
+  @override
+  String get freezeTokenUsedSuccess => '✅ Token de congelamento usado! Meta marcada como concluída.';
+
+  @override
+  String get trendsErrorLoading => 'Erro ao carregar dados';
+
+  @override
+  String get trendsPoints => 'Pontos';
+
+  @override
+  String get trendsStreak => 'Sequência';
+
+  @override
+  String get trendsSessions => 'Sessões';
+
+  @override
+  String get trendsTopActivity => 'Atividade Principal';
+
+  @override
+  String get sectionToday => 'Hoje';
+
+  @override
+  String get sectionSessions => 'Sessões';
+
+  @override
+  String get sectionInsights => 'Insights';
+
+  @override
+  String get onboardingGoalAdviceGettingStarted => 'Começo perfeito! 🌟 Pequenos passos levam a grandes vitórias. Você consegue!';
+
+  @override
+  String get onboardingGoalAdviceBuildingHabit => 'Excelente escolha! 🎯 Este ponto ideal constrói hábitos duradouros!';
+
+  @override
+  String get onboardingGoalAdviceRegularPractice => 'Ambicioso! 💪 Você está pronto para melhorar seu foco!';
+
+  @override
+  String get onboardingGoalAdviceDeepWork => 'Uau! 🏆 Modo de trabalho profundo ativado! Lembre-se de fazer pausas!';
+
+  @override
+  String get onboardingDuration10to15 => '10-15 minutos';
+
+  @override
+  String get onboardingDuration20to30 => '20-30 minutos';
+
+  @override
+  String get onboardingDuration40to60 => '40-60 minutos';
+
+  @override
+  String get onboardingDuration60plus => '60+ minutos';
+
+  @override
+  String get activityStudy => 'Estudo';
+
+  @override
+  String get activityReading => 'Leitura';
+
+  @override
+  String get activityMeditation => 'Meditação';
+
+  @override
+  String get activityOther => 'Outro';
+
+  @override
+  String get onboardingTip1Description => 'Comece com sessões de 5-10 minutos. Consistência supera perfeição!';
+
+  @override
+  String get onboardingTip2Description => 'Toque no Modo Foco para uma experiência imersiva sem distrações.';
+
+  @override
+  String get onboardingTip3Description => 'Use seu token mensal em dias ocupados para proteger sua sequência.';
+
+  @override
+  String get onboardingTip4Description => 'Aponte para 70% de tempo silencioso - silêncio perfeito não é necessário!';
+
+  @override
+  String get onboardingLaunchTitle => 'Você Está Pronto para Começar! 🚀';
+
+  @override
+  String get onboardingLaunchDescription => 'Vamos começar sua primeira sessão e construir hábitos incríveis!';
+
+  @override
+  String get insightsBestTimeByActivity => 'Melhor horário por atividade';
+
+  @override
+  String get insightHighSuccessRateTitle => 'Alta taxa de sucesso';
+
+  @override
+  String get insightEnvironmentStabilityTitle => 'Estabilidade Ambiental';
+
+  @override
+  String get insightLowNoiseSuccessTitle => 'Sucesso de baixo ruído';
+
+  @override
+  String get insightConsistentPracticeTitle => 'Prática Consistente';
+
+  @override
+  String get insightStreakProtectionTitle => 'Proteção contra riscos disponível';
+
+  @override
+  String get insightRoomTooNoisyTitle => 'Quarto muito barulhento';
+
+  @override
+  String get insightIrregularScheduleTitle => 'Horário Irregular';
+
+  @override
+  String get insightLowAmbientScoreTitle => 'Pontuação ambiental baixa';
+
+  @override
+  String get insightNoRecentSessionsTitle => 'Nenhuma sessão recente';
+
+  @override
+  String get insightHighSuccessRateDesc => 'Você está mantendo fortes sessões silenciosas.';
+
+  @override
+  String get insightEnvironmentStabilityDesc => 'O ruído ambiente está dentro de uma faixa moderada e gerenciável.';
+
+  @override
+  String get insightLowNoiseSuccessDesc => 'Seu ambiente é excepcionalmente silencioso durante as sessões.';
+
+  @override
+  String get insightConsistentPracticeDesc => 'Você está construindo um hábito de prática diária confiável.';
+
+  @override
+  String insightStreakProtectionDesc(Object count) {
+    return 'Você tem $count token(s) de congelamento para proteger sua sequência.';
+  }
+
+  @override
+  String get insightRoomTooNoisyDesc => 'Tente encontrar um espaço mais silencioso ou ajustar seu limite.';
+
+  @override
+  String get insightIrregularScheduleDesc => 'Tempos de sessão mais consistentes podem melhorar sua sequência.';
+
+  @override
+  String get insightLowAmbientScoreDesc => 'As sessões recentes tiveram menor tempo de silêncio. Experimente um ambiente mais silencioso.';
+
+  @override
+  String get insightNoRecentSessionsDesc => 'Comece uma sessão hoje para construir seu hábito de foco!';
+
+  @override
+  String sessionCompleteSuccess(Object minutes) {
+    return 'Ótimo trabalho! $minutes minutos de foco na sua sessão! ✨';
+  }
+
+  @override
+  String sessionCompletePartial(Object minutes) {
+    return 'Bom esforço! $minutes minutos concluídos.';
+  }
+
+  @override
+  String get sessionCompleteFailed => 'A sessão terminou. Tente novamente quando estiver pronto.';
+
+  @override
+  String get notificationSessionStarted => 'Sessão iniciada - mantenha o foco!';
+
+  @override
+  String get notificationSessionPaused => 'Sessão pausada';
+
+  @override
+  String get notificationSessionResumed => 'Sessão retomada';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1168,7 +2607,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get microphonePermissionTitle => 'Permissão de microfone';
 
   @override
-  String get microphonePermissionMessage => 'Focus Field precisa de acesso ao microfone para medir o ruído. Nenhum áudio é armazenado.';
+  String get microphonePermissionMessage => 'Focus Field mede os níveis de som ambiente para ajudá-lo a manter ambientes silenciosos.\n\nO aplicativo precisa de acesso ao microfone para detectar o silêncio, mas não grava nenhum áudio.';
 
   @override
   String get permissionDeniedMessage => 'Permissão de microfone necessária. Ative nas configurações.';
@@ -1729,7 +3168,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get weeklyTimeLabel => 'Horário semanal';
 
   @override
-  String get notificationPreview => 'Prévia';
+  String get notificationPreview => 'Pré-visualização de Notificação';
 
   @override
   String get dailySilenceReminderTitle => 'Lembrete diário de foco';
@@ -1819,94 +3258,94 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get hideTips => 'Ocultar dicas';
 
   @override
-  String get tip01 => 'Short sessions count—start with 2–3 minutes to build consistency.';
+  String get tip01 => 'Comece pequeno—até 2 minutos constroem seu hábito de foco.';
 
   @override
-  String get tip02 => 'Use Smart Daily Reminders to nudge you at your best time.';
+  String get tip02 => 'Sua sequência tem graça—uma falta não a quebrará com a Regra de 2 Dias.';
 
   @override
-  String get tip03 => 'Recalibrate when your environment changes for better accuracy.';
+  String get tip03 => 'Experimente atividades de Estudo, Leitura ou Meditação para combinar com seu estilo de foco.';
 
   @override
-  String get tip04 => 'Check Weekly Trends to spot your momentum over time.';
+  String get tip04 => 'Confira seu Mapa de Calor de 12 semanas para ver como pequenas vitórias se acumulam ao longo do tempo.';
 
   @override
-  String get tip05 => 'Streaks grow with daily wins—show up, even for one minute.';
+  String get tip05 => 'Observe sua % de Calma ao vivo durante as sessões—pontuações mais altas significam melhor foco!';
 
   @override
-  String get tip06 => 'High ambient noise? Raise threshold a bit to reduce false fails.';
+  String get tip06 => 'Personalize sua meta diária (10-60 min) para combinar com seu ritmo.';
 
   @override
-  String get tip07 => 'Try different times of day to find your quiet sweet spot.';
+  String get tip07 => 'Use seu Token de Congelamento mensal para proteger sua sequência em dias difíceis.';
 
   @override
-  String get tip08 => 'Session complete notifications keep motivation high—enable them!';
+  String get tip08 => 'Após 3 vitórias, o Focus Field sugere um limiar mais rigoroso—pronto para subir de nível?';
 
   @override
-  String get tip09 => 'Prefer hands‑off? Auto reminders can schedule themselves (Smart).';
+  String get tip09 => 'Ruído ambiente alto? Aumente seu limiar para permanecer na zona.';
 
   @override
-  String get tip10 => 'Use shorter sessions on busy days to keep your streak alive.';
+  String get tip10 => 'Lembretes Diários Inteligentes aprendem seu melhor momento—deixe-os guiá-lo.';
 
   @override
-  String get tip11 => 'The progress ring is tappable—start or stop with a single tap.';
+  String get tip11 => 'O anel de progresso é tocável—um toque inicia sua sessão de foco.';
 
   @override
-  String get tip12 => 'Export your data (Premium) to share progress or back it up.';
+  String get tip12 => 'Recalibre quando seu ambiente mudar para melhor precisão.';
 
   @override
-  String get tip13 => 'Average session length helps you choose the right duration.';
+  String get tip13 => 'Notificações de sessão celebram suas vitórias—ative-as para motivação!';
 
   @override
-  String get tip14 => 'Consistency beats intensity—small daily practice compounds.';
+  String get tip14 => 'Consistência vence perfeição—apareça, mesmo em dias ocupados.';
 
   @override
-  String get tip15 => 'Set a gentle goal: 5 quiet minutes is a great baseline.';
+  String get tip15 => 'Experimente diferentes momentos do dia para descobrir seu ponto doce tranquilo.';
 
   @override
-  String get tip16 => 'The noise chart helps you see spikes—aim for calmer periods.';
+  String get tip16 => 'Seu progresso diário está sempre visível—toque em Ir para começar a qualquer momento.';
 
   @override
-  String get tip17 => 'Upgrade session duration (Premium) for longer focus blocks.';
+  String get tip17 => 'Cada atividade rastreia separadamente em direção à sua meta—variedade mantém as coisas frescas.';
 
   @override
-  String get tip18 => 'High threshold warning guards accuracy—avoid setting it too high.';
+  String get tip18 => 'Exporte seus dados (Premium) para ver sua jornada de foco completa.';
 
   @override
-  String get tip19 => 'Weekdays vary—tune your weekly summary to your schedule.';
+  String get tip19 => 'Confete celebra cada conclusão—pequenas vitórias merecem reconhecimento!';
 
   @override
-  String get tip20 => 'Accessibility options: high contrast, large text, and vibration.';
+  String get tip20 => 'Sua linha de base importa—calibre ao mudar para novos espaços.';
 
   @override
-  String get tip21 => 'Ambient baseline matters—calibrate when moving to new spaces.';
+  String get tip21 => 'Suas Tendências de 7 Dias revelam padrões—confira-as semanalmente para insights.';
 
   @override
-  String get tip22 => 'Quiet wins add up—1 point per minute keeps it simple.';
+  String get tip22 => 'Atualize a duração da sessão (Premium) para blocos de foco profundo mais longos.';
 
   @override
-  String get tip23 => 'Confetti celebrates progress—small celebrations reinforce habits.';
+  String get tip23 => 'Foco é uma prática—pequenas sessões constroem o hábito que você deseja.';
 
   @override
-  String get tip24 => 'Try mornings if evenings are noisy—best time differs for everyone.';
+  String get tip24 => 'O Resumo Semanal mostra seu ritmo—ajuste-o ao seu cronograma.';
 
   @override
-  String get tip25 => 'Fine‑tune the decibel threshold for your room’s character.';
+  String get tip25 => 'Ajuste seu limiar para seu espaço—cada sala é diferente.';
 
   @override
-  String get tip26 => 'Use the moving average to smooth out noisy days.';
+  String get tip26 => 'Opções de acessibilidade ajudam todos a focar—alto contraste, texto grande, vibração.';
 
   @override
-  String get tip27 => 'Let Weekly Insights remind you of your progress rhythm.';
+  String get tip27 => 'Linha do Tempo de Hoje mostra quando você focou—encontre suas horas produtivas.';
 
   @override
-  String get tip28 => 'Finish what you start—short sessions reduce friction to begin.';
+  String get tip28 => 'Termine o que você começa—sessões mais curtas significam mais conclusões.';
 
   @override
-  String get tip29 => 'Silence is a skill—practice makes patterns, patterns make progress.';
+  String get tip29 => 'Minutos Silenciosos somam em direção à sua meta—progresso sobre perfeição.';
 
   @override
-  String get tip30 => 'You’re one tap away—start a tiny session now.';
+  String get tip30 => 'Você está a um toque de distância—comece uma pequena sessão agora.';
 
   @override
   String get tipInstructionNotifications => 'Settings → Advanced → Notifications to configure reminders and celebrations.';
@@ -1952,6 +3391,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get tipInstructionStartNow => 'Tap Start Session on the Home screen.';
+
+  @override
+  String get tipInstructionHeatmap => 'Aba Resumo → Mostrar Mais → Mapa de Calor';
+
+  @override
+  String get tipInstructionTodayTimeline => 'Aba Resumo → Mostrar Mais → Linha do Tempo de Hoje';
+
+  @override
+  String get tipInstruction7DayTrends => 'Aba Resumo → Mostrar Mais → Tendências de 7 Dias';
+
+  @override
+  String get tipInstructionEditActivities => 'Aba Atividade → toque em Editar para mostrar/ocultar atividades';
+
+  @override
+  String get tipInstructionQuestGo => 'Aba Atividade → Cápsula de Missão → toque em Ir';
 
   @override
   String get tipInfoTooltip => 'Mostrar dica';
@@ -2022,4 +3476,1428 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String errorWithMessage(String message) {
     return 'Erro: $message';
   }
+
+  @override
+  String get faqTitle => 'Perguntas Frequentes';
+
+  @override
+  String get faqSearchHint => 'Pesquisar perguntas...';
+
+  @override
+  String get faqNoResults => 'Nenhum resultado encontrado';
+
+  @override
+  String get faqNoResultsSubtitle => 'Tente um termo de pesquisa diferente';
+
+  @override
+  String faqResultsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count resultados encontrados',
+      one: '1 resultado encontrado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get faqQ01 => 'O que é Focus Field e como me ajuda a concentrar?';
+
+  @override
+  String get faqA01 => 'Focus Field ajuda você a desenvolver melhores hábitos de concentração monitorando o ruído ambiente em seu ambiente. Quando você inicia uma sessão (Estudo, Leitura, Meditação ou Outro), o aplicativo mede o quão silencioso está seu ambiente. Quanto mais silencioso você mantiver, mais \"minutos de concentração\" você ganha. Isso o incentiva a encontrar e manter espaços livres de distrações para trabalho profundo.';
+
+  @override
+  String get faqQ02 => 'Como o Focus Field mede minha concentração?';
+
+  @override
+  String get faqA02 => 'Focus Field monitorao nível de ruído ambiente em seu ambiente durante sua sessão. Ele calcula uma \"Pontuação Ambiente\" rastreando quantos segundos seu ambiente permanece abaixo do seu limiar de ruído escolhido. Se sua sessão tiver pelo menos 70% de tempo silencioso (Pontuação Ambiente ≥70%), você ganha crédito total por esses minutos silenciosos.';
+
+  @override
+  String get faqQ03 => 'O Focus Field grava meu áudio ou conversas?';
+
+  @override
+  String get faqA03 => 'Não, absolutamente não. Focus Field apenas mede níveis de decibéis (volume) - nunca grava, armazena ou transmite áudio. Sua privacidade está completamente protegida. O aplicativo simplesmente verifica se seu ambiente está acima ou abaixo do seu limiar escolhido.';
+
+  @override
+  String get faqQ04 => 'Quais atividades posso rastrear com Focus Field?';
+
+  @override
+  String get faqA04 => 'Focus Field vem com quatro tipos de atividade: Estudo 📚 (para aprendizado e pesquisa), Leitura 📖 (para leitura focada), Meditação 🧘 (para prática de atenção plena) e Outro ⭐ (para qualquer atividade que requer concentração). Todas as atividades usam monitoramento de ruído ambiente para ajudá-lo a manter um ambiente silencioso e focado.';
+
+  @override
+  String get faqQ05 => 'Devo usar o Focus Field para todas as minhas atividades?';
+
+  @override
+  String get faqA05 => 'Focus Field funciona melhor para atividades onde o ruído ambiente indica seu nível de concentração. Atividades como Estudo, Leitura e Meditação se beneficiam mais de ambientes silenciosos. Embora você possa rastrear atividades \"Outro\", recomendamos usar Focus Field principalmente para trabalho de concentração sensível ao ruído.';
+
+  @override
+  String get faqQ06 => 'Como iniciar uma sessão de concentração?';
+
+  @override
+  String get faqA06 => 'Vá para a aba Sessões, selecione sua atividade (Estudo, Leitura, Meditação ou Outro), escolha a duração da sua sessão (1, 5, 10, 15, 30 minutos ou opções premium), toque no botão Iniciar no anel de progresso e mantenha seu ambiente silencioso!';
+
+  @override
+  String get faqQ07 => 'Quais durações de sessão estão disponíveis?';
+
+  @override
+  String get faqA07 => 'Usuários gratuitos podem escolher: sessões de 1, 5, 10, 15 ou 30 minutos. Usuários Premium também obtêm: sessões estendidas de 1 hora, 1,5 hora e 2 horas para períodos mais longos de trabalho profundo.';
+
+  @override
+  String get faqQ08 => 'Posso pausar ou parar uma sessão mais cedo?';
+
+  @override
+  String get faqA08 => 'Sim! Durante uma sessão, você verá botões de Pausar e Parar acima do anel de progresso. Para evitar toques acidentais, você precisa pressionar longamente esses botões. Se você parar mais cedo, ainda ganhará pontos pelos minutos silenciosos que acumulou.';
+
+  @override
+  String get faqQ09 => 'Como ganho pontos no Focus Field?';
+
+  @override
+  String get faqA09 => 'Você ganha 1 ponto por minuto silencioso. Durante sua sessão, Focus Field rastreia quantos segundos seu ambiente permanece abaixo do limiar de ruído. No final, esses segundos silenciosos são convertidos em minutos. Por exemplo, se você completar uma sessão de 10 minutos com 8 minutos de tempo silencioso, ganha 8 pontos.';
+
+  @override
+  String get faqQ10 => 'O que é o limiar de 70% e por que importa?';
+
+  @override
+  String get faqA10 => 'O limiar de 70% determina se sua sessão conta para seu objetivo diário. Se sua Pontuação Ambiente (tempo silencioso ÷ tempo total) for pelo menos 70%, sua sessão qualifica para crédito de missão. Mesmo se estiver abaixo de 70%, você ainda ganha pontos por cada minuto silencioso!';
+
+  @override
+  String get faqQ11 => 'Qual é a diferença entre Pontuação Ambiente e pontos?';
+
+  @override
+  String get faqA11 => 'Pontuação Ambiente é a qualidade da sua sessão como porcentagem (segundos silenciosos ÷ segundos totais), determinando se você atinge o limiar de 70%. Pontos são os minutos silenciosos reais ganhos (1 ponto = 1 minuto). Pontuação Ambiente = qualidade, Pontos = conquista.';
+
+  @override
+  String get faqQ12 => 'Como funcionam as sequências no Focus Field?';
+
+  @override
+  String get faqA12 => 'Sequências rastreiam dias consecutivos de atingir seu objetivo diário. Focus Field usa uma Regra Compassiva de 2 Dias: Sua sequência só quebra se você perder dois dias consecutivos. Isso significa que você pode perder um dia e sua sequência continua se você completar seu objetivo no dia seguinte.';
+
+  @override
+  String get faqQ13 => 'O que são tokens de congelamento e como usá-los?';
+
+  @override
+  String get faqA13 => 'Tokens de congelamento protegem sua sequência quando você não pode completar seu objetivo. Você recebe 1 token de congelamento grátis por mês. Quando usado, seu progresso geral mostra 100% (objetivo protegido), sua sequência está segura e o rastreamento de atividades individuais continua normalmente. Use sabiamente para dias ocupados!';
+
+  @override
+  String get faqQ14 => 'Posso personalizar meu objetivo diário de concentração?';
+
+  @override
+  String get faqA14 => 'Sim! Toque em Editar no cartão de Sessões na aba Hoje. Você pode definir seu objetivo diário global (10-60 minutos gratuito, até 1080 minutos premium), ativar objetivos por atividade para alvos separados e mostrar/ocultar atividades específicas.';
+
+  @override
+  String get faqQ15 => 'O que é o limiar de ruído e como ajustá-lo?';
+
+  @override
+  String get faqA15 => 'O limiar é o nível máximo de ruído (em decibéis) que conta como \"silencioso\". O padrão é 40 dB (silêncio de biblioteca). Você pode ajustá-lo na aba Sessões: 30 dB (muito silencioso), 40 dB (silêncio de biblioteca - recomendado), 50 dB (escritório moderado), 60-80 dB (ambientes mais barulhentos).';
+
+  @override
+  String get faqQ16 => 'O que é Limiar Adaptativo e devo usá-lo?';
+
+  @override
+  String get faqA16 => 'Após 3 sessões bem-sucedidas consecutivas no seu limiar atual, Focus Field sugere aumentá-lo em 2 dB para desafiá-lo. Isso ajuda você a melhorar gradualmente. Você pode aceitar ou recusar a sugestão - ela só aparece uma vez a cada 7 dias.';
+
+  @override
+  String get faqQ17 => 'O que é o Modo de Concentração?';
+
+  @override
+  String get faqA17 => 'Modo de Concentração é uma sobreposição de tela cheia sem distrações durante sua sessão. Mostra seu cronômetro de contagem regressiva, porcentagem de calma ao vivo e controles mínimos (Pausar/Parar via pressão longa). Remove todos os outros elementos de interface para que você possa se concentrar completamente. Ative em Configurações > Básico > Modo de Concentração.';
+
+  @override
+  String get faqQ18 => 'Por que o Focus Field precisa de permissão de microfone?';
+
+  @override
+  String get faqA18 => 'Focus Field usa o microfone do seu dispositivo para medir níveis de ruído ambiente (decibéis) durante as sessões. Isso é essencial para calcular sua Pontuação Ambiente. Lembre-se: nenhum áudio é gravado - apenas níveis de ruído são medidos em tempo real.';
+
+  @override
+  String get faqQ19 => 'Posso ver meus padrões de concentração ao longo do tempo?';
+
+  @override
+  String get faqA19 => 'Sim! A aba Hoje mostra seu progresso diário, tendências semanais, mapa de calor de atividade de 12 semanas (como contribuições do GitHub) e linha do tempo de sessões. Usuários Premium obtêm análises avançadas com métricas de desempenho, médias móveis e insights impulsionados por IA.';
+
+  @override
+  String get faqQ20 => 'Como funcionam as notificações no Focus Field?';
+
+  @override
+  String get faqA20 => 'Focus Field tem lembretes inteligentes: Lembretes Diários (aprende sua hora de concentração preferida ou usa uma hora fixa), notificações de Sessão Concluída com resultados, notificações de Conquista para marcos e Resumo Semanal (Premium). Ative/personalize em Configurações > Avançado > Notificações.';
+
+  @override
+  String get microphoneSettingsTitle => 'Configurações Necessárias';
+
+  @override
+  String get microphoneSettingsMessage => 'Para ativar a detecção de silêncio, conceda manualmente a permissão do microfone:\n\n• iOS: Ajustes > Privacidade e Segurança > Microfone > Focus Field\n• Android: Configurações > Aplicativos > Focus Field > Permissões > Microfone';
+
+  @override
+  String get buttonGrantPermission => 'Conceder Permissão';
+
+  @override
+  String get buttonOk => 'OK';
+
+  @override
+  String get buttonOpenSettings => 'Abrir Configurações';
+
+  @override
+  String get onboardingBack => 'Voltar';
+
+  @override
+  String get onboardingSkip => 'Pular';
+
+  @override
+  String get onboardingNext => 'Próximo';
+
+  @override
+  String get onboardingGetStarted => 'Começar';
+
+  @override
+  String get onboardingWelcomeSnackbar => 'Bem-vindo! Pronto para iniciar sua primeira sessão? 🚀';
+
+  @override
+  String get onboardingWelcomeTitle => 'Bem-vindo ao\nFocus Field! 🎯';
+
+  @override
+  String get onboardingWelcomeSubtitle => 'A sua jornada para um melhor foco começa aqui!\nVamos construir hábitos que permanecem 💪';
+
+  @override
+  String get onboardingFeatureTrackTitle => 'Acompanhe o Seu Foco';
+
+  @override
+  String get onboardingFeatureTrackDesc => 'Veja o seu progresso em tempo real enquanto constrói o seu superpoder de foco! 📊';
+
+  @override
+  String get onboardingFeatureRewardsTitle => 'Ganhe Recompensas';
+
+  @override
+  String get onboardingFeatureRewardsDesc => 'Cada minuto silencioso conta! Colete pontos e celebre suas vitórias 🏆';
+
+  @override
+  String get onboardingFeatureStreaksTitle => 'Construa Sequências';
+
+  @override
+  String get onboardingFeatureStreaksDesc => 'Mantenha o impulso! Nosso sistema compassivo mantém você motivado 🔥';
+
+  @override
+  String get onboardingEnvironmentTitle => 'Onde está a sua Zona de Foco? 🎯';
+
+  @override
+  String get onboardingEnvironmentSubtitle => 'Escolha seu ambiente típico para que possamos otimizar seu espaço!';
+
+  @override
+  String get onboardingEnvQuietHomeTitle => 'Casa Silenciosa';
+
+  @override
+  String get onboardingEnvQuietHomeDesc => 'Quarto, escritório em casa silencioso';
+
+  @override
+  String get onboardingEnvQuietHomeDb => '30 dB - Muito silencioso';
+
+  @override
+  String get onboardingEnvOfficeTitle => 'Escritório Típico';
+
+  @override
+  String get onboardingEnvOfficeDesc => 'Escritório padrão, biblioteca';
+
+  @override
+  String get onboardingEnvOfficeDb => '40 dB - Silêncio de biblioteca (Recomendado)';
+
+  @override
+  String get onboardingEnvBusyTitle => 'Espaço Ocupado';
+
+  @override
+  String get onboardingEnvBusyDesc => 'Café, espaço de trabalho partilhado';
+
+  @override
+  String get onboardingEnvBusyDb => '50 dB - Ruído moderado';
+
+  @override
+  String get onboardingEnvNoisyTitle => 'Ambiente Barulhento';
+
+  @override
+  String get onboardingEnvNoisyDesc => 'Escritório aberto, espaço público';
+
+  @override
+  String get onboardingEnvNoisyDb => '60 dB - Ruído mais alto';
+
+  @override
+  String get onboardingEnvAdjustNote => 'Você pode ajustar isso a qualquer momento nas Configurações';
+
+  @override
+  String get onboardingGoalTitle => 'Defina Sua Meta Diária! 🎯';
+
+  @override
+  String get onboardingGoalSubtitle => 'Quanto tempo de concentração parece certo para você?\n(Você pode ajustar isso a qualquer momento!)';
+
+  @override
+  String get onboardingGoalStartingTitle => 'Começando';
+
+  @override
+  String get onboardingGoalStartingDuration => '10-15 minutos';
+
+  @override
+  String get onboardingGoalHabitTitle => 'Construindo Hábito';
+
+  @override
+  String get onboardingGoalHabitDuration => '20-30 minutos';
+
+  @override
+  String get onboardingGoalPracticeTitle => 'Prática Regular';
+
+  @override
+  String get onboardingGoalPracticeDuration => '40-60 minutos';
+
+  @override
+  String get onboardingGoalDeepWorkTitle => 'Trabalho Profundo';
+
+  @override
+  String get onboardingGoalDeepWorkDuration => '60+ minutos';
+
+  @override
+  String get onboardingGoalAdvice1 => 'Começo perfeito! 🌟 Pequenos passos levam a grandes vitórias. Você consegue!';
+
+  @override
+  String get onboardingGoalAdvice2 => 'Excelente escolha! 🎯 Este ponto ideal constrói hábitos duradouros!';
+
+  @override
+  String get onboardingGoalAdvice3 => 'Ambicioso! 💪 Você está pronto para subir de nível seu jogo de concentração!';
+
+  @override
+  String get onboardingGoalAdvice4 => 'Uau! 🏆 Modo de trabalho profundo ativado! Lembre-se de fazer pausas!';
+
+  @override
+  String get onboardingActivitiesTitle => 'Escolha Suas Atividades! ✨';
+
+  @override
+  String get onboardingActivitiesSubtitle => 'Escolha todas que ressoam com você!\n(Você sempre pode adicionar mais depois)';
+
+  @override
+  String get onboardingActivityStudyTitle => 'Estudo';
+
+  @override
+  String get onboardingActivityStudyDesc => 'Aprendizado, trabalhos de curso, pesquisa';
+
+  @override
+  String get onboardingActivityReadingTitle => 'Leitura';
+
+  @override
+  String get onboardingActivityReadingDesc => 'Leitura profunda, artigos, livros';
+
+  @override
+  String get onboardingActivityMeditationTitle => 'Meditação';
+
+  @override
+  String get onboardingActivityMeditationDesc => 'Atenção plena, exercícios de respiração';
+
+  @override
+  String get onboardingActivityOtherTitle => 'Outro';
+
+  @override
+  String get onboardingActivityOtherDesc => 'Qualquer atividade que exija concentração';
+
+  @override
+  String get onboardingActivitiesTip => 'Dica profissional: Focus Field brilha quando silêncio = concentração! 🤫✨';
+
+  @override
+  String get onboardingPermissionTitle => 'Sua Privacidade Importa! 🔒';
+
+  @override
+  String get onboardingPermissionSubtitle => 'Precisamos de acesso ao microfone para medir o ruído ambiente e ajudá-lo a se concentrar melhor';
+
+  @override
+  String get onboardingPrivacyNoRecordingTitle => 'Sem Gravação';
+
+  @override
+  String get onboardingPrivacyNoRecordingDesc => 'Medimos apenas níveis de ruído, nunca gravamos áudio';
+
+  @override
+  String get onboardingPrivacyLocalTitle => 'Apenas Local';
+
+  @override
+  String get onboardingPrivacyLocalDesc => 'Todos os dados permanecem no seu dispositivo';
+
+  @override
+  String get onboardingPrivacyFirstTitle => 'Privacidade Primeiro';
+
+  @override
+  String get onboardingPrivacyFirstDesc => 'Suas conversas são completamente privadas';
+
+  @override
+  String get onboardingPermissionNote => 'Você pode conceder permissão na próxima tela ao iniciar sua primeira sessão';
+
+  @override
+  String get onboardingTipsTitle => 'Dicas Profissionais para o Sucesso! 💡';
+
+  @override
+  String get onboardingTipsSubtitle => 'Estas ajudarão você a aproveitar ao máximo o Focus Field!';
+
+  @override
+  String get onboardingTip1Title => 'Comece Pequeno, Ganhe Grande! 🌱';
+
+  @override
+  String get onboardingTip1Desc => 'Comece com sessões de 5-10 minutos. Consistência supera perfeição!';
+
+  @override
+  String get onboardingTip2Title => 'Ative o Modo de Concentração! 🎯';
+
+  @override
+  String get onboardingTip2Desc => 'Toque no Modo de Concentração para uma experiência imersiva sem distrações.';
+
+  @override
+  String get onboardingTip3Title => 'Token de Congelamento = Rede de Segurança! ❄️';
+
+  @override
+  String get onboardingTip3Desc => 'Use seu token mensal em dias ocupados para proteger sua sequência.';
+
+  @override
+  String get onboardingTip4Title => 'A Regra dos 70% é Ótima! 📈';
+
+  @override
+  String get onboardingTip4Desc => 'Mire em 70% de tempo silencioso - silêncio perfeito não é necessário!';
+
+  @override
+  String get onboardingReadyTitle => 'Você Está Pronto para Decolar! 🚀';
+
+  @override
+  String get onboardingReadyDesc => 'Vamos começar sua primeira sessão e construir hábitos incríveis!';
+
+  @override
+  String get questMotivation1 => 'O sucesso nunca termina e o fracasso nunca é final';
+
+  @override
+  String get questMotivation2 => 'Progresso sobre perfeição - cada minuto conta';
+
+  @override
+  String get questMotivation3 => 'Pequenos passos diários levam a grandes mudanças';
+
+  @override
+  String get questMotivation4 => 'Você está construindo melhores hábitos, uma sessão de cada vez';
+
+  @override
+  String get questMotivation5 => 'Consistência supera intensidade';
+
+  @override
+  String get questMotivation6 => 'Cada sessão é uma vitória, não importa quão curta';
+
+  @override
+  String get questMotivation7 => 'Foco é um músculo - você está ficando mais forte';
+
+  @override
+  String get questMotivation8 => 'A jornada de mil milhas começa com um único passo';
+
+  @override
+  String get questGo => 'Ir';
+
+  @override
+  String get todayDashboardTitle => 'Seu Painel de Foco';
+
+  @override
+  String get todayFocusMinutes => 'Minutos de foco hoje';
+
+  @override
+  String todayGoalCalm(int goalMinutes, int calmPercent) {
+    return 'Meta: $goalMinutes min • Calma ≥$calmPercent%';
+  }
+
+  @override
+  String get todayPickMode => 'Escolha seu modo';
+
+  @override
+  String get todayDefaultActivities => 'Estudo • Leitura • Meditação';
+
+  @override
+  String get todayTooltipTips => 'Dicas';
+
+  @override
+  String get todayTooltipTheme => 'Tema';
+
+  @override
+  String get todayTooltipSettings => 'Configurações';
+
+  @override
+  String todayThemeChanged(String themeName) {
+    return 'Tema alterado para $themeName';
+  }
+
+  @override
+  String get todayTabToday => 'Hoje';
+
+  @override
+  String get todayTabSessions => 'Sessões';
+
+  @override
+  String get todayHelperText => 'Defina sua duração e acompanhe seu tempo. O histórico de sessões e análises aparecerão no Resumo.';
+
+  @override
+  String get statPoints => 'Pontos';
+
+  @override
+  String get statStreak => 'Sequência';
+
+  @override
+  String get statSessions => 'Sessões';
+
+  @override
+  String get ringProgressTitle => 'Progresso do Anel';
+
+  @override
+  String get ringOverall => 'Geral';
+
+  @override
+  String get ringOverallFrozen => 'Geral ❄️';
+
+  @override
+  String get sessionCalm => 'Calma';
+
+  @override
+  String get sessionStart => 'Iniciar';
+
+  @override
+  String get sessionStop => 'Parar';
+
+  @override
+  String get buttonEdit => 'Editar';
+
+  @override
+  String get durationUpTo1Hour => 'Sessões de até 1 hora';
+
+  @override
+  String get durationUpTo1_5Hours => 'Sessões de até 1,5 horas';
+
+  @override
+  String get durationUpTo2Hours => 'Sessões de até 2 horas';
+
+  @override
+  String get durationExtended => 'Durações de sessão estendidas';
+
+  @override
+  String get durationExtendedAccess => 'Acesso a sessões estendidas';
+
+  @override
+  String get noiseRoomLoudness => 'Volume da Sala';
+
+  @override
+  String noiseThresholdLabel(int threshold) {
+    return 'Limiar: ${threshold}dB';
+  }
+
+  @override
+  String noiseThresholdSet(int db) {
+    return 'Limiar definido para $db dB';
+  }
+
+  @override
+  String get noiseHighDetected => 'Ruído alto detectado, por favor vá para uma sala mais silenciosa para melhor foco';
+
+  @override
+  String get noiseThresholdExceededHint => 'Encontre um local mais silencioso ou aumente o limite →';
+
+  @override
+  String noiseExceededIncreasePrompt(int db) {
+    return 'Encontrar local mais silencioso ou aumentar para ${db}dB?';
+  }
+
+  @override
+  String noiseHighIncreasePrompt(int db) {
+    return 'Alto ruído detectado. Aumentar para ${db}dB?';
+  }
+
+  @override
+  String get noiseAtMaxThreshold => 'Já está no limite máximo. Por favor, encontre um local mais silencioso.';
+
+  @override
+  String get noiseThresholdYes => 'Sim';
+
+  @override
+  String get noiseThresholdNo => 'Não';
+
+  @override
+  String get trendsInsights => 'Insights';
+
+  @override
+  String get trendsLast7Days => 'Últimos 7 Dias';
+
+  @override
+  String get trendsShareWeeklySummary => 'Compartilhar resumo semanal';
+
+  @override
+  String get trendsLoading => 'Carregando...';
+
+  @override
+  String get trendsLoadingMetrics => 'Carregando métricas...';
+
+  @override
+  String get trendsNoData => 'Sem dados';
+
+  @override
+  String get trendsWeeklyTotal => 'Total Semanal';
+
+  @override
+  String get trendsBestDay => 'Melhor Dia';
+
+  @override
+  String get trendsActivityHeatmap => 'Mapa de Calor de Atividade';
+
+  @override
+  String get trendsRecentActivity => 'Atividade recente';
+
+  @override
+  String get trendsHeatmapError => 'Não foi possível carregar o mapa de calor';
+
+  @override
+  String get dayMon => 'Seg';
+
+  @override
+  String get dayTue => 'Ter';
+
+  @override
+  String get dayWed => 'Qua';
+
+  @override
+  String get dayThu => 'Qui';
+
+  @override
+  String get dayFri => 'Sex';
+
+  @override
+  String get daySat => 'Sáb';
+
+  @override
+  String get daySun => 'Dom';
+
+  @override
+  String get focusModeComplete => 'Sessão Completa!';
+
+  @override
+  String get focusModeGreatSession => 'Ótima sessão de foco';
+
+  @override
+  String get focusModeResume => 'Retomar';
+
+  @override
+  String get focusModePause => 'Pausar';
+
+  @override
+  String get focusModeLongPressHint => 'Pressione longamente para pausar ou parar';
+
+  @override
+  String get activityEditTitle => 'Editar Atividades';
+
+  @override
+  String get activityRecommendation => 'Recomendado: 10+ min por atividade para construção consistente de hábitos';
+
+  @override
+  String get activityDailyGoals => 'Metas Diárias';
+
+  @override
+  String activityTotalHours(String hours) {
+    return 'Total: ${hours}h / 18h';
+  }
+
+  @override
+  String get activityPerActivity => 'Por Atividade';
+
+  @override
+  String get activityExceedsLimit => 'O total excede o limite diário de 18 horas. Por favor, reduza as metas.';
+
+  @override
+  String get activityGoalLabel => 'Meta';
+
+  @override
+  String get activityGoalDescription => 'Defina sua meta de foco diária (1 min - 18h)';
+
+  @override
+  String get shareYourProgress => 'Compartilhe Seu Progresso';
+
+  @override
+  String get shareTimeRange => 'Intervalo de Tempo';
+
+  @override
+  String get shareCardSize => 'Tamanho do Cartão';
+
+  @override
+  String get analyticsPerformanceMetrics => 'Métricas de Desempenho';
+
+  @override
+  String get analyticsPreferredDuration => 'Duração Preferida';
+
+  @override
+  String get analyticsUnavailable => 'Análise indisponível';
+
+  @override
+  String get analyticsRestoreAttempt => 'Tentaremos restaurar esta seção na próxima inicialização do aplicativo.';
+
+  @override
+  String get audioUnavailable => 'Áudio temporariamente indisponível';
+
+  @override
+  String get audioRecovering => 'O processamento de áudio encontrou um problema. Recuperando automaticamente...';
+
+  @override
+  String get shareQuietMinutes => 'MINUTOS TRANQUILOS';
+
+  @override
+  String get shareTopActivity => 'Atividade Principal';
+
+  @override
+  String get appName => 'Focus Field';
+
+  @override
+  String get sharePreview => 'Visualizar';
+
+  @override
+  String get sharePinchToZoom => 'Belisque para ampliar';
+
+  @override
+  String get shareGenerating => 'Gerando...';
+
+  @override
+  String get shareButton => 'Compartilhar';
+
+  @override
+  String get shareTodayLabel => 'Hoje';
+
+  @override
+  String get shareWeeklyLabel => 'Semanal';
+
+  @override
+  String get shareTodayTitle => 'Seu Foco de Hoje';
+
+  @override
+  String get shareWeeklyTitle => 'Seu Foco Semanal';
+
+  @override
+  String get shareSubject => 'Meu Progresso no Focus Field';
+
+  @override
+  String get shareFormatSquare => 'Proporção 1:1 • Compatibilidade universal';
+
+  @override
+  String get shareFormatPost => 'Proporção 4:5 • Posts Instagram/Twitter';
+
+  @override
+  String get shareFormatStory => 'Proporção 9:16 • Stories do Instagram';
+
+  @override
+  String get recapWeeklyTitle => 'Resumo Semanal';
+
+  @override
+  String get recapMinutes => 'Minutos';
+
+  @override
+  String recapStreak(int start, int end) {
+    return 'Sequência: $start → $end dias';
+  }
+
+  @override
+  String get recapTopActivity => 'Atividade Principal: ';
+
+  @override
+  String get practiceOverviewTitle => 'Visão Geral da Prática';
+
+  @override
+  String get practiceLast7Days => 'Últimos 7 Dias';
+
+  @override
+  String get audioMultipleErrors => 'Múltiplos erros de áudio detectados. Componente recuperando...';
+
+  @override
+  String activityCurrentGoal(String goal) {
+    return 'Meta atual: $goal';
+  }
+
+  @override
+  String get activitySaveChanges => 'Salvar Alterações';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsTooltip => 'Ver insights detalhados';
+
+  @override
+  String get statDays => 'DIAS';
+
+  @override
+  String sessionsTotalToday(int done, int goal) {
+    return 'Total Hoje $done/$goal min, escolha qualquer atividade';
+  }
+
+  @override
+  String get premiumFeature => 'Recurso Premium';
+
+  @override
+  String get premiumFeatureAccess => 'Acesso a recurso premium';
+
+  @override
+  String get activityUnknown => 'Desconhecido';
+
+  @override
+  String get insightsFirstSessionTitle => 'Complete sua primeira sessão';
+
+  @override
+  String get insightsFirstSessionSubtitle => 'Comece a rastrear seu tempo de foco, padrões de sessão e tendências de pontuação ambiente';
+
+  @override
+  String sessionAmbientLabel(int percent) {
+    return 'Ambiente: $percent%';
+  }
+
+  @override
+  String get sessionSuccess => 'Sucesso';
+
+  @override
+  String get sessionFailed => 'Falhou';
+
+  @override
+  String get focusModeButton => 'Modo de Foco';
+
+  @override
+  String get settingsDailyGoalsTitle => 'Objetivos Diários';
+
+  @override
+  String get settingsFocusModeDescription => 'Minimize as distrações durante as sessões com uma sobreposição focada';
+
+  @override
+  String get settingsDeepFocusTitle => 'Foco Profundo';
+
+  @override
+  String get settingsDeepFocusDescription => 'Terminar sessão se a aplicação for deixada';
+
+  @override
+  String get deepFocusDialogTitle => 'Foco Profundo';
+
+  @override
+  String get deepFocusEnableLabel => 'Ativar Foco Profundo';
+
+  @override
+  String get deepFocusGracePeriodLabel => 'Período de graça (segundos)';
+
+  @override
+  String get deepFocusExplanation => 'Quando ativado, sair da aplicação terminará a sessão após o período de graça.';
+
+  @override
+  String get notificationPermissionTitle => 'Ativar Notificações';
+
+  @override
+  String get notificationPermissionExplanation => 'Focus Field precisa de permissão de notificação para lhe enviar:';
+
+  @override
+  String get notificationBenefitReminders => 'Lembretes diários de foco';
+
+  @override
+  String get notificationBenefitCompletion => 'Alertas de sessão concluída';
+
+  @override
+  String get notificationBenefitAchievements => 'Celebrações de conquistas';
+
+  @override
+  String get notificationHowToEnableIos => 'Como ativar no iOS:';
+
+  @override
+  String get notificationHowToEnableAndroid => 'Como ativar no Android:';
+
+  @override
+  String get notificationStepsIos => '1. Toque em \"Abrir Definições\" abaixo\n2. Toque em \"Notificações\"\n3. Ative \"Permitir Notificações\"';
+
+  @override
+  String get notificationStepsAndroid => '1. Toque em \"Abrir Definições\" abaixo\n2. Toque em \"Notificações\"\n3. Ative \"Todas as notificações do Focus Field\"';
+
+  @override
+  String get aboutShowTips => 'Mostrar Dicas';
+
+  @override
+  String get aboutShowTipsDescription => 'Mostra dicas úteis no arranque da aplicação e através do ícone de lâmpada. As dicas aparecem a cada 2-3 dias.';
+
+  @override
+  String get aboutReplayOnboarding => 'Repetir Introdução';
+
+  @override
+  String get aboutReplayOnboardingDescription => 'Reveja o tour da aplicação e configure as suas preferências novamente';
+
+  @override
+  String get buttonFaq => 'FAQ';
+
+  @override
+  String get onboardingWelcomeMessage => 'Bem-vindo! Pronto para começar a sua primeira sessão? 🚀';
+
+  @override
+  String get onboardingFeatureEarnTitle => 'Ganhar Recompensas';
+
+  @override
+  String get onboardingFeatureEarnDesc => 'Cada minuto silencioso conta! Colete pontos e celebre as suas vitórias 🏆';
+
+  @override
+  String get onboardingFeatureBuildTitle => 'Construir Sequências';
+
+  @override
+  String get onboardingFeatureBuildDesc => 'Mantenha o impulso! O nosso sistema compassivo mantém-no motivado 🔥';
+
+  @override
+  String get onboardingEnvironmentDescription => 'Escolha o seu ambiente típico para que possamos otimizar o seu espaço!';
+
+  @override
+  String get onboardingEnvQuietHome => 'Casa Silenciosa';
+
+  @override
+  String get onboardingEnvQuietHomeLevel => '30 dB - Muito silencioso';
+
+  @override
+  String get onboardingEnvOffice => 'Escritório Típico';
+
+  @override
+  String get onboardingEnvOfficeLevel => '40 dB - Silêncio de biblioteca (Recomendado)';
+
+  @override
+  String get onboardingEnvBusy => 'Espaço Movimentado';
+
+  @override
+  String get onboardingEnvBusyLevel => '50 dB - Ruído moderado';
+
+  @override
+  String get onboardingEnvNoisy => 'Ambiente Ruidoso';
+
+  @override
+  String get onboardingEnvNoisyLevel => '60 dB - Ruído mais alto';
+
+  @override
+  String get onboardingAdjustAnytime => 'Pode ajustar isto a qualquer momento nas Definições';
+
+  @override
+  String get buttonGetStarted => 'Começar';
+
+  @override
+  String get buttonNext => 'Seguinte';
+
+  @override
+  String get errorActivityRequired => '⚠️ Pelo menos uma atividade deve estar ativada';
+
+  @override
+  String get errorGoalExceeds => 'Os objetivos totais excedem o limite diário de 18 horas. Por favor, reduza os objetivos.';
+
+  @override
+  String get messageSaved => 'Definições guardadas';
+
+  @override
+  String get errorPermissionRequired => 'Permissão necessária';
+
+  @override
+  String get notificationEnableReason => 'Ative as notificações para receber lembretes e celebrar conquistas.';
+
+  @override
+  String get buttonEnableNotifications => 'Ativar Notificações';
+
+  @override
+  String get buttonRequesting => 'A solicitar...';
+
+  @override
+  String get notificationDailyTime => 'Hora Diária';
+
+  @override
+  String notificationDailyReminderSet(String time) {
+    return 'Lembrete diário às $time';
+  }
+
+  @override
+  String get notificationLearning => 'a aprender';
+
+  @override
+  String notificationSmart(String time) {
+    return 'Inteligente ($time)';
+  }
+
+  @override
+  String get buttonUseSmart => 'Usar Inteligente';
+
+  @override
+  String get notificationSmartExplanation => 'Escolha uma hora fixa ou deixe o Focus Field aprender o seu padrão.';
+
+  @override
+  String get notificationSessionComplete => 'Sessão Concluída';
+
+  @override
+  String get notificationSessionCompleteDesc => 'Celebrar sessões concluídas';
+
+  @override
+  String get notificationAchievement => 'Conquista Desbloqueada';
+
+  @override
+  String get notificationAchievementDesc => 'Notificações de marcos';
+
+  @override
+  String get notificationWeekly => 'Resumo Semanal de Progresso';
+
+  @override
+  String get notificationWeeklyDesc => 'Insights semanais (dia da semana e hora)';
+
+  @override
+  String get notificationWeeklyTime => 'Hora Semanal';
+
+  @override
+  String get notificationMilestone => 'Notificações de marcos';
+
+  @override
+  String get notificationWeeklyInsights => 'Insights semanais (dia da semana e horário)';
+
+  @override
+  String get notificationDailyReminder => 'Lembrete diário';
+
+  @override
+  String get notificationComplete => 'Sessão concluída';
+
+  @override
+  String get settingsSnackbar => 'Por favor, ative as notificações nas configurações do dispositivo';
+
+  @override
+  String get shareCardTitle => 'Compartilhar cartão';
+
+  @override
+  String get shareYourWeek => 'Compartilhe sua semana';
+
+  @override
+  String get shareStyleGradient => 'Estilo gradiente';
+
+  @override
+  String get shareStyleGradientDesc => 'Gradiente ousado com números grandes';
+
+  @override
+  String get shareWeeklySummary => 'Resumo semanal';
+
+  @override
+  String get shareStyleAchievement => 'Estilo de conquista';
+
+  @override
+  String get shareStyleAchievementDesc => 'Foco no total de minutos silenciosos';
+
+  @override
+  String get shareQuietMinutesWeek => 'Minutos silenciosos esta semana';
+
+  @override
+  String get shareAchievementMessage => 'Construindo foco mais profundo,\\numa sessão de cada vez';
+
+  @override
+  String get shareAchievementCard => 'Cartão de conquista';
+
+  @override
+  String get shareTextOnly => 'Apenas texto';
+
+  @override
+  String get shareTextOnlyDesc => 'Compartilhar como texto simples (sem imagem)';
+
+  @override
+  String get shareYourStreak => 'Compartilhe sua sequência';
+
+  @override
+  String get shareAsCard => 'Compartilhar como cartão';
+
+  @override
+  String get shareAsCardDesc => 'Cartão visual bonito';
+
+  @override
+  String get shareStreakCard => 'Cartão de sequência';
+
+  @override
+  String get shareAsText => 'Compartilhar como texto';
+
+  @override
+  String get shareAsTextDesc => 'Mensagem de texto simples';
+
+  @override
+  String get shareErrorFailed => 'Falha ao compartilhar. Por favor, tente novamente.';
+
+  @override
+  String get buttonShare => 'Compartilhar';
+
+  @override
+  String get initializingApp => 'Inicializando aplicativo...';
+
+  @override
+  String initializationFailed(String error) {
+    return 'Falha na inicialização: $error';
+  }
+
+  @override
+  String get loadingSettings => 'Carregando configurações...';
+
+  @override
+  String settingsLoadingFailed(String error) {
+    return 'Falha ao carregar configurações: $error';
+  }
+
+  @override
+  String get loadingUserData => 'Carregando dados do usuário...';
+
+  @override
+  String dataLoadingFailed(String error) {
+    return 'Falha ao carregar dados: $error';
+  }
+
+  @override
+  String get loading => 'Carregando...';
+
+  @override
+  String get taglineSilence => '🤫 Domine a arte do silêncio';
+
+  @override
+  String get errorOops => 'Ops! Algo deu errado';
+
+  @override
+  String get buttonRetry => 'Tentar novamente';
+
+  @override
+  String get resetAppData => 'Redefinir dados do aplicativo';
+
+  @override
+  String get resetAppDataMessage => 'Isso redefinirá todos os dados e configurações do aplicativo para seus padrões. Esta ação não pode ser desfeita.\\n\\nDeseja continuar?';
+
+  @override
+  String get buttonReset => 'Redefinir';
+
+  @override
+  String get messageDataReset => 'Os dados do aplicativo foram redefinidos';
+
+  @override
+  String errorResetFailed(String error) {
+    return 'Falha ao redefinir dados: $error';
+  }
+
+  @override
+  String get analyticsTitle => 'Análise';
+
+  @override
+  String get analyticsOverview => 'Visão geral';
+
+  @override
+  String get analyticsPoints => 'Pontos';
+
+  @override
+  String get analyticsStreak => 'Sequência';
+
+  @override
+  String get analyticsSessions => 'Sessões';
+
+  @override
+  String get analyticsLast7Days => 'Últimos 7 dias';
+
+  @override
+  String get analyticsPerformanceHighlights => 'Destaques de desempenho';
+
+  @override
+  String get analyticsSuccessRate => 'Taxa de sucesso';
+
+  @override
+  String get analyticsAvgSession => 'Sessão média';
+
+  @override
+  String get analyticsBestStreak => 'Melhor sequência';
+
+  @override
+  String get analyticsActivityProgress => 'Progresso da atividade';
+
+  @override
+  String get analyticsComingSoon => 'Rastreamento detalhado de atividades em breve.';
+
+  @override
+  String get analyticsAdvancedMetrics => 'Métricas avançadas';
+
+  @override
+  String get analyticsPremiumContent => 'Conteúdo de análise avançada premium aqui...';
+
+  @override
+  String get analytics30DayTrends => 'Tendências de 30 dias';
+
+  @override
+  String get analyticsTrendsChart => 'Gráfico de tendências premium aqui...';
+
+  @override
+  String get analyticsAIInsights => 'Insights de IA';
+
+  @override
+  String get analyticsAIComingSoon => 'Insights alimentados por IA em breve...';
+
+  @override
+  String get analyticsUnlock => 'Desbloquear análise avançada';
+
+  @override
+  String get errorTitle => 'Erro';
+
+  @override
+  String get errorQuestUnavailable => 'Estado da missão não disponível';
+
+  @override
+  String get buttonOK => 'OK';
+
+  @override
+  String get errorFreezeTokenFailed => '❌ Falha ao usar o token de congelamento';
+
+  @override
+  String get buttonUseFreeze => 'Usar congelamento';
+
+  @override
+  String get onboardingDailyGoalTitle => 'Defina sua meta diária! 🎯';
+
+  @override
+  String get onboardingDailyGoalSubtitle => 'Quanto tempo de foco parece certo para você?\\n(Você pode ajustar a qualquer momento!)';
+
+  @override
+  String get onboardingGoalGettingStarted => 'Começando';
+
+  @override
+  String get onboardingGoalBuildingHabit => 'Construindo hábito';
+
+  @override
+  String get onboardingGoalRegularPractice => 'Prática regular';
+
+  @override
+  String get onboardingGoalDeepWork => 'Trabalho profundo';
+
+  @override
+  String get onboardingProTip => 'Dica profissional: Focus Field brilha quando silêncio = foco! 🤫✨';
+
+  @override
+  String get onboardingPrivacyTitle => 'Sua privacidade importa! 🔒';
+
+  @override
+  String get onboardingPrivacySubtitle => 'Precisamos de acesso ao microfone para medir o ruído ambiente e ajudá-lo a se concentrar melhor';
+
+  @override
+  String get onboardingPrivacyNoRecording => 'Sem gravação';
+
+  @override
+  String get onboardingPrivacyLocalOnly => 'Apenas local';
+
+  @override
+  String get onboardingPrivacyLocalOnlyDesc => 'Todos os dados permanecem no seu dispositivo';
+
+  @override
+  String get onboardingPrivacyFirst => 'Privacidade em primeiro lugar';
+
+  @override
+  String get onboardingPrivacyNote => 'Você pode conceder permissão na próxima tela ao iniciar sua primeira sessão';
+
+  @override
+  String get insightsFocusTime => 'Tempo de foco';
+
+  @override
+  String get insightsSessions => 'Sessões';
+
+  @override
+  String get insightsAverage => 'Média';
+
+  @override
+  String get insightsAmbientScore => 'Pontuação ambiente';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeOceanBlue => 'Azul oceano';
+
+  @override
+  String get themeForestGreen => 'Verde floresta';
+
+  @override
+  String get themePurpleNight => 'Noite roxa';
+
+  @override
+  String get themeGoldLuxury => 'Luxo dourado';
+
+  @override
+  String get themeSolarSunrise => 'Nascer do sol solar';
+
+  @override
+  String get themeCyberNeon => 'Neon cibernético';
+
+  @override
+  String get themeMidnightTeal => 'Azul-petróleo meia-noite';
+
+  @override
+  String get settingsAppTheme => 'Tema do aplicativo';
+
+  @override
+  String get freezeTokenNoTokensTitle => 'Sem Tokens de Congelamento';
+
+  @override
+  String get freezeTokenNoTokensMessage => 'Você não tem tokens de congelamento disponíveis. Você ganha 1 token por semana (máximo 4).';
+
+  @override
+  String get freezeTokenGoalCompleteTitle => 'Meta Já Concluída';
+
+  @override
+  String get freezeTokenGoalCompleteMessage => 'Sua meta diária já está completa! Tokens de congelamento só podem ser usados quando você ainda não atingiu sua meta.';
+
+  @override
+  String get freezeTokenUseTitle => 'Usar Token de Congelamento';
+
+  @override
+  String get freezeTokenUseMessage => 'Tokens de congelamento protegem sua sequência quando você perde um dia. Usar um congelamento contará como completar sua meta diária.';
+
+  @override
+  String freezeTokenUsePrompt(Object count) {
+    return 'Você tem $count token(s). Usar um agora?';
+  }
+
+  @override
+  String get freezeTokenUsedSuccess => '✅ Token de congelamento usado! Meta marcada como concluída.';
+
+  @override
+  String get trendsErrorLoading => 'Erro ao carregar dados';
+
+  @override
+  String get trendsPoints => 'Pontos';
+
+  @override
+  String get trendsStreak => 'Sequência';
+
+  @override
+  String get trendsSessions => 'Sessões';
+
+  @override
+  String get trendsTopActivity => 'Atividade Principal';
+
+  @override
+  String get sectionToday => 'Hoje';
+
+  @override
+  String get sectionSessions => 'Sessões';
+
+  @override
+  String get sectionInsights => 'Insights';
+
+  @override
+  String get onboardingGoalAdviceGettingStarted => 'Começo perfeito! 🌟 Pequenos passos levam a grandes vitórias. Você consegue!';
+
+  @override
+  String get onboardingGoalAdviceBuildingHabit => 'Excelente escolha! 🎯 Este ponto ideal constrói hábitos duradouros!';
+
+  @override
+  String get onboardingGoalAdviceRegularPractice => 'Ambicioso! 💪 Você está pronto para melhorar seu foco!';
+
+  @override
+  String get onboardingGoalAdviceDeepWork => 'Uau! 🏆 Modo de trabalho profundo ativado! Lembre-se de fazer pausas!';
+
+  @override
+  String get onboardingDuration10to15 => '10-15 minutos';
+
+  @override
+  String get onboardingDuration20to30 => '20-30 minutos';
+
+  @override
+  String get onboardingDuration40to60 => '40-60 minutos';
+
+  @override
+  String get onboardingDuration60plus => '60+ minutos';
+
+  @override
+  String get activityStudy => 'Estudo';
+
+  @override
+  String get activityReading => 'Leitura';
+
+  @override
+  String get activityMeditation => 'Meditação';
+
+  @override
+  String get activityOther => 'Outro';
+
+  @override
+  String get onboardingTip1Description => 'Comece com sessões de 5-10 minutos. Consistência supera perfeição!';
+
+  @override
+  String get onboardingTip2Description => 'Toque no Modo Foco para uma experiência imersiva sem distrações.';
+
+  @override
+  String get onboardingTip3Description => 'Use seu token mensal em dias ocupados para proteger sua sequência.';
+
+  @override
+  String get onboardingTip4Description => 'Aponte para 70% de tempo silencioso - silêncio perfeito não é necessário!';
+
+  @override
+  String get onboardingLaunchTitle => 'Você Está Pronto para Começar! 🚀';
+
+  @override
+  String get onboardingLaunchDescription => 'Vamos começar sua primeira sessão e construir hábitos incríveis!';
+
+  @override
+  String get insightsBestTimeByActivity => 'Melhor horário por atividade';
+
+  @override
+  String get insightHighSuccessRateTitle => 'Alta taxa de sucesso';
+
+  @override
+  String get insightEnvironmentStabilityTitle => 'Estabilidade Ambiental';
+
+  @override
+  String get insightLowNoiseSuccessTitle => 'Sucesso de baixo ruído';
+
+  @override
+  String get insightConsistentPracticeTitle => 'Prática Consistente';
+
+  @override
+  String get insightStreakProtectionTitle => 'Proteção contra riscos disponível';
+
+  @override
+  String get insightRoomTooNoisyTitle => 'Quarto muito barulhento';
+
+  @override
+  String get insightIrregularScheduleTitle => 'Horário Irregular';
+
+  @override
+  String get insightLowAmbientScoreTitle => 'Pontuação ambiental baixa';
+
+  @override
+  String get insightNoRecentSessionsTitle => 'Nenhuma sessão recente';
+
+  @override
+  String get insightHighSuccessRateDesc => 'Você está mantendo fortes sessões silenciosas.';
+
+  @override
+  String get insightEnvironmentStabilityDesc => 'O ruído ambiente está dentro de uma faixa moderada e gerenciável.';
+
+  @override
+  String get insightLowNoiseSuccessDesc => 'Seu ambiente é excepcionalmente silencioso durante as sessões.';
+
+  @override
+  String get insightConsistentPracticeDesc => 'Você está construindo um hábito de prática diária confiável.';
+
+  @override
+  String insightStreakProtectionDesc(Object count) {
+    return 'Você tem $count token(s) de congelamento para proteger sua sequência.';
+  }
+
+  @override
+  String get insightRoomTooNoisyDesc => 'Tente encontrar um espaço mais silencioso ou ajustar seu limite.';
+
+  @override
+  String get insightIrregularScheduleDesc => 'Tempos de sessão mais consistentes podem melhorar sua sequência.';
+
+  @override
+  String get insightLowAmbientScoreDesc => 'As sessões recentes tiveram menor tempo de silêncio. Experimente um ambiente mais silencioso.';
+
+  @override
+  String get insightNoRecentSessionsDesc => 'Comece uma sessão hoje para construir seu hábito de foco!';
+
+  @override
+  String sessionCompleteSuccess(Object minutes) {
+    return 'Ótimo trabalho! $minutes minutos de foco na sua sessão! ✨';
+  }
+
+  @override
+  String sessionCompletePartial(Object minutes) {
+    return 'Bom esforço! $minutes minutos concluídos.';
+  }
+
+  @override
+  String get sessionCompleteFailed => 'A sessão terminou. Tente novamente quando estiver pronto.';
+
+  @override
+  String get notificationSessionStarted => 'Sessão iniciada - mantenha o foco!';
+
+  @override
+  String get notificationSessionPaused => 'Sessão pausada';
+
+  @override
+  String get notificationSessionResumed => 'Sessão retomada';
 }
