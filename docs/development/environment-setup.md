@@ -1,7 +1,7 @@
 # Environment Setup & Secrets Management
 
 ## Overview
-This guide explains how to properly configure API keys and environment variables for SilenceScore development and production builds. The system is designed to keep sensitive information out of version control while providing a smooth developer experience.
+This guide explains how to properly configure API keys and environment variables for Focus Field development and production builds. The system is designed to keep sensitive information out of version control while providing a smooth developer experience.
 
 ## Prerequisites
 - Flutter development environment setup
@@ -34,7 +34,7 @@ SENTRY_DSN=https://xxxxx@sentry.io/xxxxx
 #### 3. Run Development Build
 ```bash
 # Automatically loads .env file
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run directly
 flutter run
@@ -56,7 +56,7 @@ export REVENUECAT_API_KEY="your_actual_key"
 export IS_DEVELOPMENT="false"
 
 # Build for production
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 ### Method 3: System Environment Variables
@@ -75,7 +75,7 @@ flutter build apk --release
 
 1. **Create RevenueCat Account**
    - Go to [RevenueCat Dashboard](https://app.revenuecat.com)
-   - Create new project for SilenceScore
+   - Create new project for Focus Field
 
 2. **Get API Key**
    - Navigate to Project Settings → API Keys
@@ -93,7 +93,7 @@ flutter build apk --release
 
 1. **Create Firebase Project**
    - Go to [Firebase Console](https://console.firebase.google.com)
-   - Create project for SilenceScore
+   - Create project for Focus Field
 
 2. **Get Configuration**
    - Add iOS/Android apps
@@ -140,7 +140,7 @@ export IS_DEVELOPMENT=false
 export ENABLE_MOCK_SUBSCRIPTIONS=false
 
 # Or use production build script
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 #### 3. Environment file not loading
@@ -216,7 +216,7 @@ vim .env  # Add your API keys
 ### 2. Daily Development
 ```bash
 # Quick development build
-./scripts/build-dev.sh
+./scripts/build/build-dev.sh
 
 # Or run in development mode
 flutter run
@@ -228,7 +228,7 @@ flutter run
 export REVENUECAT_API_KEY="prod_key_here"
 
 # Build for production
-./scripts/build-prod.sh
+./scripts/build/build-prod.sh
 ```
 
 ## Related Documents
@@ -241,4 +241,4 @@ January 27, 2025
 
 ---
 
-*This document covers secure environment configuration for SilenceScore. Keep your API keys safe and never commit them to version control.* 
+*This document covers secure environment configuration for Focus Field. Keep your API keys safe and never commit them to version control.* 

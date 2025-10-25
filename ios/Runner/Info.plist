@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Silence Score</string>
+	<string>Focus Field</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,9 +29,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Silence Score needs microphone access to measure ambient noise levels for silence detection. No audio is recorded or stored.</string>
+	<string>Focus Field needs microphone access to measure ambient noise levels for silence detection. No audio is recorded or stored.</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Silence Score uses notifications to remind you about your silence practice and celebrate your achievements.</string>
+	<string>Focus Field uses notifications to remind you about your focus practice and celebrate your achievements.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -49,9 +49,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<!-- Google Mobile Ads (AdMob) App ID - Test ID used for development. Replace for production. -->
+	<!-- Google Mobile Ads (AdMob) App ID (iOS) -->
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-2086096819226646~9627636327</string>
 	<!-- (Optional) Delay app measurement if you want to perform initialization logic first -->
 	<key>GADDelayAppMeasurementInit</key>
 	<true/>

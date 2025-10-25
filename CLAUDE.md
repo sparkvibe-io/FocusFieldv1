@@ -1,346 +1,446 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with the Focus Field codebase.
 
-## Project Overview
+> **Historical Logs**: All completion logs moved to [`docs/development/CHANGELOG.md`](docs/development/CHANGELOG.md)
 
-SilenceScore is a comprehensive Flutter mobile app that measures ambient silence and awards points for maintaining quiet environments. It represents a first-to-market opportunity in the silence measurement category, combining workplace wellness, productivity technology, and ambient environmental monitoring. The app features real-time noise monitoring, session tracking, achievements, and a sophisticated subscription-based monetization system with multiple premium tiers.
+---
 
-## 🚀 **CURRENT STATUS - JULY 27, 2025: MONETIZATION COMPLETE**
+## 🎯 Quick Start
 
-### ✅ **READY FOR LAUNCH - Phase 1 Monetization Complete**
-- **RevenueCat Integration**: ✅ Complete with API key `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
-- **Subscription System**: ✅ Premium ($1.99/month), Premium Plus ($3.99/month)
-- **Feature Gating**: ✅ All premium features properly restricted
-- **Paywall UI**: ✅ Professional subscription interface implemented
-- **Package ID**: ✅ Updated to `io.sparkvibe.silencescore` (iOS & Android)
-- **Build Verification**: ✅ Android APK builds successfully with monetization
-- **Development Mode**: ✅ Mock subscriptions enabled for testing
-
-### 📋 **IMMEDIATE NEXT STEPS (This Week)**
-1. **App Store Connect**: Configure subscription products
-2. **Google Play Console**: Configure subscription products  
-3. **Visual Assets**: Create app icons and store screenshots
-4. **Legal Documents**: Finalize privacy policy and terms of service
-
-### 🎯 **Launch Timeline: 6 Weeks Total (Week 1 Complete)**
-- **Week 1**: ✅ Monetization infrastructure (COMPLETE - AHEAD OF SCHEDULE)
-- **Week 2**: Platform configuration and visual assets
-- **Week 3**: Legal documentation and store submission
-- **Week 4-6**: Launch marketing and user acquisition
-
-## Common Development Commands
-
-### Running the App
 ```bash
-# Development build with mock subscriptions
-./scripts/build-dev.sh
+# Development build (with mock subscriptions)
+./scripts/build/build-dev.sh
 
-# Run directly with Flutter (requires environment setup)
-flutter run --dart-define=REVENUECAT_API_KEY=your_key_here
+# Run on iOS/Android
+./scripts/run/ios.sh --debug
+./scripts/run/android.sh --debug
 
-# Run in debug mode with environment file
-flutter run
+# Run tests
+./scripts/testing/test.sh
+./scripts/testing/test.sh --coverage
+
+# Tools
+./scripts/tools/check-localizations.sh
+./scripts/tools/coverage-summary.sh
+
+# Format & analyze
+flutter format . && flutter analyze
 ```
 
-### Building for Production
-```bash
-# Production build (requires actual API keys)
-export REVENUECAT_API_KEY="your_actual_api_key"
-./scripts/build-prod.sh
+---
 
-# Manual production build
-flutter build apk --release --dart-define=REVENUECAT_API_KEY=your_key
-flutter build appbundle --release --dart-define=REVENUECAT_API_KEY=your_key
+## 🚀 Current Status (Oct 25, 2025)
+
+**MVP Complete - Ready for Platform Configuration**
+
+### ✅ Completed Today (Oct 25)
+- **Performance Optimization**: AnimatedBuilder pattern for widget rebuilds
+  - Replaced `useAnimation()` with `AnimatedBuilder` in Room Loudness widget
+  - Reduced rebuild scope by 95% (only pulse badge rebuilds, not entire widget)
+  - Improved battery life and smoother animations
+  - File: `lib/widgets/inline_noise_panel.dart`
+- **Activity Name Localization**: Fully localized all activity display names
+  - Added `getLocalizedActivityName()` helper in `ambient_quest_provider.dart`
+  - Updated home page header to show localized activity names (e.g., "学習 • 読書 • 瞑想")
+  - Updated shareable cards to use localized names in exported images
+  - Files: `home_page_elegant.dart`, `shareable_cards.dart`
+- **Session Controls UX**: Improved button layout and visibility
+  - Removed "Ambience" label to give buttons more space
+  - Restructured layout: Focus Mode (left) | Spacer | Pause + Stop (right)
+  - Increased button spacing with `flex: 2` for equal distribution
+  - Reduced font to 11pt and padding to 8px for better text fit
+  - Full button text now visible in all languages
+  - File: `lib/screens/home_page_elegant.dart`
+- **Room Loudness Widget Refinement**: Cleaner contextual messaging
+  - Removed unnecessary "No" button from threshold suggestions
+  - Expanded message text space (70% width vs 50% before)
+  - Added fixed height constraint (52px) for consistent layout
+  - No more visual jumping between message/threshold selector states
+  - File: `lib/widgets/inline_noise_panel.dart`
+
+### ✅ Completed Oct 20
+- **i18n Cleanup**: Removed 93 unused FAQ localization keys
+- **FAQ System**: 20 comprehensive Q&A entries, fully localized in 7 languages
+- **UI Polish**: Redesigned Help & Support section with better tap targets
+
+### What Works Now
+- ✅ Ambient Quests system (70% threshold, compassionate credit, 2-day streaks)
+- ✅ Focus Mode (full-screen overlay, completion states, long-press controls)
+- ✅ Monetization (RevenueCat + AdMob integrated, feature gating complete)
+- ✅ Responsive design (phone-first, tablet-adaptive with landscape split-screen)
+- ✅ 7 languages (EN, ES, DE, FR, JA, PT, PT_BR) - all core strings localized
+- ✅ Onboarding flow (6 screens)
+- ✅ **FAQ System** (20 comprehensive Q&A entries with search, fully localized)
+
+### Next Actions
+1. Configure App Store Connect & Google Play Console subscriptions
+2. Create app icons and store screenshots
+3. Finalize legal documents (privacy policy, terms)
+
+### Not Blocking Launch
+- iOS Live Activities (Android notification works)
+- Focus Mode P2/P3 enhancements (breathing animation, themes)
+- Custom activity creation (3 default profiles sufficient)
+- ~71 hardcoded UI strings in widgets/screens (non-critical, have fallback text)
+  - See `docs/development/i18n_remaining_work.md` for complete list and approach
+
+---
+
+## 📖 Project Overview
+
+**Focus Field** is a Flutter mobile app measuring ambient silence for focus sessions. First-to-market in silence measurement category, combining productivity technology with environmental monitoring.
+
+### Core Concept
+- **Real-time noise monitoring** via microphone (decibel levels only, no audio recording)
+- **Ambient Score** system: `quietSeconds / actualSeconds` (0.0-1.0)
+- **Quest-based progression** with daily goals, streaks, freeze tokens
+- **Freemium model**: Premium ($1.99/mo), Premium Plus ($3.99/mo)
+
+---
+
+## ⚡ Product Principles
+
+1. **No Scrolling**: Main pages fit without vertical scroll (compact components, tabs, carousels)
+2. **Ads Always Visible**: Anchored adaptive banner, never obscured
+3. **Material 3**: Minimal, non-repeatable content (unique information only)
+4. **UI Consistency**: All bottom sheets use 85% screen height, drag handles, scrollable content
+
+---
+
+## 🧭 Architecture Quick Reference
+
+### State Management (Riverpod)
+```dart
+// Reactive state
+ref.watch(provider)  // In build methods
+ref.read(provider)   // In event handlers
 ```
 
-### Testing
-```bash
-# Run all tests
-flutter test
+### Key Files Lookup
 
-# Run specific test files
-flutter test test/silence_detector_test.dart
-flutter test test/widget_test.dart
+| Component | File Path | Purpose |
+|-----------|-----------|---------|
+| Noise detection | `lib/services/silence_detector.dart` | Core audio monitoring |
+| Ambient scoring | `lib/providers/ambient_quest_provider.dart` | Quest engine, streaks |
+| Subscriptions | `lib/services/subscription_service.dart` | RevenueCat integration |
+| Main screen | `lib/screens/home_page_elegant.dart` | Tabbed interface |
+| Progress ring | `lib/widgets/progress_ring.dart` | Session control |
+| Focus Mode | `lib/widgets/focus_mode_overlay.dart` | Full-screen mode |
+| Settings | `lib/screens/settings_sheet.dart` | User preferences |
 
-# Run tests with coverage
-flutter test --coverage
+### Core Providers
+
+| Provider | Location | Purpose |
+|----------|----------|---------|
+| `silenceDataProvider` | `lib/providers/silence_provider.dart` | Session data |
+| `questStateProvider` | `lib/providers/ambient_quest_provider.dart` | Daily goals, streaks |
+| `userPreferencesProvider` | `lib/providers/user_preferences_provider.dart` | User settings |
+| `subscriptionProvider` | `lib/providers/subscription_provider.dart` | Premium status |
+| `themeProvider` | `lib/providers/theme_provider.dart` | App theming |
+
+### Feature Flags (`lib/constants/ambient_flags.dart`)
+
+```dart
+// Enabled
+FF_QUESTS = true
+FF_AMBIENT_SCORE = true
+FF_ADAPTIVE_THRESHOLD = true
+
+// Disabled (P2)
+FF_ACTIVE_PROFILES = false
+FF_HEALTH_SYNC = false
+FF_CALENDAR_EXPORT = false
 ```
 
-### Code Quality
-```bash
-# Format code
-flutter format .
+---
 
-# Analyze code
-flutter analyze
+## 🎨 Design System
 
-# Run linter (no fatal info warnings)
-flutter analyze --no-fatal-infos
+### Visual Design Patterns
+```dart
+// Selector button pattern (duration/threshold chips)
+// - Selected: Bold + Primary Color
+// - Unselected: Normal weight + 70% opacity
+// - No backgrounds, minimal padding
+// - 48x48dp minimum touch targets
+
+// Duration selectors: 1m 5m 10m 30m ⭐1hr ⭐1.5hr ⭐2hr
+// Threshold selectors: 30dB 40dB 50dB 60dB 80dB
 ```
 
-### Dependencies
-```bash
-# Install dependencies
-flutter pub get
-
-# Upgrade dependencies
-flutter pub upgrade
-
-# Clean build
-flutter clean && flutter pub get
+### Responsive Breakpoints
+```dart
+class ScreenBreakpoints {
+  static const double phone = 600;      // < 600dp
+  static const double tablet = 840;     // 600-840dp
+  static const double desktop = 1024;   // > 840dp
+}
 ```
 
-## Architecture Overview
+### Tablet Layout Strategy
+- **Portrait**: Phone layout with proportional scaling (+15-25% fonts, +20-35% widgets)
+- **Landscape (≥840dp)**: Split-screen 50/50
+  - Left: Today tab + ad footer
+  - Right: Sessions tab (no ad)
+- **Orientation Lock**: Portrait-only for <840dp (protects ad visibility)
 
-### State Management
-- **Riverpod** with `hooks_riverpod` for reactive state management
-- **Provider Pattern** with dedicated notifiers for different concerns
-- **Async State Handling** using AsyncValue for loading/error states
+---
 
-### Core Services Architecture
-- **SilenceDetector** (`lib/services/silence_detector.dart`): Core noise monitoring using `noise_meter` package ✅
-- **StorageService** (`lib/services/storage_service.dart`): Data persistence with SharedPreferences ✅
-- **SubscriptionService** (`lib/services/subscription_service.dart`): ✅ **COMPLETE** RevenueCat integration for premium features
-- **ExportService** (`lib/services/export_service.dart`): Data export functionality (CSV/PDF) ✅
-- **AnalyticsService** (`lib/services/analytics_service.dart`): User behavior tracking ✅
-- **NotificationService** (`lib/services/notification_service.dart`): Smart reminders and session tracking ✅
-- **SupportService** (`lib/services/support_service.dart`): Email support with device info ✅
+## 🧪 Business Logic
 
-### Key Providers
-- **SilenceDataNotifier** (`lib/providers/silence_provider.dart`): Session data and statistics ✅
-- **SubscriptionProvider** (`lib/providers/subscription_provider.dart`): ✅ **COMPLETE** Premium feature management
-- **ThemeProvider** (`lib/providers/theme_provider.dart`): App theming with System/Light/Dark modes ✅
-- **NotificationProvider** (`lib/providers/notification_provider.dart`): Smart reminder state management ✅
-- **AccessibilityProvider** (`lib/providers/accessibility_provider.dart`): Accessibility features ✅
+### Ambient Score System
+```dart
+// Calculation (1Hz updates)
+ambientScore = quietSeconds / actualSeconds  // Range: 0.0 to 1.0
 
-### Main Screens
-- **AppInitializer** (`lib/screens/app_initializer.dart`): App startup with data loading and permission checks
-- **HomePage** (`lib/screens/home_page.dart`): Main interface with progress ring, noise chart, and controls
-- **SettingsSheet** (`lib/screens/settings_sheet.dart`): Tabbed settings (Basic/Advanced/About)
+// Success threshold
+session.successful = ambientScore >= 0.70  // 70% quiet
 
-### Key Widgets
-- **ProgressRing** (`lib/widgets/progress_ring.dart`): Interactive session control with countdown timer ✅
-- **RealTimeNoiseChart** (`lib/widgets/real_time_noise_chart.dart`): Live decibel visualization using fl_chart ✅
-- **SessionHistoryGraph** (`lib/widgets/session_history_graph.dart`): Historical performance tracking ✅
-- **FeatureGate** (`lib/widgets/feature_gate.dart`): ✅ **COMPLETE** Premium feature access control
-- **PaywallWidget** (`lib/widgets/paywall_widget.dart`): ✅ **COMPLETE** Subscription management UI
-- **AdvancedAnalyticsWidget** (`lib/widgets/advanced_analytics_widget.dart`): Premium analytics dashboard ✅
-- **NotificationSettingsWidget** (`lib/widgets/notification_settings_widget.dart`): Smart reminder configuration ✅
-- **ThemeSelectorWidget** (`lib/widgets/theme_selector_widget.dart`): Advanced theme selection ✅
+// Compassionate credit
+creditedMinutes = quietSeconds / 60  // Proportional points
+pointsEarned = creditedMinutes × 1   // 1 point per quiet minute
+```
 
-## Environment Configuration
+**Example**: 10-minute session, 8 minutes quiet (80% ambient score) → 8 points awarded
 
-### Development Setup ✅ **COMPLETE**
-1. ✅ `.env` file configured with actual API keys
-2. ✅ RevenueCat API key: `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
-3. ✅ Mock subscriptions enabled for development testing
-4. ✅ Build scripts ready for development and production
+### Quest System
+- **Daily Goal**: 10-60 minutes (default 20, user-configurable)
+- **Streak Rule**: Resets only after 2 consecutive missed days (permissive)
+- **Freeze Token**: 1 per month, protects streak + counts as goal completion
+- **Activity Profiles**: Study, Reading, Meditation (all use 38 dB threshold)
 
-### Current Environment Configuration ✅ **READY**
-- `REVENUECAT_API_KEY`: ✅ `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk` (CONFIGURED)
-- `FIREBASE_API_KEY`: ✅ Configured for analytics (optional)
-- `IS_DEVELOPMENT`: ✅ `true` (development mode enabled)
-- `ENABLE_MOCK_SUBSCRIPTIONS`: ✅ `true` (mock payments for testing)
+### Premium Features
+| Feature | Free | Premium ($1.99) | Premium Plus ($3.99) |
+|---------|------|-----------------|----------------------|
+| Session length | 30 min | 120 min | 120 min |
+| History | 7 days | 90 days | Unlimited |
+| Analytics | Basic | Advanced | AI insights |
+| Export | No | CSV/PDF | Cloud sync |
+| Focus durations | 1-30 min | + 1h, 1.5h, 2h | + All |
 
-### Build Scripts
-- `./scripts/build-dev.sh`: Development build with mock subscriptions
-- `./scripts/build-prod.sh`: Production build with validation
+---
 
-## Core Business Logic
+## 🔧 Development Conventions
 
-### Silence Detection
-- Uses `noise_meter` package to monitor ambient decibel levels
-- Default threshold: 38 dB (configurable 20-80 dB)
-- Real-time monitoring at 200ms intervals during sessions
-- Ambient monitoring at 1Hz when not in active session
-- Exponential moving average for noise smoothing
+### File Organization
+```
+lib/
+├── constants/     # Feature flags, config
+├── models/        # Data models (JSON serialization)
+├── providers/     # Riverpod state management
+├── screens/       # Main UI screens
+├── services/      # Business logic, APIs
+├── theme/         # Design system
+├── widgets/       # Reusable components
+└── main.dart      # App entry
+```
 
-### Point System
-- 1 point per minute of successful silence session
-- Sessions can be 1-120 minutes (configurable)
-- Daily streak tracking with best performance records
-- Achievement system with confetti celebrations
+### Code Patterns
+```dart
+// Feature gating
+FeatureGate(
+  feature: PremiumFeature.extendedSessions,
+  child: PremiumContent(),
+  fallback: UpgradePrompt(),
+)
 
-### Premium Features (RevenueCat Integration)
-- **Premium ($1.99/month)**: Extended sessions, advanced analytics, data export
-- **Premium Plus ($3.99/month)**: Cloud sync, AI insights, multi-environment profiles
-- Mock subscriptions available for development/testing
+// Async state handling
+ref.watch(dataProvider).when(
+  data: (data) => Content(data),
+  loading: () => LoadingSpinner(),
+  error: (err, stack) => ErrorWidget(err),
+)
 
-## Data Models
+// Stream subscriptions (always dispose!)
+final subscription = stream.listen(handler);
+// In dispose:
+subscription?.cancel();
+```
 
-### Core Models
-- **SilenceData** (`lib/models/silence_data.dart`): Session statistics and user progress
-- **SubscriptionTier** (`lib/models/subscription_tier.dart`): Premium subscription levels
+### Common Commands
 
-### Data Storage
-- Local storage using SharedPreferences with JSON serialization
-- No audio recording - only decibel level measurements
-- Data export functionality for session history and statistics
+| Task | Command |
+|------|---------|
+| Dev build | `./scripts/build/build-dev.sh` |
+| Prod build | `./scripts/build/build-prod.sh` |
+| Run tests | `flutter test` |
+| Format code | `flutter format .` |
+| Analyze | `flutter analyze` |
+| Clean | `flutter clean && flutter pub get` |
+| Localization | `flutter gen-l10n` |
 
-## Testing Strategy
+---
 
-### Unit Tests
-- Silence detection logic validation
-- Data model serialization/deserialization
-- Core service functionality
+## 🌍 Environment Configuration
 
-### Widget Tests
-- UI component rendering and interaction
-- Theme switching and responsive layout
-- Form validation and user input handling
-
-### Key Test Files
-- `test/silence_detector_test.dart`: Core noise detection logic
-- `test/widget_test.dart`: UI component validation
-
-## Development Notes
-
-### Permissions
-- **Microphone**: Required for ambient noise monitoring
-- **iOS**: NSMicrophoneUsageDescription in Info.plist
-- **Android**: RECORD_AUDIO permission in AndroidManifest.xml
-- Privacy-focused: Only measures decibel levels, no audio recording
-
-### Performance Considerations
-- Reduced update frequencies for better battery life
-- Noise smoothing algorithms to prevent UI flickering
-- Efficient state management with Riverpod providers
-- Optimized chart rendering with fl_chart
-
-### Theme System
-- Material 3 design with dynamic color support
-- Three modes: System, Light, Dark themes
-- Custom AppTheme with purple night mode
-- Consistent color scheme across all components
-
-## Business Context
-
-### Market Position
-- **First-to-Market**: Creating the silence measurement app category
-- **Target Markets**: Individual productivity users, enterprise teams, educational institutions
-- **Revenue Model**: Freemium SaaS with dual-tier subscription system
-- **Launch Strategy**: Phase 1 Premium ($1.99/month), Phase 2 Premium Plus ($3.99/month)
-
-### Business Metrics & Goals
-- **Year 1 Target**: 15,000 downloads with 8% Premium conversion
-- **Revenue Goal**: $19,080 ARR in Year 1
-- **Markets**: US, Canada, UK, Australia (English-speaking primary markets)
-- **Enterprise Focus**: B2B features and team management capabilities planned
-
-## Monetization System
-
-### Subscription Tiers
-- **Free Tier**: Basic silence detection, 20 session history limit, 5-minute sessions
-- **Premium Tier ($1.99/month)**: Unlimited history, 60-minute sessions, advanced analytics, data export, premium themes
-- **Premium Plus Tier ($3.99/month)**: Cloud sync, AI insights, multi-environment profiles, social features (Phase 2)
-
-### RevenueCat Integration
-- Centralized subscription management through RevenueCat
-- Mock subscriptions available for development (`ENABLE_MOCK_SUBSCRIPTIONS=true`)
-- Feature gating system with `FeatureGate` widget
-- Subscription validation and restoration functionality
-
-### Environment Configuration
+### Development (Mock Subscriptions Enabled)
 ```bash
-# Required for production
-REVENUECAT_API_KEY=your_actual_key
-IS_DEVELOPMENT=false
-ENABLE_MOCK_SUBSCRIPTIONS=false
-
-# Development defaults
 REVENUECAT_API_KEY=REVENUECAT_API_KEY_NOT_SET
 IS_DEVELOPMENT=true
 ENABLE_MOCK_SUBSCRIPTIONS=true
 ```
 
-## Documentation Structure
+### Production
+```bash
+# iOS
+REVENUECAT_API_KEY=appl_qoFokYDCMBFZLyKXTulaPFkjdME
 
-### Comprehensive Documentation (`docs/` folder)
-- **Business Strategy** (`docs/business/`): Launch plans, revenue strategy, market analysis
-- **Architecture** (`docs/architecture/`): System design and technical overview
-- **Development** (`docs/development/`): Setup guides and contribution guidelines
-- **Deployment** (`docs/deployment/`): Platform-specific deployment guides
-- **User Documentation** (`docs/user/`): User guides and tutorials
-- **API Reference** (`docs/api/`): Complete API documentation
+# Android
+REVENUECAT_API_KEY=goog_HNKHzGPIWgDdqihvtZrmgTdMSzf
 
-### Key Business Documents
-- `docs/business/phase1-launch-plan.md` - Immediate launch strategy with detailed timeline
-- `docs/MONETIZATION_SETUP.md` - Complete subscription system setup guide
-- `docs/business/revenue-strategy.md` - Financial projections and monetization approach
-- `docs/business/roadmap.md` - 24-month technical and product development timeline
-
-## Code Conventions
-
-### File Organization
-```
-lib/
-├── constants/     # App-wide constants and configuration
-├── models/        # Data models with JSON serialization (includes SubscriptionTier)
-├── providers/     # Riverpod state management (includes SubscriptionProvider)
-├── screens/       # Main UI screens and navigation
-├── services/      # Business logic and external API integration (includes SubscriptionService)
-├── theme/         # App theming and design system
-├── widgets/       # Reusable UI components (includes FeatureGate, PaywallWidget)
-└── main.dart      # App entry point with provider setup
+IS_DEVELOPMENT=false
+ENABLE_MOCK_SUBSCRIPTIONS=false
 ```
 
-### Business Logic Patterns
-- **Feature Gating**: All premium features wrapped in `FeatureGate` widgets
-- **Subscription Management**: Centralized through `SubscriptionProvider`
-- **Revenue Tracking**: Analytics service for subscription events
-- **Export Functionality**: PDF/CSV generation for premium users
+### AdMob IDs
+```bash
+# Android
+App ID: ca-app-pub-2086096819226646~6517708516
+Banner: ca-app-pub-2086096819226646/3553182566
 
-### State Management Patterns
-- Use AsyncNotifier for complex state with async operations
-- Implement proper error handling with AsyncValue
-- Follow Riverpod best practices for provider dependencies
-- Use ref.watch() for reactive updates, ref.read() for one-time access
+# iOS
+App ID: ca-app-pub-2086096819226646~9627636327
+Banner: ca-app-pub-2086096819226646/9050063581
+```
 
-### Premium Feature Development ✅ **COMPLETE**
-- ✅ All premium features implement feature gating with `FeatureGate` widgets
-- ✅ Both free and premium user experiences tested with mock subscriptions
-- ✅ Graceful degradation for free tier users with upgrade prompts
-- ✅ Subscription prompts and upgrade flows fully implemented
+---
 
-## 🚀 **CURRENT LAUNCH STATUS - JULY 27, 2025**
+## 📚 Documentation Structure
 
-### ✅ **PHASE 1 MONETIZATION COMPLETE**
-**Status: READY FOR APP STORE SUBMISSION**
+### Comprehensive Docs (`docs/`)
+- **`business/`**: Launch plans, revenue strategy, market analysis
+- **`development/`**: Setup guides, CHANGELOG, implementation specs
+- **`deployment/`**: Platform-specific deployment guides
+- **`architecture/`**: System design, technical overview
+- **`user/`**: User guides, tutorials
+- **`api/`**: API documentation
 
-#### Technical Implementation: 100% Complete
-- ✅ **RevenueCat Integration**: Complete IAP system with API key configured
-- ✅ **Subscription Tiers**: Premium ($1.99/month), Premium Plus ($3.99/month)  
-- ✅ **Feature Gating**: All premium features properly restricted
-- ✅ **Paywall UI**: Professional subscription purchase interface
-- ✅ **State Management**: Riverpod providers for subscription state
-- ✅ **Package ID**: Updated to `io.sparkvibe.silencescore` (iOS & Android)
-- ✅ **Build Verification**: Android APK builds successfully with monetization
-- ✅ **Mock Testing**: Development mode allows testing without real payments
+### Key Documents
+- [`docs/development/CHANGELOG.md`](docs/development/CHANGELOG.md) - Historical completion logs
+- [`docs/development/AmbientQuests_Dev_Spec.md`](docs/development/AmbientQuests_Dev_Spec.md) - Quest system spec
+- [`docs/MONETIZATION_SETUP.md`](docs/MONETIZATION_SETUP.md) - Subscription setup guide
+- [`docs/business/phase1-launch-plan.md`](docs/business/phase1-launch-plan.md) - Launch timeline
+- [`docs/business/roadmap.md`](docs/business/roadmap.md) - 24-month product roadmap
 
-#### Revenue System: Production Ready
-- ✅ **API Configuration**: RevenueCat API key `sk_OhKOxLUKPtKeNBNWPYGJYoJuVSkOk`
-- ✅ **Product IDs**: Premium and Premium Plus subscription products defined
-- ✅ **Billing Cycles**: Monthly and yearly options implemented
-- ✅ **Feature Restrictions**: Free tier limited to 5-minute sessions, 7-day history
-- ✅ **Premium Benefits**: 60-minute sessions, unlimited history, advanced analytics, export
+---
 
-#### Implementation Timeline: Ahead of Schedule
-- **Week 1**: ✅ **COMPLETE** - Monetization infrastructure (planned for Days 1-4)
-- **Week 2**: 📋 **NEXT** - Platform configuration and visual assets  
-- **Week 3**: 📋 **UPCOMING** - Legal documentation and store submission
-- **Week 4-6**: 📋 **PLANNED** - Launch marketing and user acquisition
+## ✅ Testing Strategy
 
-### 📋 **IMMEDIATE NEXT ACTIONS**
-1. **App Store Connect**: Configure subscription products with Apple
-2. **Google Play Console**: Configure subscription products with Google
-3. **Visual Assets**: Create professional app icons and store screenshots
-4. **Legal Documents**: Finalize privacy policy and terms of service
+### Unit Tests
+- Silence detection logic (`test/silence_detector_test.dart`)
+- Data model serialization
+- Core service functionality
 
-### 🎯 **LAUNCH READINESS**
-- **Technical**: ✅ 100% Complete (ahead of 6-week timeline)
-- **Platform Setup**: 📋 Pending (Week 2 priority)
-- **Marketing Assets**: 📋 Pending (Week 2-3)
-- **Revenue Generation**: ✅ Ready (switch `ENABLE_MOCK_SUBSCRIPTIONS=false`)
+### Widget Tests
+- UI component rendering (`test/widget_test.dart`)
+- Theme switching
+- Responsive layouts
 
-**The app is immediately ready for revenue generation once platform subscriptions are configured.**
+### Manual Testing Checklist
+- [ ] Microphone permissions (iOS NSMicrophoneUsageDescription, Android RECORD_AUDIO)
+- [ ] Session lifecycle (start → tick → end → persist)
+- [ ] Ambient score calculation accuracy (±1% tolerance)
+- [ ] Quest rollover (daily/monthly reset logic)
+- [ ] Premium feature gating (paywall triggers)
+- [ ] Tablet responsiveness (600dp, 840dp, 1024dp breakpoints)
+- [ ] Ad visibility (never obscured by overlays)
+- [ ] Localization (all 7 languages render correctly)
+
+---
+
+## 🚨 Performance Guidelines
+
+### Optimization Checklist
+- ✅ Debug logs wrapped in `kDebugMode` guards (tree-shaken in release)
+- ✅ Stream subscriptions disposed in cleanup methods
+- ✅ useEffect hooks return cleanup functions
+- ✅ AnimationControllers disposed properly
+- ✅ No `ref.watch()` in event handlers (use `ref.read()`)
+- ✅ Deprecated APIs migrated (`withOpacity` → `withValues`, etc.)
+
+### Battery Life Considerations
+- Noise monitoring at 200ms intervals (efficient)
+- Ambient score calculation at 1Hz (low overhead)
+- Chart updates throttled to reduce redraws
+- Background monitoring optimized (Android STOP action support)
+
+---
+
+## 💼 Business Context
+
+### Market Position
+- **First-to-Market**: Creating silence measurement app category
+- **Target Markets**: US, Canada, UK, Australia (English-speaking)
+- **Revenue Model**: Freemium SaaS, dual-tier subscriptions
+- **Year 1 Goal**: 15,000 downloads, 8% conversion, $19,080 ARR
+
+### Launch Timeline (6 Weeks)
+- **Week 1**: ✅ Monetization infrastructure (COMPLETE)
+- **Week 2**: Platform configuration, visual assets
+- **Week 3**: Legal docs, store submission
+- **Week 4-6**: Marketing, user acquisition
+
+---
+
+## 🔮 Future Roadmap (P2)
+
+### Focus Mode Enhancements
+- Breathing animation (8s cycle: 4s inhale, 4s exhale)
+- Icon-only buttons (cleaner minimal design)
+- Lock Mode (Premium feature - prevents exit until completion)
+- Color themes (Midnight/Ocean/Forest/Sunset)
+
+### Activity System Expansion
+- Custom activity creation (user-defined icons, colors, goals)
+- Active profiles (non-quiet activities: Fitness, Family, Custom)
+- Health sync, calendar export (feature-flagged)
+
+### Support Resources
+- In-app FAQ browser
+- Documentation widget in Settings
+- Web-based help center
+
+**Why Deferred**: MVP validates core value first. P2 features add polish after launch validation.
+
+---
+
+## 🛠️ Permissions & Privacy
+
+- **Microphone**: Required for ambient noise monitoring
+  - **iOS**: `NSMicrophoneUsageDescription` in `Info.plist`
+  - **Android**: `RECORD_AUDIO` in `AndroidManifest.xml`
+- **Privacy-Focused**: Only measures decibel levels, **no audio recording**
+- **Data Storage**: Local (SharedPreferences), JSON serialization
+- **Export**: CSV/PDF for premium users (session history, statistics)
+
+---
+
+## 📝 Notes for Claude Code
+
+### When Working on This Codebase
+1. **Check CHANGELOG first**: Historical context in `docs/development/CHANGELOG.md`
+2. **Respect Product Principles**: No scrolling, ads visible, Material 3, UI consistency
+3. **Feature flags**: Check `lib/constants/ambient_flags.dart` before implementing features
+4. **Localization**: Update all 7 `.arb` files, run `flutter gen-l10n`
+5. **Premium features**: Always wrap in `FeatureGate` widget
+6. **Tablet support**: Test responsive breakpoints (600dp, 840dp, 1024dp)
+7. **Performance**: Wrap debug logs in `kDebugMode`, dispose streams/controllers
+8. **Business logic**: Ambient score is **primary success metric** (not legacy average-based)
+
+### Common Pitfalls to Avoid
+- ❌ Don't use `ref.watch()` in event handlers (use `ref.read()`)
+- ❌ Don't forget stream/controller disposal in cleanup methods
+- ❌ Don't hardcode values that should come from providers (e.g., calm %, daily goal)
+- ❌ Don't add scrolling to main pages (use tabs/carousels instead)
+- ❌ Don't obscure ads with overlays or long content
+- ❌ Don't use deprecated APIs (`withOpacity`, `Color.value`, old Share API)
+
+### Legacy Systems to Ignore
+- **Mission/Habit System**: Archived in `docs/archive/` (replaced by Ambient Quests)
+- **Average-Based Success**: Replaced by Ambient Score system (70% threshold)
+- **Emoji Icons**: Replaced with Material Design 3 icons throughout
+
+---
+
+**For detailed technical specs, see linked documentation files above.**

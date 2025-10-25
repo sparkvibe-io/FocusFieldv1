@@ -1,13 +1,25 @@
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/screens/home_page.dart';
-import 'package:silence_score/widgets/error_boundary.dart';
-import 'package:silence_score/services/rating_service.dart';
-import 'package:silence_score/constants/permission_constants.dart';
-import 'package:silence_score/widgets/permission_dialogs.dart';
-import 'package:silence_score/services/tip_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:focus_field/providers/silence_provider.dart';
+import 'package:focus_field/screens/home_page_elegant.dart';
+import 'package:focus_field/screens/onboarding_screen.dart';
+import 'package:focus_field/widgets/error_boundary.dart';
+import 'package:focus_field/services/rating_service.dart';
+import 'package:focus_field/constants/permission_constants.dart';
+import 'package:focus_field/widgets/permission_dialogs.dart';
+import 'package:focus_field/services/tip_service.dart';
+import 'package:focus_field/services/deep_focus_manager.dart';
+import 'package:focus_field/providers/notification_provider.dart';
+import 'package:focus_field/providers/ambient_quest_provider.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+
+/// Provider to check if onboarding has been completed
+final _onboardingCompletedProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('onboardingCompleted') ?? false;
+});
 
 /// App initialization widget that ensures all data is loaded before showing main UI
 class AppInitializer extends ConsumerWidget {
@@ -15,66 +27,135 @@ class AppInitializer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch all the async providers we need to initialize
     final storageServiceAsync = ref.watch(storageServiceProvider);
     final settingsAsync = ref.watch(appSettingsProvider);
     final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
 
     return storageServiceAsync.when(
-      loading: () => _buildLoadingScreen(context, 'Initializing app...'),
+      loading: () => _buildLoadingScreen(context, l10n.initializingApp),
       error:
           (error, stack) =>
-              _buildErrorScreen(context, 'Initialization failed: $error', ref),
+              _buildErrorScreen(context, l10n.initializationFailed(error.toString()), ref),
       data: (storageService) {
         return settingsAsync.when(
-          loading: () => _buildLoadingScreen(context, 'Loading settings...'),
+          loading: () => _buildLoadingScreen(context, l10n.loadingSettings),
           error:
               (error, stack) => _buildErrorScreen(
                 context,
-                'Settings loading failed: $error',
+                l10n.settingsLoadingFailed(error.toString()),
                 ref,
               ),
           data: (settings) {
             return silenceDataAsync.when(
               loading:
-                  () => _buildLoadingScreen(context, 'Loading user data...'),
+                  () => _buildLoadingScreen(context, l10n.loadingUserData),
               error:
                   (error, stack) => _buildErrorScreen(
                     context,
-                    'Data loading failed: $error',
+                    l10n.dataLoadingFailed(error.toString()),
                     ref,
                   ),
               data: (silenceData) {
-                // Trigger rating prompt logic (non-blocking)
-                WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  try {
-                    await RatingService.instance.initLaunch();
-                    // silenceData is a SilenceData model
-                    await RatingService.instance.maybePrompt(
-                      context,
-                      totalSessions: silenceData.totalSessions,
-                      lastSessionDurationSeconds:
-                          silenceData.recentSessions.isNotEmpty
-                              ? silenceData.recentSessions.first.duration
-                              : null,
-                    );
-                    // Reset tip session state on app start
-                    try {
-                      await ref.read(tipServiceProvider).resetSessionState();
-                    } catch (_) {}
-                  } catch (_) {
-                    /* ignore rating errors */
-                  }
-                });
-                return const SafeWidget(
-                  context: 'app_initialization',
-                  child: _PermissionChecker(child: HomePage()),
+                // Check if onboarding has been completed via async provider
+                final onboardingAsync = ref.watch(_onboardingCompletedProvider);
+
+                return onboardingAsync.when(
+                  loading: () => _buildLoadingScreen(context, l10n.loading),
+                  error: (e, _) {
+                    // If we can't check onboarding status, show home anyway
+                    return _initializeServicesAndShowHome(context, ref, silenceData);
+                  },
+                  data: (onboardingCompleted) {
+                    if (!onboardingCompleted) {
+                      // Show onboarding screen for first-time users
+                      return const OnboardingScreen(isReplay: false);
+                    }
+                    
+                    return _initializeServicesAndShowHome(context, ref, silenceData);
+                  },
                 );
               },
             );
           },
         );
       },
+    );
+  }
+
+  Widget _initializeServicesAndShowHome(BuildContext context, WidgetRef ref, dynamic silenceData) {
+    // Initialize services after core data loaded
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Notifications
+      final notificationService = ref.read(notificationServiceProvider);
+      await notificationService.initialize();
+      // Wire action handler for ongoing notification actions
+      notificationService.actionHandler = (actionId, payload) async {
+        if (actionId == 'STOP_SESSION') {
+          try {
+            ref.read(silenceStateProvider.notifier).stopSession();
+            await notificationService.cancelOngoingSession();
+            // Also end ambient engine to persist partial session if any
+            try {
+              final plannedSeconds = ref.read(sessionDurationProvider);
+              await ref
+                  .read(ambientSessionEngineProvider.notifier)
+                  .end(reason: 'stopped_from_notification', plannedSeconds: plannedSeconds);
+            } catch (_) {}
+          } catch (_) {}
+        }
+      };
+
+      // Deep Focus lifecycle manager
+      final dfm = DeepFocusManager(
+        onBreach: () async {
+          // End/stop session if running
+          try {
+            final silent = ref.read(silenceStateProvider);
+            if (silent.isListening) {
+              ref.read(silenceStateProvider.notifier).stopSession();
+              await notificationService.cancelOngoingSession();
+              try {
+                final plannedSeconds = ref.read(sessionDurationProvider);
+                await ref
+                    .read(ambientSessionEngineProvider.notifier)
+                    .end(reason: 'deep_focus_breach', plannedSeconds: plannedSeconds);
+              } catch (_) {}
+            }
+          } catch (_) {}
+        },
+      );
+      await dfm.init();
+    });
+    
+    // Trigger rating prompt logic (non-blocking)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        await RatingService.instance.initLaunch();
+        // silenceData is a SilenceData model
+        if (!context.mounted) return;
+        await RatingService.instance.maybePrompt(
+          context,
+          totalSessions: silenceData.totalSessions,
+          lastSessionDurationSeconds:
+              silenceData.recentSessions.isNotEmpty
+                  ? silenceData.recentSessions.first.duration
+                  : null,
+        );
+        // Reset tip session state on app start
+        try {
+          await ref.read(tipServiceProvider).resetSessionState();
+        } catch (_) {}
+      } catch (_) {
+        /* ignore rating errors */
+      }
+    });
+    
+    // Using HomePageElegant - Refined with rocket theme and bottom tabs
+    return const SafeWidget(
+      context: 'app_initialization',
+      child: _PermissionChecker(child: HomePageElegant()),
     );
   }
 
@@ -131,7 +212,7 @@ class AppInitializer extends ConsumerWidget {
               const SizedBox(height: 8),
 
               Text(
-                '🤫 Master the Art of Silence',
+                AppLocalizations.of(context)!.taglineSilence,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -151,6 +232,7 @@ class AppInitializer extends ConsumerWidget {
     WidgetRef ref,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -179,7 +261,7 @@ class AppInitializer extends ConsumerWidget {
 
                 // Error message
                 Text(
-                  'Oops! Something went wrong',
+                  l10n.errorOops,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     color: theme.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -208,7 +290,7 @@ class AppInitializer extends ConsumerWidget {
                       ref.invalidate(silenceDataNotifierProvider);
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
+                    label: Text(l10n.buttonRetry),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: theme.colorScheme.primary,
@@ -224,30 +306,29 @@ class AppInitializer extends ConsumerWidget {
                     final confirmed = await showDialog<bool>(
                       context: context,
                       builder:
-                          (context) => AlertDialog(
-                            title: const Text('Reset App Data'),
-                            content: const Text(
-                              'This will reset all app data and settings to their defaults. '
-                              'This action cannot be undone.\n\n'
-                              'Do you want to continue?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: const Text('Cancel'),
-                              ),
-                              ElevatedButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.error,
-                                  foregroundColor: theme.colorScheme.onError,
+                          (ctx) {
+                            final l10nDialog = AppLocalizations.of(ctx)!;
+                            return AlertDialog(
+                              title: Text(l10nDialog.resetAppData),
+                              content: Text(l10nDialog.resetAppDataMessage),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(ctx).pop(false),
+                                  child: Text(l10nDialog.cancel),
                                 ),
-                                child: const Text('Reset'),
-                              ),
-                            ],
-                          ),
+                                ElevatedButton(
+                                  onPressed:
+                                      () => Navigator.of(ctx).pop(true),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: theme.colorScheme.error,
+                                    foregroundColor: theme.colorScheme.onError,
+                                  ),
+                                  child: Text(l10nDialog.buttonReset),
+                                ),
+                              ],
+                            );
+                          },
                     );
 
                     if (confirmed == true) {
@@ -266,18 +347,21 @@ class AppInitializer extends ConsumerWidget {
                         ref.invalidate(silenceDataNotifierProvider);
 
                         if (context.mounted) {
+                          final theme = Theme.of(context);
+                          final l10nMsg = AppLocalizations.of(context)!;
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('App data has been reset'),
-                              backgroundColor: Colors.green,
+                            SnackBar(
+                              content: Text(l10nMsg.messageDataReset),
+                              backgroundColor: theme.colorScheme.primary,
                             ),
                           );
                         }
                       } catch (e) {
                         if (context.mounted) {
+                          final l10nMsg = AppLocalizations.of(context)!;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Failed to reset data: $e'),
+                              content: Text(l10nMsg.errorResetFailed(e.toString())),
                               backgroundColor: theme.colorScheme.error,
                             ),
                           );
@@ -286,7 +370,7 @@ class AppInitializer extends ConsumerWidget {
                     }
                   },
                   child: Text(
-                    'Reset App Data',
+                    l10n.resetAppData,
                     style: TextStyle(color: theme.colorScheme.error),
                   ),
                 ),
@@ -368,8 +452,9 @@ class _PermissionCheckerState extends ConsumerState<_PermissionChecker> {
               milliseconds: PermissionConstants.dialogPostRequestDelayMs,
             ),
           );
-          if (mounted)
+          if (mounted) {
             await PermissionDialogs.showMicrophoneRationale(context, ref);
+          }
         }
       } else if (hasPermission) {
         DebugLog.d('DEBUG: Permission already granted');

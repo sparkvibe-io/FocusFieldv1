@@ -1,22 +1,24 @@
 import 'dart:math' as math;
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/models/silence_data.dart';
 
 // Insight categories shown in the advanced analytics widget.
 enum InsightType { achievement, improvement, warning, recommendation, trend }
 
 class AnalyticsInsight {
-  final String title;
-  final String description;
+  final String titleKey;       // Localization key for title
+  final String descriptionKey; // Localization key for description
   final String value;
   final InsightType type;
   final double confidence; // 0-1 relative strength
+  final Map<String, dynamic>? params; // Optional parameters for translations
 
   const AnalyticsInsight({
-    required this.title,
-    required this.description,
+    required this.titleKey,
+    required this.descriptionKey,
     required this.value,
     required this.type,
     required this.confidence,
+    this.params,
   });
 }
 
@@ -49,6 +51,7 @@ class PerformanceMetrics {
   improvementTrend; // percentage points difference (recent - older)
   final int bestTimeOfDay; // 0-23
   final String preferredDuration; // human label
+  final Map<String, int> bestTimeByActivity; // activity -> hour (0-23)
 
   const PerformanceMetrics({
     required this.overallSuccessRate,
@@ -57,6 +60,7 @@ class PerformanceMetrics {
     required this.improvementTrend,
     required this.bestTimeOfDay,
     required this.preferredDuration,
+    this.bestTimeByActivity = const {},
   });
 }
 
@@ -170,6 +174,7 @@ class AdvancedAnalyticsService {
         improvementTrend: 0,
         bestTimeOfDay: 12,
         preferredDuration: '10 minutes',
+        bestTimeByActivity: {},
       );
     }
 
@@ -183,6 +188,7 @@ class AdvancedAnalyticsService {
     final improvementTrend = _improvementTrend(sessions);
     final bestHour = _bestTimeOfDay(sessions);
     final preferredDuration = _preferredDuration(sessions);
+    final bestTimeByActivity = _bestTimeByActivity(sessions);
 
     return PerformanceMetrics(
       overallSuccessRate: overallSuccessRate,
@@ -191,6 +197,7 @@ class AdvancedAnalyticsService {
       improvementTrend: improvementTrend,
       bestTimeOfDay: bestHour,
       preferredDuration: preferredDuration,
+      bestTimeByActivity: bestTimeByActivity,
     );
   }
 
@@ -201,8 +208,8 @@ class AdvancedAnalyticsService {
     if (sessions.isEmpty) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Get Started',
-          description: 'Complete your first session to unlock insights',
+          titleKey: 'insightNoRecentSessionsTitle',
+          descriptionKey: 'insightNoRecentSessionsDesc',
           value: 'Begin now',
           type: InsightType.recommendation,
           confidence: 1.0,
@@ -213,8 +220,8 @@ class AdvancedAnalyticsService {
     if (metrics.overallSuccessRate >= 80) {
       insights.add(
         AnalyticsInsight(
-          title: 'High Success Rate',
-          description: 'You are maintaining strong silent sessions.',
+          titleKey: 'insightHighSuccessRateTitle',
+          descriptionKey: 'insightHighSuccessRateDesc',
           value: '${metrics.overallSuccessRate.toStringAsFixed(1)}%',
           type: InsightType.achievement,
           confidence: .9,
@@ -223,9 +230,8 @@ class AdvancedAnalyticsService {
     } else if (metrics.overallSuccessRate < 50) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Improve Consistency',
-          description:
-              'Try adjusting environment or threshold for more completed sessions.',
+          titleKey: 'insightLowAmbientScoreTitle',
+          descriptionKey: 'insightLowAmbientScoreDesc',
           value: 'Tip',
           type: InsightType.recommendation,
           confidence: .8,
@@ -235,8 +241,8 @@ class AdvancedAnalyticsService {
     if (metrics.improvementTrend > 15) {
       insights.add(
         const AnalyticsInsight(
-          title: 'Trending Up',
-          description: 'Recent sessions show noticeable improvement.',
+          titleKey: 'insightConsistentPracticeTitle',
+          descriptionKey: 'insightConsistentPracticeDesc',
           value: '+Improving',
           type: InsightType.improvement,
           confidence: .85,
@@ -246,9 +252,8 @@ class AdvancedAnalyticsService {
     if (metrics.improvementTrend < -10) {
       insights.add(
         AnalyticsInsight(
-          title: 'Declining Trend',
-          description:
-              'Performance has dipped recently compared to earlier sessions.',
+          titleKey: 'insightIrregularScheduleTitle',
+          descriptionKey: 'insightIrregularScheduleDesc',
           value: '${metrics.improvementTrend.toStringAsFixed(1)} pts',
           type: InsightType.warning,
           confidence: .8,
@@ -258,8 +263,8 @@ class AdvancedAnalyticsService {
     if (data.currentStreak >= 5) {
       insights.add(
         AnalyticsInsight(
-          title: 'Streak Strength',
-          description: 'Great streak of ${data.currentStreak} days!',
+          titleKey: 'insightConsistentPracticeTitle',
+          descriptionKey: 'insightConsistentPracticeDesc',
           value: '${data.currentStreak} days',
           type: InsightType.achievement,
           confidence: 1.0,
@@ -275,9 +280,8 @@ class AdvancedAnalyticsService {
       if (avgNoise < 35) {
         insights.add(
           AnalyticsInsight(
-            title: 'Quiet Environment',
-            description:
-                'Low ambient noise is supporting higher focus potential.',
+            titleKey: 'insightLowNoiseSuccessTitle',
+            descriptionKey: 'insightLowNoiseSuccessDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.achievement,
             confidence: 0.7,
@@ -286,9 +290,8 @@ class AdvancedAnalyticsService {
       } else if (avgNoise > 55) {
         insights.add(
           AnalyticsInsight(
-            title: 'High Ambient Noise',
-            description:
-                'Consider a quieter space or adjusting threshold for better results.',
+            titleKey: 'insightRoomTooNoisyTitle',
+            descriptionKey: 'insightRoomTooNoisyDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.recommendation,
             confidence: 0.75,
@@ -297,9 +300,8 @@ class AdvancedAnalyticsService {
       } else {
         insights.add(
           AnalyticsInsight(
-            title: 'Environment Stability',
-            description:
-                'Ambient noise is within a moderate, manageable range.',
+            titleKey: 'insightEnvironmentStabilityTitle',
+            descriptionKey: 'insightEnvironmentStabilityDesc',
             value: '${avgNoise.toStringAsFixed(1)} dB',
             type: InsightType.trend,
             confidence: 0.5,
@@ -314,6 +316,12 @@ class AdvancedAnalyticsService {
   DateTime _weekStart(DateTime d) =>
       DateTime(d.year, d.month, d.day - (d.weekday - 1));
 
+  /// Calculates consistency score based on regularity of practice sessions.
+  /// This measures HABIT CONSISTENCY (how regularly you practice), not session quality variance.
+  /// Returns a score from 0 to 1, where 1 = perfectly regular practice intervals.
+  /// 
+  /// Algorithm: Uses variance of time intervals between sessions to determine
+  /// if the user maintains a regular practice schedule (e.g., daily, every other day).
   double _consistencyScore(List<SessionRecord> sessions) {
     if (sessions.length < 3) return 0.3; // minimal data
     final sorted = [...sessions]..sort((a, b) => a.date.compareTo(b.date));
@@ -359,6 +367,42 @@ class AdvancedAnalyticsService {
     return bestHour;
   }
 
+  /// Calculates best time of day for each activity type.
+  /// Returns map of activity ID -> best hour (0-23) based on success rate.
+  Map<String, int> _bestTimeByActivity(List<SessionRecord> sessions) {
+    final activityMap = <String, Map<int, List<bool>>>{};
+    
+    // Group sessions by activity and hour
+    for (final s in sessions) {
+      final activity = s.activity ?? 'other';
+      activityMap.putIfAbsent(activity, () => {});
+      activityMap[activity]!.putIfAbsent(s.date.hour, () => []).add(s.completed);
+    }
+    
+    // Find best hour for each activity
+    final result = <String, int>{};
+    activityMap.forEach((activity, hourMap) {
+      double bestRate = -1;
+      int bestHour = 12;
+      hourMap.forEach((hour, completedList) {
+        final rate = completedList.where((c) => c).length / completedList.length;
+        if (rate > bestRate) {
+          bestRate = rate;
+          bestHour = hour;
+        }
+      });
+      result[activity] = bestHour;
+    });
+    
+    return result;
+  }
+
+  /// Determines the preferred session duration based on success rate.
+  /// Returns the duration bucket (e.g., '1-2 min', '6-10 min') with the highest
+  /// completion rate. This helps users identify their optimal focus session length.
+  /// 
+  /// Returns a localization key (bucket1to2, bucket3to5, etc.) that UI layer
+  /// can translate via AppLocalizations.
   String _preferredDuration(List<SessionRecord> sessions) {
     // Use stable bucket keys; UI layer can translate via AppLocalizations.
     String bucketKey(int minutes) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class ScoreCard extends StatelessWidget {
   final int totalPoints;

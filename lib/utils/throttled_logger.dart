@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Lightweight throttled logger to reduce spammy debugPrint calls that can
 /// contribute to frame drops in debug/profile builds. In release builds this
@@ -17,8 +17,9 @@ class ThrottledLogger {
 
   void log(String message, {bool force = false}) {
     if (!DebugLog.enabled) return;
-    if (kReleaseMode && !alwaysPrintInRelease && !force)
+    if (kReleaseMode && !alwaysPrintInRelease && !force) {
       return; // Skip in release
+    }
     final now = DateTime.now();
 
     // If message changed allow immediate output (helps when errors differ)

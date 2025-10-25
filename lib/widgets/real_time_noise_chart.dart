@@ -4,26 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:silence_score/providers/silence_provider.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 import 'dart:math' as math;
-import 'package:silence_score/utils/throttled_logger.dart';
-import 'package:silence_score/utils/debug_log.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
+import 'package:focus_field/utils/throttled_logger.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 class RealTimeNoiseChart extends HookConsumerWidget {
   final double threshold;
   final bool isListening;
+  final bool showHeader;
 
   const RealTimeNoiseChart({
     super.key,
     required this.threshold,
     required this.isListening,
+    this.showHeader = true,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final dramatic = theme.extension<DramaticThemeStyling>();
     final silenceDetector = ref.read(silenceDetectorProvider);
     final noiseController = ref.watch(realTimeNoiseControllerProvider);
 
@@ -53,6 +53,14 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
     // Subscribe to real-time decibel readings with proper error handling
     useEffect(() {
+      // Skip all chart updates when Focus Mode is active (chart is hidden behind overlay)
+      if (isListening) {
+        if (!kReleaseMode) {
+          DebugLog.d('DEBUG: Chart - Skipping updates during Focus Mode (isListening: true)');
+        }
+        return null;
+      }
+
       // Common update logic used by aggregated controller and ambient fallback.
       bool isDisposed = false;
       Timer? ambientTimer;
@@ -64,8 +72,9 @@ class RealTimeNoiseChart extends HookConsumerWidget {
             decibel.isInfinite ||
             decibel < 0 ||
             decibel > 150) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log('DEBUG: Chart - Invalid decibel value: $decibel');
+          }
           return;
         }
         final clamped = decibel.clamp(0.0, 120.0);
@@ -81,34 +90,38 @@ class RealTimeNoiseChart extends HookConsumerWidget {
       // Session or ambient: subscribe to aggregated stream (already throttled to 1Hz)
       final sub = noiseController.stream.listen(
         (d) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log(
               'DEBUG: Chart - Aggregated dB: ${d.toStringAsFixed(1)}',
             );
+          }
           safeUpdateDecibel(d);
         },
         onError: (e) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log('DEBUG: Chart - Aggregated stream error: $e');
+          }
         },
       );
 
-      if (!isListening) {
+      // Ambient monitoring only (not during Focus Mode)
         // Start ambient monitoring (still needed to keep _currentDecibel updated)
         try {
           silenceDetector.startAmbientMonitoring(
             onError: (error) {
-              if (!kReleaseMode)
+              if (!kReleaseMode) {
                 sensorLogger.log(
                   'DEBUG: Chart - Ambient monitoring error: $error',
                 );
+              }
             },
           );
         } catch (e) {
-          if (!kReleaseMode)
+          if (!kReleaseMode) {
             sensorLogger.log(
               'DEBUG: Chart - Failed to start ambient monitoring: $e',
             );
+          }
         }
 
         // Lightweight ambient sampling (lower frequency than before)
@@ -120,8 +133,9 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
         // Fallback animation before permission granted
         fallbackTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-          if (isDisposed || hasPermission.value || chartData.value.isNotEmpty)
+          if (isDisposed || hasPermission.value || chartData.value.isNotEmpty) {
             return;
+          }
           final now = DateTime.now();
           final timeSinceStart =
               now.difference(startTime.value ?? now).inSeconds;
@@ -129,20 +143,17 @@ class RealTimeNoiseChart extends HookConsumerWidget {
               35.0 + (math.sin(timeSinceStart * 0.1) * 5);
           safeUpdateDecibel(placeholderDecibel);
         });
-      }
 
       return () {
         isDisposed = true;
         sub.cancel();
         ambientTimer?.cancel();
         fallbackTimer?.cancel();
-        if (!isListening) {
-          try {
-            silenceDetector.stopAmbientMonitoring();
-          } catch (_) {}
-        }
+        try {
+          silenceDetector.stopAmbientMonitoring();
+        } catch (_) {}
       };
-    }, [isListening, hasPermission.value, noiseController]);
+    }, [isListening, hasPermission.value]);  // Removed noiseController - stream subscription handles updates
 
     // Clean up old data points periodically with error handling
     useEffect(() {
@@ -166,74 +177,43 @@ class RealTimeNoiseChart extends HookConsumerWidget {
     }, []);
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: dramatic?.cardBackgroundGradient,
-        color:
-            dramatic?.cardBackgroundGradient == null
-                ? theme.colorScheme.surfaceContainer
-                : null,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color:
-              dramatic != null
-                  ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                  : theme.colorScheme.outline.withValues(alpha: 0.12),
-          width: 1,
-        ),
-        boxShadow:
-            dramatic != null
-                ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 18,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 6),
-                  ),
-                ]
-                : null,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
       ),
       child: Column(
         children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Noise Level',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+          // Header - just threshold line indicator (hidden when showHeader is false)
+          if (showHeader) ...[
+            Row(
+              children: [
+                Icon(
+                  Icons.rule,
+                  size: 12,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color:
-                          smoothedDecibel.value > threshold
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
+                const SizedBox(width: 4),
+                Text(
+                  'Threshold: ${threshold.toStringAsFixed(0)} dB',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${smoothedDecibel.value.toStringAsFixed(1)} dB',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color:
-                          smoothedDecibel.value > threshold
-                              ? theme.colorScheme.error
-                              : theme.colorScheme.primary,
-                    ),
+                ),
+                const Spacer(),
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: smoothedDecibel.value > threshold
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.primary,
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
+                ),
+              ],
+            ),
+            const SizedBox(height: 2),
+          ],
 
           // Chart
           Expanded(
@@ -257,9 +237,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
                                       alpha: 0.7,
                                     ),
                           ),
-                          const SizedBox(
-                            height: 4,
-                          ), // Reduced from 8 to save space
+                          const SizedBox(height: 2),
                           Flexible(
                             child: Text(
                               hasPermission.value
@@ -281,9 +259,7 @@ class RealTimeNoiseChart extends HookConsumerWidget {
                             ),
                           ),
                           if (!hasPermission.value) ...[
-                            const SizedBox(
-                              height: 2,
-                            ), // Reduced from 4 to save space
+                            const SizedBox(height: 2),
                             Flexible(
                               child: Text(
                                 'Tap "Start" to grant permission',

@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-SilenceScore is an ambient noise monitoring application that helps you track and improve the quietness of your environment. Whether you're working from home, studying, or simply want to monitor noise levels, SilenceScore provides real-time feedback and historical tracking.
+Focus Field is an ambient noise monitoring application that helps you track and improve the quietness of your environment. Whether you're working from home, studying, or simply want to monitor noise levels, Focus Field provides real-time feedback and historical tracking.
 
 ## Installation
 
@@ -27,7 +27,7 @@ SilenceScore is an ambient noise monitoring application that helps you track and
 
 ### Permission Setup
 
-When you first open SilenceScore, you'll be asked to grant microphone permission:
+When you first open Focus Field, you'll be asked to grant microphone permission:
 
 1. **Tap "Allow"** when prompted for microphone access
 2. **Enable** if you want background monitoring (optional)
@@ -70,7 +70,7 @@ The main screen displays:
 - **Settings**: Adjust decibel threshold, duration, advanced options
 - **History / Analytics**: View recent sessions and weekly trends
 
-## Using SilenceScore
+## Using Focus Field
 
 ### Starting a Session
 
@@ -123,7 +123,7 @@ A session counts “quiet time” when ambient noise stays below your configured
 - Use Calibration first, then fine-tune manually if needed
 
 #### Session Duration
-- **Free Tier**: Up to 5 minutes
+- **Free Tier**: Up to 30 minutes
 - **Premium**: Up to 120 minutes
 - Adjustable in whole minutes via slider
 

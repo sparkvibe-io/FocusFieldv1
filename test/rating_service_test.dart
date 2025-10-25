@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:silence_score/services/rating_service.dart';
+import 'package:focus_field/services/rating_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +22,9 @@ void main() {
     test('Probability increases with sessions', () async {
       // Access private probability via reflection not possible; replicate formula.
       double probability(int sessions) {
-        if (sessions <= RatingService.minSessions)
+        if (sessions <= RatingService.minSessions) {
           return RatingService.baseProbability;
+        }
         final extra = sessions - RatingService.minSessions;
         final p = (RatingService.baseProbability +
                 extra * RatingService.probabilitySlope)

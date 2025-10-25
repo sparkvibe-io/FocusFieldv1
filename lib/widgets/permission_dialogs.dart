@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/silence_provider.dart';
-import 'package:silence_score/constants/permission_constants.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/providers/silence_provider.dart';
 
 class PermissionDialogs {
   static Future<void> showMicrophoneRationale(
@@ -9,17 +9,18 @@ class PermissionDialogs {
     WidgetRef ref,
   ) async {
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       barrierDismissible: true,
       builder:
           (ctx) => AlertDialog(
-            title: const Text(PermissionConstants.microphoneDialogTitle),
-            content: const Text(PermissionConstants.microphoneDialogBody),
+            title: Text(l10n.microphonePermissionTitle),
+            content: Text(l10n.microphonePermissionMessage),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Later'),
+                child: Text(l10n.ratingPromptLater),
               ),
               TextButton(
                 onPressed: () async {
@@ -27,7 +28,7 @@ class PermissionDialogs {
                   final detector = ref.read(silenceDetectorProvider);
                   await detector.requestPermission();
                 },
-                child: const Text('Grant Permission'),
+                child: Text(l10n.buttonGrantPermission),
               ),
             ],
           ),
@@ -39,21 +40,18 @@ class PermissionDialogs {
     WidgetRef ref,
   ) async {
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
     await showDialog(
       context: context,
       barrierDismissible: true,
       builder:
           (ctx) => AlertDialog(
-            title: const Text(
-              PermissionConstants.microphoneSettingsDialogTitle,
-            ),
-            content: const Text(
-              PermissionConstants.microphoneSettingsDialogBody,
-            ),
+            title: Text(l10n.microphoneSettingsTitle),
+            content: Text(l10n.microphoneSettingsMessage),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('OK'),
+                child: Text(l10n.buttonOk),
               ),
               TextButton(
                 onPressed: () async {
@@ -63,7 +61,7 @@ class PermissionDialogs {
                     await detector.openSettings();
                   } catch (_) {}
                 },
-                child: const Text('Open Settings'),
+                child: Text(l10n.buttonOpenSettings),
               ),
             ],
           ),

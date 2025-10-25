@@ -1,7 +1,7 @@
 # Business Strategy Overview
 
 ## Overview
-This directory serves as the central hub for SilenceScore's business strategy, planning, and execution documentation. It provides comprehensive strategic guidance for launching and scaling SilenceScore as a successful productivity and wellness application in the mobile app ecosystem.
+This directory serves as the central hub for Focus Field's business strategy, planning, and execution documentation. It provides comprehensive strategic guidance for launching and scaling Focus Field as a successful productivity and wellness application in the mobile app ecosystem.
 
 ## Prerequisites
 - Understanding of mobile app business models
@@ -11,7 +11,7 @@ This directory serves as the central hub for SilenceScore's business strategy, p
 
 ## Executive Summary
 
-SilenceScore represents a unique opportunity in the intersection of workplace wellness, productivity technology, and ambient environmental monitoring. As the first application to quantify and gamify silence measurement, we are positioned to create an entirely new category in the productivity and wellness app ecosystem.
+Focus Field represents a unique opportunity in the intersection of workplace wellness, productivity technology, and ambient environmental monitoring. As the first application to quantify and gamify silence measurement, we are positioned to create an entirely new category in the productivity and wellness app ecosystem.
 
 ## Business Documentation Structure
 
@@ -153,4 +153,4 @@ January 27, 2025
 
 ---
 
-*This business documentation suite provides strategic guidance for SilenceScore's launch and growth. All documents are maintained by the executive team and reviewed monthly.*
+*This business documentation suite provides strategic guidance for Focus Field's launch and growth. All documents are maintained by the executive team and reviewed monthly.*

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 void main() {
   testWidgets('German streak interpolation and weekly progress', (

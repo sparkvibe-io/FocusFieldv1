@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
 
 /// Error boundary widget that catches and handles widget build errors gracefully

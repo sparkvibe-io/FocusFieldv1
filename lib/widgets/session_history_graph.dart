@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/models/silence_data.dart';
 
 class SessionHistoryGraph extends StatelessWidget {
   final List<SessionRecord> sessions;
@@ -87,8 +87,6 @@ class SessionHistoryGraph extends StatelessWidget {
   }
 
   Widget _buildSessionGraph(BuildContext context) {
-    final theme = Theme.of(context);
-
     // Take last 7 sessions for the graph
     final recentSessions = sessions.take(7).toList().reversed.toList();
     final maxPoints =

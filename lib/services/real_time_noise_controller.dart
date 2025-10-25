@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:silence_score/services/silence_detector.dart';
-import 'package:silence_score/utils/throttled_logger.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/services/silence_detector.dart';
+import 'package:focus_field/utils/throttled_logger.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Aggregates high-frequency realtime decibel readings into a lower frequency
 /// smoothed stream (default 1Hz) to reduce UI rebuild pressure.

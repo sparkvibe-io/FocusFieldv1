@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Isolated permission handler for notification-related permissions.
 class NotificationPermissionHandler {
@@ -35,10 +36,11 @@ class NotificationPermissionHandler {
         _hasPermission = granted?.isEnabled ?? false;
       }
     } catch (e) {
-      if (!kReleaseMode)
-        debugPrint(
+      if (!kReleaseMode) {
+        DebugLog.d(
           'NotificationPermissionHandler: error checking permission: $e',
         );
+      }
       _hasPermission = false;
     }
   }
@@ -67,10 +69,11 @@ class NotificationPermissionHandler {
       }
       return _hasPermission;
     } catch (e) {
-      if (!kReleaseMode)
-        debugPrint(
+      if (!kReleaseMode) {
+        DebugLog.d(
           'NotificationPermissionHandler: error requesting permission: $e',
         );
+      }
       return false;
     }
   }

@@ -9,7 +9,7 @@ class AnalyticsService {
   void logEvent(String name, {Map<String, Object?> parameters = const {}}) {
     if (!kReleaseMode) {
       // ignore: avoid_print
-      print('AnalyticsEvent: $name ${parameters.isEmpty ? '' : parameters}');
+      // print('AnalyticsEvent: $name ${parameters.isEmpty ? '' : parameters}');
     }
   }
 }

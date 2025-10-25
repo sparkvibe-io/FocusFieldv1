@@ -50,7 +50,7 @@ class NoiseCalibrationService {
             (avg + marginDb).clamp(20, 80).toDouble(); // sanity bounds
         if (!kReleaseMode) {
           // ignore: avoid_print
-          print('NoiseCalibration: avg=$avg -> recommended=$recommended');
+          // print('NoiseCalibration: avg=$avg -> recommended=$recommended');
         }
         if (!completer.isCompleted) completer.complete(recommended);
       });
@@ -59,7 +59,7 @@ class NoiseCalibrationService {
     } catch (e) {
       if (!kReleaseMode) {
         // ignore: avoid_print
-        print('NoiseCalibration: error $e');
+        // print('NoiseCalibration: error $e');
       }
       return null;
     } finally {

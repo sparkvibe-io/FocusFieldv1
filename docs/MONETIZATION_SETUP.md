@@ -1,7 +1,7 @@
-# SilenceScore Monetization System Setup Guide
+# Focus Field Monetization System Setup Guide
 
 ## Overview
-This guide provides complete setup instructions for SilenceScore's subscription monetization system. The infrastructure is fully implemented with centralized configuration, requiring only platform configuration and API key setup to enable revenue generation.
+This guide provides complete setup instructions for Focus Field's subscription monetization system. The infrastructure is fully implemented with centralized configuration, requiring only platform configuration and API key setup to enable revenue generation.
 
 ## Prerequisites
 - Flutter development environment setup
@@ -47,14 +47,14 @@ Implemented:
 1. Go to [RevenueCat Dashboard](https://app.revenuecat.com)
 2. Create account and new project
 3. Add iOS and Android apps with bundle IDs:
-   - iOS: `io.sparkvibe.silencescore`
-   - Android: `io.sparkvibe.silencescore`
+  - iOS: `io.sparkvibe.focusfield`
+  - Android: `io.sparkvibe.focusfield`
 
 #### Configure Products
 Create the following subscription product identifiers (must match exactly across App Store Connect, Google Play Console, and RevenueCat):
 ```
-premium.tier:monthly  # Monthly (rename to premium.tier.monthly if stores reject colon)
-premium.tier:yearly   # Yearly (rename to premium.tier.yearly if needed)
+premium.tier.monthly  # Monthly
+premium.tier.yearly   # Yearly
 ```
 
 #### Update API Key
@@ -67,16 +67,14 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create App
 1. Login to [App Store Connect](https://appstoreconnect.apple.com)
-2. Create new app with bundle ID: `io.sparkvibe.silencescore`
+2. Create new app with bundle ID: `io.sparkvibe.focusfield`
 3. Fill app metadata, description, screenshots
 
 #### Configure Subscriptions
 1. Go to **Features** → **In-App Purchases**
-2. Create Auto-Renewable Subscriptions:
-   - Premium Monthly: `silence_score_premium_monthly` ($1.99/month)
-   - Premium Yearly: `silence_score_premium_yearly` ($19.99/year)
-   - Premium Plus Monthly: `silence_score_premium_plus_monthly` ($3.99/month)
-   - Premium Plus Yearly: `silence_score_premium_plus_yearly` ($39.99/year)
+2. Create Auto-Renewable Subscriptions (use these exact product IDs):
+  - Premium Monthly: `premium.tier.monthly` ($1.99/month)
+  - Premium Yearly: `premium.tier.yearly` ($19.99/year)
 3. Create subscription groups and configure pricing
 
 #### Test in Sandbox
@@ -88,7 +86,7 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create App
 1. Login to [Google Play Console](https://play.google.com/console)
-2. Create new app with package name: `io.sparkvibe.silencescore`
+2. Create new app with package name: `io.sparkvibe.focusfield`
 3. Complete store listing
 
 #### Configure Subscriptions
@@ -106,7 +104,7 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Create Firebase Project
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create project for `SilenceScore`
+2. Create project for `Focus Field`
 3. Add iOS and Android apps
 
 #### Configure Authentication
@@ -245,4 +243,41 @@ August 29, 2025
 
 ---
 
-*This setup guide covers the technical configuration required to enable SilenceScore's monetization system. Follow all steps in sequence for successful implementation.*
+*This setup guide covers the technical configuration required to enable Focus Field's monetization system. Follow all steps in sequence for successful implementation.*
+
+## 📣 AdMob Ads Setup (Banners)
+
+This app uses Google Mobile Ads (AdMob) for a single bottom banner. Integration is centralized and follows Google’s guidelines.
+
+### What’s wired
+- Android App ID (Manifest): `ca-app-pub-2086096819226646~6517708516`
+- Android Banner Unit (Dart): `ca-app-pub-2086096819226646/3553182566`
+- iOS: The `GADApplicationIdentifier` is currently the Google test App ID. Replace with your real iOS App ID before release.
+
+### Where to configure
+- Android App ID: `android/app/src/main/AndroidManifest.xml`
+  - `<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="YOUR_ANDROID_APP_ID" />`
+- iOS App ID: `ios/Runner/Info.plist`
+  - `<key>GADApplicationIdentifier</key><string>YOUR_IOS_APP_ID</string>`
+- Banner Unit IDs (Dart): `lib/constants/app_constants.dart`
+  - Test unit is always used in development (safe default)
+  - Production units can be supplied via `--dart-define` or defaults in constants
+    - ANDROID_BANNER_AD_UNIT_ID (default: `ca-app-pub-2086096819226646/3553182566`)
+    - IOS_BANNER_AD_UNIT_ID (default: empty, set from AdMob console)
+
+### Dev vs Prod behavior
+- Development builds use the official test banner unit (`ca-app-pub-3940256099942544/6300978111`) regardless of platform to avoid policy issues.
+- Production builds use platform-specific production unit IDs via `AppConstants.effectiveBannerAdUnitId`.
+- Toggle with `--dart-define IS_DEVELOPMENT=false` for production-like runs.
+
+### Policy checklist
+- Do not encourage accidental clicks (no buttons directly above the banner).
+- Avoid sticky overlapping content; banner sits in a dedicated footer.
+- No prohibited content and no personal data collection tied to ads.
+- Use Google’s test IDs during development. Only use real IDs in production/test tracks.
+
+### Quick verification
+1. Android: Install a build with `IS_DEVELOPMENT=false` on a physical device connected to Play services.
+2. Confirm the banner loads without crashing and respects safe area.
+3. iOS: Set your real iOS App ID in `Info.plist` and a real banner unit in `IOS_BANNER_AD_UNIT_ID`, then test on device.
+4. Optional QA: If a new production unit shows "no fill" initially, set `ADS_FALLBACK_TEST_ON_FAIL=true` for a one-time retry with Google's test unit to verify integration.

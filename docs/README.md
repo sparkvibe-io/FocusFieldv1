@@ -1,19 +1,24 @@
-# SilenceScore Documentation
+# Focus Field Documentation
 
-Welcome to the SilenceScore documentation hub. This directory contains comprehensive documentation for users, developers, and contributors.
+Welcome to the Focus Field documentation hub. This directory contains comprehensive documentation for users, developers, and contributors.
 
 ## 📋 Recent Changes
 **January 2025**: Documentation has been reorganized for better structure. All documentation files (except the main README.md) are now located in the `/docs/` folder. If you have bookmarked links to `CHANGELOG.md` or `MONETIZATION_SETUP.md`, please update them to `docs/CHANGELOG.md` and `docs/MONETIZATION_SETUP.md` respectively.
 
-### 📌 Current Project State (September 2025)
+### 📌 Current Project State (October 2025)
 - CI pipeline stable: uses `dart format`, localization parity check, coverage (≥70%).
 - Localization script refactored (no broken pipes; only fails on true key or artifact drift).
 - Monetization scaffolding implemented (subscription tiers, paywall UI, gating). Free trial & analytics integration pending.
 - Recent cleanup: removed committed coverage artifact; added `.gitignore` entries for coverage & Flutter ephemeral dirs.
 - Large formatting pass applied across codebase (Dart formatter).
 - Android emulator launch issues under investigation (Pixel Tablet AVD failing to start locally).
-- Next immediate technical focus: emulator diagnostics + store listing asset preparation (screenshots, icon finalization, privacy screens).
-- Business focus: finalize launch category (Primary: Productivity; Secondary: Health & Fitness / Lifestyle) and implement free trial.
+- Final product direction: Ambient Quests (quiet-first profiles, Ambient Score, Quest capsule, compassionate streaks). Mission/Habit docs have been removed from code and archived in docs.
+- Implemented: Adaptive threshold suggestion provider (±2 dB after 3 wins/losses), debug-only long-press to cycle overrides, inline apply hint with auto-clear, and a 24-hour cooldown for suggestions. Unit tests cover wins/losses/neutral, override precedence, and cooldown behavior.
+- Implemented: Minimal AmbientSessionEngine and Quest state providers; Quest capsule adopted as Today center widget.
+- Premium themes updated: Global DramaticBackdrop provides animated gradients (respecting reduced motion); Cyber Neon tuned for higher glow; Midnight Teal uses calmer teal/blue accents.
+- Next focus: move Quest application into the session engine (remove UI-side apply), expose a live calm-percent stream for ring subtitle, and add hysteresis/cooldown tuning behind flags.
+
+See also: the up-to-date Feature Inventory and status tracker in [development/feature-inventory.md](development/feature-inventory.md).
 
 > This section should be updated whenever a major milestone or blocking issue changes.
 
@@ -22,6 +27,9 @@ Welcome to the SilenceScore documentation hub. This directory contains comprehen
 ### Project Documentation
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 - **[MONETIZATION_SETUP.md](MONETIZATION_SETUP.md)** - Subscription system setup guide
+- **[Ambient Quests – Dev Spec](development/AmbientQuests_Dev_Spec.md)** - Final implementation plan and acceptance criteria
+- **[Ambient Quests – Copy & Micro-Interactions](development/AmbientQuests_Copy_and_MicroInteractions.md)** - Copy deck and micro-interactions
+- Archived: Habit tracking & migration documents moved to `docs/archive/`
 - **[Environment Setup](development/environment-setup.md)** - API keys and secrets management *(coming soon)*
 
 ### For Users
@@ -31,6 +39,7 @@ Welcome to the SilenceScore documentation hub. This directory contains comprehen
 
 ### For Developers
 - **[Setup Guide](development/setup-guide.md)** - Development environment setup
+- **[Feature Inventory (Status)](development/feature-inventory.md)** - What’s done vs. what’s next across major features
 - **[API Reference](api/api-reference.md)** - Complete API documentation
 - **[Architecture Overview](architecture/system-overview.md)** - System architecture and design
 - **[Contributing Guide](development/contributing.md)** - How to contribute *(coming soon)*
@@ -144,11 +153,11 @@ The **[assets/](assets/)** directory contains:
 ---
 
 ## Last Updated
-January 27, 2025
+October 19, 2025
 
 **Documentation Version**: 1.0.0  
 **Project Version**: 1.0.0
 
 ---
 
-*This documentation is maintained by the SilenceScore development team. For questions or suggestions, please contact us or open an issue.*
+*This documentation is maintained by the Focus Field development team. For questions or suggestions, please contact us or open an issue.*

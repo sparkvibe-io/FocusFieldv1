@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class TipOverlay extends StatelessWidget {
   final String text;
@@ -21,9 +21,9 @@ class TipOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-  final l10n = AppLocalizations.of(context);
-  final bg = theme.colorScheme.surface.withOpacity(0.98);
-    final border = theme.colorScheme.outline.withOpacity(0.25);
+    final l10n = AppLocalizations.of(context);
+    final bg = theme.colorScheme.surface.withValues(alpha: 0.98);
+    final border = theme.colorScheme.outline.withValues(alpha: 0.25);
     return Positioned.fill(
       child: SafeArea(
         child: Center(
@@ -39,7 +39,7 @@ class TipOverlay extends StatelessWidget {
                 border: Border.all(color: border),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.14),
+                    color: Colors.black.withValues(alpha: 0.14),
                     blurRadius: 18,
                     offset: const Offset(0, 8),
                   ),
@@ -90,7 +90,8 @@ class TipOverlay extends StatelessWidget {
                             ),
                           ),
                           visualDensity: VisualDensity.compact,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ),
                     ),
@@ -123,9 +124,11 @@ class TipOverlay extends StatelessWidget {
                           foregroundColor: theme.colorScheme.onSurfaceVariant,
                           textStyle: theme.textTheme.bodySmall,
                         ),
-                        child: Text(isEnabled 
-                            ? (l10n?.hideTips ?? 'Hide Tips')
-                            : (l10n?.showTips ?? 'Show Tips')),
+                        child: Text(
+                          isEnabled
+                              ? (l10n?.hideTips ?? 'Hide Tips')
+                              : (l10n?.showTips ?? 'Show Tips'),
+                        ),
                       ),
                     ],
                   ),

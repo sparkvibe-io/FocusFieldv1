@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 // Removed explicit HostedPaywallService import (no direct usage after redesign)
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:focus_field/utils/debug_log.dart';
 // NOTE: RevenueCat prebuilt UI package not available; maintaining custom paywall.
 
 // Restored custom paywall (will later be enhanced with dynamic offerings display).
@@ -69,6 +70,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     final subscriptionActions = ref.watch(subscriptionActionsProvider.notifier);
     final subscriptionState = ref.watch(subscriptionActionsProvider);
     final hostedPaywallAsync = ref.watch(hostedPaywallProvider);
+  final offeringsAsync = ref.watch(offeringsProvider);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -84,13 +86,16 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Background gradient (replace with DecorationImage for starry asset if added)
+                    // Background gradient (theme-aware colors for dark/light mode)
                     Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0xFF0D0D17), Color(0xFF111A2A)],
+                          colors: [
+                            Theme.of(context).colorScheme.surface,
+                            Theme.of(context).colorScheme.surfaceContainerHighest,
+                          ],
                         ),
                       ),
                     ),
@@ -99,7 +104,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       top: 12,
                       right: 12,
                       child: Material(
-                        color: Colors.white.withOpacity(0.10),
+                        color: Colors.white.withValues(alpha: 0.10),
                         shape: const CircleBorder(),
                         child: IconButton(
                           icon: const Icon(Icons.close, color: Colors.white),
@@ -137,7 +142,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                         padding: const EdgeInsets.all(8),
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.2),
+                          color: Colors.amber.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -148,15 +153,33 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                     // Feature bullets
                     ..._buildFeatureList(context),
                     const SizedBox(height: 32),
-                    hostedPaywallAsync.when(
-                      data: (data) {
-                        if (data != null) {
-                          return _buildHostedPaywallPackages(context, data);
+                    // Prefer live offerings from RevenueCat when available.
+                    offeringsAsync.when(
+                      data: (offerings) {
+                        final current = offerings?.current;
+                        if (current != null && current.availablePackages.isNotEmpty) {
+                          return _buildRcOfferingPackages(context, current);
                         }
-                        return _buildPlanCards(context);
+                        // Fallback to hosted paywall JSON if provided
+                        return hostedPaywallAsync.when(
+                          data: (data) {
+                            if (data != null) {
+                              return _buildHostedPaywallPackages(context, data);
+                            }
+                            return _buildPlanCards(context);
+                          },
+                          loading: () => _buildPlanCards(context),
+                          error: (_, __) => _buildPlanCards(context),
+                        );
                       },
                       loading: () => _buildPlanCards(context),
-                      error: (_, __) => _buildPlanCards(context),
+                      error: (_, __) => hostedPaywallAsync.when(
+                        data: (data) => data != null
+                            ? _buildHostedPaywallPackages(context, data)
+                            : _buildPlanCards(context),
+                        loading: () => _buildPlanCards(context),
+                        error: (_, __) => _buildPlanCards(context),
+                      ),
                     ),
                     const SizedBox(height: 28),
                     _buildPurchaseButtons(
@@ -258,8 +281,8 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
             : AppConstants.premiumMonthlyProductId;
     final dyn = _dynamicPriceStrings[id];
     // Fallback static pricing (update if actual pricing changes)
-    final baseMonthly = 1.99; // monthly price fallback
-    final fallbackYearlyTotal = 9.99; // yearly total fallback
+    const baseMonthly = 1.99; // monthly price fallback
+    const fallbackYearlyTotal = 9.99; // yearly total fallback
     late final String headline; // big number
     late final String subline; // billed at line
 
@@ -300,13 +323,13 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
         duration: const Duration(milliseconds: 220),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color:
                 isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).dividerColor.withOpacity(0.4),
+                    : Theme.of(context).dividerColor.withValues(alpha: 0.4),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -335,7 +358,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.65),
+                    ).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
                 ),
               ],
@@ -356,7 +379,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
                       BoxShadow(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.4),
+                        ).colorScheme.primary.withValues(alpha: 0.4),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -550,6 +573,57 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
     );
   }
 
+  Widget _buildRcOfferingPackages(BuildContext context, Offering offering) {
+    final l10n = AppLocalizations.of(context);
+    // Choose packages based on monthly/yearly toggle when possible.
+    Package? monthly;
+    Package? yearly;
+    for (final pkg in offering.availablePackages) {
+      final id = pkg.storeProduct.identifier.toLowerCase();
+      if (id.contains('month')) monthly ??= pkg;
+      if (id.contains('year')) yearly ??= pkg;
+    }
+    final selected = _isYearly ? (yearly ?? monthly ?? offering.availablePackages.first) : (monthly ?? yearly ?? offering.availablePackages.first);
+
+    // Debug surface what we're showing (development only)
+    if (kDebugMode) {
+      DebugLog.d('🧪 RC UI: showing package id=${selected.storeProduct.identifier} price=${selected.storeProduct.priceString}');
+    }
+
+    final priceString = selected.storeProduct.priceString;
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n?.paywallTitle ?? 'Current Offer',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _isYearly ? (l10n?.yearlyPlanTitle ?? 'Yearly Plan') : (l10n?.monthlyPlanTitle ?? 'Monthly Plan'),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _isYearly ? '$priceString / year' : '$priceString / month',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildLegalFooter(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Column(
@@ -578,7 +652,7 @@ class _PaywallWidgetState extends ConsumerState<PaywallWidget> {
           l10n?.legalDisclaimer ??
               'Auto-renewing subscription. Cancel anytime in store settings.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),

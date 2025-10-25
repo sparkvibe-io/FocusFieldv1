@@ -14,8 +14,8 @@ def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
 
 android {
-    namespace "io.sparkvibe.silencescore"
-    compileSdkVersion 35
+    namespace "io.sparkvibe.focusfield"
+    compileSdkVersion 36
     ndkVersion "27.0.12077973"
 
     compileOptions {
@@ -44,10 +44,10 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.sparkvibe.silencescore"
+    applicationId "io.sparkvibe.focusfield"
         // Raised from 23 -> 24 due to purchases_ui_flutter plugin requirement
         minSdkVersion 24
-        targetSdkVersion 35
+        targetSdkVersion 36
     // Set explicitly to satisfy bundle packaging; values originate from pubspec.yaml -> local.properties
     versionCode flutterVersionCode.toInteger()
     versionName flutterVersionName
@@ -55,6 +55,16 @@ android {
 
     if (!keystorePropertiesFile.exists()) {
         throw new GradleException("Release keystore config missing: create android/key.properties (see key.properties.example) before building release.")
+    } else {
+        // Validate keystore file path from properties
+        def storeFilePath = keystoreProperties['storeFile']
+        if (storeFilePath == null || storeFilePath.trim().isEmpty()) {
+            throw new GradleException("key.properties is missing 'storeFile' entry. See android/key.properties.example")
+        }
+        def storeFileResolved = file(storeFilePath)
+        if (!storeFileResolved.exists()) {
+            throw new GradleException("Keystore file not found: '${storeFilePath}'. Place your keystore under android/ and update android/key.properties. See android/key.properties.example")
+        }
     }
 
     signingConfigs {

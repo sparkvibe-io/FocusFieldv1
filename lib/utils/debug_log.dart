@@ -23,8 +23,9 @@ class DebugLog {
     bool force = false,
   }) {
     if (!enabled && !force) return;
-    if (kReleaseMode && !force)
+    if (kReleaseMode && !force) {
       return; // Only forced errors in release (currently none)
+    }
     debugPrint('[ERROR] $message: $err');
     debugPrint(st.toString());
   }

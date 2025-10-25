@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/models/subscription_tier.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/widgets/paywall_widget.dart';
-import 'package:silence_score/services/paywall_launcher.dart';
+import 'package:focus_field/models/subscription_tier.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/widgets/paywall_widget.dart';
+import 'package:focus_field/services/paywall_launcher.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 /// Widget that checks if user has access to a feature and shows paywall if not
 class FeatureGate extends ConsumerWidget {
@@ -44,7 +46,8 @@ class FeatureGate extends ConsumerWidget {
   }
 
   Widget _buildPaywallPrompt(BuildContext context, WidgetRef ref) {
-    String message = 'Premium Feature';
+    final l10n = AppLocalizations.of(context)!;
+    String message = l10n.premiumFeature;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -87,7 +90,7 @@ class FeatureGate extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    _getFeatureDescription(featureId),
+                    _getFeatureDescription(featureId, context),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -122,7 +125,7 @@ class FeatureGate extends ConsumerWidget {
     );
   }
 
-  String _getFeatureDescription(String featureId) {
+  String _getFeatureDescription(String featureId, BuildContext context) {
     switch (featureId) {
       case 'extended_sessions':
         return 'Sessions up to 120 minutes';
@@ -141,7 +144,8 @@ class FeatureGate extends ConsumerWidget {
       case 'social_features':
         return 'Challenges and competitions';
       default:
-        return 'Premium feature access';
+        final l10n = AppLocalizations.of(context)!;
+        return l10n.premiumFeatureAccess;
     }
   }
 
@@ -168,7 +172,7 @@ class FeatureGate extends ConsumerWidget {
                     ),
                     child: PaywallWidget(
                       requiredTier: requiredTier,
-                      featureDescription: _getFeatureDescription(featureId),
+                      featureDescription: _getFeatureDescription(featureId, context),
                       onDismiss: () => Navigator.of(context).pop(),
                     ),
                   ),
@@ -186,13 +190,16 @@ void showPaywall(
   SubscriptionTier requiredTier = SubscriptionTier.premium,
   String? featureDescription,
 }) {
+  DebugLog.d('🚀 showPaywall called with description: $featureDescription');
   PaywallLauncher.presentIfNeeded().then((result) {
+    DebugLog.d('📱 PaywallLauncher result: $result');
     switch (result) {
       case PaywallAttemptResult.unlocked:
         return;
       case PaywallAttemptResult.dismissed:
         return; // do nothing
       case PaywallAttemptResult.notShown:
+        DebugLog.d('💡 Showing custom paywall fallback');
         if (context.mounted) {
           showModalBottomSheet(
             context: context,

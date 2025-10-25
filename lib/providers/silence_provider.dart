@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/services/silence_detector.dart';
-import 'package:silence_score/services/storage_service.dart';
-import 'package:silence_score/services/real_time_noise_controller.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/services/silence_detector.dart';
+import 'package:focus_field/services/storage_service.dart';
+import 'package:focus_field/services/real_time_noise_controller.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 // Storage service provider
 final storageServiceProvider = FutureProvider<StorageService>((ref) async {
@@ -19,7 +21,8 @@ final appSettingsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
 });
 
 // Individual setting providers that depend on the app settings
-final decibelThresholdProvider = Provider<double>((ref) {
+// Active decibel threshold provider - used for quick threshold selector temporary overrides
+final activeDecibelThresholdProvider = StateProvider<double>((ref) {
   final settings = ref.watch(appSettingsProvider);
   return settings.when(
     data: (data) => data['decibelThreshold'] as double,
@@ -28,13 +31,24 @@ final decibelThresholdProvider = Provider<double>((ref) {
   );
 });
 
-final sessionDurationProvider = Provider<int>((ref) {
+// Decibel threshold provider - now uses active threshold for actual detection
+final decibelThresholdProvider = Provider<double>((ref) {
+  return ref.watch(activeDecibelThresholdProvider);
+});
+
+// Active session duration provider - used for quick duration selector temporary overrides
+final activeSessionDurationProvider = StateProvider<int>((ref) {
   final settings = ref.watch(appSettingsProvider);
   return settings.when(
     data: (data) => data['sessionDuration'] as int,
     loading: () => AppConstants.silenceDurationSeconds,
     error: (_, __) => AppConstants.silenceDurationSeconds,
   );
+});
+
+// Session duration provider - now uses active duration for actual sessions
+final sessionDurationProvider = Provider<int>((ref) {
+  return ref.watch(activeSessionDurationProvider);
 });
 
 // Sample interval and points per success are now system constants
@@ -73,6 +87,10 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
     if (!state.hasValue) return;
 
     try {
+      if (!kReleaseMode) {
+        DebugLog.d('⚙️ [SettingsNotifier] updateSetting called: $key = $value');
+      }
+
       final storageService = await _ref.read(storageServiceProvider.future);
       final currentSettings = state.value!;
       final updatedSettings = {...currentSettings, key: value};
@@ -85,8 +103,18 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
         state = AsyncValue.data(updatedSettings);
       }
 
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '⚙️ [SettingsNotifier] Setting saved, invalidating appSettingsProvider...',
+        );
+      }
+
       // Invalidate the app settings provider to refresh dependent providers
       _ref.invalidate(appSettingsProvider);
+
+      if (!kReleaseMode) {
+        DebugLog.d('⚙️ [SettingsNotifier] appSettingsProvider invalidated');
+      }
     } catch (error, stackTrace) {
       if (mounted) {
         state = AsyncValue.error(error, stackTrace);
@@ -109,10 +137,32 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
 }
 
 // Silence detector provider
+// IMPORTANT: This provider should NOT dispose detectors on threshold changes
+// because ambient monitoring may be running. Instead, we create new instances
+// and let Dart GC clean up old ones when they're no longer referenced.
 final silenceDetectorProvider = Provider<SilenceDetector>((ref) {
   final threshold = ref.watch(decibelThresholdProvider);
   final duration = ref.watch(sessionDurationProvider);
-  return SilenceDetector(threshold: threshold, durationSeconds: duration);
+
+  if (!kDebugMode) {
+    // Production: create new detector (old ones will be GC'd)
+    return SilenceDetector(threshold: threshold, durationSeconds: duration);
+  }
+
+  // Debug mode: add logging
+  DebugLog.d(
+    '🔧 [Provider] Creating new SilenceDetector (threshold: $threshold, duration: ${duration}s)',
+  );
+  final detector = SilenceDetector(
+    threshold: threshold,
+    durationSeconds: duration,
+  );
+  DebugLog.d('🔧 [Provider] Detector created with hash: ${detector.hashCode}');
+
+  // DO NOT dispose detector here - ambient monitoring may be using it
+  // The detector will be garbage collected when no longer referenced
+
+  return detector;
 });
 
 /// Aggregated real-time noise controller provider (1Hz updates)
@@ -167,6 +217,14 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
     state = state.copyWith(canStop: canStop);
   }
 
+  void setPaused(bool paused) {
+    state = state.copyWith(isPaused: paused);
+  }
+
+  void togglePause() {
+    state = state.copyWith(isPaused: !state.isPaused);
+  }
+
   void reset() {
     state = const SilenceState();
   }
@@ -178,6 +236,7 @@ class SilenceStateNotifier extends StateNotifier<SilenceState> {
       progress: 0.0,
       success: null,
       error: null,
+      isPaused: false,
     );
   }
 }
@@ -285,6 +344,7 @@ class SilenceState {
   final bool? success;
   final String? error;
   final bool canStop; // New field to track if session can be stopped
+  final bool? _isPaused; // Internal nullable field for backward compatibility
 
   const SilenceState({
     this.isListening = false,
@@ -292,7 +352,11 @@ class SilenceState {
     this.success,
     this.error,
     this.canStop = false,
-  });
+    bool? isPaused,
+  }) : _isPaused = isPaused;
+
+  // Safe getter that defaults to false if null
+  bool get isPaused => _isPaused ?? false;
 
   SilenceState copyWith({
     bool? isListening,
@@ -300,6 +364,7 @@ class SilenceState {
     bool? success,
     String? error,
     bool? canStop,
+    bool? isPaused,
   }) {
     return SilenceState(
       isListening: isListening ?? this.isListening,
@@ -307,6 +372,9 @@ class SilenceState {
       success: success ?? this.success,
       error: error ?? this.error,
       canStop: canStop ?? this.canStop,
+      isPaused:
+          isPaused ??
+          this.isPaused, // Use the getter which safely defaults to false
     );
   }
 }

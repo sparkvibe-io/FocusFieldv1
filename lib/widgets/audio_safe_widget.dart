@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/utils/debug_log.dart';
 import 'package:flutter/material.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 /// Specialized error boundary for audio-related widgets that may crash due to native audio buffer issues
 class AudioSafeWidget extends StatefulWidget {
@@ -180,6 +181,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
 
   Widget _buildDefaultErrorWidget(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -197,7 +199,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
           Icon(Icons.volume_off, color: theme.colorScheme.error, size: 24),
           const SizedBox(height: 8),
           Text(
-            'Audio temporarily unavailable',
+            l10n.audioUnavailable,
             style: theme.textTheme.titleSmall?.copyWith(
               color: theme.colorScheme.error,
               fontWeight: FontWeight.bold,
@@ -206,9 +208,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            _errorCount > 3
-                ? 'Multiple audio errors detected. Component recovering...'
-                : 'Audio processing encountered an issue. Recovering automatically...',
+            _errorCount > 3 ? l10n.audioMultipleErrors : l10n.audioRecovering,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onErrorContainer,
             ),
@@ -225,7 +225,7 @@ class _AudioSafeWidgetState extends State<AudioSafeWidget> {
                   _hasError = false;
                 });
               },
-              child: const Text('Retry Now'),
+              child: Text(l10n.retry),
             ),
           ],
         ],

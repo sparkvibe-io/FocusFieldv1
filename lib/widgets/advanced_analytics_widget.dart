@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:silence_score/models/silence_data.dart';
-import 'package:silence_score/services/advanced_analytics_service.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/theme/theme_extensions.dart';
-import 'package:silence_score/utils/debug_log.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/services/advanced_analytics_service.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
+// keep single import of theme_extensions.dart
+import 'package:focus_field/utils/debug_log.dart';
 
 class AdvancedAnalyticsWidget extends ConsumerWidget {
   final SilenceData silenceData;
-  const AdvancedAnalyticsWidget({super.key, required this.silenceData});
+
+  /// Whether to show the title row with "Advanced Analytics" and "PREMIUM" badge.
+  /// Set to false when used within a context where the title is already shown (e.g., Advanced tab).
+  final bool showTitle;
+
+  const AdvancedAnalyticsWidget({
+    super.key,
+    required this.silenceData,
+    this.showTitle = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,6 +33,33 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
 
       final dramatic = Theme.of(context).extension<DramaticThemeStyling>();
 
+      // Content to display (metrics, trends, insights)
+      final content = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 40/60 split: Performance Metrics + Weekly Trends
+          _buildMetricsAndTrendsRow(context, metrics, trends, compact: compact),
+          // Best Time by Activity section
+          if (metrics.bestTimeByActivity.isNotEmpty) ...[
+            const SizedBox(height: 10), // Reduced from 16
+            _buildBestTimeByActivity(context, metrics.bestTimeByActivity),
+          ],
+          // Insights section
+          if (insights.isNotEmpty) ...[
+            const SizedBox(height: 10), // Reduced from 16
+            _insights(context, insights, compact: compact),
+          ],
+          // Bottom padding to ensure last insight is visible when scrolling
+          const SizedBox(height: 100), // Increased to ensure bottom widget is fully visible
+        ],
+      );
+
+      // If showTitle is false, return content directly without the container/title
+      if (!showTitle) {
+        return content;
+      }
+
+      // Otherwise, wrap in styled container with ExpansionTile title
       return Container(
         decoration: BoxDecoration(
           gradient: dramatic?.cardBackgroundGradient,
@@ -33,7 +70,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Theme.of(
+                context,
+              ).colorScheme.shadow.withValues(alpha: 0.12),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -64,7 +103,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.15),
+                  ).colorScheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -77,17 +116,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               ),
             ],
           ),
-          children: [
-            _performanceMetrics(context, metrics, compact: compact),
-            if (trends.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _trendsChart(context, trends, compact: compact),
-            ],
-            if (insights.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _insights(context, insights, compact: compact),
-            ],
-          ],
+          children: [content],
         ),
       );
     } catch (e, st) {
@@ -96,16 +125,58 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     }
   }
 
-  Widget _performanceMetrics(
+  /// 40/60 split: Performance Metrics (left) + Weekly Trends (right)
+  /// Wraps on small screens for better mobile experience
+  Widget _buildMetricsAndTrendsRow(
     BuildContext context,
-    PerformanceMetrics m, {
+    PerformanceMetrics metrics,
+    List<WeeklyTrend> trends, {
     required bool compact,
   }) {
-    final themeMode = Theme.of(context).extension<DramaticThemeStyling>();
-    final isNeon =
-        themeMode != null &&
-        themeMode.statAccentColors != null &&
-        themeMode.statAccentColors!.contains(const Color(0xFF00F5FF));
+    final screenWidth = MediaQuery.of(context).size.width;
+    final shouldWrap = screenWidth < 600; // Wrap on phones
+
+    if (shouldWrap) {
+      // Vertical stack on small screens
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPerformanceMetricsVertical(context, metrics),
+          if (trends.isNotEmpty) ...[
+            const SizedBox(height: 10), // Reduced from 16
+            _buildWeeklyTrendsChart(context, trends, compact: compact),
+          ],
+        ],
+      );
+    }
+
+    // Horizontal 40/60 split on larger screens
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left 40%: Performance Metrics (vertical list)
+        Expanded(
+          flex: 40,
+          child: _buildPerformanceMetricsVertical(context, metrics),
+        ),
+        const SizedBox(width: 16),
+        // Right 60%: Weekly Trends
+        if (trends.isNotEmpty)
+          Expanded(
+            flex: 60,
+            child: _buildWeeklyTrendsChart(context, trends, compact: compact),
+          ),
+      ],
+    );
+  }
+
+  /// Performance Metrics as compact 2x2 grid
+  Widget _buildPerformanceMetricsVertical(
+    BuildContext context,
+    PerformanceMetrics m,
+  ) {
+    final theme = Theme.of(context);
+
     String localizedPreferredDuration(String key) {
       final l = AppLocalizations.of(context);
       if (l == null) return key;
@@ -127,217 +198,329 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context)!.performanceMetrics,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        SizedBox(height: compact ? 8 : 12),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final w = constraints.maxWidth;
-            final twoCol = w < 720;
-            final itemSpacing = 12.0;
-            final items = [
-              _metricCard(
+        const SizedBox(height: 12),
+
+        // 2x2 Grid of compact metric cards
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactMetricCard(
                 context,
+                icon: Icons.check_circle_outline,
                 label: AppLocalizations.of(context)!.successRate,
                 value: '${m.overallSuccessRate.toStringAsFixed(1)}%',
-                description: 'Completed sessions ratio',
-                icon: isNeon ? Icons.check_circle : Icons.check_circle_outline,
-                color: _successRateColor(m.overallSuccessRate),
-                compact: compact,
+                color: _successRateColor(context, m.overallSuccessRate),
               ),
-              _metricCard(
+            ),
+            const SizedBox(width: 6), // Reduced from 8
+            Expanded(
+              child: _buildCompactMetricCard(
                 context,
+                icon: Icons.timer_outlined,
                 label: AppLocalizations.of(context)!.avgSession,
                 value: '${m.averageSessionLength.toStringAsFixed(1)}m',
-                description: 'Avg session length (min)',
-                icon: isNeon ? Icons.timer : Icons.timer_outlined,
-                color: Theme.of(context).colorScheme.secondary,
-                compact: compact,
+                color: theme.colorScheme.secondary,
               ),
-              _metricCard(
+            ),
+          ],
+        ),
+        const SizedBox(height: 6), // Reduced from 8
+        Row(
+          children: [
+            Expanded(
+              child: _buildCompactMetricCard(
                 context,
+                icon: Icons.show_chart,
                 label: AppLocalizations.of(context)!.consistency,
                 value: '${(m.consistencyScore * 100).toStringAsFixed(0)}%',
-                description: 'Day-to-day stability',
-                icon: isNeon ? Icons.trending_up : Icons.show_chart,
-                color: _consistencyColor(m.consistencyScore),
-                compact: compact,
+                color: _consistencyColor(context, m.consistencyScore),
               ),
-              _metricCard(
+            ),
+            const SizedBox(width: 6), // Reduced from 8
+            Expanded(
+              child: _buildCompactMetricCard(
                 context,
-                label: AppLocalizations.of(context)!.bestTime,
-                value: _formatHour(m.bestTimeOfDay),
-                description: 'Most successful hour',
-                icon: isNeon ? Icons.schedule : Icons.access_time,
-                color: Theme.of(context).colorScheme.tertiary,
-                compact: compact,
-              ),
-              _metricCard(
-                context,
-                label: 'Preferred Duration',
+                icon: Icons.hourglass_bottom,
+                label: AppLocalizations.of(context)!.analyticsPreferredDuration,
                 value: localizedPreferredDuration(m.preferredDuration),
-                description: 'Most successful session length',
-                icon: isNeon ? Icons.timelapse : Icons.hourglass_bottom,
-                color: Theme.of(context).colorScheme.primary,
-                compact: compact,
+                color: theme.colorScheme.primary,
               ),
-            ];
-            if (twoCol) {
-              return Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(child: items[0]),
-                      SizedBox(width: itemSpacing),
-                      Expanded(child: items[1]),
-                    ],
-                  ),
-                  SizedBox(height: itemSpacing),
-                  Row(
-                    children: [
-                      Expanded(child: items[2]),
-                      SizedBox(width: itemSpacing),
-                      Expanded(child: items[3]),
-                    ],
-                  ),
-                  SizedBox(height: itemSpacing),
-                  Row(children: [Expanded(child: items[4])]),
-                ],
-              );
-            }
-            return Wrap(
-              spacing: itemSpacing,
-              runSpacing: itemSpacing,
-              children:
-                  items
-                      .map(
-                        (e) => SizedBox(
-                          width: (w - itemSpacing * 4) / 5,
-                          child: e,
-                        ),
-                      )
-                      .toList(),
-            );
-          },
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _metricCard(
+  /// Ultra-compact metric card with icon+title row, centered value
+  Widget _buildCompactMetricCard(
     BuildContext context, {
+    required IconData icon,
     required String label,
     required String value,
-    required String description,
-    required IconData icon,
     required Color color,
-    required bool compact,
   }) {
-    final textTheme = Theme.of(context).textTheme;
-  return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: compact ? 10 : 12,
-      ),
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-    color: color.withOpacity(0.09),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.3)),
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for better visibility
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Icon + Label on same row
           Row(
             children: [
-              Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(icon, color: color, size: 16),
-              ),
-              const SizedBox(width: 8),
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   label,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 11,
                   ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: textTheme.titleMedium?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              letterSpacing: -0.2,
+          const SizedBox(height: 8),
+          // Value centered
+          Center(
+            child: Text(
+              value,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            description,
-            style: textTheme.labelSmall?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurfaceVariant.withOpacity(0.75),
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.1,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  Widget _trendsChart(
+  /// Best Time by Activity widget - compact single-row cards
+  Widget _buildBestTimeByActivity(
+    BuildContext context,
+    Map<String, int> bestTimeByActivity,
+  ) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    if (bestTimeByActivity.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.insightsBestTimeByActivity,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...bestTimeByActivity.entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _buildActivityTimeCard(
+              context,
+              activityId: entry.key,
+              hour: entry.value,
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  /// Individual activity time card - compact horizontal layout
+  Widget _buildActivityTimeCard(
+    BuildContext context, {
+    required String activityId,
+    required int hour,
+  }) {
+    final theme = Theme.of(context);
+    final icon = _getActivityIcon(activityId);
+    final color = _getActivityColor(activityId);
+    final name = _getActivityName(activityId);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for consistency
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Icon
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(width: 12),
+          // Activity name
+          Expanded(
+            child: Text(
+              name,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          // Time
+          Text(
+            _formatHour(hour),
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Activity helper methods
+  IconData _getActivityIcon(String activityId) {
+    switch (activityId.toLowerCase()) {
+      case 'study':
+      case 'studying':
+        return Icons.school_outlined;
+      case 'reading':
+        return Icons.menu_book_outlined;
+      case 'meditation':
+        return Icons.self_improvement_outlined;
+      case 'other':
+        return Icons.star_outline;
+      case 'work':
+        return Icons.work_outline;
+      case 'fitness':
+        return Icons.fitness_center_outlined;
+      case 'family':
+        return Icons.people_outline;
+      default:
+        return Icons.circle_outlined;
+    }
+  }
+
+  Color _getActivityColor(String activityId) {
+    switch (activityId.toLowerCase()) {
+      case 'study':
+      case 'studying':
+        return const Color(0xFF8B9DC3); // Soft blue-gray
+      case 'reading':
+        return const Color(0xFF7BA7BC); // Muted teal-blue
+      case 'meditation':
+        return const Color(0xFF86B489); // Sage green
+      case 'other':
+        return const Color(0xFFC4A57B); // Muted amber
+      case 'work':
+        return const Color(0xFFC6927E); // Muted terracotta
+      case 'fitness':
+        return const Color(0xFFFA114F); // Pink-red
+      case 'family':
+        return const Color(0xFF9B59B6); // Purple
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getActivityName(String activityId) {
+    switch (activityId.toLowerCase()) {
+      case 'study':
+      case 'studying':
+        return 'Study';
+      case 'reading':
+        return 'Reading';
+      case 'meditation':
+        return 'Meditation';
+      case 'other':
+        return 'Other';
+      case 'work':
+        return 'Work';
+      case 'fitness':
+        return 'Fitness';
+      case 'family':
+        return 'Family';
+      default:
+        return activityId;
+    }
+  }
+
+  /// Weekly Trends Chart with simplified X-axis (week numbers)
+  /// Shows up to 8 weeks of data with MA(3) moving average
+  Widget _buildWeeklyTrendsChart(
     BuildContext context,
     List<WeeklyTrend> trends, {
     required bool compact,
   }) {
+    // Limit to last 8 weeks
+    final displayTrends =
+        trends.length > 8 ? trends.sublist(trends.length - 8) : trends;
+
+    // Calculate MA(3) moving average
     final ma = <FlSpot>[];
-    for (var i = 0; i < trends.length; i++) {
-      final w = trends.sublist((i - 2).clamp(0, i), i + 1);
+    for (var i = 0; i < displayTrends.length; i++) {
+      final w = displayTrends.sublist((i - 2).clamp(0, i), i + 1);
       final avg =
           w.map((e) => e.successRate).reduce((a, b) => a + b) / w.length;
       ma.add(FlSpot(i.toDouble(), avg));
     }
+
+    // Calculate overall average
     final overall =
-        trends.isEmpty
+        displayTrends.isEmpty
             ? 0.0
-            : trends.map((e) => e.successRate).reduce((a, b) => a + b) /
-                trends.length;
+            : displayTrends.map((e) => e.successRate).reduce((a, b) => a + b) /
+                displayTrends.length;
+
     final primary = Theme.of(context).colorScheme.primary;
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppLocalizations.of(context)!.weeklyTrends,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         SizedBox(height: compact ? 8 : 12),
         Container(
-          height: compact ? 110 : 140,
+          height: compact ? 120 : 150,
           padding: EdgeInsets.all(compact ? 8 : 12),
           decoration: BoxDecoration(
-            color: Theme.of(
-              context,
-            ).colorScheme.surfaceVariant.withOpacity(0.25),
+            color: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.25,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: LineChart(
@@ -350,7 +533,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 horizontalInterval: 25,
                 getDrawingHorizontalLine:
                     (v) => FlLine(
-                      color: Theme.of(context).dividerColor.withOpacity(0.15),
+                      color: theme.dividerColor.withValues(alpha: 0.15),
                       strokeWidth: 1,
                     ),
               ),
@@ -363,7 +546,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                               .map(
                                 (p) => LineTooltipItem(
                                   '${p.y.toStringAsFixed(1)}%',
-                                  Theme.of(context).textTheme.labelSmall!,
+                                  theme.textTheme.labelSmall!,
                                 ),
                               )
                               .toList(),
@@ -379,27 +562,34 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 30,
+                    reservedSize: 28,
                     getTitlesWidget:
                         (v, meta) => Text(
                           '${v.toInt()}%',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 9,
+                          ),
                         ),
                   ),
                 ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 20,
+                    reservedSize: 22,
+                    interval: 1,
                     getTitlesWidget: (v, meta) {
                       final i = v.toInt();
-                      if (i < 0 || i >= trends.length) return const SizedBox();
-                      final d = trends[i].weekStart;
+                      if (i < 0 || i >= displayTrends.length)
+                        return const SizedBox();
+
+                      // Show as W1, W2, W3, etc. (week number relative to display)
                       return Text(
-                        '${d.month}/${d.day}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall?.color
-                              ?.withOpacity(trends[i].isMissing ? 0.35 : 1),
+                        'W${i + 1}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 9,
+                          color: theme.textTheme.bodySmall?.color?.withValues(
+                            alpha: displayTrends[i].isMissing ? 0.35 : 1,
+                          ),
                         ),
                       );
                     },
@@ -408,28 +598,29 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               ),
               borderData: FlBorderData(show: false),
               lineBarsData: [
+                // Main success rate line
                 LineChartBarData(
                   spots: [
-                    for (var i = 0; i < trends.length; i++)
-                      FlSpot(i.toDouble(), trends[i].successRate),
+                    for (var i = 0; i < displayTrends.length; i++)
+                      FlSpot(i.toDouble(), displayTrends[i].successRate),
                   ],
                   isCurved: true,
                   color: primary,
-                  barWidth: 3,
+                  barWidth: 2.5,
                   dotData: FlDotData(
                     show: true,
                     getDotPainter: (spot, p, bar, index) {
-                      final t = trends[spot.x.toInt()];
+                      final t = displayTrends[spot.x.toInt()];
                       if (t.isMissing) {
                         return FlDotCirclePainter(
-                          radius: 3.5,
-                          color: primary.withOpacity(0.15),
-                          strokeWidth: 1.2,
-                          strokeColor: primary.withOpacity(0.5),
+                          radius: 3,
+                          color: primary.withValues(alpha: 0.15),
+                          strokeWidth: 1,
+                          strokeColor: primary.withValues(alpha: 0.5),
                         );
                       }
                       return FlDotCirclePainter(
-                        radius: 3.5,
+                        radius: 3,
                         color: primary,
                         strokeWidth: 0,
                       );
@@ -437,28 +628,28 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: primary.withOpacity(0.10),
+                    color: primary.withValues(alpha: 0.10),
                   ),
                 ),
+                // MA(3) moving average line
                 if (ma.length > 2)
                   LineChartBarData(
                     spots: ma,
                     isCurved: true,
-                    color: primary.withOpacity(0.55),
+                    color: primary.withValues(alpha: 0.55),
                     barWidth: 2,
                     dotData: const FlDotData(show: false),
                     dashArray: [4, 4],
                   ),
-                if (trends.length > 1)
+                // Overall average line
+                if (displayTrends.length > 1)
                   LineChartBarData(
                     spots: [
                       FlSpot(0, overall),
-                      FlSpot((trends.length - 1).toDouble(), overall),
+                      FlSpot((displayTrends.length - 1).toDouble(), overall),
                     ],
                     isCurved: false,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.secondary.withOpacity(0.5),
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.5),
                     barWidth: 1,
                     dotData: const FlDotData(show: false),
                   ),
@@ -466,27 +657,45 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
             ),
           ),
         ),
+        // Legend
         Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Row(
+          padding: const EdgeInsets.only(top: 6),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 4,
             children: [
-              _legendDot(context, primary),
-              const SizedBox(width: 4),
-              const Text('Rate', style: TextStyle(fontSize: 10)),
-              const SizedBox(width: 8),
-              _legendDot(context, primary.withOpacity(0.55), dashed: true),
-              const SizedBox(width: 4),
-              const Text('MA(3) Moving Avg', style: TextStyle(fontSize: 10)),
-              const SizedBox(width: 8),
-              _legendDot(
+              _buildLegendItem(context, primary, 'Rate'),
+              _buildLegendItem(
                 context,
-                Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                primary.withValues(alpha: 0.55),
+                'MA(3)',
+                dashed: true,
               ),
-              const SizedBox(width: 4),
-              const Text('Avg (overall)', style: TextStyle(fontSize: 10)),
+              _buildLegendItem(
+                context,
+                theme.colorScheme.secondary.withValues(alpha: 0.5),
+                'Avg',
+              ),
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  /// Compact legend item with dot and label
+  Widget _buildLegendItem(
+    BuildContext context,
+    Color color,
+    String label, {
+    bool dashed = false,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _legendDot(context, color, dashed: dashed),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 9)),
       ],
     );
   }
@@ -496,11 +705,12 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     List<AnalyticsInsight> insights, {
     required bool compact,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'AI Insights',
+          l10n.insightsTitle,
           style: Theme.of(
             context,
           ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
@@ -519,14 +729,25 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
   }
 
   Widget _insightCard(BuildContext context, AnalyticsInsight insight) {
+    final l10n = AppLocalizations.of(context)!;
     final color = _insightColor(context, insight.type);
     final icon = _insightIcon(insight.type);
+    final scheme = Theme.of(context).colorScheme;
+
+    // Translate insight title and description using keys
+    final title = _translateInsightKey(l10n, insight.titleKey, insight.params);
+    final description = _translateInsightKey(l10n, insight.descriptionKey, insight.params);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(
+          color: color.withValues(
+            alpha: 0.5,
+          ), // Increased from 0.3 for consistency
+        ),
       ),
       child: Row(
         children: [
@@ -536,7 +757,11 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               color: color,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(icon, size: 16, color: Colors.white),
+            child: Icon(
+              icon,
+              size: 16,
+              color: context.onColorFor(color, scheme),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -547,7 +772,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        insight.title,
+                        title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: color,
@@ -565,7 +790,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  insight.description,
+                  description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -576,6 +801,31 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  // Helper to translate insight keys dynamically
+  String _translateInsightKey(AppLocalizations l10n, String key, Map<String, dynamic>? params) {
+    // Map of all insight keys to their translations
+    final translations = {
+      'insightHighSuccessRateTitle': l10n.insightHighSuccessRateTitle,
+      'insightHighSuccessRateDesc': l10n.insightHighSuccessRateDesc,
+      'insightEnvironmentStabilityTitle': l10n.insightEnvironmentStabilityTitle,
+      'insightEnvironmentStabilityDesc': l10n.insightEnvironmentStabilityDesc,
+      'insightLowNoiseSuccessTitle': l10n.insightLowNoiseSuccessTitle,
+      'insightLowNoiseSuccessDesc': l10n.insightLowNoiseSuccessDesc,
+      'insightConsistentPracticeTitle': l10n.insightConsistentPracticeTitle,
+      'insightConsistentPracticeDesc': l10n.insightConsistentPracticeDesc,
+      'insightRoomTooNoisyTitle': l10n.insightRoomTooNoisyTitle,
+      'insightRoomTooNoisyDesc': l10n.insightRoomTooNoisyDesc,
+      'insightIrregularScheduleTitle': l10n.insightIrregularScheduleTitle,
+      'insightIrregularScheduleDesc': l10n.insightIrregularScheduleDesc,
+      'insightLowAmbientScoreTitle': l10n.insightLowAmbientScoreTitle,
+      'insightLowAmbientScoreDesc': l10n.insightLowAmbientScoreDesc,
+      'insightNoRecentSessionsTitle': l10n.insightNoRecentSessionsTitle,
+      'insightNoRecentSessionsDesc': l10n.insightNoRecentSessionsDesc,
+    };
+
+    return translations[key] ?? key; // Fallback to key if not found
   }
 
   Widget _legendDot(BuildContext context, Color color, {bool dashed = false}) =>
@@ -589,24 +839,28 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
         ),
       );
 
-  Color _successRateColor(double v) =>
-      v >= 80
-          ? Colors.green
-          : v >= 60
-          ? Colors.orange
-          : Colors.red;
-  Color _consistencyColor(double c) =>
-      c >= 0.8
-          ? Colors.green
-          : c >= 0.5
-          ? Colors.orange
-          : Colors.red;
+  Color _successRateColor(BuildContext context, double v) {
+    final sem = context.semanticColors;
+    final scheme = Theme.of(context).colorScheme;
+    if (v >= 80) return sem.success;
+    if (v >= 60) return sem.warning;
+    return scheme.error;
+  }
+
+  Color _consistencyColor(BuildContext context, double c) {
+    final sem = context.semanticColors;
+    final scheme = Theme.of(context).colorScheme;
+    if (c >= 0.8) return sem.success;
+    if (c >= 0.5) return sem.warning;
+    return scheme.error;
+  }
+
   Color _insightColor(BuildContext context, InsightType t) => switch (t) {
-    InsightType.achievement => Colors.green,
-    InsightType.improvement => Colors.blue,
-    InsightType.warning => Colors.orange,
+    InsightType.achievement => context.semanticColors.success,
+    InsightType.improvement => Theme.of(context).colorScheme.primary,
+    InsightType.warning => context.semanticColors.warning,
     InsightType.recommendation => Theme.of(context).colorScheme.primary,
-    InsightType.trend => Colors.purple,
+    InsightType.trend => Theme.of(context).colorScheme.tertiary,
   };
   IconData _insightIcon(InsightType t) => switch (t) {
     InsightType.achievement => Icons.emoji_events,
@@ -622,42 +876,45 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return '${h - 12} PM';
   }
 
-  Widget _fallbackErrorContainer(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.4),
+  Widget _fallbackErrorContainer(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.4),
+        ),
       ),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.warning_amber_rounded,
-          color: Theme.of(context).colorScheme.error,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Analytics unavailable',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'We\'ll attempt to restore this section on the next app launch.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.warning_amber_rounded,
+            color: Theme.of(context).colorScheme.error,
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.analyticsUnavailable,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.analyticsRestoreAttempt,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

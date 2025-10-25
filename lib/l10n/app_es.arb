@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Preparando motor de enfoque…",
   "paywallTitle": "Entrena un enfoque más profundo con Premium",
   "featureExtendSessions": "Amplía sesiones de enfoque de 30 min a 120 min",
@@ -46,7 +46,7 @@
   "decibelThresholdLabel": "Umbral de decibelios",
   "decibelThresholdHint": "Establece el nivel máximo de ruido (dB)",
   "microphonePermissionTitle": "Permiso de micrófono",
-  "microphonePermissionMessage": "Silence Score necesita acceso al micrófono para medir el ruido. No se almacena audio.",
+  "microphonePermissionMessage": "Focus Field mide los niveles de sonido ambiente para ayudarte a mantener entornos silenciosos.\n\nLa aplicación necesita acceso al micrófono para detectar el silencio, pero no graba ningún audio.",
   "permissionDeniedMessage": "Se requiere permiso de micrófono. Actívalo en ajustes.",
   "noiseMeterError": "No se puede acceder al micrófono",
   "premiumFeaturesTitle": "Funciones Premium",
@@ -61,253 +61,919 @@
   "savePercent": "AHORRA {percent}%",
   "billedAnnually": "Facturado a {price}/año",
   "billedMonthly": "Facturado a {price}/mes",
-  "mockSubscriptionsBanner": "Suscripciones simuladas activas"
-  ,"splashTagline": "Encuentra tu quietud"
-  ,"appIconSemantic": "Icono de la app"
-  ,"tabBasic": "Básico"
-  ,"tabAdvanced": "Avanzado"
-  ,"tabAbout": "Acerca de"
-  ,"resetAllSettings": "Restablecer todos los ajustes"
-  ,"decibelThresholdMaxNoise": "Umbral de decibelios (ruido máx)"
-  ,"highThresholdWarningText": "Un umbral alto puede ignorar ruidos importantes."
-  ,"decibelThresholdTooltip": "Espacios silenciosos típicos: 30–40 dB. Calibra; sube solo si el zumbido cuenta como ruido."
-  ,"sessionDuration": "Duración de la sesión"
-  ,"upgradeForMinutes": "Mejora para {minutes}m"
-  ,"freeUpToMinutes": "Gratis: hasta {minutes} min"
-  ,"durationLabel": "Duración"
-  ,"noiseCalibration": "Calibración de ruido"
-  ,"calibrateBaseline": "Calibrar base"
-  ,"exportData": "Exportar datos"
-  ,"sessionHistory": "Historial de sesiones"
-  ,"notifications": "Notificaciones"
-  ,"remindersCelebrations": "Recordatorios y celebraciones"
-  ,"accessibility": "Accesibilidad"
-  ,"accessibilityFeatures": "Funciones de accesibilidad"
-  ,"appInformation": "Información de la app"
-  ,"version": "Versión"
-  ,"bundleId": "ID de paquete"
-  ,"environment": "Entorno"
-  ,"helpSupport": "Ayuda y soporte"
-  ,"faq": "FAQ"
-  ,"support": "Soporte"
-  ,"rateApp": "Calificar"
-  ,"errorLoadingSettings": "Error cargando ajustes: {error}"
-  ,"chooseExportFormat": "Elige formato para tus {sessions} sesiones:"
-  ,"csvSpreadsheet": "Hoja de cálculo CSV"
-  ,"rawDataForAnalysis": "Datos crudos para análisis"
-  ,"pdfReport": "Informe PDF"
-  ,"formattedReportWithCharts": "Informe formateado con gráficos"
-  ,"generatingExport": "Generando exportación {format}..."
-  ,"exportCompleted": "Exportación {format} completada"
-  ,"exportFailed": "Fallo en exportación: {error}"
-  ,"frequentlyAskedQuestions": "Preguntas frecuentes"
-  ,"close": "Cerrar"
-  ,"vibrationFeedback": "Vibración"
-  ,"vibrateOnSessionEvents": "Vibrar en eventos"
-  ,"voiceAnnouncements": "Anuncios de voz"
-  ,"announceSessionProgress": "Anunciar progreso"
-  ,"highContrastMode": "Alto contraste"
-  ,"improveVisualAccessibility": "Mejora visual"
-  ,"largeText": "Texto grande"
-  ,"increaseTextSize": "Aumentar tamaño"
-  ,"accessibilitySettings": "Ajustes de accesibilidad"
-  ,"measuringAmbientNoise": "Midiendo ruido ambiente (≈5s)..."
-  ,"retry": "Reintentar"
-  ,"previousThreshold": "Anterior: {value} dB"
-  ,"newThreshold": "Nuevo umbral: {value} dB"
-  ,"noSignificantChange": "Sin cambio significativo"
-  ,"highAmbientDetected": "Alto ruido ambiente detectado"
-  ,"adjustAnytimeSettings": "Puedes ajustarlo en Ajustes"
-  ,"toggleThemeTooltip": "Cambiar tema"
-  ,"audioChartRecovering": "Recuperando gráfico de audio..."
-  ,"themeChanged": "Tema: {themeName}"
-  ,"privacyComingSoon": "Privacy policy coming soon."
-  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
-  ,"resetAllSettingsDescription": "Esto restablecerá todos los ajustes y datos. No se puede deshacer."
-  ,"cancel": "Cancelar"
-  ,"reset": "Restablecer"
-  ,"allSettingsReset": "Todos los ajustes y datos fueron restablecidos"
-  ,"minutesShort": "min"
-  ,"unlockAdvancedCalibration": "Desbloquea calibración avanzada de ruido"
-  ,"exportNoData": "No hay datos para exportar"
-  ,"faqHowWorksQ": "¿Cómo funciona Silence Score?"
-  ,"faqHowWorksA": "Mide el ruido ambiente: el tiempo por debajo del umbral gana puntos."
-  ,"faqAudioRecordedQ": "¿Se graba audio?"
-  ,"faqAudioRecordedA": "No. Solo se toman niveles de decibelios; nunca se guarda audio."
-  ,"faqAdjustSensitivityQ": "¿Ajustar sensibilidad?"
-  ,"faqAdjustSensitivityA": "Usa Ajustes > Básico > Umbral de decibelios ({min}–{max} dB) y calibra primero."
-  ,"faqPremiumFeaturesQ": "¿Funciones Premium?"
-  ,"faqPremiumFeaturesA": "Sesiones extendidas (hasta 120m), analítica avanzada, exportación, temas."
-  ,"faqNotificationsQ": "¿Notificaciones?"
-  ,"faqNotificationsA": "Recordatorios inteligentes aprenden hábitos y celebran hitos."
-  ,"supportTitle": "Soporte"
-  ,"responseTimeLabel": "Tiempo de respuesta: {time}"
-  ,"docs": "Docs"
-  ,"contactSupport": "Contactar soporte"
-  ,"emailOpenDescription": "Abre tu correo con información del sistema pre‑rellenada"
-  ,"subject": "Asunto"
-  ,"briefDescription": "Descripción breve"
-  ,"description": "Descripción"
-  ,"issueDescriptionHint": "Describe tu problema..."
-  ,"openingEmail": "Abriendo correo..."
-  ,"openEmailApp": "Abrir app de correo"
-  ,"fillSubjectDescription": "Rellena asunto y descripción"
-  ,"emailOpened": "App de correo abierta. Envía cuando quieras."
-  ,"noEmailAppFound": "No se encontró app de correo. Contacto:"
-  ,"standardSubject": "Asunto: [STANDARD] {subject}"
-  ,"issueLine": "Incidencia: {issue}"
-  ,"failedOpenFaq": "Error al abrir FAQ: {error}"
-  ,"failedOpenDocs": "Error al abrir documentación: {error}"
-  ,"save": "Guardar"
-  ,"accessibilitySettingsSaved": "Ajustes de accesibilidad guardados"
-  ,"noiseFloorCalibration": "Calibración de ruido base"
-  ,"couldNotReadMic": "No se pudo leer el micrófono"
-  ,"calibrationFailed": "Fallo de calibración"
-  ,"startSessionButton": "Iniciar sesión"
-  ,"stopSessionButton": "Detener"
-  ,"statusListening": "Escuchando..."
-  ,"statusSuccess": "¡Silencio logrado! +1 punto"
-  ,"statusFailure": "¡Demasiado ruido!"
-  ,"upgrade": "Mejorar"
-  ,"exportCsvSpreadsheet": "Hoja CSV"
-  ,"exportPdfReport": "Informe PDF"
-  ,"formattedReportCharts": "Informe con gráficos"
-  ,"csv": "CSV"
-  ,"pdf": "PDF"
-  ,"theme": "Tema"
-  ,"open": "Abrir"
-  ,"microphone": "Micrófono"
-  ,"premium": "Premium"
-  ,"sessions": "sesiones"
-  ,"format": "formato"
-  ,"successRate": "Tasa de éxito"
-  ,"avgSession": "Sesión prom."
-  ,"consistency": "Consistencia"
-  ,"bestTime": "Mejor tiempo"
-  ,"weeklyTrends": "Tendencias semanales"
-  ,"performanceMetrics": "Métricas de rendimiento"
-  ,"advancedAnalytics": "Analítica avanzada"
-  ,"premiumBadge": "PREMIUM"
-  ,"bucket1to2": "1-2 min"
-  ,"bucket3to5": "3-5 min"
-  ,"bucket6to10": "6-10 min"
-  ,"bucket11to20": "11-20 min"
-  ,"bucket21to30": "21-30 min"
-  ,"bucket30plus": "30+ min"
-  ,"sessionHistoryTitle": "Historial de sesiones"
-  ,"recentSessionHistory": "Historial reciente"
-  ,"achievementFirstStepTitle": "Primer paso"
-  ,"achievementFirstStepDesc": "Completaste tu primera sesión"
-  ,"achievementOnFireTitle": "En racha"
-  ,"achievementOnFireDesc": "Racha de 3 días"
-  ,"achievementWeekWarriorTitle": "Guerrero semanal"
-  ,"achievementWeekWarriorDesc": "Racha de 7 días"
-  ,"achievementDecadeTitle": "Década"
-  ,"achievementDecadeDesc": "Hito de 10 puntos"
-  ,"achievementHalfCenturyTitle": "Media centena"
-  ,"achievementHalfCenturyDesc": "Hito de 50 puntos"
-  ,"achievementLockedPrompt": "Completa sesiones para desbloquear logros"
-  ,"notificationSettingsTitle": "Ajustes de notificaciones"
-  ,"notificationPermissionRequired": "Permiso requerido"
-  ,"notificationPermissionRationale": "Activa notificaciones para recordatorios suaves y celebrar logros."
-  ,"requesting": "Solicitando..."
-  ,"enableNotificationsCta": "Activar notificaciones"
-  ,"enableNotificationsTitle": "Activar notificaciones"
-  ,"enableNotificationsSubtitle": "Permite a SilenceScore enviar notificaciones"
-  ,"dailyReminderTitle": "Recordatorio diario inteligente"
-  ,"dailyReminderSubtitle": "Inteligente o hora fija"
-  ,"dailyTimeLabel": "Hora diaria"
-  ,"dailyTimeHint": "Elige hora fija o deja que la app aprenda tu patrón."
-  ,"useSmartCta": "Usar inteligente"
-  ,"sessionCompletedTitle": "Sesión completada"
-  ,"sessionCompletedSubtitle": "Celebrar sesiones completadas"
-  ,"achievementUnlockedTitle": "Logro desbloqueado"
-  ,"achievementUnlockedSubtitle": "Notificaciones de hitos"
-  ,"weeklySummaryTitle": "Resumen semanal"
-  ,"weeklySummarySubtitle": "Resumen semanal (día & hora)"
-  ,"weeklyTimeLabel": "Hora semanal"
-  ,"notificationPreview": "Vista previa"
-  ,"dailySilenceReminderTitle": "Recordatorio diario de silencio"
-  ,"weeklyProgressReportTitle": "Progreso semanal 📊"
-  ,"achievementUnlockedGenericTitle": "¡Logro desbloqueado! 🏆"
-  ,"sessionCompleteSuccessTitle": "¡Sesión lista! 🎉"
-  ,"sessionCompleteEndedTitle": "Sesión finalizada"
-  ,"reminderStartJourney": "🧘‍♂️ ¡Comienza hoy tu viaje de silencio y encuentra tu calma!"
-  ,"reminderRestart": "🌱 ¿Reinicias? Cada momento es un nuevo comienzo."
-  ,"reminderDayTwo": "⭐ ¡Día 2 de tu racha! La constancia crea tranquilidad."
-  ,"reminderStreakShort": "🔥 ¡Racha de {streak} días! Construyes un gran hábito."
-  ,"reminderStreakMedium": "🏆 Impresionante racha de {streak} días. ¡Inspiras dedicación!"
-  ,"reminderStreakLong": "👑 Increíble racha de {streak} días. ¡Maestría en silencio!"
-  ,"achievementFirstSession": "🎉 ¡Primera sesión lograda! Bienvenido a tu viaje."
-  ,"achievementWeekStreak": "🌟 ¡Racha de 7 días! La constancia es tu superpoder."
-  ,"achievementMonthStreak": "🏆 ¡Racha de 30 días desbloqueada! Imparable."
-  ,"achievementPerfectSession": "✨ Sesión de silencio perfecta. Nada interrumpió tu paz."
-  ,"achievementLongSession": "⏰ Sesión larga dominada. Tu enfoque crece."
-  ,"achievementGeneric": "🎊 Logro desbloqueado. ¡Sigue así!"
-  ,"weeklyProgressNone": "💭 Semana silenciosa en la práctica. ¿Listo para una sesión?"
-  ,"weeklyProgressFew": "🌿 {count} sesiones esta semana. Cada práctica profundiza tu calma."
-  ,"weeklyProgressSome": "🌊 {count} sesiones – vas encontrando tu ritmo."
-  ,"weeklyProgressPerfect": "🎯 Semana perfecta con {count} sesiones. Gran constancia."
-  ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@reminderStreakLong": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
-  ,"ratingPromptTitle": "¿Disfrutas Silence Score?"
-  ,"ratingPromptBody": "Una valoración 5★ rápida ayuda a otros a descubrir calma."
-  ,"ratingPromptRateNow": "Calificar ahora"
-  ,"ratingPromptLater": "Más tarde"
-  ,"ratingPromptNoThanks": "No, gracias"
-  ,"ratingThankYou": "¡Gracias por tu apoyo!"
-  ,"tipsHidden": "Consejos ocultos"
-  ,"tipsShown": "Consejos mostrados"
-  ,"showTips": "Mostrar consejos"
-  ,"hideTips": "Ocultar consejos"
-  ,"tip01": "Short sessions count\u2014start with 2\u20133 minutes to build consistency."
-  ,"tip02": "Use Smart Daily Reminders to nudge you at your best time."
-  ,"tip03": "Recalibrate when your environment changes for better accuracy."
-  ,"tip04": "Check Weekly Trends to spot your momentum over time."
-  ,"tip05": "Streaks grow with daily wins\u2014show up, even for one minute."
-  ,"tip06": "High ambient noise? Raise threshold a bit to reduce false fails."
-  ,"tip07": "Try different times of day to find your quiet sweet spot."
-  ,"tip08": "Session complete notifications keep motivation high\u2014enable them!"
-  ,"tip09": "Prefer hands\u2011off? Auto reminders can schedule themselves (Smart)."
-  ,"tip10": "Use shorter sessions on busy days to keep your streak alive."
-  ,"tip11": "The progress ring is tappable\u2014start or stop with a single tap."
-  ,"tip12": "Export your data (Premium) to share progress or back it up."
-  ,"tip13": "Average session length helps you choose the right duration."
-  ,"tip14": "Consistency beats intensity\u2014small daily practice compounds."
-  ,"tip15": "Set a gentle goal: 5 quiet minutes is a great baseline."
-  ,"tip16": "The noise chart helps you see spikes\u2014aim for calmer periods."
-  ,"tip17": "Upgrade session duration (Premium) for longer focus blocks."
-  ,"tip18": "High threshold warning guards accuracy\u2014avoid setting it too high."
-  ,"tip19": "Weekdays vary\u2014tune your weekly summary to your schedule."
-  ,"tip20": "Accessibility options: high contrast, large text, and vibration."
-  ,"tip21": "Ambient baseline matters\u2014calibrate when moving to new spaces."
-  ,"tip22": "Quiet wins add up\u20141 point per minute keeps it simple."
-  ,"tip23": "Confetti celebrates progress\u2014small celebrations reinforce habits."
-  ,"tip24": "Try mornings if evenings are noisy\u2014best time differs for everyone."
-  ,"tip25": "Fine\u2011tune the decibel threshold for your room\u2019s character."
-  ,"tip26": "Use the moving average to smooth out noisy days."
-  ,"tip27": "Let Weekly Insights remind you of your progress rhythm."
-  ,"tip28": "Finish what you start\u2014short sessions reduce friction to begin."
-  ,"tip29": "Silence is a skill\u2014practice makes patterns, patterns make progress."
-  ,"tip30": "You\u2019re one tap away\u2014start a tiny session now."
-  ,"tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations."
-  ,"tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time."
-  ,"tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune."
-  ,"tipsTitle": "Tips"
-  ,"tipInstructionSetTime": "Settings → Basic → Session duration"
-  ,"tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders."
-  ,"tipInstructionCalibrate": "Settings → Advanced → Noise Calibration."
-  ,"tipInstructionOpenAnalytics": "Open Analytics to view trends and averages."
-  ,"tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed."
-  ,"tipInstructionTapRing": "On Home, tap the progress ring to start/stop."
-  ,"tipInstructionExport": "Settings → Advanced → Export Data."
-  ,"tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart."
-  ,"tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks."
-  ,"tipInstructionAccessibility": "Settings → Advanced → Accessibility."
-  ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
-  ,"tipInfoTooltip": "Mostrar consejo"
+  "mockSubscriptionsBanner": "Suscripciones simuladas activas",
+  "splashTagline": "Encuentra tu quietud",
+  "appIconSemantic": "Icono de la app",
+  "tabBasic": "Básico",
+  "tabAdvanced": "Avanzado",
+  "tabAbout": "Acerca de",
+  "resetAllSettings": "Restablecer todos los ajustes",
+  "decibelThresholdMaxNoise": "Umbral de decibelios (ruido máx)",
+  "highThresholdWarningText": "Un umbral alto puede ignorar ruidos importantes.",
+  "decibelThresholdTooltip": "Espacios silenciosos típicos: 30–40 dB. Calibra; sube solo si el zumbido cuenta como ruido.",
+  "sessionDuration": "Duración de la sesión",
+  "upgradeForMinutes": "Mejora para {minutes}m",
+  "freeUpToMinutes": "Gratis: hasta {minutes} min",
+  "durationLabel": "Duración",
+  "noiseCalibration": "Calibración de ruido",
+  "calibrateBaseline": "Calibrar base",
+  "exportData": "Exportar datos",
+  "sessionHistory": "Historial de sesiones",
+  "notifications": "Notificaciones",
+  "remindersCelebrations": "Recordatorios y celebraciones",
+  "accessibility": "Accesibilidad",
+  "accessibilityFeatures": "Funciones de accesibilidad",
+  "appInformation": "Información de la app",
+  "version": "Versión",
+  "bundleId": "ID de paquete",
+  "environment": "Entorno",
+  "helpSupport": "Ayuda y soporte",
+  "support": "Soporte",
+  "rateApp": "Calificar",
+  "errorLoadingSettings": "Error cargando ajustes: {error}",
+  "chooseExportFormat": "Elige formato para tus {sessions} sesiones:",
+  "csvSpreadsheet": "Hoja de cálculo CSV",
+  "rawDataForAnalysis": "Datos crudos para análisis",
+  "pdfReport": "Informe PDF",
+  "formattedReportWithCharts": "Informe formateado con gráficos",
+  "generatingExport": "Generando exportación {format}...",
+  "exportCompleted": "Exportación {format} completada",
+  "exportFailed": "Fallo en exportación: {error}",
+  "close": "Cerrar",
+  "vibrationFeedback": "Vibración",
+  "vibrateOnSessionEvents": "Vibrar en eventos",
+  "voiceAnnouncements": "Anuncios de voz",
+  "announceSessionProgress": "Anunciar progreso",
+  "highContrastMode": "Alto contraste",
+  "improveVisualAccessibility": "Mejora visual",
+  "largeText": "Texto grande",
+  "increaseTextSize": "Aumentar tamaño",
+  "accessibilitySettings": "Ajustes de accesibilidad",
+  "measuringAmbientNoise": "Midiendo ruido ambiente (≈5s)...",
+  "retry": "Reintentar",
+  "previousThreshold": "Anterior: {value} dB",
+  "newThreshold": "Nuevo umbral: {value} dB",
+  "noSignificantChange": "Sin cambio significativo",
+  "highAmbientDetected": "Alto ruido ambiente detectado",
+  "adjustAnytimeSettings": "Puedes ajustarlo en Ajustes",
+  "toggleThemeTooltip": "Cambiar tema",
+  "audioChartRecovering": "Recuperando gráfico de audio...",
+  "themeChanged": "Tema: {themeName}",
+  "privacyComingSoon": "Privacy policy coming soon.",
+  "ratingFeatureComingSoon": "Rating feature coming soon!",
+  "resetAllSettingsDescription": "Esto restablecerá todos los ajustes y datos. No se puede deshacer.",
+  "cancel": "Cancelar",
+  "reset": "Restablecer",
+  "allSettingsReset": "Todos los ajustes y datos fueron restablecidos",
+  "minutesShort": "min",
+  "unlockAdvancedCalibration": "Desbloquea calibración avanzada de ruido",
+  "exportNoData": "No hay datos para exportar",
+  "supportTitle": "Soporte",
+  "responseTimeLabel": "Tiempo de respuesta: {time}",
+  "docs": "Docs",
+  "contactSupport": "Contactar soporte",
+  "emailOpenDescription": "Abre tu correo con información del sistema pre‑rellenada",
+  "subject": "Asunto",
+  "briefDescription": "Descripción breve",
+  "description": "Descripción",
+  "issueDescriptionHint": "Describe tu problema...",
+  "openingEmail": "Abriendo correo...",
+  "openEmailApp": "Abrir app de correo",
+  "fillSubjectDescription": "Rellena asunto y descripción",
+  "emailOpened": "App de correo abierta. Envía cuando quieras.",
+  "noEmailAppFound": "No se encontró app de correo. Contacto:",
+  "standardSubject": "Asunto: [STANDARD] {subject}",
+  "issueLine": "Incidencia: {issue}",
+  "failedOpenFaq": "Error al abrir FAQ: {error}",
+  "failedOpenDocs": "Error al abrir documentación: {error}",
+  "save": "Guardar",
+  "accessibilitySettingsSaved": "Ajustes de accesibilidad guardados",
+  "noiseFloorCalibration": "Calibración de ruido base",
+  "couldNotReadMic": "No se pudo leer el micrófono",
+  "calibrationFailed": "Fallo de calibración",
+  "startSessionButton": "Iniciar sesión",
+  "stopSessionButton": "Detener",
+  "statusListening": "Escuchando...",
+  "statusSuccess": "¡Silencio logrado! +1 punto",
+  "statusFailure": "¡Demasiado ruido!",
+  "upgrade": "Mejorar",
+  "upgradeRequired": "Se requiere actualización",
+  "exportCsvSpreadsheet": "Hoja CSV",
+  "exportPdfReport": "Informe PDF",
+  "formattedReportCharts": "Informe con gráficos",
+  "csv": "CSV",
+  "pdf": "PDF",
+  "theme": "Tema",
+  "open": "Abrir",
+  "microphone": "Micrófono",
+  "premium": "Premium",
+  "sessions": "sesiones",
+  "format": "formato",
+  "successRate": "Tasa de éxito",
+  "avgSession": "Sesión prom.",
+  "consistency": "Consistencia",
+  "bestTime": "Mejor tiempo",
+  "weeklyTrends": "Tendencias semanales",
+  "performanceMetrics": "Métricas de rendimiento",
+  "advancedAnalytics": "Analítica avanzada",
+  "premiumBadge": "PREMIUM",
+  "bucket1to2": "1-2 min",
+  "bucket3to5": "3-5 min",
+  "bucket6to10": "6-10 min",
+  "bucket11to20": "11-20 min",
+  "bucket21to30": "21-30 min",
+  "bucket30plus": "30+ min",
+  "sessionHistoryTitle": "Historial de sesiones",
+  "recentSessionHistory": "Historial reciente",
+  "achievementFirstStepTitle": "Primer paso",
+  "achievementFirstStepDesc": "Completaste tu primera sesión",
+  "achievementOnFireTitle": "En racha",
+  "achievementOnFireDesc": "Racha de 3 días",
+  "achievementWeekWarriorTitle": "Guerrero semanal",
+  "achievementWeekWarriorDesc": "Racha de 7 días",
+  "achievementDecadeTitle": "Década",
+  "achievementDecadeDesc": "Hito de 10 puntos",
+  "achievementHalfCenturyTitle": "Media centena",
+  "achievementHalfCenturyDesc": "Hito de 50 puntos",
+  "achievementLockedPrompt": "Completa sesiones para desbloquear logros",
+  "notificationSettingsTitle": "Ajustes de notificaciones",
+  "notificationPermissionRequired": "Permiso requerido",
+  "notificationPermissionRationale": "Activa notificaciones para recordatorios suaves y celebrar logros.",
+  "requesting": "Solicitando...",
+  "enableNotificationsCta": "Activar notificaciones",
+  "enableNotificationsTitle": "Activar notificaciones",
+  "enableNotificationsSubtitle": "Permite a Focus Field enviar notificaciones",
+  "dailyReminderTitle": "Recordatorio diario inteligente",
+  "dailyReminderSubtitle": "Inteligente o hora fija",
+  "dailyTimeLabel": "Hora diaria",
+  "dailyTimeHint": "Elige hora fija o deja que la app aprenda tu patrón.",
+  "useSmartCta": "Usar inteligente",
+  "sessionCompletedTitle": "Sesión completada",
+  "sessionCompletedSubtitle": "Celebrar sesiones completadas",
+  "achievementUnlockedTitle": "Logro desbloqueado",
+  "achievementUnlockedSubtitle": "Notificaciones de hitos",
+  "weeklySummaryTitle": "Resumen semanal",
+  "weeklySummarySubtitle": "Resumen semanal (día & hora)",
+  "weeklyTimeLabel": "Hora semanal",
+  "notificationPreview": "Vista Previa de Notificación",
+  "dailySilenceReminderTitle": "Recordatorio diario de enfoque",
+  "weeklyProgressReportTitle": "Progreso semanal 📊",
+  "achievementUnlockedGenericTitle": "¡Logro desbloqueado! 🏆",
+  "sessionCompleteSuccessTitle": "¡Sesión lista! 🎉",
+  "sessionCompleteEndedTitle": "Sesión finalizada",
+  "reminderStartJourney": "🎯 ¡Comienza hoy tu viaje de enfoque! Construye tu hábito de trabajo profundo.",
+  "reminderRestart": "🌱 ¿Listo para reiniciar tu práctica de enfoque? Cada momento es un nuevo comienzo.",
+  "reminderDayTwo": "⭐ ¡Día 2 de tu racha de enfoque! La constancia crea concentración.",
+  "reminderStreakShort": "🔥 ¡Racha de {streak} días! Construyes un hábito de enfoque poderoso.",
+  "reminderStreakMedium": "🏆 Impresionante racha de {streak} días. ¡Inspiras dedicación!",
+  "reminderStreakLong": "👑 Increíble racha de {streak} días. ¡Eres un campeón de enfoque!",
+  "achievementFirstSession": "🎉 ¡Primera sesión lograda! ¡Bienvenido a Focus Field!",
+  "achievementWeekStreak": "🌟 ¡Racha de 7 días! La constancia es tu superpoder.",
+  "achievementMonthStreak": "🏆 ¡Racha de 30 días desbloqueada! Imparable.",
+  "achievementPerfectSession": "✨ ¡Sesión perfecta! ¡Ambiente tranquilo al 100%!",
+  "achievementLongSession": "⏰ Sesión larga dominada. Tu enfoque crece.",
+  "achievementGeneric": "🎊 Logro desbloqueado. ¡Sigue así!",
+  "weeklyProgressNone": "💭 ¡Comienza tu meta semanal! ¿Listo para una sesión enfocada?",
+  "weeklyProgressFew": "🌿 ¡{count} minutos de enfoque esta semana! Cada sesión cuenta.",
+  "weeklyProgressSome": "🌊 ¡{count} minutos de enfoque ganados! ¡Vas por buen camino!",
+  "weeklyProgressPerfect": "🎯 ¡{count} minutos de enfoque logrados! ¡Semana perfecta!",
+  "@reminderStreakShort": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@reminderStreakMedium": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@reminderStreakLong": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressFew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressSome": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressPerfect": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ratingPromptTitle": "¿Disfrutas Focus Field?",
+  "ratingPromptBody": "Una valoración 5★ rápida ayuda a otros a descubrir calma.",
+  "ratingPromptRateNow": "Calificar ahora",
+  "ratingPromptLater": "Más tarde",
+  "ratingPromptNoThanks": "No, gracias",
+  "ratingThankYou": "¡Gracias por tu apoyo!",
+  "tipsHidden": "Consejos ocultos",
+  "tipsShown": "Consejos mostrados",
+  "showTips": "Mostrar consejos",
+  "hideTips": "Ocultar consejos",
+  "tip01": "Comienza pequeño—incluso 2 minutos construyen tu hábito de concentración.",
+  "tip02": "Tu racha tiene gracia—una falta no la romperá con la Regla de 2 Días.",
+  "tip03": "Prueba actividades de Estudio, Lectura o Meditación para que coincidan con tu estilo de concentración.",
+  "tip04": "Revisa tu Mapa de Calor de 12 semanas para ver cómo se acumulan las pequeñas victorias con el tiempo.",
+  "tip05": "Observa tu % de Calma en vivo durante las sesiones—¡puntuaciones más altas significan mejor concentración!",
+  "tip06": "Personaliza tu objetivo diario (10-60 min) para que coincida con tu ritmo.",
+  "tip07": "Usa tu Token de Congelación mensual para proteger tu racha en días difíciles.",
+  "tip08": "Después de 3 victorias, Focus Field sugiere un umbral más estricto—¿listo para subir de nivel?",
+  "tip09": "¿Ruido ambiente alto? Aumenta tu umbral para mantenerte en la zona.",
+  "tip10": "Los Recordatorios Diarios Inteligentes aprenden tu mejor momento—déjalos guiarte.",
+  "tip11": "El anillo de progreso es tocable—un toque inicia tu sesión de concentración.",
+  "tip12": "Recalibra cuando tu entorno cambie para mejor precisión.",
+  "tip13": "¡Las notificaciones de sesión celebran tus victorias—actívalas para motivación!",
+  "tip14": "La consistencia vence a la perfección—aparece, incluso en días ocupados.",
+  "tip15": "Prueba diferentes momentos del día para descubrir tu punto dulce tranquilo.",
+  "tip16": "Tu progreso diario siempre está visible—toca Ir para comenzar en cualquier momento.",
+  "tip17": "Cada actividad rastrea por separado hacia tu objetivo—la variedad lo mantiene fresco.",
+  "tip18": "Exporta tus datos (Premium) para ver tu viaje completo de concentración.",
+  "tip19": "¡El confeti celebra cada finalización—las pequeñas victorias merecen reconocimiento!",
+  "tip20": "Tu línea base importa—calibra al mudarte a nuevos espacios.",
+  "tip21": "Tus Tendencias de 7 Días revelan patrones—revísalas semanalmente para obtener información.",
+  "tip22": "Actualiza la duración de la sesión (Premium) para bloques de concentración profunda más largos.",
+  "tip23": "El enfoque es una práctica—las sesiones pequeñas construyen el hábito que deseas.",
+  "tip24": "El Resumen Semanal muestra tu ritmo—ajústalo a tu horario.",
+  "tip25": "Ajusta tu umbral para tu espacio—cada habitación es diferente.",
+  "tip26": "Las opciones de accesibilidad ayudan a todos a concentrarse—alto contraste, texto grande, vibración.",
+  "tip27": "La Línea de Tiempo de Hoy muestra cuándo te concentraste—encuentra tus horas productivas.",
+  "tip28": "Termina lo que comienzas—sesiones más cortas significan más finalizaciones.",
+  "tip29": "Los Minutos Silenciosos se suman hacia tu objetivo—progreso sobre perfección.",
+  "tip30": "Estás a un toque de distancia—comienza una sesión pequeña ahora mismo.",
+  "tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations.",
+  "tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.",
+  "tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.",
+  "tipsTitle": "Tips",
+  "tipInstructionSetTime": "Settings → Basic → Session duration",
+  "tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders.",
+  "tipInstructionCalibrate": "Settings → Advanced → Noise Calibration.",
+  "tipInstructionOpenAnalytics": "Open Analytics to view trends and averages.",
+  "tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed.",
+  "tipInstructionTapRing": "On Home, tap the progress ring to start/stop.",
+  "tipInstructionExport": "Settings → Advanced → Export Data.",
+  "tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart.",
+  "tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks.",
+  "tipInstructionAccessibility": "Settings → Advanced → Accessibility.",
+  "tipInstructionStartNow": "Tap Start Session on the Home screen.",
+  "tipInstructionHeatmap": "Pestaña Resumen → Mostrar Más → Mapa de Calor",
+  "tipInstructionTodayTimeline": "Pestaña Resumen → Mostrar Más → Línea de Tiempo de Hoy",
+  "tipInstruction7DayTrends": "Pestaña Resumen → Mostrar Más → Tendencias de 7 Días",
+  "tipInstructionEditActivities": "Pestaña Actividad → toca Editar para mostrar/ocultar actividades",
+  "tipInstructionQuestGo": "Pestaña Actividad → Cápsula de Misión → toca Ir",
+  "tipInfoTooltip": "Mostrar consejo",
+  "questCapsuleTitle": "Misión Ambiental",
+  "questCapsuleLoading": "Cargando minutos de calma…",
+  "questCapsuleProgress": "Calma {progress}/{goal} min • Racha {streak}",
+  "@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      },
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "questFreezeButton": "Congelar",
+  "questFrozenToday": "Hoy congelado — estás cubierto.",
+  "questGoButton": "Ir",
+  "calmPercent": "Calma {percent}%",
+  "@calmPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "calmLabel": "Calma",
+  "day": "día",
+  "days": "días",
+  "freeze": "congelar",
+  "adaptiveThresholdSuggestion": "¡3 victorias! ¿Probar {threshold} dB?",
+  "@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "adaptiveThresholdNotNow": "Ahora no",
+  "adaptiveThresholdTryIt": "Probarlo",
+  "adaptiveThresholdConfirm": "Umbral establecido en {threshold} dB",
+  "@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "Editar",
+  "start": "Iniciar",
+  "error": "Error",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "faqTitle": "Preguntas Frecuentes",
+  "faqSearchHint": "Buscar preguntas...",
+  "faqNoResults": "No se encontraron resultados",
+  "faqNoResultsSubtitle": "Intenta con un término diferente",
+  "faqResultsCount": "{count, plural, one {1 resultado encontrado} other {{count} resultados encontrados}}",
+  "@faqResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "faqQ01": "¿Qué es Focus Field y cómo me ayuda a concentrarme?",
+  "faqA01": "Focus Field te ayuda a desarrollar mejores hábitos de concentración monitoreando el ruido ambiental en tu entorno. Cuando inicias una sesión (Estudio, Lectura, Meditación u Otro), la app mide qué tan silencioso está tu ambiente. Cuanto más silencio mantengas, más \"minutos de concentración\" ganas. Esto te anima a encontrar y mantener espacios libres de distracciones para trabajo profundo.",
+  "faqQ02": "¿Cómo mide Focus Field mi concentración?",
+  "faqA02": "Focus Field monitorea el nivel de ruido ambiental en tu entorno durante tu sesión. Calcula un \"Puntaje Ambiental\" rastreando cuántos segundos tu ambiente permanece por debajo de tu umbral de ruido elegido. Si tu sesión tiene al menos 70% de tiempo silencioso (Puntaje Ambiental ≥70%), obtienes crédito completo por esos minutos silenciosos.",
+  "faqQ03": "¿Focus Field graba mi audio o conversaciones?",
+  "faqA03": "No, absolutamente no. Focus Field solo mide niveles de decibelios (volumen) - nunca graba, almacena ni transmite audio. Tu privacidad está completamente protegida. La app simplemente verifica si tu ambiente está por encima o por debajo de tu umbral elegido.",
+  "faqQ04": "¿Qué actividades puedo rastrear con Focus Field?",
+  "faqA04": "Focus Field viene con cuatro tipos de actividad: Estudio 📚 (para aprendizaje e investigación), Lectura 📖 (para lectura concentrada), Meditación 🧘 (para práctica de atención plena) y Otro ⭐ (para cualquier actividad que requiera concentración). Todas las actividades usan monitoreo de ruido ambiental para ayudarte a mantener un ambiente silencioso y concentrado.",
+  "faqQ05": "¿Debería usar Focus Field para todas mis actividades?",
+  "faqA05": "Focus Field funciona mejor para actividades donde el ruido ambiental indica tu nivel de concentración. Actividades como Estudio, Lectura y Meditación se benefician más de ambientes silenciosos. Aunque puedes rastrear actividades \"Otro\", recomendamos usar Focus Field principalmente para trabajo de concentración sensible al ruido.",
+  "faqQ06": "¿Cómo inicio una sesión de concentración?",
+  "faqA06": "Ve a la pestaña Sesiones, selecciona tu actividad (Estudio, Lectura, Meditación u Otro), elige la duración de tu sesión (1, 5, 10, 15, 30 minutos u opciones premium), toca el botón Iniciar en el anillo de progreso y ¡mantén tu ambiente silencioso!",
+  "faqQ07": "¿Qué duraciones de sesión están disponibles?",
+  "faqA07": "Los usuarios gratuitos pueden elegir: sesiones de 1, 5, 10, 15 o 30 minutos. Los usuarios Premium también obtienen: sesiones extendidas de 1 hora, 1.5 horas y 2 horas para períodos más largos de trabajo profundo.",
+  "faqQ08": "¿Puedo pausar o detener una sesión antes de tiempo?",
+  "faqA08": "¡Sí! Durante una sesión, verás botones de Pausa y Detener sobre el anillo de progreso. Para evitar toques accidentales, necesitas mantener presionados estos botones. Si detienes antes, aún ganarás puntos por los minutos silenciosos que acumulaste.",
+  "faqQ09": "¿Cómo gano puntos en Focus Field?",
+  "faqA09": "Ganas 1 punto por minuto silencioso. Durante tu sesión, Focus Field rastrea cuántos segundos tu ambiente permanece por debajo del umbral de ruido. Al final, esos segundos silenciosos se convierten en minutos. Por ejemplo, si completas una sesión de 10 minutos con 8 minutos de silencio, ganas 8 puntos.",
+  "faqQ10": "¿Qué es el umbral del 70% y por qué importa?",
+  "faqA10": "El umbral del 70% determina si tu sesión cuenta para tu meta diaria. Si tu Puntaje Ambiental (tiempo silencioso ÷ tiempo total) es al menos 70%, tu sesión califica para crédito de misión. ¡Incluso si estás por debajo del 70%, aún ganas puntos por cada minuto silencioso!",
+  "faqQ11": "¿Cuál es la diferencia entre Puntaje Ambiental y puntos?",
+  "faqA11": "El Puntaje Ambiental es la calidad de tu sesión como porcentaje (segundos silenciosos ÷ segundos totales), determinando si alcanzas el umbral del 70%. Los puntos son los minutos silenciosos reales ganados (1 punto = 1 minuto). Puntaje Ambiental = calidad, Puntos = logro.",
+  "faqQ12": "¿Cómo funcionan las rachas en Focus Field?",
+  "faqA12": "Las rachas rastrean días consecutivos cumpliendo tu meta diaria. Focus Field usa una Regla Compasiva de 2 Días: Tu racha solo se rompe si pierdes dos días consecutivos. Esto significa que puedes perder un día y tu racha continúa si completas tu meta al día siguiente.",
+  "faqQ13": "¿Qué son las fichas de congelación y cómo las uso?",
+  "faqA13": "Las fichas de congelación protegen tu racha cuando no puedes completar tu meta. Obtienes 1 ficha de congelación gratis por mes. Cuando se usa, tu progreso general muestra 100% (meta protegida), tu racha está segura y el seguimiento de actividad individual continúa normalmente. ¡Úsala sabiamente para días ocupados!",
+  "faqQ14": "¿Puedo personalizar mi meta diaria de concentración?",
+  "faqA14": "¡Sí! Toca Editar en la tarjeta Sesiones en la pestaña Hoy. Puedes establecer tu meta diaria global (10-60 minutos gratis, hasta 1080 minutos premium), habilitar metas por actividad para objetivos separados y mostrar/ocultar actividades específicas.",
+  "faqQ15": "¿Qué es el umbral de ruido y cómo lo ajusto?",
+  "faqA15": "El umbral es el nivel máximo de ruido (en decibelios) que cuenta como \"silencioso\". El predeterminado es 40 dB (biblioteca silenciosa). Puedes ajustarlo en la pestaña Sesiones: 30 dB (muy silencioso), 40 dB (biblioteca silenciosa - recomendado), 50 dB (oficina moderada), 60-80 dB (ambientes más ruidosos).",
+  "faqQ16": "¿Qué es el Umbral Adaptativo y debería usarlo?",
+  "faqA16": "Después de 3 sesiones exitosas consecutivas en tu umbral actual, Focus Field sugiere aumentarlo en 2 dB para desafiarte. Esto te ayuda a mejorar gradualmente. Puedes aceptar o rechazar la sugerencia; solo aparece una vez cada 7 días.",
+  "faqQ17": "¿Qué es el Modo de Concentración?",
+  "faqA17": "El Modo de Concentración es una superposición de pantalla completa libre de distracciones durante tu sesión. Muestra tu temporizador de cuenta regresiva, porcentaje de calma en vivo y controles mínimos (Pausa/Detener mediante mantener presionado). Elimina todos los demás elementos de UI para que puedas concentrarte completamente. Habilítalo en Configuración > Básico > Modo de Concentración.",
+  "faqQ18": "¿Por qué Focus Field necesita permiso de micrófono?",
+  "faqA18": "Focus Field usa el micrófono de tu dispositivo para medir niveles de ruido ambiental (decibelios) durante las sesiones. Esto es esencial para calcular tu Puntaje Ambiental. Recuerda: nunca se graba audio, solo se miden los niveles de ruido en tiempo real.",
+  "faqQ19": "¿Puedo ver mis patrones de concentración a lo largo del tiempo?",
+  "faqA19": "¡Sí! La pestaña Hoy muestra tu progreso diario, tendencias semanales, mapa de calor de actividad de 12 semanas (como contribuciones de GitHub) y línea de tiempo de sesiones. Los usuarios Premium obtienen análisis avanzados con métricas de rendimiento, promedios móviles e información impulsada por IA.",
+  "faqQ20": "¿Cómo funcionan las notificaciones en Focus Field?",
+  "faqA20": "Focus Field tiene recordatorios inteligentes: Recordatorios Diarios (aprende tu hora de concentración preferida o usa una hora fija), notificaciones de Sesión Completada con resultados, notificaciones de Logros para hitos y Resumen Semanal (Premium). Habilita/personaliza en Configuración > Avanzado > Notificaciones.",
+  "microphoneSettingsTitle": "Configuración Requerida",
+  "microphoneSettingsMessage": "Para habilitar la detección de silencio, otorga manualmente el permiso del micrófono:\n\n• iOS: Ajustes > Privacidad y Seguridad > Micrófono > Focus Field\n• Android: Ajustes > Aplicaciones > Focus Field > Permisos > Micrófono",
+  "buttonGrantPermission": "Otorgar Permiso",
+  "buttonOk": "Aceptar",
+  "buttonOpenSettings": "Abrir Ajustes",
+  "onboardingBack": "Atrás",
+  "onboardingSkip": "Omitir",
+  "onboardingNext": "Siguiente",
+  "onboardingGetStarted": "Comenzar",
+  "onboardingWelcomeSnackbar": "¡Bienvenido! ¿Listo para comenzar tu primera sesión? 🚀",
+  "onboardingWelcomeTitle": "¡Bienvenido a\nFocus Field! 🎯",
+  "onboardingWelcomeSubtitle": "¡Tu viaje hacia un mejor enfoque comienza aquí!\nConstruyamos hábitos que perduren 💪",
+  "onboardingFeatureTrackTitle": "Rastrea Tu Enfoque",
+  "onboardingFeatureTrackDesc": "¡Ve tu progreso en tiempo real mientras construyes tu superpoder de enfoque! 📊",
+  "onboardingFeatureRewardsTitle": "Gana Recompensas",
+  "onboardingFeatureRewardsDesc": "¡Cada minuto silencioso cuenta! Colecciona puntos y celebra tus logros 🏆",
+  "onboardingFeatureStreaksTitle": "Construye Rachas",
+  "onboardingFeatureStreaksDesc": "¡Mantén el impulso! Nuestro sistema compasivo te mantiene motivado 🔥",
+  "onboardingEnvironmentTitle": "¿Dónde está tu Zona de Enfoque? 🎯",
+  "onboardingEnvironmentSubtitle": "¡Elige tu entorno típico para que optimicemos tu espacio!",
+  "onboardingEnvQuietHomeTitle": "Hogar Silencioso",
+  "onboardingEnvQuietHomeDesc": "Dormitorio, oficina en casa tranquila",
+  "onboardingEnvQuietHomeDb": "30 dB - Muy silencioso",
+  "onboardingEnvOfficeTitle": "Oficina Típica",
+  "onboardingEnvOfficeDesc": "Oficina estándar, biblioteca",
+  "onboardingEnvOfficeDb": "40 dB - Silencio de biblioteca (Recomendado)",
+  "onboardingEnvBusyTitle": "Espacio Ocupado",
+  "onboardingEnvBusyDesc": "Cafetería, espacio de trabajo compartido",
+  "onboardingEnvBusyDb": "50 dB - Ruido moderado",
+  "onboardingEnvNoisyTitle": "Entorno Ruidoso",
+  "onboardingEnvNoisyDesc": "Oficina abierta, espacio público",
+  "onboardingEnvNoisyDb": "60 dB - Ruido más alto",
+  "onboardingEnvAdjustNote": "Puedes ajustar esto en cualquier momento en Configuración",
+  "onboardingGoalTitle": "¡Establece tu Meta Diaria! 🎯",
+  "onboardingGoalSubtitle": "¿Cuánto tiempo de concentración te parece adecuado?\n(¡Puedes ajustar esto en cualquier momento!)",
+  "onboardingGoalStartingTitle": "Comenzando",
+  "onboardingGoalStartingDuration": "10-15 minutos",
+  "onboardingGoalHabitTitle": "Construyendo Hábito",
+  "onboardingGoalHabitDuration": "20-30 minutos",
+  "onboardingGoalPracticeTitle": "Práctica Regular",
+  "onboardingGoalPracticeDuration": "40-60 minutos",
+  "onboardingGoalDeepWorkTitle": "Trabajo Profundo",
+  "onboardingGoalDeepWorkDuration": "60+ minutos",
+  "onboardingGoalAdvice1": "¡Comienzo perfecto! 🌟 Los pequeños pasos llevan a grandes victorias. ¡Tú puedes!",
+  "onboardingGoalAdvice2": "¡Excelente elección! 🎯 ¡Este punto ideal construye hábitos duraderos!",
+  "onboardingGoalAdvice3": "¡Ambicioso! 💪 ¡Estás listo para subir de nivel tu juego de concentración!",
+  "onboardingGoalAdvice4": "¡Guau! 🏆 ¡Modo de trabajo profundo activado! ¡Recuerda tomar descansos!",
+  "onboardingActivitiesTitle": "¡Elige Tus Actividades! ✨",
+  "onboardingActivitiesSubtitle": "¡Elige todas las que resuenen contigo!\n(Siempre puedes agregar más después)",
+  "onboardingActivityStudyTitle": "Estudio",
+  "onboardingActivityStudyDesc": "Aprendizaje, tareas, investigación",
+  "onboardingActivityReadingTitle": "Lectura",
+  "onboardingActivityReadingDesc": "Lectura profunda, artículos, libros",
+  "onboardingActivityMeditationTitle": "Meditación",
+  "onboardingActivityMeditationDesc": "Atención plena, ejercicios de respiración",
+  "onboardingActivityOtherTitle": "Otro",
+  "onboardingActivityOtherDesc": "Cualquier actividad que requiera concentración",
+  "onboardingActivitiesTip": "Consejo profesional: ¡Focus Field brilla cuando silencio = concentración! 🤫✨",
+  "onboardingPermissionTitle": "¡Tu Privacidad Importa! 🔒",
+  "onboardingPermissionSubtitle": "Necesitamos acceso al micrófono para medir el ruido ambiente y ayudarte a concentrarte mejor",
+  "onboardingPrivacyNoRecordingTitle": "Sin Grabación",
+  "onboardingPrivacyNoRecordingDesc": "Solo medimos niveles de ruido, nunca grabamos audio",
+  "onboardingPrivacyLocalTitle": "Solo Local",
+  "onboardingPrivacyLocalDesc": "Todos los datos permanecen en tu dispositivo",
+  "onboardingPrivacyFirstTitle": "Privacidad Primero",
+  "onboardingPrivacyFirstDesc": "Tus conversaciones son completamente privadas",
+  "onboardingPermissionNote": "Puedes otorgar permiso en la siguiente pantalla al iniciar tu primera sesión",
+  "onboardingTipsTitle": "¡Consejos Profesionales para el Éxito! 💡",
+  "onboardingTipsSubtitle": "¡Estos te ayudarán a aprovechar al máximo Focus Field!",
+  "onboardingTip1Title": "¡Comienza Pequeño, Gana Grande! 🌱",
+  "onboardingTip1Desc": "Comienza con sesiones de 5-10 minutos. ¡La consistencia supera la perfección!",
+  "onboardingTip2Title": "¡Activa el Modo de Concentración! 🎯",
+  "onboardingTip2Desc": "Toca Modo de Concentración para una experiencia inmersiva sin distracciones.",
+  "onboardingTip3Title": "¡Token de Congelación = Red de Seguridad! ❄️",
+  "onboardingTip3Desc": "Usa tu token mensual en días ocupados para proteger tu racha.",
+  "onboardingTip4Title": "¡La Regla del 70% Funciona! 📈",
+  "onboardingTip4Desc": "Apunta al 70% de tiempo silencioso - ¡no se requiere silencio perfecto!",
+  "onboardingReadyTitle": "¡Estás Listo para Despegar! 🚀",
+  "onboardingReadyDesc": "¡Comencemos tu primera sesión y construyamos hábitos increíbles!",
+  "questMotivation1": "El éxito nunca termina y el fracaso nunca es final",
+  "questMotivation2": "Progreso sobre perfección - cada minuto cuenta",
+  "questMotivation3": "Pequeños pasos diarios conducen a grandes cambios",
+  "questMotivation4": "Estás construyendo mejores hábitos, una sesión a la vez",
+  "questMotivation5": "La consistencia supera la intensidad",
+  "questMotivation6": "Cada sesión es una victoria, sin importar cuán corta",
+  "questMotivation7": "El enfoque es un músculo - te estás volviendo más fuerte",
+  "questMotivation8": "El viaje de mil millas comienza con un solo paso",
+  "questGo": "Ir",
+  "todayDashboardTitle": "Tu Panel de Enfoque",
+  "todayFocusMinutes": "Minutos de enfoque hoy",
+  "todayGoalCalm": "Objetivo: {goalMinutes} min • Calma ≥{calmPercent}%",
+  "@todayGoalCalm": {
+    "placeholders": {
+      "goalMinutes": {
+        "type": "int"
+      },
+      "calmPercent": {
+        "type": "int"
+      }
+    }
+  },
+  "todayPickMode": "Elige tu modo",
+  "todayDefaultActivities": "Estudio • Lectura • Meditación",
+  "todayTooltipTips": "Consejos",
+  "todayTooltipTheme": "Tema",
+  "todayTooltipSettings": "Configuración",
+  "todayThemeChanged": "Tema cambiado a {themeName}",
+  "@todayThemeChanged": {
+    "placeholders": {
+      "themeName": {
+        "type": "String"
+      }
+    }
+  },
+  "todayTabToday": "Hoy",
+  "todayTabSessions": "Sesiones",
+  "todayHelperText": "Establece tu duración y rastrea tu tiempo. El historial de sesiones y análisis aparecerán en Resumen.",
+  "statPoints": "Puntos",
+  "statStreak": "Racha",
+  "statSessions": "Sesiones",
+  "ringProgressTitle": "Progreso del Anillo",
+  "ringOverall": "General",
+  "ringOverallFrozen": "General ❄️",
+  "sessionCalm": "Calma",
+  "sessionStart": "Iniciar",
+  "sessionStop": "Detener",
+  "buttonEdit": "Editar",
+  "durationUpTo1Hour": "Sesiones de hasta 1 hora",
+  "durationUpTo1_5Hours": "Sesiones de hasta 1.5 horas",
+  "durationUpTo2Hours": "Sesiones de hasta 2 horas",
+  "durationExtended": "Duraciones de sesión extendidas",
+  "durationExtendedAccess": "Acceso a sesiones extendidas",
+  "noiseRoomLoudness": "Volumen de la Habitación",
+  "noiseThresholdLabel": "Umbral: {threshold}dB",
+  "@noiseThresholdLabel": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseThresholdSet": "Umbral establecido en {db} dB",
+  "@noiseThresholdSet": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighDetected": "Ruido alto detectado, por favor vaya a una habitación más silenciosa para un mejor enfoque",
+  "noiseThresholdExceededHint": "Busque un lugar más silencioso o aumente el umbral →",
+  "noiseExceededIncreasePrompt": "¿Buscar un lugar más silencioso o aumentar a {db}dB?",
+  "@noiseExceededIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighIncreasePrompt": "Alto ruido detectado. ¿Aumentar a {db}dB?",
+  "@noiseHighIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseAtMaxThreshold": "Ya está en el umbral máximo. Por favor, busque un lugar más silencioso.",
+  "noiseThresholdYes": "Sí",
+  "noiseThresholdNo": "No",
+  "trendsInsights": "Perspectivas",
+  "trendsLast7Days": "Últimos 7 Días",
+  "trendsShareWeeklySummary": "Compartir resumen semanal",
+  "trendsLoading": "Cargando...",
+  "trendsLoadingMetrics": "Cargando métricas...",
+  "trendsNoData": "Sin datos",
+  "trendsWeeklyTotal": "Total Semanal",
+  "trendsBestDay": "Mejor Día",
+  "trendsActivityHeatmap": "Mapa de Calor de Actividad",
+  "trendsRecentActivity": "Actividad reciente",
+  "trendsHeatmapError": "No se puede cargar el mapa de calor",
+  "dayMon": "Lun",
+  "dayTue": "Mar",
+  "dayWed": "Mié",
+  "dayThu": "Jue",
+  "dayFri": "Vie",
+  "daySat": "Sáb",
+  "daySun": "Dom",
+  "focusModeComplete": "¡Sesión Completa!",
+  "focusModeGreatSession": "Gran sesión de enfoque",
+  "focusModeResume": "Reanudar",
+  "focusModePause": "Pausar",
+  "focusModeLongPressHint": "Mantén presionado para pausar o detener",
+  "activityEditTitle": "Editar Actividades",
+  "activityRecommendation": "Recomendado: 10+ min por actividad para la construcción constante de hábitos",
+  "activityDailyGoals": "Objetivos Diarios",
+  "activityTotalHours": "Total: {hours}h / 18h",
+  "@activityTotalHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activityPerActivity": "Por Actividad",
+  "activityExceedsLimit": "El total excede el límite diario de 18 horas. Por favor reduce los objetivos.",
+  "activityGoalLabel": "Objetivo",
+  "activityGoalDescription": "Establece tu objetivo de enfoque diario (1 min - 18h)",
+  "shareYourProgress": "Comparte Tu Progreso",
+  "shareTimeRange": "Rango de Tiempo",
+  "shareCardSize": "Tamaño de Tarjeta",
+  "analyticsPerformanceMetrics": "Métricas de Rendimiento",
+  "analyticsPreferredDuration": "Duración Preferida",
+  "analyticsUnavailable": "Análisis no disponible",
+  "analyticsRestoreAttempt": "Intentaremos restaurar esta sección en el próximo inicio de la aplicación.",
+  "audioUnavailable": "Audio temporalmente no disponible",
+  "audioRecovering": "El procesamiento de audio encontró un problema. Recuperando automáticamente...",
+  "shareQuietMinutes": "MINUTOS TRANQUILOS",
+  "shareTopActivity": "Actividad Principal",
+  "appName": "Focus Field",
+  "sharePreview": "Vista Previa",
+  "sharePinchToZoom": "Pellizca para ampliar",
+  "shareGenerating": "Generando...",
+  "shareButton": "Compartir",
+  "shareTodayLabel": "Hoy",
+  "shareWeeklyLabel": "Semanal",
+  "shareTodayTitle": "Tu Enfoque de Hoy",
+  "shareWeeklyTitle": "Tu Enfoque Semanal",
+  "shareSubject": "Mi Progreso en Focus Field",
+  "shareFormatSquare": "Relación 1:1 • Compatibilidad universal",
+  "shareFormatPost": "Relación 4:5 • Publicaciones de Instagram/Twitter",
+  "shareFormatStory": "Relación 9:16 • Historias de Instagram",
+  "recapWeeklyTitle": "Resumen Semanal",
+  "recapMinutes": "Minutos",
+  "recapStreak": "Racha: {start} → {end} días",
+  "@recapStreak": {
+    "placeholders": {
+      "start": {
+        "type": "int"
+      },
+      "end": {
+        "type": "int"
+      }
+    }
+  },
+  "recapTopActivity": "Actividad Principal: ",
+  "practiceOverviewTitle": "Resumen de Práctica",
+  "practiceLast7Days": "Últimos 7 Días",
+  "audioMultipleErrors": "Se detectaron múltiples errores de audio. Componente recuperándose...",
+  "activityCurrentGoal": "Meta actual: {goal}",
+  "activitySaveChanges": "Guardar Cambios",
+  "insightsTitle": "Perspectivas",
+  "insightsTooltip": "Ver perspectivas detalladas",
+  "statDays": "DÍAS",
+  "sessionsTotalToday": "Total Hoy {done}/{goal} min, elige cualquier actividad",
+  "premiumFeature": "Función Premium",
+  "premiumFeatureAccess": "Acceso a función premium",
+  "activityUnknown": "Desconocido",
+  "insightsFirstSessionTitle": "Completa tu primera sesión",
+  "insightsFirstSessionSubtitle": "Comienza a rastrear tu tiempo de concentración, patrones de sesión y tendencias de puntuación ambiental",
+  "sessionAmbientLabel": "Ambiente: {percent}%",
+  "sessionSuccess": "Éxito",
+  "sessionFailed": "Fallido",
+  "focusModeButton": "Modo de enfoque",
+  "@sessionAmbientLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsDailyGoalsTitle": "Objetivos Diarios",
+  "settingsFocusModeDescription": "Minimiza las distracciones durante las sesiones con una superposición enfocada",
+  "settingsDeepFocusTitle": "Enfoque Profundo",
+  "settingsDeepFocusDescription": "Finalizar sesión si se abandona la aplicación",
+  "deepFocusDialogTitle": "Enfoque Profundo",
+  "deepFocusEnableLabel": "Habilitar Enfoque Profundo",
+  "deepFocusGracePeriodLabel": "Período de gracia (segundos)",
+  "deepFocusExplanation": "Cuando está habilitado, salir de la aplicación finalizará la sesión después del período de gracia.",
+  "notificationPermissionTitle": "Habilitar Notificaciones",
+  "notificationPermissionExplanation": "Focus Field necesita permiso de notificaciones para enviarte:",
+  "notificationBenefitReminders": "Recordatorios diarios de enfoque",
+  "notificationBenefitCompletion": "Alertas de sesión completada",
+  "notificationBenefitAchievements": "Celebraciones de logros",
+  "notificationHowToEnableIos": "Cómo habilitar en iOS:",
+  "notificationHowToEnableAndroid": "Cómo habilitar en Android:",
+  "notificationStepsIos": "1. Toca \"Abrir Configuración\" abajo\n2. Toca \"Notificaciones\"\n3. Habilita \"Permitir Notificaciones\"",
+  "notificationStepsAndroid": "1. Toca \"Abrir Configuración\" abajo\n2. Toca \"Notificaciones\"\n3. Habilita \"Todas las notificaciones de Focus Field\"",
+  "aboutShowTips": "Mostrar Consejos",
+  "aboutShowTipsDescription": "Muestra consejos útiles al iniciar la aplicación y mediante el icono de bombilla. Los consejos aparecen cada 2-3 días.",
+  "aboutReplayOnboarding": "Repetir Introducción",
+  "aboutReplayOnboardingDescription": "Revisa el recorrido de la aplicación y configura tus preferencias nuevamente",
+  "buttonFaq": "Preguntas Frecuentes",
+  "onboardingWelcomeMessage": "¡Bienvenido! ¿Listo para comenzar tu primera sesión? 🚀",
+  "onboardingFeatureEarnTitle": "Gana Recompensas",
+  "onboardingFeatureEarnDesc": "¡Cada minuto tranquilo cuenta! Colecciona puntos y celebra tus victorias 🏆",
+  "onboardingFeatureBuildTitle": "Construye Rachas",
+  "onboardingFeatureBuildDesc": "¡Mantén el impulso! Nuestro sistema compasivo te mantiene motivado 🔥",
+  "onboardingEnvironmentDescription": "¡Elige tu entorno típico para que podamos optimizar tu espacio!",
+  "onboardingEnvQuietHome": "Casa Tranquila",
+  "onboardingEnvQuietHomeLevel": "30 dB - Muy tranquilo",
+  "onboardingEnvOffice": "Oficina Típica",
+  "onboardingEnvOfficeLevel": "40 dB - Silencio de biblioteca (Recomendado)",
+  "onboardingEnvBusy": "Espacio Concurrido",
+  "onboardingEnvBusyLevel": "50 dB - Ruido moderado",
+  "onboardingEnvNoisy": "Entorno Ruidoso",
+  "onboardingEnvNoisyLevel": "60 dB - Ruido alto",
+  "onboardingAdjustAnytime": "Puedes ajustar esto en cualquier momento en Configuración",
+  "buttonGetStarted": "Comenzar",
+  "buttonNext": "Siguiente",
+  "errorActivityRequired": "⚠️ Debe habilitarse al menos una actividad",
+  "errorGoalExceeds": "Los objetivos totales exceden el límite diario de 18 horas. Por favor, reduce los objetivos.",
+  "messageSaved": "Configuración guardada",
+  "errorPermissionRequired": "Se requiere permiso",
+  "notificationEnableReason": "Habilita las notificaciones para recibir recordatorios y celebrar logros.",
+  "buttonEnableNotifications": "Habilitar Notificaciones",
+  "buttonRequesting": "Solicitando...",
+  "notificationDailyTime": "Hora Diaria",
+  "notificationDailyReminderSet": "Recordatorio diario a las {time}",
+  "notificationLearning": "aprendiendo",
+  "notificationSmart": "Inteligente ({time})",
+  "buttonUseSmart": "Usar Inteligente",
+  "notificationSmartExplanation": "Elige una hora fija o deja que Focus Field aprenda tu patrón.",
+  "notificationSessionComplete": "Sesión Completada",
+  "notificationSessionCompleteDesc": "Celebra sesiones completadas",
+  "notificationAchievement": "Logro Desbloqueado",
+  "notificationAchievementDesc": "Notificaciones de hitos",
+  "notificationWeekly": "Resumen Semanal de Progreso",
+  "notificationWeeklyDesc": "Información semanal (día y hora)",
+  "notificationWeeklyTime": "Hora Semanal",
+  "@notificationDailyReminderSet": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationSmart": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationMilestone": "Notificaciones de hitos",
+  "notificationWeeklyInsights": "Informes semanales (día y hora)",
+  "notificationDailyReminder": "Recordatorio diario",
+  "notificationComplete": "Sesión completada",
+  "settingsSnackbar": "Por favor, habilita las notificaciones en la configuración del dispositivo",
+  "shareCardTitle": "Compartir tarjeta",
+  "shareYourWeek": "Comparte tu semana",
+  "shareStyleGradient": "Estilo degradado",
+  "shareStyleGradientDesc": "Degradado audaz con números grandes",
+  "shareWeeklySummary": "Resumen semanal",
+  "shareStyleAchievement": "Estilo de logro",
+  "shareStyleAchievementDesc": "Enfócate en los minutos totales de silencio",
+  "shareQuietMinutesWeek": "Minutos de silencio esta semana",
+  "shareAchievementMessage": "Construyendo un enfoque más profundo,\\nuna sesión a la vez",
+  "shareAchievementCard": "Tarjeta de logro",
+  "shareTextOnly": "Solo texto",
+  "shareTextOnlyDesc": "Compartir como texto plano (sin imagen)",
+  "shareYourStreak": "Comparte tu racha",
+  "shareAsCard": "Compartir como tarjeta",
+  "shareAsCardDesc": "Tarjeta visual hermosa",
+  "shareStreakCard": "Tarjeta de racha",
+  "shareAsText": "Compartir como texto",
+  "shareAsTextDesc": "Mensaje de texto simple",
+  "shareErrorFailed": "Error al compartir. Por favor, inténtalo de nuevo.",
+  "buttonShare": "Compartir",
+  "initializingApp": "Inicializando aplicación...",
+  "initializationFailed": "Error de inicialización: {error}",
+  "loadingSettings": "Cargando configuración...",
+  "settingsLoadingFailed": "Error al cargar configuración: {error}",
+  "loadingUserData": "Cargando datos de usuario...",
+  "dataLoadingFailed": "Error al cargar datos: {error}",
+  "loading": "Cargando...",
+  "taglineSilence": "🤫 Domina el arte del silencio",
+  "errorOops": "¡Ups! Algo salió mal",
+  "buttonRetry": "Reintentar",
+  "resetAppData": "Restablecer datos de la aplicación",
+  "resetAppDataMessage": "Esto restablecerá todos los datos y configuraciones de la aplicación a sus valores predeterminados. Esta acción no se puede deshacer.\\n\\n¿Deseas continuar?",
+  "buttonReset": "Restablecer",
+  "messageDataReset": "Los datos de la aplicación se han restablecido",
+  "errorResetFailed": "Error al restablecer datos: {error}",
+  "@initializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@dataLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorResetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "analyticsTitle": "Analítica",
+  "analyticsOverview": "Resumen",
+  "analyticsPoints": "Puntos",
+  "analyticsStreak": "Racha",
+  "analyticsSessions": "Sesiones",
+  "analyticsLast7Days": "Últimos 7 días",
+  "analyticsPerformanceHighlights": "Aspectos destacados del rendimiento",
+  "analyticsSuccessRate": "Tasa de éxito",
+  "analyticsAvgSession": "Sesión promedio",
+  "analyticsBestStreak": "Mejor racha",
+  "analyticsActivityProgress": "Progreso de actividad",
+  "analyticsComingSoon": "El seguimiento detallado de actividades estará disponible próximamente.",
+  "analyticsAdvancedMetrics": "Métricas avanzadas",
+  "analyticsPremiumContent": "Contenido de análisis avanzado premium aquí...",
+  "analytics30DayTrends": "Tendencias de 30 días",
+  "analyticsTrendsChart": "Gráfico de tendencias premium aquí...",
+  "analyticsAIInsights": "Información de IA",
+  "analyticsAIComingSoon": "Información impulsada por IA próximamente...",
+  "analyticsUnlock": "Desbloquear análisis avanzados",
+  "errorTitle": "Error",
+  "errorQuestUnavailable": "Estado de misión no disponible",
+  "buttonOK": "OK",
+  "errorFreezeTokenFailed": "❌ Error al usar el token de congelación",
+  "buttonUseFreeze": "Usar congelación",
+  "onboardingDailyGoalTitle": "¡Establece tu meta diaria! 🎯",
+  "onboardingDailyGoalSubtitle": "¿Cuánto tiempo de concentración te parece adecuado?\\n(¡Puedes ajustarlo en cualquier momento!)",
+  "onboardingGoalGettingStarted": "Comenzando",
+  "onboardingGoalBuildingHabit": "Construyendo hábito",
+  "onboardingGoalRegularPractice": "Práctica regular",
+  "onboardingGoalDeepWork": "Trabajo profundo",
+  "onboardingProTip": "Consejo profesional: ¡Focus Field brilla cuando silencio = concentración! 🤫✨",
+  "onboardingPrivacyTitle": "¡Tu privacidad importa! 🔒",
+  "onboardingPrivacySubtitle": "Necesitamos acceso al micrófono para medir el ruido ambiental y ayudarte a concentrarte mejor",
+  "onboardingPrivacyNoRecording": "Sin grabación",
+  "onboardingPrivacyLocalOnly": "Solo local",
+  "onboardingPrivacyLocalOnlyDesc": "Todos los datos permanecen en tu dispositivo",
+  "onboardingPrivacyFirst": "Privacidad primero",
+  "onboardingPrivacyNote": "Puedes otorgar permiso en la siguiente pantalla al iniciar tu primera sesión",
+  "insightsFocusTime": "Tiempo de concentración",
+  "insightsSessions": "Sesiones",
+  "insightsAverage": "Promedio",
+  "insightsAmbientScore": "Puntuación ambiental",
+  "themeSystem": "Sistema",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro",
+  "themeOceanBlue": "Azul océano",
+  "themeForestGreen": "Verde bosque",
+  "themePurpleNight": "Noche púrpura",
+  "themeGoldLuxury": "Lujo dorado",
+  "themeSolarSunrise": "Amanecer solar",
+  "themeCyberNeon": "Neón cibernético",
+  "themeMidnightTeal": "Verde azulado medianoche",
+  "settingsAppTheme": "Tema de la aplicación",
+  "freezeTokenNoTokensTitle": "Sin Tokens de Congelación",
+  "freezeTokenNoTokensMessage": "No tienes tokens de congelación disponibles. Ganas 1 token por semana (máximo 4).",
+  "freezeTokenGoalCompleteTitle": "Meta Ya Completada",
+  "freezeTokenGoalCompleteMessage": "¡Tu meta diaria ya está completa! Los tokens de congelación solo se pueden usar cuando aún no has alcanzado tu meta.",
+  "freezeTokenUseTitle": "Usar Token de Congelación",
+  "freezeTokenUseMessage": "Los tokens de congelación protegen tu racha cuando pierdes un día. Usar un token contará como completar tu meta diaria.",
+  "freezeTokenUsePrompt": "Tienes {count} token(s). ¿Usar uno ahora?",
+  "freezeTokenUsedSuccess": "✅ ¡Token de congelación usado! Meta marcada como completa.",
+  "trendsErrorLoading": "Error al cargar datos",
+  "trendsPoints": "Puntos",
+  "trendsStreak": "Racha",
+  "trendsSessions": "Sesiones",
+  "trendsTopActivity": "Actividad Principal",
+  "sectionToday": "Hoy",
+  "sectionSessions": "Sesiones",
+  "sectionInsights": "Perspectivas",
+  "onboardingGoalAdviceGettingStarted": "¡Excelente comienzo! 🌟 Los pequeños pasos conducen a grandes victorias. ¡Tú puedes!",
+  "onboardingGoalAdviceBuildingHabit": "¡Excelente elección! 🎯 ¡Este punto ideal construye hábitos duraderos!",
+  "onboardingGoalAdviceRegularPractice": "¡Ambicioso! 💪 ¡Estás listo para mejorar tu enfoque!",
+  "onboardingGoalAdviceDeepWork": "¡Guau! 🏆 ¡Modo de trabajo profundo activado! ¡Recuerda tomar descansos!",
+  "onboardingDuration10to15": "10-15 minutos",
+  "onboardingDuration20to30": "20-30 minutos",
+  "onboardingDuration40to60": "40-60 minutos",
+  "onboardingDuration60plus": "60+ minutos",
+  "activityStudy": "Estudio",
+  "activityReading": "Lectura",
+  "activityMeditation": "Meditación",
+  "activityOther": "Otro",
+  "onboardingTip1Description": "Comienza con sesiones de 5-10 minutos. ¡La consistencia supera la perfección!",
+  "onboardingTip2Description": "Toca Modo Enfoque para una experiencia inmersiva sin distracciones.",
+  "onboardingTip3Description": "Usa tu token mensual en días ocupados para proteger tu racha.",
+  "onboardingTip4Description": "Apunta al 70% de tiempo tranquilo - ¡no se requiere silencio perfecto!",
+  "onboardingLaunchTitle": "¡Estás Listo para Comenzar! 🚀",
+  "onboardingLaunchDescription": "¡Comencemos tu primera sesión y construyamos hábitos increíbles!",
+  "insightsBestTimeByActivity": "Mejor tiempo por actividad",
+  "insightHighSuccessRateTitle": "Alta tasa de éxito",
+  "insightEnvironmentStabilityTitle": "Estabilidad ambiental",
+  "insightLowNoiseSuccessTitle": "Éxito con poco ruido",
+  "insightConsistentPracticeTitle": "Práctica consistente",
+  "insightStreakProtectionTitle": "Protección contra rayas disponible",
+  "insightRoomTooNoisyTitle": "Habitación demasiado ruidosa",
+  "insightIrregularScheduleTitle": "Horario irregular",
+  "insightLowAmbientScoreTitle": "Puntuación ambiental baja",
+  "insightNoRecentSessionsTitle": "No hay sesiones recientes",
+  "insightHighSuccessRateDesc": "Estás manteniendo fuertes sesiones de silencio.",
+  "insightEnvironmentStabilityDesc": "El ruido ambiental está dentro de un rango moderado y manejable.",
+  "insightLowNoiseSuccessDesc": "Su entorno es excepcionalmente silencioso durante las sesiones.",
+  "insightConsistentPracticeDesc": "Estás construyendo un hábito de práctica diaria confiable.",
+  "insightStreakProtectionDesc": "Tienes {count} token(s) de congelación para proteger tu racha.",
+  "insightRoomTooNoisyDesc": "Intente buscar un espacio más tranquilo o ajustar su umbral.",
+  "insightIrregularScheduleDesc": "Tiempos de sesión más consistentes pueden mejorar tu racha.",
+  "insightLowAmbientScoreDesc": "Las sesiones recientes tuvieron menos tiempo de silencio. Pruebe un ambiente más tranquilo.",
+  "insightNoRecentSessionsDesc": "¡Comience una sesión hoy para desarrollar su hábito de concentración!",
+  "sessionCompleteSuccess": "¡Buen trabajo! {minutes} minutos de concentración en tu sesión! ✨",
+  "sessionCompletePartial": "¡Buen esfuerzo! {minutes} minutos completados.",
+  "sessionCompleteFailed": "Sesión finalizada. Inténtalo de nuevo cuando estés listo.",
+  "notificationSessionStarted": "Sesión iniciada: ¡manténgase concentrado!",
+  "notificationSessionPaused": "Sesión pausada",
+  "notificationSessionResumed": "Sesión reanudada"
 }

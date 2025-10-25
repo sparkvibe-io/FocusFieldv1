@@ -1,5 +1,6 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/foundation.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 class AdService {
   AdService._();
@@ -13,7 +14,7 @@ class AdService {
       _initialized = true;
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('AdService init failed: $e');
+        DebugLog.d('AdService init failed: $e');
       }
     }
   }

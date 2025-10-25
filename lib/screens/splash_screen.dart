@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:silence_score/screens/app_initializer.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/screens/app_initializer.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class SplashScreen extends HookWidget {
   const SplashScreen({super.key});
@@ -58,7 +58,7 @@ class SplashScreen extends HookWidget {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        theme.colorScheme.surfaceVariant.withValues(alpha: 0.4),
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
         theme.colorScheme.surface,
       ],

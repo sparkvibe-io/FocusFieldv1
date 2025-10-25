@@ -1,4 +1,4 @@
-# Android Setup Guide for SilenceScore
+# Android Setup Guide for Focus Field
 
 ## Overview
 # Android Platform Setup
@@ -6,7 +6,7 @@
 Relocated from `android/ANDROID_SETUP.md` per documentation standards.
 
 ## Overview
-Steps to configure, build, and release the Android version of SilenceScore.
+Steps to configure, build, and release the Android version of Focus Field.
 
 ## Prerequisites
 - Android Studio (latest)
@@ -15,7 +15,7 @@ Steps to configure, build, and release the Android version of SilenceScore.
 - RevenueCat API key
 
 ## Configuration
-1. Package name: `io.sparkvibe.silencescore` (validate in `android/app/build.gradle`).
+1. Package name: `io.sparkvibe.focusfield` (validate in `android/app/build.gradle`).
 2. Microphone permission already declared (`RECORD_AUDIO`).
 3. Add release keystore:
      - Place `keystore.jks` outside repo.
@@ -60,7 +60,7 @@ flutter build appbundle --release \
 August 30, 2025
 
 ## Current Configuration
-- **Package Name**: `io.sparkvibe.silencescore`
+- **Package Name**: `io.sparkvibe.focusfield`
 - **Target SDK**: API 35 (Android 14)
 - **Minimum SDK**: API 21 (Android 5.0)
 - **Compile SDK**: API 35
@@ -95,7 +95,7 @@ The app requires the following permission (already configured in AndroidManifest
 - `RECORD_AUDIO`: Required for measuring sound levels (no audio is stored)
 
 ### Application ID
-- Current: `io.sparkvibe.silencescore`
+- Current: `io.sparkvibe.focusfield`
 - Location: `android/app/build.gradle` and `android/app/build.gradle.kts`
 
 ### Version Management
@@ -280,14 +280,14 @@ cd android && ./gradlew clean       # Clean Android build
 ```
 
 ## File Locations
-- **Main Activity**: `android/app/src/main/kotlin/com/sparkvibe/silencescore/MainActivity.kt`
+- **Main Activity**: `android/app/src/main/kotlin/io/sparkvibe/focusfield/MainActivity.kt`
 - **Manifest**: `android/app/src/main/AndroidManifest.xml`
 - **Build Config**: `android/app/build.gradle.kts`
 - **App Icons**: `android/app/src/main/res/mipmap-*/`
 - **Strings**: `android/app/src/main/res/values/strings.xml`
 
 ## Next Steps for Production
-1. ✅ Update package name to `io.sparkvibe.silencescore`
+1. ✅ Update package name to `io.sparkvibe.focusfield`
 2. ✅ Configure proper permissions
 3. ⏳ Set up app signing
 4. ⏳ Create app icons for all densities

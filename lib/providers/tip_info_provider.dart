@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/services/tip_service.dart';
+import 'package:focus_field/services/tip_service.dart';
 
 // Provider for checking if there are new tips
 final hasNewTipsProvider = FutureProvider<bool>((ref) async {
@@ -9,9 +9,10 @@ final hasNewTipsProvider = FutureProvider<bool>((ref) async {
 });
 
 // Provider for tip service enabled state
-final tipServiceEnabledProvider = Provider<bool>((ref) {
+final tipServiceEnabledProvider = FutureProvider<bool>((ref) async {
   final tipService = ref.read(tipServiceProvider);
-  return tipService.enabled.value;
+  return await tipService
+      .getEnabled(); // Use async method that properly initializes
 });
 
 // Provider to watch tip service enabled state changes

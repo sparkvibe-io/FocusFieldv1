@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "Preparing focus engine…",
   "paywallTitle": "Train Deeper Focus with Premium",
   "featureExtendSessions": "Extend focus sessions from 30 min to 120 min",
@@ -55,7 +55,7 @@
   "decibelThresholdLabel": "Decibel Threshold",
   "decibelThresholdHint": "Set the maximum allowed noise level (dB)",
   "microphonePermissionTitle": "Microphone Permission",
-  "microphonePermissionMessage": "Silence Score needs microphone access to measure ambient noise levels. No audio is stored.",
+  "microphonePermissionMessage": "Focus Field measures ambient sound levels to help you maintain quiet environments.\n\nThe app needs microphone access to detect silence, but does not record any audio.",
   "permissionDeniedMessage": "Microphone permission is required to measure silence. Please enable it in settings.",
   "noiseMeterError": "Unable to access microphone",
   "premiumFeaturesTitle": "Premium Features",
@@ -68,285 +68,1107 @@
   "yearlyPlanTitle": "Yearly",
   "monthlyPlanTitle": "Monthly",
   "savePercent": "SAVE {percent}%",
-  "@savePercent": {"placeholders": {"percent": {"type": "String"}}},
+  "@savePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "billedAnnually": "Billed at {price}/yr.",
-  "@billedAnnually": {"placeholders": {"price": {"type": "String"}}},
+  "@billedAnnually": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "billedMonthly": "Billed at {price}/mo.",
-  "@billedMonthly": {"placeholders": {"price": {"type": "String"}}},
-  "mockSubscriptionsBanner": "Mock Subscriptions Enabled"
-  ,"splashTagline": "Find your quiet"
-  ,"appIconSemantic": "App icon"
-  ,"tabBasic": "Basic"
-  ,"tabAdvanced": "Advanced"
-  ,"tabAbout": "About"
-  ,"resetAllSettings": "Reset All Settings"
-  ,"resetAllSettingsDescription": "This will reset all settings and data. Cannot be undone."
-  ,"cancel": "Cancel"
-  ,"reset": "Reset"
-  ,"allSettingsReset": "All settings and data have been reset"
-  ,"decibelThresholdMaxNoise": "Decibel Threshold (max noise level)"
-  ,"highThresholdWarningText": "High threshold may ignore meaningful noise events."
-  ,"decibelThresholdTooltip": "Typical quiet spaces: 30–40 dB. Calibrate; raise only if normal hum counts as noise."
-  ,"sessionDuration": "Session Duration"
-  ,"upgradeForMinutes": "Upgrade for {minutes}m"
-  ,"freeUpToMinutes": "Free: up to {minutes} min"
-  ,"durationLabel": "Duration"
-  ,"minutesShort": "min"
-  ,"noiseCalibration": "Noise Calibration"
-  ,"calibrateBaseline": "Calibrate baseline"
-  ,"unlockAdvancedCalibration": "Unlock advanced noise calibration"
-  ,"exportData": "Export Data"
-  ,"sessionHistory": "Session history"
-  ,"notifications": "Notifications"
-  ,"remindersCelebrations": "Reminders & celebrations"
-  ,"accessibility": "Accessibility"
-  ,"accessibilityFeatures": "Accessibility features"
-  ,"appInformation": "App Information"
-  ,"version": "Version"
-  ,"bundleId": "Bundle ID"
-  ,"environment": "Environment"
-  ,"helpSupport": "Help & Support"
-  ,"faq": "FAQ"
-  ,"support": "Support"
-  ,"rateApp": "Rate App"
-  ,"errorLoadingSettings": "Error loading settings: {error}"
-  ,"exportNoData": "No data available to export"
-  ,"chooseExportFormat": "Choose export format for your {sessions} sessions:"
-  ,"csvSpreadsheet": "CSV Spreadsheet"
-  ,"rawDataForAnalysis": "Raw data for analysis"
-  ,"pdfReport": "PDF Report"
-  ,"formattedReportWithCharts": "Formatted report with charts"
-  ,"generatingExport": "Generating {format} export..."
-  ,"exportCompleted": "{format} export completed!"
-  ,"exportFailed": "Export failed: {error}"
-  ,"frequentlyAskedQuestions": "Frequently Asked Questions"
-  ,"faqHowWorksQ": "How does SilenceScore work?"
-  ,"faqHowWorksA": "It measures ambient noise – time below threshold earns points."
-  ,"faqAudioRecordedQ": "Is audio recorded?"
-  ,"faqAudioRecordedA": "No. Only decibel levels are sampled; audio is never stored."
-  ,"faqAdjustSensitivityQ": "Adjust sensitivity?"
-  ,"faqAdjustSensitivityA": "Use Settings > Basic > Decibel Threshold ({min}–{max} dB) and calibrate first."
-  ,"faqPremiumFeaturesQ": "Premium features?"
-  ,"faqPremiumFeaturesA": "Extended sessions (up to 120m), advanced analytics, export, themes."
-  ,"faqNotificationsQ": "Notifications?"
-  ,"faqNotificationsA": "Smart reminders learn habits and celebrate milestones."
-  ,"close": "Close"
-  ,"supportTitle": "Support"
-  ,"responseTimeLabel": "Response Time: {time}"
-  ,"docs": "Docs"
-  ,"contactSupport": "Contact Support"
-  ,"emailOpenDescription": "Opens your email app with system information pre-filled"
-  ,"subject": "Subject"
-  ,"briefDescription": "Brief description"
-  ,"description": "Description"
-  ,"issueDescriptionHint": "Provide details about your issue..."
-  ,"openingEmail": "Opening Email..."
-  ,"openEmailApp": "Open Email App"
-  ,"fillSubjectDescription": "Please fill subject and description"
-  ,"emailOpened": "Email app opened. Send when ready."
-  ,"noEmailAppFound": "No email app found. Contact:"
-  ,"standardSubject": "Subject: [STANDARD] {subject}"
-  ,"issueLine": "Issue: {issue}"
-  ,"failedOpenFaq": "Failed to open FAQ: {error}"
-  ,"failedOpenDocs": "Failed to open documentation: {error}"
-  ,"accessibilitySettings": "Accessibility Settings"
-  ,"vibrationFeedback": "Vibration Feedback"
-  ,"vibrateOnSessionEvents": "Vibrate on session events"
-  ,"voiceAnnouncements": "Voice Announcements"
-  ,"announceSessionProgress": "Announce session progress"
-  ,"highContrastMode": "High Contrast Mode"
-  ,"improveVisualAccessibility": "Improve visual accessibility"
-  ,"largeText": "Large Text"
-  ,"increaseTextSize": "Increase text size"
-  ,"save": "Save"
-  ,"accessibilitySettingsSaved": "Accessibility settings saved"
-  ,"noiseFloorCalibration": "Noise Floor Calibration"
-  ,"measuringAmbientNoise": "Measuring ambient noise (≈5s)..."
-  ,"couldNotReadMic": "Could not read microphone"
-  ,"calibrationFailed": "Calibration failed"
-  ,"retry": "Retry"
-  ,"previousThreshold": "Previous: {value} dB"
-  ,"newThreshold": "New threshold: {value} dB"
-  ,"noSignificantChange": "No significant change detected."
-  ,"highAmbientDetected": "High ambient environment detected. Consider a quieter space for more sensitivity."
-  ,"adjustAnytimeSettings": "You can adjust this anytime in Settings."
-  ,"toggleThemeTooltip": "Toggle theme"
-  ,"audioChartRecovering": "Audio chart recovering..."
-  ,"themeChanged": "Theme: {themeName}"
-  ,"privacyComingSoon": "Privacy policy coming soon."
-  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
-  ,"startSessionButton": "Start Session"
-  ,"stopSessionButton": "Stop"
-  ,"statusListening": "Listening..."
-  ,"statusSuccess": "Silence achieved! +1 point"
-  ,"statusFailure": "Too noisy! Try again"
-  ,"upgrade": "Upgrade"
-  ,"exportCsvSpreadsheet": "CSV Spreadsheet"
-  ,"exportPdfReport": "PDF Report"
-  ,"formattedReportCharts": "Formatted report with charts"
-  ,"csv": "CSV"
-  ,"pdf": "PDF"
-  ,"theme": "Theme"
-  ,"open": "Open"
-  ,"microphone": "Microphone"
-  ,"premium": "Premium"
-  ,"sessions": "sessions"
-  ,"format": "format"
-  ,"successRate": "Success Rate"
-  ,"avgSession": "Avg Session"
-  ,"consistency": "Consistency"
-  ,"bestTime": "Best Time"
-  ,"weeklyTrends": "Weekly Trends"
-  ,"performanceMetrics": "Performance Metrics"
-  ,"advancedAnalytics": "Advanced Analytics"
-  ,"premiumBadge": "PREMIUM"
-  ,"bucket1to2": "1-2 min"
-  ,"bucket3to5": "3-5 min"
-  ,"bucket6to10": "6-10 min"
-  ,"bucket11to20": "11-20 min"
-  ,"bucket21to30": "21-30 min"
-  ,"bucket30plus": "30+ min"
-  ,"sessionHistoryTitle": "Session History"
-  ,"recentSessionHistory": "Recent Session History"
-  ,"achievementFirstStepTitle": "First Step"
-  ,"achievementFirstStepDesc": "Completed your first session"
-  ,"achievementOnFireTitle": "On Fire"
-  ,"achievementOnFireDesc": "3-day streak achieved"
-  ,"achievementWeekWarriorTitle": "Week Warrior"
-  ,"achievementWeekWarriorDesc": "7-day streak achieved"
-  ,"achievementDecadeTitle": "Decade"
-  ,"achievementDecadeDesc": "10 points milestone"
-  ,"achievementHalfCenturyTitle": "Half Century"
-  ,"achievementHalfCenturyDesc": "50 points milestone"
-  ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
-    ,"ratingPromptTitle": "Enjoying Silence Score?"
-    ,"ratingPromptBody": "A quick 5-star rating helps others discover calmer focus time."
-    ,"ratingPromptRateNow": "Rate Now"
-    ,"ratingPromptLater": "Later"
-    ,"ratingPromptNoThanks": "No Thanks"
-    ,"ratingThankYou": "Thanks for your support!"
-  ,"@achievementFirstStepTitle": {"description": "Achievement title for completing the very first session"}
-  ,"@achievementFirstStepDesc": {"description": "Achievement description: user completed their first session"}
-  ,"@achievementOnFireTitle": {"description": "Achievement title for achieving a 3 day streak"}
-  ,"@achievementOnFireDesc": {"description": "Achievement description: user achieved a 3 day streak"}
-  ,"@achievementWeekWarriorTitle": {"description": "Achievement title for achieving a 7 day streak"}
-  ,"@achievementWeekWarriorDesc": {"description": "Achievement description: user achieved a 7 day streak"}
-  ,"@achievementDecadeTitle": {"description": "Achievement title for reaching 10 total points"}
-  ,"@achievementDecadeDesc": {"description": "Achievement description: user reached 10 points milestone"}
-  ,"@achievementHalfCenturyTitle": {"description": "Achievement title for reaching 50 total points"}
-  ,"@achievementHalfCenturyDesc": {"description": "Achievement description: user reached 50 points milestone"}
-  ,"@achievementLockedPrompt": {"description": "Prompt shown when achievements are locked and user has no progress"}
-  ,"@upgradeForMinutes": {"placeholders": {"minutes": {"type": "int"}}}
-  ,"@freeUpToMinutes": {"placeholders": {"minutes": {"type": "int"}}}
-  ,"@errorLoadingSettings": {"placeholders": {"error": {"type": "String"}}}
-  ,"@chooseExportFormat": {"placeholders": {"sessions": {"type": "int"}}}
-  ,"@generatingExport": {"placeholders": {"format": {"type": "String"}}}
-  ,"@exportCompleted": {"placeholders": {"format": {"type": "String"}}}
-  ,"@exportFailed": {"placeholders": {"error": {"type": "String"}}}
-  ,"@faqAdjustSensitivityA": {"placeholders": {"min": {"type": "int"}, "max": {"type": "int"}}}
-  ,"@responseTimeLabel": {"placeholders": {"time": {"type": "String"}}}
-  ,"@standardSubject": {"placeholders": {"subject": {"type": "String"}}}
-  ,"@issueLine": {"placeholders": {"issue": {"type": "String"}}}
-  ,"@failedOpenFaq": {"placeholders": {"error": {"type": "String"}}}
-  ,"@failedOpenDocs": {"placeholders": {"error": {"type": "String"}}}
-  ,"@previousThreshold": {"placeholders": {"value": {"type": "double"}}}
-  ,"@newThreshold": {"placeholders": {"value": {"type": "double"}}}
-  ,"@themeChanged": {"placeholders": {"themeName": {"type": "String"}}}
-  ,"notificationSettingsTitle": "Notification Settings"
-  ,"notificationPermissionRequired": "Notification Permission Required"
-  ,"notificationPermissionRationale": "Enable notifications to receive gentle reminders and celebrate achievements."
-  ,"requesting": "Requesting..."
-  ,"enableNotificationsCta": "Enable Notifications"
-  ,"enableNotificationsTitle": "Enable Notifications"
-  ,"enableNotificationsSubtitle": "Allow SilenceScore to send notifications"
-  ,"dailyReminderTitle": "Smart Daily Reminders"
-  ,"dailyReminderSubtitle": "Smart or chosen time"
-  ,"dailyTimeLabel": "Daily Time"
-  ,"dailyTimeHint": "Choose a fixed time or let SilenceScore learn your pattern."
-  ,"useSmartCta": "Use Smart"
-  ,"sessionCompletedTitle": "Session Completed"
-  ,"sessionCompletedSubtitle": "Celebrate completed sessions"
-  ,"achievementUnlockedTitle": "Achievement Unlocked"
-  ,"achievementUnlockedSubtitle": "Milestone notifications"
-  ,"weeklySummaryTitle": "Weekly Progress Summary"
-  ,"weeklySummarySubtitle": "Weekly insights (weekday & time)"
-  ,"weeklyTimeLabel": "Weekly Time"
-  ,"notificationPreview": "Notification Preview"
-  ,"dailySilenceReminderTitle": "Daily Silence Reminder"
-  ,"weeklyProgressReportTitle": "Weekly Progress Report 📊"
-  ,"achievementUnlockedGenericTitle": "Achievement Unlocked! 🏆"
-  ,"sessionCompleteSuccessTitle": "Session Complete! 🎉"
-  ,"sessionCompleteEndedTitle": "Session Ended"
-  ,"reminderStartJourney": "🧘‍♂️ Start your silence journey today! Find your inner peace."
-  ,"reminderRestart": "🌱 Ready to restart your silence practice? Every moment is a new beginning."
-  ,"reminderDayTwo": "⭐ Day 2 of your silence streak! Consistency builds tranquility."
-  ,"reminderStreakShort": "🔥 {streak}-day streak! You're building a powerful habit."
-  ,"reminderStreakMedium": "🏆 Amazing {streak}-day streak! Your dedication is inspiring."
-  ,"reminderStreakLong": "👑 Incredible {streak}-day streak! You're a silence master!"
-  ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@reminderStreakLong": {"placeholders": {"streak": {"type": "int"}}}
-  ,"achievementFirstSession": "🎉 First session completed! Welcome to your silence journey!"
-  ,"achievementWeekStreak": "🌟 7-day streak achieved! Consistency is your superpower!"
-  ,"achievementMonthStreak": "🏆 30-day streak unlocked! You're unstoppable!"
-  ,"achievementPerfectSession": "✨ Perfect silence session! Not a sound disturbed your peace."
-  ,"achievementLongSession": "⏰ Extended session master! Your focus grows stronger."
-  ,"achievementGeneric": "🎊 Achievement unlocked! Keep up the great work!"
-  ,"weeklyProgressNone": "💭 This week could use some silence. Ready for a peaceful session?"
-  ,"weeklyProgressFew": "🌿 {count} sessions this week. Every practice deepens your calm."
-  ,"weeklyProgressSome": "🌊 {count} sessions this week! You're finding your rhythm."
-  ,"weeklyProgressPerfect": "🎯 Perfect week with {count} sessions! Your dedication shines."
-  ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
-  ,"tipsHidden": "Tips hidden"
-  ,"tipsShown": "Tips shown"
-  ,"showTips": "Show Tips"
-  ,"hideTips": "Hide Tips"
-  ,"tip01": "Short sessions count—start with 2–3 minutes to build consistency."
-  ,"tip02": "Use Smart Daily Reminders to nudge you at your best time."
-  ,"tip03": "Recalibrate when your environment changes for better accuracy."
-  ,"tip04": "Check Weekly Trends to spot your momentum over time."
-  ,"tip05": "Streaks grow with daily wins—show up, even for one minute."
-  ,"tip06": "High ambient noise? Raise threshold a bit to reduce false fails."
-  ,"tip07": "Try different times of day to find your quiet sweet spot."
-  ,"tip08": "Session complete notifications keep motivation high—enable them!"
-  ,"tip09": "Prefer hands‑off? Auto reminders can schedule themselves (Smart)."
-  ,"tip10": "Use shorter sessions on busy days to keep your streak alive."
-  ,"tip11": "The progress ring is tappable—start or stop with a single tap."
-  ,"tip12": "Export your data (Premium) to share progress or back it up."
-  ,"tip13": "Average session length helps you choose the right duration."
-  ,"tip14": "Consistency beats intensity—small daily practice compounds."
-  ,"tip15": "Set a gentle goal: 5 quiet minutes is a great baseline."
-  ,"tip16": "The noise chart helps you see spikes—aim for calmer periods."
-  ,"tip17": "Upgrade session duration (Premium) for longer focus blocks."
-  ,"tip18": "High threshold warning guards accuracy—avoid setting it too high."
-  ,"tip19": "Weekdays vary—tune your weekly summary to your schedule."
-  ,"tip20": "Accessibility options: high contrast, large text, and vibration."
-  ,"tip21": "Ambient baseline matters—calibrate when moving to new spaces."
-  ,"tip22": "Quiet wins add up—1 point per minute keeps it simple."
-  ,"tip23": "Confetti celebrates progress—small celebrations reinforce habits."
-  ,"tip24": "Try mornings if evenings are noisy—best time differs for everyone."
-  ,"tip25": "Fine‑tune the decibel threshold for your room’s character."
-  ,"tip26": "Use the moving average to smooth out noisy days."
-  ,"tip27": "Let Weekly Insights remind you of your progress rhythm."
-  ,"tip28": "Finish what you start—short sessions reduce friction to begin."
-  ,"tip29": "Silence is a skill—practice makes patterns, patterns make progress."
-  ,"tip30": "You’re one tap away—start a tiny session now."
-    ,"tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations."
-    ,"tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time."
-    ,"tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune."
-    ,"tipsTitle": "Tips"
-    ,"tipInstructionSetTime": "Settings → Basic → Session duration"
-  ,"tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders."
-  ,"tipInstructionCalibrate": "Settings → Advanced → Noise Calibration."
-  ,"tipInstructionOpenAnalytics": "Open Analytics to view trends and averages."
-  ,"tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed."
-  ,"tipInstructionTapRing": "On Home, tap the progress ring to start/stop."
-  ,"tipInstructionExport": "Settings → Advanced → Export Data."
-  ,"tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart."
-  ,"tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks."
-  ,"tipInstructionAccessibility": "Settings → Advanced → Accessibility."
-  ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
-  ,"tipInfoTooltip": "Show tip"
+  "@billedMonthly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "mockSubscriptionsBanner": "Mock Subscriptions Enabled",
+  "splashTagline": "Find your quiet",
+  "appIconSemantic": "App icon",
+  "tabBasic": "Basic",
+  "tabAdvanced": "Advanced",
+  "tabAbout": "About",
+  "resetAllSettings": "Reset All Settings",
+  "resetAllSettingsDescription": "This will reset all settings and data. Cannot be undone.",
+  "cancel": "Cancel",
+  "reset": "Reset",
+  "allSettingsReset": "All settings and data have been reset",
+  "decibelThresholdMaxNoise": "Decibel Threshold (max noise level)",
+  "highThresholdWarningText": "High threshold may ignore meaningful noise events.",
+  "decibelThresholdTooltip": "Typical quiet spaces: 30–40 dB. Calibrate; raise only if normal hum counts as noise.",
+  "sessionDuration": "Session Duration",
+  "upgradeForMinutes": "Upgrade for {minutes}m",
+  "freeUpToMinutes": "Free: up to {minutes} min",
+  "durationLabel": "Duration",
+  "minutesShort": "min",
+  "noiseCalibration": "Noise Calibration",
+  "calibrateBaseline": "Calibrate baseline",
+  "unlockAdvancedCalibration": "Unlock advanced noise calibration",
+  "exportData": "Export Data",
+  "sessionHistory": "Session history",
+  "notifications": "Notifications",
+  "remindersCelebrations": "Reminders & celebrations",
+  "accessibility": "Accessibility",
+  "accessibilityFeatures": "Accessibility features",
+  "appInformation": "App Information",
+  "version": "Version",
+  "bundleId": "Bundle ID",
+  "environment": "Environment",
+  "helpSupport": "Help & Support",
+  "support": "Support",
+  "rateApp": "Rate App",
+  "errorLoadingSettings": "Error loading settings: {error}",
+  "exportNoData": "No data available to export",
+  "chooseExportFormat": "Choose export format for your {sessions} sessions:",
+  "csvSpreadsheet": "CSV Spreadsheet",
+  "rawDataForAnalysis": "Raw data for analysis",
+  "pdfReport": "PDF Report",
+  "formattedReportWithCharts": "Formatted report with charts",
+  "generatingExport": "Generating {format} export...",
+  "exportCompleted": "{format} export completed!",
+  "exportFailed": "Export failed: {error}",
+  "close": "Close",
+  "supportTitle": "Support",
+  "responseTimeLabel": "Response Time: {time}",
+  "docs": "Docs",
+  "contactSupport": "Contact Support",
+  "emailOpenDescription": "Opens your email app with system information pre-filled",
+  "subject": "Subject",
+  "briefDescription": "Brief description",
+  "description": "Description",
+  "issueDescriptionHint": "Provide details about your issue...",
+  "openingEmail": "Opening Email...",
+  "openEmailApp": "Open Email App",
+  "fillSubjectDescription": "Please fill subject and description",
+  "emailOpened": "Email app opened. Send when ready.",
+  "noEmailAppFound": "No email app found. Contact:",
+  "standardSubject": "Subject: [STANDARD] {subject}",
+  "issueLine": "Issue: {issue}",
+  "failedOpenFaq": "Failed to open FAQ: {error}",
+  "failedOpenDocs": "Failed to open documentation: {error}",
+  "accessibilitySettings": "Accessibility Settings",
+  "vibrationFeedback": "Vibration Feedback",
+  "vibrateOnSessionEvents": "Vibrate on session events",
+  "voiceAnnouncements": "Voice Announcements",
+  "announceSessionProgress": "Announce session progress",
+  "highContrastMode": "High Contrast Mode",
+  "improveVisualAccessibility": "Improve visual accessibility",
+  "largeText": "Large Text",
+  "increaseTextSize": "Increase text size",
+  "save": "Save",
+  "accessibilitySettingsSaved": "Accessibility settings saved",
+  "noiseFloorCalibration": "Noise Floor Calibration",
+  "measuringAmbientNoise": "Measuring ambient noise (≈5s)...",
+  "couldNotReadMic": "Could not read microphone",
+  "calibrationFailed": "Calibration failed",
+  "retry": "Retry",
+  "previousThreshold": "Previous: {value} dB",
+  "newThreshold": "New threshold: {value} dB",
+  "noSignificantChange": "No significant change detected.",
+  "highAmbientDetected": "High ambient environment detected. Consider a quieter space for more sensitivity.",
+  "adjustAnytimeSettings": "You can adjust this anytime in Settings.",
+  "toggleThemeTooltip": "Toggle theme",
+  "audioChartRecovering": "Audio chart recovering...",
+  "themeChanged": "Theme: {themeName}",
+  "privacyComingSoon": "Privacy policy coming soon.",
+  "ratingFeatureComingSoon": "Rating feature coming soon!",
+  "startSessionButton": "Start Session",
+  "stopSessionButton": "Stop",
+  "statusListening": "Listening...",
+  "statusSuccess": "Silence achieved! +1 point",
+  "statusFailure": "Too noisy! Try again",
+  "upgrade": "Upgrade",
+  "upgradeRequired": "Upgrade Required",
+  "exportCsvSpreadsheet": "CSV Spreadsheet",
+  "exportPdfReport": "PDF Report",
+  "formattedReportCharts": "Formatted report with charts",
+  "csv": "CSV",
+  "pdf": "PDF",
+  "theme": "Theme",
+  "open": "Open",
+  "microphone": "Microphone",
+  "premium": "Premium",
+  "sessions": "sessions",
+  "format": "format",
+  "successRate": "Success Rate",
+  "avgSession": "Avg Session",
+  "consistency": "Consistency",
+  "bestTime": "Best Time",
+  "weeklyTrends": "Weekly Trends",
+  "performanceMetrics": "Performance Metrics",
+  "advancedAnalytics": "Advanced Analytics",
+  "premiumBadge": "PREMIUM",
+  "bucket1to2": "1-2 min",
+  "bucket3to5": "3-5 min",
+  "bucket6to10": "6-10 min",
+  "bucket11to20": "11-20 min",
+  "bucket21to30": "21-30 min",
+  "bucket30plus": "30+ min",
+  "sessionHistoryTitle": "Session History",
+  "recentSessionHistory": "Recent Session History",
+  "achievementFirstStepTitle": "First Step",
+  "achievementFirstStepDesc": "Completed your first session",
+  "achievementOnFireTitle": "On Fire",
+  "achievementOnFireDesc": "3-day streak achieved",
+  "achievementWeekWarriorTitle": "Week Warrior",
+  "achievementWeekWarriorDesc": "7-day streak achieved",
+  "achievementDecadeTitle": "Decade",
+  "achievementDecadeDesc": "10 points milestone",
+  "achievementHalfCenturyTitle": "Half Century",
+  "achievementHalfCenturyDesc": "50 points milestone",
+  "achievementLockedPrompt": "Complete sessions to unlock achievements",
+  "ratingPromptTitle": "Enjoying Focus Field?",
+  "ratingPromptBody": "A quick 5-star rating helps others discover calmer focus time.",
+  "ratingPromptRateNow": "Rate Now",
+  "ratingPromptLater": "Later",
+  "ratingPromptNoThanks": "No Thanks",
+  "ratingThankYou": "Thanks for your support!",
+  "@achievementFirstStepTitle": {
+    "description": "Achievement title for completing the very first session"
+  },
+  "@achievementFirstStepDesc": {
+    "description": "Achievement description: user completed their first session"
+  },
+  "@achievementOnFireTitle": {
+    "description": "Achievement title for achieving a 3 day streak"
+  },
+  "@achievementOnFireDesc": {
+    "description": "Achievement description: user achieved a 3 day streak"
+  },
+  "@achievementWeekWarriorTitle": {
+    "description": "Achievement title for achieving a 7 day streak"
+  },
+  "@achievementWeekWarriorDesc": {
+    "description": "Achievement description: user achieved a 7 day streak"
+  },
+  "@achievementDecadeTitle": {
+    "description": "Achievement title for reaching 10 total points"
+  },
+  "@achievementDecadeDesc": {
+    "description": "Achievement description: user reached 10 points milestone"
+  },
+  "@achievementHalfCenturyTitle": {
+    "description": "Achievement title for reaching 50 total points"
+  },
+  "@achievementHalfCenturyDesc": {
+    "description": "Achievement description: user reached 50 points milestone"
+  },
+  "@achievementLockedPrompt": {
+    "description": "Prompt shown when achievements are locked and user has no progress"
+  },
+  "@upgradeForMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@freeUpToMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@errorLoadingSettings": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@chooseExportFormat": {
+    "placeholders": {
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "@generatingExport": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportCompleted": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@faqAdjustSensitivityA": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "@responseTimeLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@standardSubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "@issueLine": {
+    "placeholders": {
+      "issue": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedOpenFaq": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedOpenDocs": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@previousThreshold": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "@newThreshold": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "@themeChanged": {
+    "placeholders": {
+      "themeName": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationSettingsTitle": "Notification Settings",
+  "notificationPermissionRequired": "Notification Permission Required",
+  "notificationPermissionRationale": "Enable notifications to receive gentle reminders and celebrate achievements.",
+  "requesting": "Requesting...",
+  "enableNotificationsCta": "Enable Notifications",
+  "enableNotificationsTitle": "Enable Notifications",
+  "enableNotificationsSubtitle": "Allow Focus Field to send notifications",
+  "dailyReminderTitle": "Smart Daily Reminders",
+  "dailyReminderSubtitle": "Smart or chosen time",
+  "dailyTimeLabel": "Daily Time",
+  "dailyTimeHint": "Choose a fixed time or let Focus Field learn your pattern.",
+  "useSmartCta": "Use Smart",
+  "sessionCompletedTitle": "Session Completed",
+  "sessionCompletedSubtitle": "Celebrate completed sessions",
+  "achievementUnlockedTitle": "Achievement Unlocked",
+  "achievementUnlockedSubtitle": "Milestone notifications",
+  "weeklySummaryTitle": "Weekly Progress Summary",
+  "weeklySummarySubtitle": "Weekly insights (weekday & time)",
+  "weeklyTimeLabel": "Weekly Time",
+  "notificationPreview": "Notification Preview",
+  "dailySilenceReminderTitle": "Daily Focus Reminder",
+  "weeklyProgressReportTitle": "Weekly Progress Report 📊",
+  "achievementUnlockedGenericTitle": "Achievement Unlocked! 🏆",
+  "sessionCompleteSuccessTitle": "Session Complete! 🎉",
+  "sessionCompleteEndedTitle": "Session Ended",
+  "reminderStartJourney": "🎯 Start your focus journey today! Build your deep work habit.",
+  "reminderRestart": "🌱 Ready to restart your focus practice? Every moment is a new beginning.",
+  "reminderDayTwo": "⭐ Day 2 of your focus streak! Consistency builds concentration.",
+  "reminderStreakShort": "🔥 {streak}-day streak! You're building a powerful focus habit.",
+  "reminderStreakMedium": "🏆 Amazing {streak}-day streak! Your dedication is inspiring.",
+  "reminderStreakLong": "👑 Incredible {streak}-day streak! You're a focus champion!",
+  "@reminderStreakShort": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@reminderStreakMedium": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@reminderStreakLong": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "achievementFirstSession": "🎉 First session complete! Welcome to Focus Field!",
+  "achievementWeekStreak": "🌟 7-day streak achieved! Consistency is your superpower!",
+  "achievementMonthStreak": "🏆 30-day streak unlocked! You're unstoppable!",
+  "achievementPerfectSession": "✨ Perfect session! 100% calm environment maintained!",
+  "achievementLongSession": "⏰ Extended session master! Your focus grows stronger.",
+  "achievementGeneric": "🎊 Achievement unlocked! Keep up the great work!",
+  "weeklyProgressNone": "💭 Start your weekly goal! Ready for a focused session?",
+  "weeklyProgressFew": "🌿 {count} focus minutes this week! Every session counts.",
+  "weeklyProgressSome": "🌊 {count} focus minutes earned! You're on track!",
+  "weeklyProgressPerfect": "🎯 {count} focus minutes achieved! Perfect week!",
+  "@weeklyProgressFew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressSome": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressPerfect": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tipsHidden": "Tips hidden",
+  "tipsShown": "Tips shown",
+  "showTips": "Show Tips",
+  "hideTips": "Hide Tips",
+  "tip01": "Start small—even 2 minutes builds your focus habit.",
+  "tip02": "Your streak has grace—one miss won't break it with the 2-Day Rule.",
+  "tip03": "Try Study, Reading, or Meditation activities to match your focus style.",
+  "tip04": "Check your 12-week Heatmap to see how small wins compound over time.",
+  "tip05": "Watch your live Calm % during sessions—higher scores mean better focus!",
+  "tip06": "Customize your daily goal (10-60 min) to match your rhythm.",
+  "tip07": "Use your monthly Freeze Token to protect your streak on tough days.",
+  "tip08": "After 3 wins, Focus Field suggests a stricter threshold—ready to level up?",
+  "tip09": "High ambient noise? Raise your threshold to stay in the zone.",
+  "tip10": "Smart Daily Reminders learn your best time—let them guide you.",
+  "tip11": "The progress ring is tappable—one tap starts your focus session.",
+  "tip12": "Recalibrate when your environment changes for better accuracy.",
+  "tip13": "Session notifications celebrate your wins—enable them for motivation!",
+  "tip14": "Consistency beats perfection—show up, even on busy days.",
+  "tip15": "Try different times of day to discover your quiet sweet spot.",
+  "tip16": "Your daily progress is always visible—tap Go to start anytime.",
+  "tip17": "Each activity tracks separately toward your goal—variety keeps it fresh.",
+  "tip18": "Export your data (Premium) to see your complete focus journey.",
+  "tip19": "Confetti celebrates every completion—small wins deserve recognition!",
+  "tip20": "Your baseline matters—calibrate when moving to new spaces.",
+  "tip21": "Your 7-Day Trends reveal patterns—check them weekly for insights.",
+  "tip22": "Upgrade session duration (Premium) for longer deep focus blocks.",
+  "tip23": "Focus is a practice—small sessions build the habit you want.",
+  "tip24": "Weekly Summary shows your rhythm—tune it to your schedule.",
+  "tip25": "Fine-tune your threshold for your space—every room is different.",
+  "tip26": "Accessibility options help everyone focus—high contrast, large text, vibration.",
+  "tip27": "Today Timeline shows when you focused—find your productive hours.",
+  "tip28": "Finish what you start—shorter sessions mean more completions.",
+  "tip29": "Quiet Minutes add up toward your goal—progress over perfection.",
+  "tip30": "You're one tap away—start a tiny session right now.",
+  "tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations.",
+  "tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.",
+  "tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.",
+  "tipsTitle": "Tips",
+  "tipInstructionSetTime": "Settings → Basic → Session duration",
+  "tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders.",
+  "tipInstructionCalibrate": "Settings → Advanced → Noise Calibration.",
+  "tipInstructionOpenAnalytics": "Open Analytics to view trends and averages.",
+  "tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed.",
+  "tipInstructionTapRing": "On Home, tap the progress ring to start/stop.",
+  "tipInstructionExport": "Settings → Advanced → Export Data.",
+  "tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart.",
+  "tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks.",
+  "tipInstructionAccessibility": "Settings → Advanced → Accessibility.",
+  "tipInstructionStartNow": "Tap Start Session on the Home screen.",
+  "tipInstructionHeatmap": "Summary tab → Show More → Heatmap",
+  "tipInstructionTodayTimeline": "Summary tab → Show More → Today Timeline",
+  "tipInstruction7DayTrends": "Summary tab → Show More → 7-Day Trends",
+  "tipInstructionEditActivities": "Activity tab → tap Edit to show/hide activities",
+  "tipInstructionQuestGo": "Activity tab → Quest Capsule → tap Go",
+  "tipInfoTooltip": "Show tip",
+  "questCapsuleTitle": "Ambient Quest",
+  "questCapsuleLoading": "Calm minutes loading…",
+  "questCapsuleProgress": "Calm {progress}/{goal} min • Streak {streak}",
+  "@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      },
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "questFreezeButton": "Freeze",
+  "questFrozenToday": "Today frozen — you're covered.",
+  "questGoButton": "Go",
+  "calmPercent": "Calm {percent}%",
+  "@calmPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "calmLabel": "Calm",
+  "day": "day",
+  "days": "days",
+  "freeze": "freeze",
+  "adaptiveThresholdSuggestion": "3 wins! Try {threshold} dB?",
+  "@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "adaptiveThresholdNotNow": "Not Now",
+  "adaptiveThresholdTryIt": "Try It",
+  "adaptiveThresholdConfirm": "Threshold set to {threshold} dB",
+  "@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "Edit",
+  "start": "Start",
+  "error": "Error",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "faqTitle": "Frequently Asked Questions",
+  "faqSearchHint": "Search FAQs...",
+  "faqNoResults": "No results found",
+  "faqNoResultsSubtitle": "Try a different search term",
+  "faqResultsCount": "{count, plural, one {1 result found} other {{count} results found}}",
+  "@faqResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "faqQ01": "What is Focus Field and how does it help me focus?",
+  "faqA01": "Focus Field helps you build better focus habits by monitoring ambient noise in your environment. When you start a session (Study, Reading, Meditation, or Other), the app measures how quiet your environment is. The quieter you keep it, the more \"focus minutes\" you earn. This encourages you to find and maintain distraction-free spaces for deep work.",
+  "faqQ02": "How does Focus Field measure my focus?",
+  "faqA02": "Focus Field monitors the ambient noise level in your environment during your session. It calculates an \"Ambient Score\" by tracking how many seconds your environment stays below your chosen noise threshold. If your session has at least 70% quiet time (Ambient Score ≥70%), you earn full credit for those quiet minutes.",
+  "faqQ03": "Does Focus Field record my audio or conversations?",
+  "faqA03": "No, absolutely not. Focus Field only measures decibel levels (loudness) - it never records, stores, or transmits any audio. Your privacy is completely protected. The app simply checks if your environment is above or below your chosen threshold.",
+  "faqQ04": "What activities can I track with Focus Field?",
+  "faqA04": "Focus Field comes with four activity types: Study 📚 (for learning and research), Reading 📖 (for focused reading), Meditation 🧘 (for mindfulness practice), and Other ⭐ (for any focus-requiring activity). All activities use ambient noise monitoring to help you maintain a quiet, focused environment.",
+  "faqQ05": "Should I use Focus Field for all my activities?",
+  "faqA05": "Focus Field works best for activities where ambient noise indicates your level of focus. Activities like Study, Reading, and Meditation benefit most from quiet environments. While you can track \"Other\" activities, we recommend using Focus Field primarily for noise-sensitive focus work.",
+  "faqQ06": "How do I start a focus session?",
+  "faqA06": "Go to the Sessions tab, select your activity (Study, Reading, Meditation, or Other), choose your session duration (1, 5, 10, 15, 30 minutes, or premium options), tap the Start button on the progress ring, and keep your environment quiet!",
+  "faqQ07": "What session durations are available?",
+  "faqA07": "Free users can choose: 1, 5, 10, 15, or 30-minute sessions. Premium users also get: 1 hour, 1.5 hours, and 2-hour extended sessions for longer deep work periods.",
+  "faqQ08": "Can I pause or stop a session early?",
+  "faqA08": "Yes! During a session, you'll see Pause and Stop buttons above the progress ring. To prevent accidental taps, you need to long-press these buttons. If you stop early, you'll still earn points for the quiet minutes you accumulated.",
+  "faqQ09": "How do I earn points in Focus Field?",
+  "faqA09": "You earn 1 point per quiet minute. During your session, Focus Field tracks how many seconds your environment stays below the noise threshold. At the end, those quiet seconds are converted to minutes. For example, if you complete a 10-minute session with 8 minutes of quiet time, you earn 8 points.",
+  "faqQ10": "What is the 70% threshold and why does it matter?",
+  "faqA10": "The 70% threshold determines if your session counts toward your daily goal. If your Ambient Score (quiet time ÷ total time) is at least 70%, your session qualifies for quest credit. Even if you're under 70%, you still earn points for every quiet minute!",
+  "faqQ11": "What's the difference between Ambient Score and points?",
+  "faqA11": "Ambient Score is your session quality as a percentage (quiet seconds ÷ total seconds), determining if you hit the 70% threshold. Points are the actual quiet minutes earned (1 point = 1 minute). Ambient Score = quality, Points = achievement.",
+  "faqQ12": "How do streaks work in Focus Field?",
+  "faqA12": "Streaks track consecutive days of meeting your daily goal. Focus Field uses a compassionate 2-Day Rule: Your streak only breaks if you miss two consecutive days. This means you can miss one day and your streak continues if you complete your goal the next day.",
+  "faqQ13": "What are freeze tokens and how do I use them?",
+  "faqA13": "Freeze tokens protect your streak when you can't complete your goal. You get 1 free freeze token per month. When used, your overall progress shows 100% (goal protected), your streak is safe, and individual activity tracking continues normally. Use it wisely for busy days!",
+  "faqQ14": "Can I customize my daily focus goal?",
+  "faqA14": "Yes! Tap Edit on the Sessions card in the Today tab. You can set your global daily goal (10-60 minutes for free, up to 1080 minutes for premium), enable per-activity goals for separate targets, and show/hide specific activities.",
+  "faqQ15": "What is the noise threshold and how do I adjust it?",
+  "faqA15": "The threshold is the maximum noise level (in decibels) that counts as \"quiet.\" Default is 40 dB (library quiet). You can adjust it in the Sessions tab: 30 dB (very quiet), 40 dB (library quiet - recommended), 50 dB (moderate office), 60-80 dB (louder environments).",
+  "faqQ16": "What is Adaptive Threshold and should I use it?",
+  "faqA16": "After 3 consecutive successful sessions at your current threshold, Focus Field suggests increasing it by 2 dB to challenge yourself. This helps you gradually improve. You can accept or dismiss the suggestion - it only appears once every 7 days.",
+  "faqQ17": "What is Focus Mode?",
+  "faqA17": "Focus Mode is a full-screen distraction-free overlay during your session. It shows your countdown timer, live calm percentage, and minimal controls (Pause/Stop via long-press). It removes all other UI elements so you can concentrate fully. Enable it in Settings > Basic > Focus Mode.",
+  "faqQ18": "Why does Focus Field need microphone permission?",
+  "faqA18": "Focus Field uses your device's microphone to measure ambient noise levels (decibels) during sessions. This is essential to calculate your Ambient Score. Remember: no audio is ever recorded - only noise levels are measured in real-time.",
+  "faqQ19": "Can I see my focus patterns over time?",
+  "faqA19": "Yes! The Today tab shows your daily progress, weekly trends, 12-week activity heatmap (like GitHub contributions), and session timeline. Premium users get advanced analytics with performance metrics, moving averages, and AI-powered insights.",
+  "faqQ20": "How do notifications work in Focus Field?",
+  "faqA20": "Focus Field has smart reminders: Daily Reminders (learns your preferred focus time or use a fixed time), Session Completion notifications with results, Achievement notifications for milestones, and Weekly Summary (Premium). Enable/customize in Settings > Advanced > Notifications.",
+  "microphoneSettingsTitle": "Settings Required",
+  "microphoneSettingsMessage": "To enable silence detection, manually grant microphone permission:\n\n• iOS: Settings > Privacy & Security > Microphone > Focus Field\n• Android: Settings > Apps > Focus Field > Permissions > Microphone",
+  "buttonGrantPermission": "Grant Permission",
+  "buttonOk": "OK",
+  "buttonOpenSettings": "Open Settings",
+  "onboardingBack": "Back",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingGetStarted": "Get Started",
+  "onboardingWelcomeSnackbar": "Welcome! Ready to start your first session? 🚀",
+  "onboardingWelcomeTitle": "Welcome to\nFocus Field! 🎯",
+  "onboardingWelcomeSubtitle": "Your journey to better focus starts here!\nLet's build habits that stick 💪",
+  "onboardingFeatureTrackTitle": "Track Your Focus",
+  "onboardingFeatureTrackDesc": "See your progress in real-time as you build your focus superpower! 📊",
+  "onboardingFeatureRewardsTitle": "Earn Rewards",
+  "onboardingFeatureRewardsDesc": "Every quiet minute counts! Collect points and celebrate your wins 🏆",
+  "onboardingFeatureStreaksTitle": "Build Streaks",
+  "onboardingFeatureStreaksDesc": "Keep the momentum going! Our compassionate system keeps you motivated 🔥",
+  "onboardingEnvironmentTitle": "Where's Your Focus Zone? 🎯",
+  "onboardingEnvironmentSubtitle": "Choose your typical environment so we can optimize for your space!",
+  "onboardingEnvQuietHomeTitle": "Quiet Home",
+  "onboardingEnvQuietHomeDesc": "Bedroom, quiet home office",
+  "onboardingEnvQuietHomeDb": "30 dB - Very quiet",
+  "onboardingEnvOfficeTitle": "Typical Office",
+  "onboardingEnvOfficeDesc": "Standard office, library",
+  "onboardingEnvOfficeDb": "40 dB - Library quiet (Recommended)",
+  "onboardingEnvBusyTitle": "Busy Space",
+  "onboardingEnvBusyDesc": "Coffee shop, shared workspace",
+  "onboardingEnvBusyDb": "50 dB - Moderate noise",
+  "onboardingEnvNoisyTitle": "Noisy Environment",
+  "onboardingEnvNoisyDesc": "Open office, public space",
+  "onboardingEnvNoisyDb": "60 dB - Higher noise",
+  "onboardingEnvAdjustNote": "You can adjust this anytime in Settings",
+  "onboardingGoalTitle": "Set Your Daily Goal! 🎯",
+  "onboardingGoalSubtitle": "How much focused time feels right for you?\n(You can adjust this anytime!)",
+  "onboardingGoalStartingTitle": "Getting Started",
+  "onboardingGoalStartingDuration": "10-15 minutes",
+  "onboardingGoalHabitTitle": "Building Habit",
+  "onboardingGoalHabitDuration": "20-30 minutes",
+  "onboardingGoalPracticeTitle": "Regular Practice",
+  "onboardingGoalPracticeDuration": "40-60 minutes",
+  "onboardingGoalDeepWorkTitle": "Deep Work",
+  "onboardingGoalDeepWorkDuration": "60+ minutes",
+  "onboardingGoalAdvice1": "Perfect start! 🌟 Small steps lead to big wins. You've got this!",
+  "onboardingGoalAdvice2": "Excellent choice! 🎯 This sweet spot builds lasting habits!",
+  "onboardingGoalAdvice3": "Ambitious! 💪 You're ready to level up your focus game!",
+  "onboardingGoalAdvice4": "Wow! 🏆 Deep work mode activated! Remember to take breaks!",
+  "onboardingActivitiesTitle": "Choose Your Activities! ✨",
+  "onboardingActivitiesSubtitle": "Pick all that resonate with you!\n(You can always add more later)",
+  "onboardingActivityStudyTitle": "Study",
+  "onboardingActivityStudyDesc": "Learning, coursework, research",
+  "onboardingActivityReadingTitle": "Reading",
+  "onboardingActivityReadingDesc": "Deep reading, articles, books",
+  "onboardingActivityMeditationTitle": "Meditation",
+  "onboardingActivityMeditationDesc": "Mindfulness, breathing exercises",
+  "onboardingActivityOtherTitle": "Other",
+  "onboardingActivityOtherDesc": "Any focus-requiring activity",
+  "onboardingActivitiesTip": "Pro tip: Focus Field shines when quiet = focused! 🤫✨",
+  "onboardingPermissionTitle": "Your Privacy Matters! 🔒",
+  "onboardingPermissionSubtitle": "We need microphone access to measure ambient noise and help you focus better",
+  "onboardingPrivacyNoRecordingTitle": "No Recording",
+  "onboardingPrivacyNoRecordingDesc": "We only measure noise levels, never record audio",
+  "onboardingPrivacyLocalTitle": "Local Only",
+  "onboardingPrivacyLocalDesc": "All data stays on your device",
+  "onboardingPrivacyFirstTitle": "Privacy First",
+  "onboardingPrivacyFirstDesc": "Your conversations are completely private",
+  "onboardingPermissionNote": "You can grant permission on the next screen when starting your first session",
+  "onboardingTipsTitle": "Pro Tips for Success! 💡",
+  "onboardingTipsSubtitle": "These will help you make the most of Focus Field!",
+  "onboardingTip1Title": "Start Small, Win Big! 🌱",
+  "onboardingTip1Desc": "Begin with 5-10 minute sessions. Consistency beats perfection!",
+  "onboardingTip2Title": "Activate Focus Mode! 🎯",
+  "onboardingTip2Desc": "Tap Focus Mode for immersive, distraction-free experience.",
+  "onboardingTip3Title": "Freeze Token = Safety Net! ❄️",
+  "onboardingTip3Desc": "Use your monthly token on busy days to protect your streak.",
+  "onboardingTip4Title": "The 70% Rule Rocks! 📈",
+  "onboardingTip4Desc": "Aim for 70% quiet time - perfect silence not required!",
+  "onboardingReadyTitle": "You're Ready to Launch! 🚀",
+  "onboardingReadyDesc": "Let's start your first session and build amazing habits!",
+  "questMotivation1": "Success is never ending and failure is never final",
+  "questMotivation2": "Progress over perfection - every minute counts",
+  "questMotivation3": "Small steps daily lead to big changes",
+  "questMotivation4": "You're building better habits, one session at a time",
+  "questMotivation5": "Consistency beats intensity",
+  "questMotivation6": "Every session is a win, no matter how short",
+  "questMotivation7": "Focus is a muscle - you're getting stronger",
+  "questMotivation8": "The journey of a thousand miles begins with a single step",
+  "questGo": "Go",
+  "todayDashboardTitle": "Your Focus Dashboard",
+  "todayFocusMinutes": "Focus minutes today",
+  "todayGoalCalm": "Goal: {goalMinutes} min • Calm ≥{calmPercent}%",
+  "@todayGoalCalm": {
+    "placeholders": {
+      "goalMinutes": {
+        "type": "int"
+      },
+      "calmPercent": {
+        "type": "int"
+      }
+    }
+  },
+  "todayPickMode": "Pick your mode",
+  "todayDefaultActivities": "Study • Reading • Meditation",
+  "todayTooltipTips": "Tips",
+  "todayTooltipTheme": "Theme",
+  "todayTooltipSettings": "Settings",
+  "todayThemeChanged": "Theme changed to {themeName}",
+  "@todayThemeChanged": {
+    "placeholders": {
+      "themeName": {
+        "type": "String"
+      }
+    }
+  },
+  "todayTabToday": "Today",
+  "todayTabSessions": "Sessions",
+  "todayHelperText": "Set your duration and track your time. Session history and analytics will appear in Summary.",
+  "statPoints": "Points",
+  "statStreak": "Streak",
+  "statSessions": "Sessions",
+  "ringProgressTitle": "Ring Progress",
+  "ringOverall": "Overall",
+  "ringOverallFrozen": "Overall ❄️",
+  "sessionCalm": "Calm",
+  "sessionStart": "Start",
+  "sessionStop": "Stop",
+  "buttonEdit": "Edit",
+  "durationUpTo1Hour": "Sessions up to 1 hour",
+  "durationUpTo1_5Hours": "Sessions up to 1.5 hours",
+  "durationUpTo2Hours": "Sessions up to 2 hours",
+  "durationExtended": "Extended session durations",
+  "durationExtendedAccess": "Extended session access",
+  "noiseRoomLoudness": "Room Loudness",
+  "noiseThresholdLabel": "Threshold: {threshold}dB",
+  "@noiseThresholdLabel": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseThresholdSet": "Threshold set to {db} dB",
+  "@noiseThresholdSet": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighDetected": "High noise detected, please proceed to a quieter room for better focus",
+  "noiseThresholdExceededHint": "Find a quieter room or increase threshold →",
+  "noiseExceededIncreasePrompt": "Find a quieter room or increase to {db}dB?",
+  "@noiseExceededIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighIncreasePrompt": "High noise detected. Increase to {db}dB?",
+  "@noiseHighIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseAtMaxThreshold": "Already at maximum threshold. Please find a quieter room.",
+  "noiseThresholdYes": "Yes",
+  "noiseThresholdNo": "No",
+  "trendsInsights": "Insights",
+  "trendsLast7Days": "Last 7 Days",
+  "trendsShareWeeklySummary": "Share weekly summary",
+  "trendsLoading": "Loading...",
+  "trendsLoadingMetrics": "Loading metrics...",
+  "trendsNoData": "No data",
+  "trendsWeeklyTotal": "Weekly Total",
+  "trendsBestDay": "Best Day",
+  "trendsActivityHeatmap": "Activity Heatmap",
+  "trendsRecentActivity": "Recent activity",
+  "trendsHeatmapError": "Unable to load heatmap",
+  "dayMon": "Mon",
+  "dayTue": "Tue",
+  "dayWed": "Wed",
+  "dayThu": "Thu",
+  "dayFri": "Fri",
+  "daySat": "Sat",
+  "daySun": "Sun",
+  "focusModeComplete": "Session Complete!",
+  "focusModeGreatSession": "Great focus session",
+  "focusModeResume": "Resume",
+  "focusModePause": "Pause",
+  "focusModeLongPressHint": "Long press to pause or stop",
+  "activityEditTitle": "Edit Activities",
+  "activityRecommendation": "Recommended: 10+ min per activity for consistent habit building",
+  "activityDailyGoals": "Daily Goals",
+  "activityTotalHours": "Total: {hours}h / 18h",
+  "@activityTotalHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activityPerActivity": "Per-Activity",
+  "activityExceedsLimit": "Total exceeds 18-hour daily limit. Please reduce goals.",
+  "activityGoalLabel": "Goal",
+  "activityGoalDescription": "Set your daily focus target (1 min - 18h)",
+  "shareYourProgress": "Share Your Progress",
+  "shareTimeRange": "Time Range",
+  "shareCardSize": "Card Size",
+  "analyticsPerformanceMetrics": "Performance Metrics",
+  "analyticsPreferredDuration": "Preferred Duration",
+  "analyticsUnavailable": "Analytics unavailable",
+  "analyticsRestoreAttempt": "We'll attempt to restore this section on the next app launch.",
+  "audioUnavailable": "Audio temporarily unavailable",
+  "audioRecovering": "Audio processing encountered an issue. Recovering automatically...",
+  "shareQuietMinutes": "QUIET MINUTES",
+  "shareTopActivity": "Top Activity",
+  "appName": "Focus Field",
+  "sharePreview": "Preview",
+  "sharePinchToZoom": "Pinch to zoom",
+  "shareGenerating": "Generating...",
+  "shareButton": "Share",
+  "shareTodayLabel": "Today",
+  "shareWeeklyLabel": "Weekly",
+  "shareTodayTitle": "Today's Focus",
+  "shareWeeklyTitle": "Your Weekly Focus",
+  "shareSubject": "My Focus Field Progress",
+  "shareFormatSquare": "1:1 ratio • Universal compatibility",
+  "shareFormatPost": "4:5 ratio • Instagram/Twitter posts",
+  "shareFormatStory": "9:16 ratio • Instagram Stories",
+  "recapWeeklyTitle": "Weekly Recap",
+  "recapMinutes": "Minutes",
+  "recapStreak": "Streak: {start} → {end} days",
+  "@recapStreak": {
+    "placeholders": {
+      "start": {
+        "type": "int"
+      },
+      "end": {
+        "type": "int"
+      }
+    }
+  },
+  "recapTopActivity": "Top Activity: ",
+  "practiceOverviewTitle": "Practice Overview",
+  "practiceLast7Days": "Last 7 Days",
+  "audioMultipleErrors": "Multiple audio errors detected. Component recovering...",
+  "activityCurrentGoal": "Current goal: {goal}",
+  "@activityCurrentGoal": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySaveChanges": "Save Changes",
+  "insightsTitle": "Insights",
+  "insightsTooltip": "View detailed insights",
+  "statDays": "DAYS",
+  "sessionsTotalToday": "Total Today {done}/{goal} min, choose any activity",
+  "@sessionsTotalToday": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "premiumFeature": "Premium Feature",
+  "premiumFeatureAccess": "Premium feature access",
+  "activityUnknown": "Unknown",
+  "insightsFirstSessionTitle": "Complete your first session",
+  "insightsFirstSessionSubtitle": "Start tracking your focus time, session patterns, and ambient score trends",
+  "sessionAmbientLabel": "Ambient: {percent}%",
+  "@sessionAmbientLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionSuccess": "Success",
+  "sessionFailed": "Failed",
+  "focusModeButton": "Focus Mode",
+  "settingsDailyGoalsTitle": "Daily Goals",
+  "settingsFocusModeDescription": "Minimize distractions during sessions with a focused overlay",
+  "settingsDeepFocusTitle": "Deep Focus",
+  "settingsDeepFocusDescription": "End session if app is left",
+  "deepFocusDialogTitle": "Deep Focus",
+  "deepFocusEnableLabel": "Enable Deep Focus",
+  "deepFocusGracePeriodLabel": "Grace period (seconds)",
+  "deepFocusExplanation": "When enabled, leaving the app will end the session after the grace period.",
+  "notificationPermissionTitle": "Enable Notifications",
+  "notificationPermissionExplanation": "Focus Field needs notification permission to send you:",
+  "notificationBenefitReminders": "Daily focus reminders",
+  "notificationBenefitCompletion": "Session completion alerts",
+  "notificationBenefitAchievements": "Achievement celebrations",
+  "notificationHowToEnableIos": "How to enable on iOS:",
+  "notificationHowToEnableAndroid": "How to enable on Android:",
+  "notificationStepsIos": "1. Tap \"Open Settings\" below\n2. Tap \"Notifications\"\n3. Enable \"Allow Notifications\"",
+  "notificationStepsAndroid": "1. Tap \"Open Settings\" below\n2. Tap \"Notifications\"\n3. Enable \"All Focus Field notifications\"",
+  "aboutShowTips": "Show Tips",
+  "aboutShowTipsDescription": "Show helpful tips on app startup and via the lightbulb icon. Tips appear every 2-3 days.",
+  "aboutReplayOnboarding": "Replay Onboarding",
+  "aboutReplayOnboardingDescription": "Review the app tour and setup your preferences again",
+  "buttonFaq": "FAQ",
+  "onboardingWelcomeMessage": "Welcome! Ready to start your first session? 🚀",
+  "onboardingFeatureEarnTitle": "Earn Rewards",
+  "onboardingFeatureEarnDesc": "Every quiet minute counts! Collect points and celebrate your wins 🏆",
+  "onboardingFeatureBuildTitle": "Build Streaks",
+  "onboardingFeatureBuildDesc": "Keep the momentum going! Our compassionate system keeps you motivated 🔥",
+  "onboardingEnvironmentDescription": "Choose your typical environment so we can optimize for your space!",
+  "onboardingEnvQuietHome": "Quiet Home",
+  "onboardingEnvQuietHomeLevel": "30 dB - Very quiet",
+  "onboardingEnvOffice": "Typical Office",
+  "onboardingEnvOfficeLevel": "40 dB - Library quiet (Recommended)",
+  "onboardingEnvBusy": "Busy Space",
+  "onboardingEnvBusyLevel": "50 dB - Moderate noise",
+  "onboardingEnvNoisy": "Noisy Environment",
+  "onboardingEnvNoisyLevel": "60 dB - Higher noise",
+  "onboardingAdjustAnytime": "You can adjust this anytime in Settings",
+  "buttonGetStarted": "Get Started",
+  "buttonNext": "Next",
+  "errorActivityRequired": "⚠️ At least one activity must be enabled",
+  "errorGoalExceeds": "Total goals exceed 18-hour daily limit. Please reduce goals.",
+  "messageSaved": "Settings saved",
+  "errorPermissionRequired": "Permission required",
+  "notificationEnableReason": "Enable notifications to receive reminders and celebrate achievements.",
+  "buttonEnableNotifications": "Enable Notifications",
+  "buttonRequesting": "Requesting...",
+  "notificationDailyTime": "Daily Time",
+  "notificationDailyReminderSet": "Daily reminder at {time}",
+  "@notificationDailyReminderSet": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationLearning": "learning",
+  "notificationSmart": "Smart ({time})",
+  "@notificationSmart": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "buttonUseSmart": "Use Smart",
+  "notificationSmartExplanation": "Choose a fixed time or let Focus Field learn your pattern.",
+  "notificationSessionComplete": "Session Completed",
+  "notificationSessionCompleteDesc": "Celebrate completed sessions",
+  "notificationAchievement": "Achievement Unlocked",
+  "notificationAchievementDesc": "Milestone notifications",
+  "notificationWeekly": "Weekly Progress Summary",
+  "notificationWeeklyDesc": "Weekly insights (weekday & time)",
+  "notificationWeeklyTime": "Weekly Time",
+  "notificationMilestone": "Milestone notifications",
+  "notificationWeeklyInsights": "Weekly insights (weekday & time)",
+  "notificationDailyReminder": "Daily Reminder",
+  "notificationComplete": "Session Complete",
+  "settingsSnackbar": "Please enable notifications in device settings",
+  "shareCardTitle": "Share Card",
+  "shareYourWeek": "Share Your Week",
+  "shareStyleGradient": "Gradient Style",
+  "shareStyleGradientDesc": "Bold gradient with large numbers",
+  "shareWeeklySummary": "Weekly Summary",
+  "shareStyleAchievement": "Achievement Style",
+  "shareStyleAchievementDesc": "Focus on total quiet minutes",
+  "shareQuietMinutesWeek": "Quiet Minutes This Week",
+  "shareAchievementMessage": "Building deeper focus,\\none session at a time",
+  "shareAchievementCard": "Achievement Card",
+  "shareTextOnly": "Text Only",
+  "shareTextOnlyDesc": "Share as plain text (no image)",
+  "shareYourStreak": "Share Your Streak",
+  "shareAsCard": "Share as Card",
+  "shareAsCardDesc": "Beautiful visual card",
+  "shareStreakCard": "Streak Card",
+  "shareAsText": "Share as Text",
+  "shareAsTextDesc": "Simple text message",
+  "shareErrorFailed": "Failed to share. Please try again.",
+  "buttonShare": "Share",
+  "initializingApp": "Initializing app...",
+  "initializationFailed": "Initialization failed: {error}",
+  "loadingSettings": "Loading settings...",
+  "settingsLoadingFailed": "Settings loading failed: {error}",
+  "loadingUserData": "Loading user data...",
+  "dataLoadingFailed": "Data loading failed: {error}",
+  "loading": "Loading...",
+  "taglineSilence": "🤫 Master the Art of Silence",
+  "errorOops": "Oops! Something went wrong",
+  "buttonRetry": "Retry",
+  "resetAppData": "Reset App Data",
+  "resetAppDataMessage": "This will reset all app data and settings to their defaults. This action cannot be undone.\\n\\nDo you want to continue?",
+  "buttonReset": "Reset",
+  "messageDataReset": "App data has been reset",
+  "errorResetFailed": "Failed to reset data: {error}",
+  "@initializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@dataLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorResetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "analyticsTitle": "Analytics",
+  "analyticsOverview": "Overview",
+  "analyticsPoints": "Points",
+  "analyticsStreak": "Streak",
+  "analyticsSessions": "Sessions",
+  "analyticsLast7Days": "Last 7 Days",
+  "analyticsPerformanceHighlights": "Performance Highlights",
+  "analyticsSuccessRate": "Success Rate",
+  "analyticsAvgSession": "Avg Session",
+  "analyticsBestStreak": "Best Streak",
+  "analyticsActivityProgress": "Activity Progress",
+  "analyticsComingSoon": "Detailed activity tracking coming soon.",
+  "analyticsAdvancedMetrics": "Advanced Metrics",
+  "analyticsPremiumContent": "Premium advanced analytics content here...",
+  "analytics30DayTrends": "30-Day Trends",
+  "analyticsTrendsChart": "Premium trends chart here...",
+  "analyticsAIInsights": "AI Insights",
+  "analyticsAIComingSoon": "AI-powered insights coming soon...",
+  "analyticsUnlock": "Unlock Advanced Analytics",
+  "errorTitle": "Error",
+  "errorQuestUnavailable": "Quest state not available",
+  "buttonOK": "OK",
+  "errorFreezeTokenFailed": "❌ Failed to use freeze token",
+  "buttonUseFreeze": "Use Freeze",
+  "onboardingDailyGoalTitle": "Set Your Daily Goal! 🎯",
+  "onboardingDailyGoalSubtitle": "How much focused time feels right for you?\\n(You can adjust this anytime!)",
+  "onboardingGoalGettingStarted": "Getting Started",
+  "onboardingGoalBuildingHabit": "Building Habit",
+  "onboardingGoalRegularPractice": "Regular Practice",
+  "onboardingGoalDeepWork": "Deep Work",
+  "onboardingProTip": "Pro tip: Focus Field shines when quiet = focused! 🤫✨",
+  "onboardingPrivacyTitle": "Your Privacy Matters! 🔒",
+  "onboardingPrivacySubtitle": "We need microphone access to measure ambient noise and help you focus better",
+  "onboardingPrivacyNoRecording": "No Recording",
+  "onboardingPrivacyLocalOnly": "Local Only",
+  "onboardingPrivacyLocalOnlyDesc": "All data stays on your device",
+  "onboardingPrivacyFirst": "Privacy First",
+  "onboardingPrivacyNote": "You can grant permission on the next screen when starting your first session",
+  "insightsFocusTime": "Focus Time",
+  "insightsSessions": "Sessions",
+  "insightsAverage": "Average",
+  "insightsAmbientScore": "Ambient Score",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeOceanBlue": "Ocean Blue",
+  "themeForestGreen": "Forest Green",
+  "themePurpleNight": "Purple Night",
+  "themeGoldLuxury": "Gold Luxury",
+  "themeSolarSunrise": "Solar Sunrise",
+  "themeCyberNeon": "Cyber Neon",
+  "themeMidnightTeal": "Midnight Teal",
+  "settingsAppTheme": "App Theme",
+  "freezeTokenNoTokensTitle": "No Freeze Tokens",
+  "freezeTokenNoTokensMessage": "You don't have any freeze tokens available. You earn 1 freeze token per week (max 4).",
+  "freezeTokenGoalCompleteTitle": "Goal Already Completed",
+  "freezeTokenGoalCompleteMessage": "Your daily goal is already complete! Freeze tokens can only be used when you haven't met your goal yet.",
+  "freezeTokenUseTitle": "Use Freeze Token",
+  "freezeTokenUseMessage": "Freeze tokens protect your streak when you miss a day. Using a freeze will count as completing your daily goal.",
+  "freezeTokenUsePrompt": "You have {count} token(s). Use one now?",
+  "freezeTokenUsedSuccess": "✅ Freeze token used! Goal marked as complete.",
+  "trendsErrorLoading": "Error loading data",
+  "trendsPoints": "Points",
+  "trendsStreak": "Streak",
+  "trendsSessions": "Sessions",
+  "trendsTopActivity": "Top Activity",
+  "sectionToday": "Today",
+  "sectionSessions": "Sessions",
+  "sectionInsights": "Insights",
+  "onboardingGoalAdviceGettingStarted": "Perfect start! 🌟 Small steps lead to big wins. You've got this!",
+  "onboardingGoalAdviceBuildingHabit": "Excellent choice! 🎯 This sweet spot builds lasting habits!",
+  "onboardingGoalAdviceRegularPractice": "Ambitious! 💪 You're ready to level up your focus game!",
+  "onboardingGoalAdviceDeepWork": "Wow! 🏆 Deep work mode activated! Remember to take breaks!",
+  "onboardingDuration10to15": "10-15 minutes",
+  "onboardingDuration20to30": "20-30 minutes",
+  "onboardingDuration40to60": "40-60 minutes",
+  "onboardingDuration60plus": "60+ minutes",
+  "activityStudy": "Study",
+  "activityReading": "Reading",
+  "activityMeditation": "Meditation",
+  "activityOther": "Other",
+  "onboardingTip1Description": "Begin with 5-10 minute sessions. Consistency beats perfection!",
+  "onboardingTip2Description": "Tap Focus Mode for immersive, distraction-free experience.",
+  "onboardingTip3Description": "Use your monthly token on busy days to protect your streak.",
+  "onboardingTip4Description": "Aim for 70% quiet time - perfect silence not required!",
+  "onboardingLaunchTitle": "You're Ready to Launch! 🚀",
+  "onboardingLaunchDescription": "Let's start your first session and build amazing habits!",
+  "insightsBestTimeByActivity": "Best Time by Activity",
+  "insightHighSuccessRateTitle": "High Success Rate",
+  "insightEnvironmentStabilityTitle": "Environment Stability",
+  "insightLowNoiseSuccessTitle": "Low Noise Success",
+  "insightConsistentPracticeTitle": "Consistent Practice",
+  "insightStreakProtectionTitle": "Streak Protection Available",
+  "insightRoomTooNoisyTitle": "Room Too Noisy",
+  "insightIrregularScheduleTitle": "Irregular Schedule",
+  "insightLowAmbientScoreTitle": "Low Ambient Score",
+  "insightNoRecentSessionsTitle": "No Recent Sessions",
+  "insightHighSuccessRateDesc": "You are maintaining strong silent sessions.",
+  "insightEnvironmentStabilityDesc": "Ambient noise is within a moderate, manageable range.",
+  "insightLowNoiseSuccessDesc": "Your environment is exceptionally quiet during sessions.",
+  "insightConsistentPracticeDesc": "You're building a reliable daily practice habit.",
+  "insightStreakProtectionDesc": "You have {count} freeze token(s) to protect your streak.",
+  "insightRoomTooNoisyDesc": "Try finding a quieter space or adjusting your threshold.",
+  "insightIrregularScheduleDesc": "More consistent session times may improve your streak.",
+  "insightLowAmbientScoreDesc": "Recent sessions had lower quiet time. Try a quieter environment.",
+  "insightNoRecentSessionsDesc": "Start a session today to build your focus habit!",
+  "sessionCompleteSuccess": "Great job! {minutes} focus minutes in your session! ✨",
+  "sessionCompletePartial": "Good effort! {minutes} minutes completed.",
+  "sessionCompleteFailed": "Session ended. Try again when ready.",
+  "notificationSessionStarted": "Session started - stay focused!",
+  "notificationSessionPaused": "Session paused",
+  "notificationSessionResumed": "Session resumed"
 }

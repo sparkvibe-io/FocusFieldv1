@@ -1,8 +1,8 @@
-# SilenceScore Architecture Overview
+# Focus Field Architecture Overview
 
 ## System Architecture
 
-SilenceScore is built using Flutter with a clean, modular architecture that emphasizes separation of concerns and maintainability.
+Focus Field is built using Flutter with a clean, modular architecture that emphasizes separation of concerns and maintainability.
 
 ### High-Level Architecture
 
@@ -29,15 +29,20 @@ SilenceScore is built using Flutter with a clean, modular architecture that emph
   - `app_initializer.dart` - App initialization and setup
   - `splash_screen.dart` - Loading screen
   - `settings_sheet.dart` - Configuration interface with optimized layout
+  - `trends_sheet.dart` - Trends bottom sheet (7‑day chart, summary stats)
 
 ### Settings UI Optimizations
-- **Space Efficiency**: Values displayed inline with titles using parentheses format
-- **Accessibility**: Optimized for large text mode with compact layout
-- **Consistency**: Uniform parentheses style across all value displays
-- **Examples**:
   - "Decibel Threshold (60dB)" instead of separate value display
   - "Duration (1min)" instead of separate value display
-- **Benefits**: Saves vertical space, improves readability, enhances accessibility
+
+### Non‑Main Page Presentation Standard
+- All non‑main pages (Settings, Trends, etc.) must open as a modal bottom sheet styled like Settings.
+- Shared behaviors:
+  - Drag handle, rounded top corners, max height ≈ 85% of viewport
+  - Header row with leading icon/title and a Close button
+  - TabBar uses icons (e.g., Basic: tune, Advanced: engineering) and disables swipe navigation
+  - Cards use the same surface/outline/borderRadius and compact padding as Summary/Activity
+- Rationale: Consistent IA, preserves main pages’ no‑scroll budget and ad visibility.
 
 ### Widget Layer (`lib/widgets/`)
 - **Purpose**: Reusable UI components

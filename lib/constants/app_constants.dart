@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode, defaultTargetPlatform, TargetPlatform;
+
 class AppConstants {
   // App metadata
-  static const String appTitle = 'Silence Score';
+  static const String appTitle = 'Focus Field';
 
   // Silence detection settings
   static const double defaultDecibelThreshold = 38.0; // dB
@@ -27,10 +29,14 @@ class AppConstants {
   //    app behaves like production regarding entitlements. To simulate purchases locally without hitting RevenueCat:
   //      flutter run --dart-define ENABLE_MOCK_SUBSCRIPTIONS=true
   //    In mock mode the last persisted tier (SharedPreferences) is loaded and can be toggled via an internal debug action.
-  static const bool isDevelopmentMode = bool.fromEnvironment(
+  // Development mode detection
+  // - Defaults: debug/profile => development, release => production
+  // - Override with: --dart-define IS_DEVELOPMENT=true/false
+  static const bool _envIsDevelopment = bool.fromEnvironment(
     'IS_DEVELOPMENT',
-    defaultValue: true,
+    defaultValue: false,
   );
+  static bool get isDevelopmentMode => _envIsDevelopment || !kReleaseMode;
   static const bool enableMockSubscriptions = bool.fromEnvironment(
     'ENABLE_MOCK_SUBSCRIPTIONS',
     defaultValue: false,
@@ -41,6 +47,28 @@ class AppConstants {
     'REVENUECAT_API_KEY',
     defaultValue: 'REVENUECAT_API_KEY_NOT_SET', // Fallback for development
   );
+
+  // RevenueCat entitlement key used to grant Premium access.
+  // This should match the "Identifier" you set for the entitlement in the RevenueCat dashboard
+  // (e.g., "premium"). It is NOT the REST object id like "entl...".
+  static const String premiumEntitlementKey = String.fromEnvironment(
+    'REVENUECAT_ENTITLEMENT_KEY',
+    defaultValue: 'Premium',
+  );
+
+  // Optional: comma-separated Apple product IDs for diagnostics/testing
+  static const String _appleProductIdsCsv = String.fromEnvironment(
+    'APPLE_PRODUCT_IDS',
+    defaultValue: '',
+  );
+  static List<String> get appleProductIds {
+    if (_appleProductIdsCsv.trim().isEmpty) return const [];
+    return _appleProductIdsCsv
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList(growable: false);
+  }
 
   // Additional API keys for future use
   static const String firebaseApiKey = String.fromEnvironment(
@@ -54,10 +82,9 @@ class AppConstants {
   );
 
   // Product IDs (these can be public)
-  // Product identifiers (current live offering). NOTE: Colons in product IDs may not be accepted by all stores;
-  // verify with App Store / Play Console. If invalid, prefer dots/underscores (e.g. premium.tier.monthly).
-  static const String premiumMonthlyProductId = 'premium.tier:monthly';
-  static const String premiumYearlyProductId = 'premium.tier:yearly';
+  // Normalized product identifiers (store-safe). Use dot notation for broadest compatibility.
+  static const String premiumMonthlyProductId = 'premium.tier.monthly';
+  static const String premiumYearlyProductId = 'premium.tier.yearly';
   // Premium Plus postponed (future expansion) – identifiers removed for now.
 
   // RevenueCat Hosted Paywall Identifiers
@@ -74,9 +101,48 @@ class AppConstants {
   static const int freeHistoryDays = 7;
   static const int premiumHistoryDays = 90;
 
-  // Ads (test/demo unit IDs; replace with production IDs before release)
+  // Ads
+  // Test/demo unit ID (safe for development per Google docs)
   static const String testBannerAdUnitId =
       'ca-app-pub-3940256099942544/6300978111';
+
+  // Production Banner Ad Unit IDs (override-able with --dart-define at build/run time)
+  // Android example: ca-app-pub-2086096819226646/3553182566
+  // iOS example:     ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY (set from AdMob console)
+  static const String androidBannerAdUnitId = String.fromEnvironment(
+    'ANDROID_BANNER_AD_UNIT_ID',
+    defaultValue: 'ca-app-pub-2086096819226646/3553182566',
+  );
+  static const String iosBannerAdUnitId = String.fromEnvironment(
+    'IOS_BANNER_AD_UNIT_ID',
+    defaultValue: 'ca-app-pub-2086096819226646/9050063581',
+  );
+
+  // Optional: when true, if a production ad fails to load in release,
+  // the app will attempt one retry with the Google test unit ID to verify integration.
+  static const bool fallbackTestAdOnFail = bool.fromEnvironment(
+    'ADS_FALLBACK_TEST_ON_FAIL',
+    defaultValue: false,
+  );
+
+  // Resolve the ad unit id to use at runtime.
+  // - In development: always use the Google-provided test unit ID to avoid policy issues.
+  // - In production: use platform-specific IDs, falling back to test ID if unset.
+  static String get effectiveBannerAdUnitId {
+    if (isDevelopmentMode) return testBannerAdUnitId;
+    if (kIsWeb) return testBannerAdUnitId; // Ads SDK not supported on web via this plugin
+    // Select based on Flutter's target platform
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return (androidBannerAdUnitId.isNotEmpty)
+            ? androidBannerAdUnitId
+            : testBannerAdUnitId;
+      case TargetPlatform.iOS:
+        return (iosBannerAdUnitId.isNotEmpty) ? iosBannerAdUnitId : testBannerAdUnitId;
+      default:
+        return testBannerAdUnitId;
+    }
+  }
 
   // Storage keys
   static const String totalPointsKey = 'total_points';
@@ -86,6 +152,8 @@ class AppConstants {
   static const String decibelThresholdKey = 'decibel_threshold';
   static const String subscriptionTierKey = 'subscription_tier';
   static const String lastSyncDateKey = 'last_sync_date';
+  static const String selectedActivityKey = 'selected_activity';
+  static const String firstMicroCelebratedPrefix = 'first_micro_celebrated_';
 
   // UI string constants removed after full localization migration.
   // Minimal placeholders retained for legacy tests referencing successMessage/failureMessage.
@@ -109,6 +177,12 @@ class AppConstants {
     if (isDevelopmentMode) return 'development';
     return 'production';
   }
+
+  // Feature flags
+  static const bool featureMissionsUi = bool.fromEnvironment(
+    'FEATURE_MISSIONS_UI',
+    defaultValue: false,
+  );
 
   // API Key validation method
   static void validateConfiguration() {

@@ -62,7 +62,7 @@ class _PulsePainter extends CustomPainter {
     ).createShader(Rect.fromCircle(center: center, radius: r2));
     canvas.drawCircle(center, r2, paint..colorFilter = null);
     paint.shader = RadialGradient(
-      colors: [b, a.withOpacity(0.4), Colors.transparent],
+      colors: [b, a.withValues(alpha: 0.4), Colors.transparent],
       stops: const [0, 0.4, 1],
     ).createShader(Rect.fromCircle(center: center, radius: r1));
     canvas.drawCircle(center, r1, paint);
@@ -89,7 +89,7 @@ class _ScanPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.white.withOpacity(o)
+          ..color = Colors.white.withValues(alpha: o)
           ..strokeWidth = 1;
     for (double y = 0; y < size.height; y += 6) {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
@@ -161,7 +161,7 @@ class _MistPainter extends CustomPainter {
       paint.shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [a, b.withOpacity(0)],
+        colors: [a, b.withValues(alpha: 0)],
         stops: const [0, 1],
       ).createShader(rect);
       canvas.drawRect(rect, paint);
@@ -235,7 +235,7 @@ class _ParticlePainter extends CustomPainter {
       canvas.drawCircle(
         Offset(dx, dy),
         p.r,
-        paint..color = c.withOpacity(0.15),
+        paint..color = c.withValues(alpha: 0.15),
       );
     }
   }

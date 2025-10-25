@@ -7,7 +7,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_permissions.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/utils/debug_log.dart';
 
 typedef NowProvider = DateTime Function();
 
@@ -27,6 +28,10 @@ class NotificationService {
   // IDs
   static const int dailyReminderId = 1001;
   static const int weeklySummaryId = 1002;
+  static const int ongoingSessionId = 2001;
+
+  // Optional action handler for notification taps/actions
+  Future<void> Function(String actionId, String? payload)? actionHandler;
 
   // Time provider (injectable for tests)
   NowProvider now = DateTime.now;
@@ -86,10 +91,11 @@ class NotificationService {
         } catch (_) {}
       }
     } else {
-      if (!kReleaseMode)
-        debugPrint(
+      if (!kReleaseMode) {
+        DebugLog.d(
           '[NotificationService] Skipping notification plugin init in test environment',
         );
+      }
       _hasNotificationPermission = false; // treat as no permission in tests
     }
 
@@ -124,7 +130,15 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse notificationResponse) {
     if (!kReleaseMode) {
-      debugPrint('Notification tapped: ${notificationResponse.payload}');
+      DebugLog.d('Notification tapped: ${notificationResponse.payload}');
+    }
+    // Dispatch action callbacks for interactive notifications
+    final actionId = notificationResponse.actionId;
+    if (actionId != null && actionId.isNotEmpty) {
+      final handler = actionHandler;
+      if (handler != null) {
+        handler(actionId, notificationResponse.payload);
+      }
     }
   }
 
@@ -143,8 +157,9 @@ class NotificationService {
     if (notifications != null) enableNotifications = notifications;
     if (dailyReminders != null) enableDailyReminders = dailyReminders;
     if (sessionComplete != null) enableSessionComplete = sessionComplete;
-    if (achievementNotifications != null)
+    if (achievementNotifications != null) {
       enableAchievementNotifications = achievementNotifications;
+    }
     if (weeklyProgress != null) enableWeeklyProgress = weeklyProgress;
     if (dailyHour != null) dailyReminderHour = dailyHour;
     if (dailyMinute != null) dailyReminderMinute = dailyMinute;
@@ -243,18 +258,18 @@ class NotificationService {
     final sessionCount = _sessionTimes.length;
 
     if (optimalTime == null || sessionCount == 0) {
-      return 'Time for your daily silence practice! 🧘‍♂️';
+      return 'Time for your daily focus practice! 🎯';
     }
 
     final timeString =
         '${optimalTime.hour.toString().padLeft(2, '0')}:${optimalTime.minute.toString().padLeft(2, '0')}';
 
     if (sessionCount < 5) {
-      return 'Building your silence habit! Ready for today\'s session? 🌱';
+      return 'Building your focus habit! Ready for today\'s session? 🌱';
     } else if (sessionCount < 15) {
       return 'You usually practice around $timeString. Ready to continue your streak? ⭐';
     } else {
-      return 'Your daily $timeString silence session awaits! You\'ve got this! 🏆';
+      return 'Your daily $timeString focus session awaits! You\'ve got this! 🏆';
     }
   }
 
@@ -262,12 +277,12 @@ class NotificationService {
   String getCompletionMessage(bool success, int durationMinutes) {
     if (success) {
       if (durationMinutes >= 5) {
-        return 'Excellent! You completed a $durationMinutes-minute silence session! 🏆';
+        return 'Excellent! $durationMinutes focus minutes earned! 🏆';
       } else {
-        return 'Great job! $durationMinutes minutes of peaceful silence achieved! ✨';
+        return 'Great job! $durationMinutes focus minutes in your session! ✨';
       }
     } else {
-      return 'Session incomplete, but every attempt makes you stronger! Try again when ready. 💪';
+      return 'Session ended early—that\'s okay! Every attempt builds your focus habit. 💪';
     }
   }
 
@@ -311,7 +326,7 @@ class NotificationService {
                 .toList();
       }
     } catch (e) {
-      debugPrint('Error loading session times: $e');
+      DebugLog.d('Error loading session times: $e');
       _sessionTimes = [];
     }
   }
@@ -324,7 +339,7 @@ class NotificationService {
       );
       await prefs.setString(_sessionTimesKey, sessionsJson);
     } catch (e) {
-      debugPrint('Error saving session times: $e');
+      DebugLog.d('Error saving session times: $e');
     }
   }
 
@@ -356,9 +371,9 @@ class NotificationService {
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -389,10 +404,84 @@ class NotificationService {
   Future<void> showDailyReminder(BuildContext context) async {
     final l = AppLocalizations.of(context);
     await showNotification(
-      title: l?.dailySilenceReminderTitle ?? 'Daily Silence Reminder',
+      title: l?.dailySilenceReminderTitle ?? 'Daily Focus Reminder',
       body: getSmartReminderMessage(context),
       payload: 'daily_reminder',
     );
+  }
+
+  // Ongoing session notification APIs (Android primary; iOS shows a regular notification as fallback)
+  Future<void> showOngoingSession({
+    required String title,
+    required String body,
+    int progress = 0, // 0..100
+  }) async {
+    if (!enableNotifications || !_hasNotificationPermission) return;
+
+    final android = AndroidNotificationDetails(
+      'focus_field_session',
+      'Session',
+      channelDescription: 'Ongoing focus session',
+      importance: Importance.low,
+      priority: Priority.low,
+      category: AndroidNotificationCategory.service,
+      ongoing: true,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: 100,
+      progress: progress.clamp(0, 100),
+      actions: const <AndroidNotificationAction>[
+        AndroidNotificationAction('STOP_SESSION', 'Stop', showsUserInterface: true),
+      ],
+      icon: '@mipmap/ic_launcher',
+    );
+    const ios = DarwinNotificationDetails(presentAlert: false, presentBadge: false, presentSound: false);
+    final details = NotificationDetails(android: android, iOS: ios);
+    await _flutterLocalNotificationsPlugin.show(
+      ongoingSessionId,
+      title,
+      body,
+      details,
+      payload: 'ongoing_session',
+    );
+  }
+
+  Future<void> updateOngoingSession({
+    String? title,
+    String? body,
+    int? progress,
+  }) async {
+    if (!enableNotifications || !_hasNotificationPermission) return;
+    final android = AndroidNotificationDetails(
+      'focus_field_session',
+      'Session',
+      channelDescription: 'Ongoing focus session',
+      importance: Importance.low,
+      priority: Priority.low,
+      category: AndroidNotificationCategory.service,
+      ongoing: true,
+      onlyAlertOnce: true,
+      showProgress: true,
+      maxProgress: 100,
+      progress: (progress ?? 0).clamp(0, 100),
+      actions: const <AndroidNotificationAction>[
+        AndroidNotificationAction('STOP_SESSION', 'Stop', showsUserInterface: true),
+      ],
+      icon: '@mipmap/ic_launcher',
+    );
+    const ios = DarwinNotificationDetails(presentAlert: false, presentBadge: false, presentSound: false);
+    final details = NotificationDetails(android: android, iOS: ios);
+    await _flutterLocalNotificationsPlugin.show(
+      ongoingSessionId,
+      title ?? 'Session in progress',
+      body ?? 'Stay in the app to maintain Deep Focus',
+      details,
+      payload: 'ongoing_session',
+    );
+  }
+
+  Future<void> cancelOngoingSession() async {
+    await _flutterLocalNotificationsPlugin.cancel(ongoingSessionId);
   }
 
   Future<void> showSessionComplete(
@@ -454,8 +543,9 @@ class NotificationService {
   }) async {
     if (!enableNotifications ||
         !enableDailyReminders ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     final optimal = getOptimalReminderTime();
     if (optimal == null) return; // need history
     final nowDt = now();
@@ -483,15 +573,15 @@ class NotificationService {
       dailyReminderId,
       context != null
           ? (AppLocalizations.of(context)?.dailySilenceReminderTitle ??
-              'Daily Silence Reminder')
-          : 'Daily Silence Reminder',
+              'Daily Focus Reminder')
+          : 'Daily Focus Reminder',
       getSmartReminderMessage(context),
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -516,8 +606,9 @@ class NotificationService {
   }) async {
     if (!enableNotifications ||
         !enableWeeklyProgress ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     // Allow stored overrides to supersede passed parameters
     final effectiveWeekday =
         weeklySummaryWeekday; // already stored default / user setting
@@ -533,8 +624,9 @@ class NotificationService {
       effectiveHour,
       effectiveMinute,
     ).add(Duration(days: daysUntil));
-    if (scheduled.isBefore(nowDt))
+    if (scheduled.isBefore(nowDt)) {
       scheduled = scheduled.add(const Duration(days: 7));
+    }
     if (_isInTestEnvironment()) {
       onZonedSchedule?.call(
         id: weeklySummaryId,
@@ -554,9 +646,9 @@ class NotificationService {
       tzTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'silence_score_general',
+          'focus_field_general',
           'General Notifications',
-          channelDescription: 'General notifications for SilenceScore app',
+          channelDescription: 'General notifications for Focus Field app',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -583,8 +675,9 @@ class NotificationService {
   Future<void> showDynamicWeeklySummary(BuildContext context) async {
     if (!enableNotifications ||
         !enableWeeklyProgress ||
-        !_hasNotificationPermission)
+        !_hasNotificationPermission) {
       return;
+    }
     // Compute sessions in last 7 days
     final nowDt = now();
     final start = nowDt.subtract(const Duration(days: 6));
@@ -603,7 +696,7 @@ class NotificationService {
             .length; // unique days
     // Simple average score placeholder: minutes per session * 1 (point per min). In absence of full scoring, approximate.
     // Average score placeholder removed to avoid misleading fixed 5 min assumption.
-    final avg =
+    const avg =
         0; // TODO: compute real average session duration once durations are tracked here.
     await showWeeklyProgress(context, sessionsThisWeek, avg);
   }
@@ -616,22 +709,22 @@ class NotificationService {
 
     if (streak == 0 && sessionCount == 0) {
       return l?.reminderStartJourney ??
-          '🧘‍♂️ Start your silence journey today! Find your inner peace.';
+          '🎯 Start your focus journey today! Build your deep work habit.';
     }
 
     if (streak == 0 && sessionCount > 0) {
       return l?.reminderRestart ??
-          '🌱 Ready to restart your silence practice? Every moment is a new beginning.';
+          '🌱 Ready to restart your focus practice? Every moment is a new beginning.';
     }
 
     if (streak == 1) {
       return l?.reminderDayTwo ??
-          '⭐ Day 2 of your silence streak! Consistency builds tranquility.';
+          '⭐ Day 2 of your focus streak! Consistency builds concentration.';
     }
 
     if (streak < 7) {
       return l?.reminderStreakShort(streak) ??
-          '🔥 $streak-day streak! You\'re building a powerful habit.';
+          '🔥 $streak-day streak! You\'re building a powerful focus habit.';
     }
 
     if (streak < 30) {
@@ -640,7 +733,7 @@ class NotificationService {
     }
 
     return l?.reminderStreakLong(streak) ??
-        '👑 Incredible $streak-day streak! You\'re a silence master!';
+        '👑 Incredible $streak-day streak! You\'re a focus champion!';
   }
 
   // Achievement notification messages
@@ -648,7 +741,7 @@ class NotificationService {
     switch (achievement) {
       case 'first_session':
         return AppLocalizations.of(context!)?.achievementFirstSession ??
-            '🎉 First session completed! Welcome to your silence journey!';
+            '🎉 First session complete! Welcome to Focus Field!';
       case 'week_streak':
         return AppLocalizations.of(context!)?.achievementWeekStreak ??
             '🌟 7-day streak achieved! Consistency is your superpower!';
@@ -657,7 +750,7 @@ class NotificationService {
             '🏆 30-day streak unlocked! You\'re unstoppable!';
       case 'perfect_session':
         return AppLocalizations.of(context!)?.achievementPerfectSession ??
-            '✨ Perfect silence session! Not a sound disturbed your peace.';
+            '✨ Perfect session! 100% calm environment maintained!';
       case 'long_session':
         return AppLocalizations.of(context!)?.achievementLongSession ??
             '⏰ Extended session master! Your focus grows stronger.';
@@ -675,27 +768,27 @@ class NotificationService {
   ) {
     if (sessionsThisWeek == 0) {
       return AppLocalizations.of(context!)?.weeklyProgressNone ??
-          '💭 This week could use some silence. Ready for a peaceful session?';
+          '💭 Start your weekly goal! Ready for a focused session?';
     }
 
     if (sessionsThisWeek < 3) {
       return AppLocalizations.of(
             context!,
           )?.weeklyProgressFew(sessionsThisWeek) ??
-          '🌿 $sessionsThisWeek sessions this week. Every practice deepens your calm.';
+          '🌿 $sessionsThisWeek focus minutes this week! Every session counts.';
     }
 
     if (sessionsThisWeek < 7) {
       return AppLocalizations.of(
             context!,
           )?.weeklyProgressSome(sessionsThisWeek) ??
-          '🌊 $sessionsThisWeek sessions this week! You\'re finding your rhythm.';
+          '🌊 $sessionsThisWeek focus minutes earned! You\'re on track!';
     }
 
     return AppLocalizations.of(
           context!,
         )?.weeklyProgressPerfect(sessionsThisWeek) ??
-        '🎯 Perfect week with $sessionsThisWeek sessions! Your dedication shines.';
+        '🎯 $sessionsThisWeek focus minutes achieved! Perfect week!';
   }
 
   bool _isInTestEnvironment() {

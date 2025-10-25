@@ -1,36 +1,52 @@
-# RUN FOR ANDROID
-flutter clean && flutter pub get
+# Build & Deploy
 
-flutter gen-l10n
+This guide includes current run commands and required defines. Premium themes use a global DramaticBackdrop for animated gradients; ensure performance settings are acceptable on device.
 
-Android phone
-flutter run -d ZL8322BT88 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+## Prerequisites
+- Flutter clean env
+- `flutter pub get`
+- Generate localization: `flutter gen-l10n`
 
-Android tablet
-flutter run -d emulator-5554 --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+## Android
 
-
-
-# RUN FOR IOS
-flutter clean && flutter pub get
-
-flutter gen-l10n
-
-cd ios && pod install
-flutter devices
-flutter run -d 00008140-000669503E93001C \
+Phone (replace device ID if needed):
+flutter run --debug -d ZL8322BT88 \
   --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+
+Emulator:
+flutter run -d emulator-5554 \
+  --dart-define=REVENUECAT_API_KEY=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false
+
+## iOS
+
+1) Install pods if needed:
+cd ios && pod install && cd -
+
+2) List devices:
+flutter devices
+
+3) Run on a specific device (example UDID):
+flutter run --release -d 00008120-0016184A21EB401E \
+  --dart-define=REVENUECAT_API_KEY=appl_qoFokYDCMBFZLyKXTulaPFkjdME \
   --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false \
   --dart-define=IS_DEVELOPMENT=false
 
+Alternative (preferred) with helper script which sources .env if present:
+./run_ios_revenuecat.sh --release -d 00008120-0016184A21EB401E
 
-## BUILD FOR PRODUCTION
-Android release: 
-scripts/build-prod.sh --rc-key=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU
+## Production Builds
 
-iOS release: 
-export REVENUECAT_API_KEY=$REVENUECAT_IOS_API_KEY 
-flutter build ipa --release --dart-define=IS_DEVELOPMENT=false --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false --dart-define=REVENUECAT_API_KEY=$REVENUECAT_API_KEY
+Android:
+scripts/build/build-prod.sh --rc-key=goog_OQmcHbcdgUgLCplNGOzHRVwfqVU
+
+iOS (export key or use .env):
+export REVENUECAT_API_KEY=$REVENUECAT_IOS_API_KEY
+flutter build ipa --release \
+  --dart-define=IS_DEVELOPMENT=false \
+  --dart-define=ENABLE_MOCK_SUBSCRIPTIONS=false \
+  --dart-define=REVENUECAT_API_KEY=$REVENUECAT_API_KEY
 
 
 PENDING

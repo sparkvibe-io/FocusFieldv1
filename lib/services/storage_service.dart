@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:silence_score/constants/app_constants.dart';
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/constants/app_constants.dart';
+import 'package:focus_field/models/silence_data.dart';
+import 'package:focus_field/models/user_preferences.dart';
 
 class StorageService {
   static const String _silenceDataKey = 'silence_data';
@@ -14,6 +15,17 @@ class StorageService {
   static const String _lastSessionDateKey = 'last_session_date';
   static const String _totalSessionsKey = 'total_sessions';
   static const String _averageScoreKey = 'average_score';
+  static const String _userPreferencesKey = 'user_preferences';
+  // Deep Focus settings
+  static const String _deepFocusEnabledKey = 'deep_focus_enabled';
+  static const String _deepFocusGraceSecondsKey = 'deep_focus_grace_seconds';
+  // Notification settings keys
+  static const String _enableNotificationsKey = 'enable_notifications';
+  static const String _enableDailyRemindersKey = 'enable_daily_reminders';
+  static const String _enableSessionCompleteKey = 'enable_session_complete';
+  static const String _enableAchievementNotificationsKey =
+      'enable_achievement_notifications';
+  static const String _enableWeeklyProgressKey = 'enable_weekly_progress';
   // Notification scheduling keys
   static const String _dailyReminderHourKey = 'daily_reminder_hour';
   static const String _dailyReminderMinuteKey = 'daily_reminder_minute';
@@ -60,6 +72,14 @@ class StorageService {
       await _prefs!.setString(_appVersionKey, '1.0.0');
       await _prefs!.setInt(_totalSessionsKey, 0);
       await _prefs!.setDouble(_averageScoreKey, 0.0);
+
+      // Initialize notification settings with defaults
+      await _prefs!.setBool(_enableNotificationsKey, true);
+      await _prefs!.setBool(_enableDailyRemindersKey, false);
+      await _prefs!.setBool(_enableSessionCompleteKey, true);
+      await _prefs!.setBool(_enableAchievementNotificationsKey, true);
+      await _prefs!.setBool(_enableWeeklyProgressKey, false);
+
       await _prefs!.setBool(_firstLaunchKey, false);
 
       // Initialize empty silence data
@@ -85,6 +105,20 @@ class StorageService {
       'averageScore': _prefs!.getDouble(_averageScoreKey) ?? 0.0,
       'appVersion': _prefs!.getString(_appVersionKey) ?? '1.0.0',
       'isFirstLaunch': _prefs!.getBool(_firstLaunchKey) ?? true,
+      // Notification settings (with defaults)
+      'enableNotifications': _prefs!.getBool(_enableNotificationsKey) ?? true,
+      'enableDailyReminders':
+          _prefs!.getBool(_enableDailyRemindersKey) ?? false,
+      'enableSessionComplete':
+          _prefs!.getBool(_enableSessionCompleteKey) ?? true,
+      'enableAchievementNotifications':
+          _prefs!.getBool(_enableAchievementNotificationsKey) ?? true,
+      'enableWeeklyProgress':
+          _prefs!.getBool(_enableWeeklyProgressKey) ?? false,
+    // Deep Focus (defaults)
+    'deepFocusEnabled': _prefs!.getBool(_deepFocusEnabledKey) ?? false,
+    'deepFocusGraceSeconds':
+      _prefs!.getInt(_deepFocusGraceSecondsKey) ?? 10,
       // Notification scheduling (nullable defaults)
       'dailyReminderHour': _prefs!.getInt(_dailyReminderHourKey),
       'dailyReminderMinute': _prefs!.getInt(_dailyReminderMinuteKey),
@@ -136,6 +170,30 @@ class StorageService {
         case 'weeklySummaryMinute':
           await _prefs!.setInt(_weeklySummaryMinuteKey, value as int);
           break;
+        case 'enableNotifications':
+          await _prefs!.setBool(_enableNotificationsKey, value as bool);
+          break;
+        case 'enableDailyReminders':
+          await _prefs!.setBool(_enableDailyRemindersKey, value as bool);
+          break;
+        case 'enableSessionComplete':
+          await _prefs!.setBool(_enableSessionCompleteKey, value as bool);
+          break;
+        case 'enableAchievementNotifications':
+          await _prefs!.setBool(
+            _enableAchievementNotificationsKey,
+            value as bool,
+          );
+          break;
+        case 'enableWeeklyProgress':
+          await _prefs!.setBool(_enableWeeklyProgressKey, value as bool);
+          break;
+        case 'deepFocusEnabled':
+          await _prefs!.setBool(_deepFocusEnabledKey, value as bool);
+          break;
+        case 'deepFocusGraceSeconds':
+          await _prefs!.setInt(_deepFocusGraceSecondsKey, value as int);
+          break;
         default:
           // Generic persistence for any new primitive key
           if (value is int) {
@@ -174,6 +232,26 @@ class StorageService {
     }
 
     return const SilenceData();
+  }
+
+  Future<void> saveUserPreferences(UserPreferences preferences) async {
+    await _init();
+    final jsonString = jsonEncode(preferences.toJson());
+    await _prefs!.setString(_userPreferencesKey, jsonString);
+  }
+
+  Future<UserPreferences> loadUserPreferences() async {
+    await _init();
+    final jsonString = _prefs!.getString(_userPreferencesKey);
+    if (jsonString == null) {
+      return UserPreferences.defaults();
+    }
+    try {
+      final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+      return UserPreferences.fromJson(jsonMap);
+    } catch (_) {
+      return UserPreferences.defaults();
+    }
   }
 
   /// Save decibel threshold setting
@@ -306,6 +384,38 @@ class StorageService {
     await _prefs!.clear();
     // Re-initialize after clearing
     await initializeApp();
+  }
+
+  // Generic helpers for simple key/value storage
+  Future<String?> getString(String key) async {
+    await _init();
+    return _prefs!.getString(key);
+  }
+
+  Future<void> setString(String key, String value) async {
+    await _init();
+    await _prefs!.setString(key, value);
+  }
+
+  Future<bool?> getBool(String key) async {
+    await _init();
+    return _prefs!.getBool(key);
+  }
+
+  Future<void> setBool(String key, bool value) async {
+    await _init();
+    await _prefs!.setBool(key, value);
+  }
+
+  // Integer helpers
+  Future<int?> getInt(String key) async {
+    await _init();
+    return _prefs!.getInt(key);
+  }
+
+  Future<void> setInt(String key, int value) async {
+    await _init();
+    await _prefs!.setInt(key, value);
   }
 
   /// Update streak based on current date

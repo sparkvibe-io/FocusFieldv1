@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/l10n/app_localizations.dart';
-import 'package:silence_score/providers/accessibility_provider.dart';
-import 'package:silence_score/services/accessibility_service.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
+import 'package:focus_field/theme/theme_extensions.dart';
+import 'package:focus_field/providers/accessibility_provider.dart';
+import 'package:focus_field/services/accessibility_service.dart';
 
 class TipInfoIcon extends HookConsumerWidget {
   final VoidCallback onTap;
@@ -21,18 +22,21 @@ class TipInfoIcon extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    
+
     return IconButton(
       icon: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         child: Stack(
           children: [
-            Icon(
-              Icons.lightbulb_outline,
-              color: isEnabled 
-                ? (hasNewTips ? Colors.amber.shade600 : theme.colorScheme.onSurface)
-                : theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
+      Icon(
+        Icons.lightbulb_outline,
+        color:
+          isEnabled
+            ? (hasNewTips
+              ? context.semanticColors.info
+              : theme.colorScheme.onSurface)
+            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
             if (hasNewTips && isEnabled)
               Positioned(
                 right: 0,
@@ -49,12 +53,15 @@ class TipInfoIcon extends HookConsumerWidget {
           ],
         ),
       ),
-      onPressed: isEnabled ? () {
-        ref
-            .read(accessibilityServiceProvider)
-            .vibrateOnEvent(AccessibilityEvent.buttonPress);
-        onTap();
-      } : null,
+      onPressed:
+          isEnabled
+              ? () {
+                ref
+                    .read(accessibilityServiceProvider)
+                    .vibrateOnEvent(AccessibilityEvent.buttonPress);
+                onTap();
+              }
+              : null,
       tooltip: l10n?.tipInfoTooltip ?? 'Show tip',
     );
   }
@@ -76,12 +83,12 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    
+
     // Create animation controller with slower, more gentle animation
     final animationController = useAnimationController(
       duration: const Duration(seconds: 3),
     );
-    
+
     // Start/stop animation based on hasNewTips
     useEffect(() {
       if (hasNewTips && isEnabled) {
@@ -92,7 +99,7 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
       }
       return null;
     }, [hasNewTips, isEnabled]);
-    
+
     return IconButton(
       icon: AnimatedBuilder(
         animation: animationController,
@@ -103,21 +110,24 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
               if (hasNewTips && isEnabled)
                 Icon(
                   Icons.lightbulb_outline,
-                  color: Colors.amber.withOpacity(0.2 * (0.5 + 0.5 * animationController.value)),
+                  color: context.semanticColors.info.withValues(
+                    alpha: 0.2 * (0.5 + 0.5 * animationController.value),
+                  ),
                   size: 26, // Slightly larger for glow effect
                 ),
               // Main lightbulb icon
               Icon(
                 Icons.lightbulb_outline,
-                color: isEnabled 
-                  ? (hasNewTips 
-                      ? Color.lerp(
-                          Colors.amber.shade600,
-                          Colors.amber.shade400,
-                          animationController.value,
-                        )
-                      : theme.colorScheme.onSurface)
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                color:
+                    isEnabled
+                        ? (hasNewTips
+                            ? Color.lerp(
+                              context.semanticColors.info,
+                              context.semanticColors.info.withValues(alpha: 0.8),
+                              animationController.value,
+                            )
+                            : theme.colorScheme.onSurface)
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               if (hasNewTips && isEnabled)
                 Positioned(
@@ -129,7 +139,7 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
                     decoration: BoxDecoration(
                       color: Color.lerp(
                         theme.colorScheme.error,
-                        theme.colorScheme.error.withOpacity(0.5),
+                        theme.colorScheme.error.withValues(alpha: 0.5),
                         animationController.value,
                       ),
                       shape: BoxShape.circle,
@@ -140,12 +150,15 @@ class TipInfoIconWithAnimation extends HookConsumerWidget {
           );
         },
       ),
-      onPressed: isEnabled ? () {
-        ref
-            .read(accessibilityServiceProvider)
-            .vibrateOnEvent(AccessibilityEvent.buttonPress);
-        onTap();
-      } : null,
+      onPressed:
+          isEnabled
+              ? () {
+                ref
+                    .read(accessibilityServiceProvider)
+                    .vibrateOnEvent(AccessibilityEvent.buttonPress);
+                onTap();
+              }
+              : null,
       tooltip: l10n?.tipInfoTooltip ?? 'Show tip',
     );
   }

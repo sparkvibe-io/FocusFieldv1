@@ -1,5 +1,5 @@
 {
-  "appTitle": "Silence Score",
+  "appTitle": "Focus Field",
   "splashLoading": "集中エンジンを準備中…",
   "paywallTitle": "プレミアムでより深い集中を",
   "featureExtendSessions": "セッションを30分から120分へ拡張",
@@ -46,7 +46,7 @@
   "decibelThresholdLabel": "デシベルしきい値",
   "decibelThresholdHint": "許容される最大ノイズレベル (dB) を設定",
   "microphonePermissionTitle": "マイク権限",
-  "microphonePermissionMessage": "Silence Score は環境ノイズ測定のためマイクを使用します。音声は保存されません。",
+  "microphonePermissionMessage": "Focus Fieldは、静かな環境を維持するために周囲の音レベルを測定します。\n\nアプリは沈黙を検出するためにマイクアクセスを必要としますが、音声は録音しません。",
   "permissionDeniedMessage": "測定にはマイク権限が必要です。設定で有効にしてください。",
   "noiseMeterError": "マイクにアクセスできません",
   "premiumFeaturesTitle": "プレミアム機能",
@@ -61,253 +61,919 @@
   "savePercent": "{percent}% お得",
   "billedAnnually": "年額 {price}",
   "billedMonthly": "月額 {price}",
-  "mockSubscriptionsBanner": "モック購読有効"
-  ,"splashTagline": "静けさを見つけよう"
-  ,"appIconSemantic": "アプリアイコン"
-  ,"tabBasic": "基本"
-  ,"tabAdvanced": "詳細"
-  ,"tabAbout": "情報"
-  ,"resetAllSettings": "全設定をリセット"
-  ,"decibelThresholdMaxNoise": "デシベルしきい値 (最大騒音)"
-  ,"highThresholdWarningText": "高いしきい値は重要な音を無視する可能性があります"
-  ,"decibelThresholdTooltip": "静かな場所: 30–40 dB 校正後 通常ハムがノイズなら上げる"
-  ,"sessionDuration": "セッション時間"
-  ,"upgradeForMinutes": "{minutes}分にアップグレード"
-  ,"freeUpToMinutes": "無料: 最大 {minutes} 分"
-  ,"durationLabel": "時間"
-  ,"noiseCalibration": "ノイズ較正"
-  ,"calibrateBaseline": "ベース較正"
-  ,"exportData": "データ書き出し"
-  ,"sessionHistory": "セッション履歴"
-  ,"notifications": "通知"
-  ,"remindersCelebrations": "リマインダーと祝福"
-  ,"accessibility": "アクセシビリティ"
-  ,"accessibilityFeatures": "アクセシビリティ機能"
-  ,"appInformation": "アプリ情報"
-  ,"version": "バージョン"
-  ,"bundleId": "バンドルID"
-  ,"environment": "環境"
-  ,"helpSupport": "ヘルプとサポート"
-  ,"faq": "FAQ"
-  ,"support": "サポート"
-  ,"rateApp": "評価"
-  ,"errorLoadingSettings": "設定読み込みエラー: {error}"
-  ,"chooseExportFormat": "{sessions}件のセッション形式を選択:"
-  ,"csvSpreadsheet": "CSVスプレッドシート"
-  ,"rawDataForAnalysis": "分析用生データ"
-  ,"pdfReport": "PDFレポート"
-  ,"formattedReportWithCharts": "グラフ付き整形レポート"
-  ,"generatingExport": "{format} 書き出し生成中..."
-  ,"exportCompleted": "{format} 書き出し完了"
-  ,"exportFailed": "書き出し失敗: {error}"
-  ,"frequentlyAskedQuestions": "よくある質問"
-  ,"close": "閉じる"
-  ,"vibrationFeedback": "バイブレーション"
-  ,"vibrateOnSessionEvents": "イベント時に振動"
-  ,"voiceAnnouncements": "音声案内"
-  ,"announceSessionProgress": "進行を案内"
-  ,"highContrastMode": "ハイコントラスト"
-  ,"improveVisualAccessibility": "視認性向上"
-  ,"largeText": "大きな文字"
-  ,"increaseTextSize": "文字サイズ拡大"
-  ,"accessibilitySettings": "アクセシビリティ設定"
-  ,"measuringAmbientNoise": "環境ノイズ測定中 (≈5秒)"
-  ,"retry": "再試行"
-  ,"previousThreshold": "以前: {value} dB"
-  ,"newThreshold": "新しいしきい値: {value} dB"
-  ,"noSignificantChange": "大きな変化なし"
-  ,"highAmbientDetected": "高い環境ノイズ検出"
-  ,"adjustAnytimeSettings": "設定でいつでも調整可能"
-  ,"toggleThemeTooltip": "テーマ切替"
-  ,"audioChartRecovering": "オーディオチャート回復中..."
-  ,"themeChanged": "テーマ: {themeName}"
-  ,"privacyComingSoon": "Privacy policy coming soon."
-  ,"ratingFeatureComingSoon": "Rating feature coming soon!"
-  ,"startSessionButton": "Start Session"
-  ,"stopSessionButton": "Stop"
-  ,"statusListening": "Listening..."
-  ,"statusSuccess": "Silence achieved! +1 point"
-  ,"statusFailure": "Too noisy! Try again"
-  ,"upgrade": "Upgrade"
-  ,"exportCsvSpreadsheet": "CSV Spreadsheet"
-  ,"exportPdfReport": "PDF Report"
-  ,"formattedReportCharts": "Formatted report with charts"
-  ,"csv": "CSV"
-  ,"pdf": "PDF"
-  ,"theme": "Theme"
-  ,"open": "Open"
-  ,"microphone": "Microphone"
-  ,"premium": "Premium"
-  ,"sessions": "sessions"
-  ,"format": "format"
-  ,"successRate": "Success Rate"
-  ,"avgSession": "Avg Session"
-  ,"consistency": "Consistency"
-  ,"bestTime": "Best Time"
-  ,"weeklyTrends": "Weekly Trends"
-  ,"performanceMetrics": "Performance Metrics"
-  ,"advancedAnalytics": "Advanced Analytics"
-  ,"premiumBadge": "PREMIUM"
-  ,"bucket1to2": "1-2分"
-  ,"bucket3to5": "3-5分"
-  ,"bucket6to10": "6-10分"
-  ,"bucket11to20": "11-20分"
-  ,"bucket21to30": "21-30分"
-  ,"bucket30plus": "30分以上"
-  ,"sessionHistoryTitle": "Session History"
-  ,"recentSessionHistory": "Recent Session History"
-  ,"achievementFirstStepTitle": "First Step"
-  ,"achievementFirstStepDesc": "Completed your first session"
-  ,"achievementOnFireTitle": "On Fire"
-  ,"achievementOnFireDesc": "3-day streak achieved"
-  ,"achievementWeekWarriorTitle": "Week Warrior"
-  ,"achievementWeekWarriorDesc": "7-day streak achieved"
-  ,"achievementDecadeTitle": "Decade"
-  ,"achievementDecadeDesc": "10 points milestone"
-  ,"achievementHalfCenturyTitle": "Half Century"
-  ,"achievementHalfCenturyDesc": "50 points milestone"
-  ,"achievementLockedPrompt": "Complete sessions to unlock achievements"
-  ,"resetAllSettingsDescription": "すべての設定とデータを初期化します (元に戻せません)"
-  ,"cancel": "キャンセル"
-  ,"reset": "リセット"
-  ,"allSettingsReset": "全設定とデータをリセットしました"
-  ,"minutesShort": "分"
-  ,"unlockAdvancedCalibration": "高度な較正をアンロック"
-  ,"exportNoData": "書き出すデータがありません"
-  ,"faqHowWorksQ": "仕組みは?"
-  ,"faqHowWorksA": "環境ノイズを測定し しきい値未満の時間でポイント獲得"
-  ,"faqAudioRecordedQ": "音声は記録されますか?"
-  ,"faqAudioRecordedA": "いいえ。デシベル値のみ計測し保存しません"
-  ,"faqAdjustSensitivityQ": "感度調整?"
-  ,"faqAdjustSensitivityA": "設定 > 基本 > しきい値 ({min}–{max} dB) で較正後に調整"
-  ,"faqPremiumFeaturesQ": "プレミアム機能?"
-  ,"faqPremiumFeaturesA": "延長セッション・高度分析・エクスポート・テーマ"
-  ,"faqNotificationsQ": "通知?"
-  ,"faqNotificationsA": "スマートリマインダーが習慣を学びマイルストーンを祝福"
-  ,"supportTitle": "サポート"
-  ,"responseTimeLabel": "応答時間: {time}"
-  ,"docs": "ドキュメント"
-  ,"contactSupport": "サポートに連絡"
-  ,"emailOpenDescription": "システム情報付きでメールアプリを開く"
-  ,"subject": "件名"
-  ,"briefDescription": "概要"
-  ,"description": "説明"
-  ,"issueDescriptionHint": "問題の詳細を入力..."
-  ,"openingEmail": "メールを開いています..."
-  ,"openEmailApp": "メールアプリを開く"
-  ,"fillSubjectDescription": "件名と説明を入力してください"
-  ,"emailOpened": "メールアプリを開きました。準備ができたら送信"
-  ,"noEmailAppFound": "メールアプリが見つかりません 連絡先:"
-  ,"standardSubject": "件名: [STANDARD] {subject}"
-  ,"issueLine": "問題: {issue}"
-  ,"failedOpenFaq": "FAQ を開けません: {error}"
-  ,"failedOpenDocs": "ドキュメントを開けません: {error}"
-  ,"save": "保存"
-  ,"accessibilitySettingsSaved": "アクセシビリティ設定を保存"
-  ,"noiseFloorCalibration": "ノイズフロア較正"
-  ,"couldNotReadMic": "マイクを読み取れません"
-  ,"calibrationFailed": "較正失敗"
-  ,"notificationSettingsTitle": "通知設定"
-  ,"notificationPermissionRequired": "通知許可が必要です"
-  ,"notificationPermissionRationale": "そっと促し達成を祝う通知を受け取るには有効にしてください。"
-  ,"requesting": "リクエスト中..."
-  ,"enableNotificationsCta": "通知を有効にする"
-  ,"enableNotificationsTitle": "通知を有効にする"
-  ,"enableNotificationsSubtitle": "SilenceScore の通知を許可"
-  ,"dailyReminderTitle": "スマートな毎日のリマインダー"
-  ,"dailyReminderSubtitle": "スマートまたは固定時間"
-  ,"dailyTimeLabel": "毎日の時間"
-  ,"dailyTimeHint": "固定時間を選ぶかパターン学習に任せましょう。"
-  ,"useSmartCta": "スマートを使う"
-  ,"sessionCompletedTitle": "セッション完了"
-  ,"sessionCompletedSubtitle": "完了したセッションを祝う"
-  ,"achievementUnlockedTitle": "実績解除"
-  ,"achievementUnlockedSubtitle": "節目の通知"
-  ,"weeklySummaryTitle": "週間サマリー"
-  ,"weeklySummarySubtitle": "週ごとの洞察 (曜日と時間)"
-  ,"weeklyTimeLabel": "週間時間"
-  ,"notificationPreview": "プレビュー"
-  ,"dailySilenceReminderTitle": "毎日の静寂リマインダー"
-  ,"weeklyProgressReportTitle": "週間進捗レポート 📊"
-  ,"achievementUnlockedGenericTitle": "実績解除! 🏆"
-  ,"sessionCompleteSuccessTitle": "セッション達成! 🎉"
-  ,"sessionCompleteEndedTitle": "セッション終了"
-  ,"reminderStartJourney": "🧘‍♂️ 今日から静寂の旅を始めましょう。内なる穏やかさを。"
-  ,"reminderRestart": "🌱 再開しませんか？いつでも新しい始まり。"
-  ,"reminderDayTwo": "⭐ 連続2日目！継続は静けさを育てます。"
-  ,"reminderStreakShort": "🔥 {streak}日連続！強い習慣が育っています。"
-  ,"reminderStreakMedium": "🏆 {streak}日連続すごい！あなたの集中は刺激的です。"
-  ,"reminderStreakLong": "👑 {streak}日連続は驚異的！静寂の達人です。"
-  ,"achievementFirstSession": "🎉 初回セッション完了！ようこそ。"
-  ,"achievementWeekStreak": "🌟 7日連続達成！継続こそ力。"
-  ,"achievementMonthStreak": "🏆 30日連続！止まりません。"
-  ,"achievementPerfectSession": "✨ 完璧な静寂セッション。何も乱しませんでした。"
-  ,"achievementLongSession": "⏰ 長時間セッション達成。集中が深まっています。"
-  ,"achievementGeneric": "🎊 実績解除！その調子！"
-  ,"weeklyProgressNone": "💭 今週は静寂が少なめ。穏やかな時間を取りませんか？"
-  ,"weeklyProgressFew": "🌿 今週 {count} 回。毎回が心を静めます。"
-  ,"weeklyProgressSome": "🌊 今週 {count} 回！リズムができています。"
-    ,"weeklyProgressPerfect": "🎯 今週は {count} セッションでパーフェクト！素晴らしい継続です。"
-  ,"@reminderStreakShort": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@reminderStreakMedium": {"placeholders": {"streak": {"type": "int"}}}
-    ,"ratingPromptTitle": "Silence Score を気に入っていますか?"
-    ,"ratingPromptBody": "5つ星の評価は他の人が静かな集中を見つける助けになります。"
-    ,"ratingPromptRateNow": "今すぐ評価"
-    ,"ratingPromptLater": "後で"
-    ,"ratingPromptNoThanks": "結構です"
-    ,"ratingThankYou": "ご支援ありがとうございます！"
-  ,"@reminderStreakLong": {"placeholders": {"streak": {"type": "int"}}}
-  ,"@weeklyProgressFew": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressSome": {"placeholders": {"count": {"type": "int"}}}
-  ,"@weeklyProgressPerfect": {"placeholders": {"count": {"type": "int"}}}
-  ,"tipsHidden": "ヒントを非表示にしました"
-  ,"tipsShown": "ヒントを表示しました"
-  ,"showTips": "ヒントを表示"
-  ,"hideTips": "ヒントを非表示"
-  ,"tip01": "Short sessions count\u2014start with 2\u20133 minutes to build consistency."
-  ,"tip02": "Use Smart Daily Reminders to nudge you at your best time."
-  ,"tip03": "Recalibrate when your environment changes for better accuracy."
-  ,"tip04": "Check Weekly Trends to spot your momentum over time."
-  ,"tip05": "Streaks grow with daily wins\u2014show up, even for one minute."
-  ,"tip06": "High ambient noise? Raise threshold a bit to reduce false fails."
-  ,"tip07": "Try different times of day to find your quiet sweet spot."
-  ,"tip08": "Session complete notifications keep motivation high\u2014enable them!"
-  ,"tip09": "Prefer hands\u2011off? Auto reminders can schedule themselves (Smart)."
-  ,"tip10": "Use shorter sessions on busy days to keep your streak alive."
-  ,"tip11": "The progress ring is tappable\u2014start or stop with a single tap."
-  ,"tip12": "Export your data (Premium) to share progress or back it up."
-  ,"tip13": "Average session length helps you choose the right duration."
-  ,"tip14": "Consistency beats intensity\u2014small daily practice compounds."
-  ,"tip15": "Set a gentle goal: 5 quiet minutes is a great baseline."
-  ,"tip16": "The noise chart helps you see spikes\u2014aim for calmer periods."
-  ,"tip17": "Upgrade session duration (Premium) for longer focus blocks."
-  ,"tip18": "High threshold warning guards accuracy\u2014avoid setting it too high."
-  ,"tip19": "Weekdays vary\u2014tune your weekly summary to your schedule."
-  ,"tip20": "Accessibility options: high contrast, large text, and vibration."
-  ,"tip21": "Ambient baseline matters\u2014calibrate when moving to new spaces."
-  ,"tip22": "Quiet wins add up\u20141 point per minute keeps it simple."
-  ,"tip23": "Confetti celebrates progress\u2014small celebrations reinforce habits."
-  ,"tip24": "Try mornings if evenings are noisy\u2014best time differs for everyone."
-  ,"tip25": "Fine\u2011tune the decibel threshold for your room\u2019s character."
-  ,"tip26": "Use the moving average to smooth out noisy days."
-  ,"tip27": "Let Weekly Insights remind you of your progress rhythm."
-  ,"tip28": "Finish what you start\u2014short sessions reduce friction to begin."
-  ,"tip29": "Silence is a skill\u2014practice makes patterns, patterns make progress."
-  ,"tip30": "You\u2019re one tap away\u2014start a tiny session now."
-  ,"tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations."
-  ,"tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time."
-  ,"tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune."
-  ,"tipsTitle": "Tips"
-  ,"tipInstructionSetTime": "Settings → Basic → Session duration"
-  ,"tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders."
-  ,"tipInstructionCalibrate": "Settings → Advanced → Noise Calibration."
-  ,"tipInstructionOpenAnalytics": "Open Analytics to view trends and averages."
-  ,"tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed."
-  ,"tipInstructionTapRing": "On Home, tap the progress ring to start/stop."
-  ,"tipInstructionExport": "Settings → Advanced → Export Data."
-  ,"tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart."
-  ,"tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks."
-  ,"tipInstructionAccessibility": "Settings → Advanced → Accessibility."
-  ,"tipInstructionStartNow": "Tap Start Session on the Home screen."
-  ,"tipInfoTooltip": "ヒントを表示"
+  "mockSubscriptionsBanner": "モック購読有効",
+  "splashTagline": "静けさを見つけよう",
+  "appIconSemantic": "アプリアイコン",
+  "tabBasic": "基本",
+  "tabAdvanced": "詳細",
+  "tabAbout": "情報",
+  "resetAllSettings": "全設定をリセット",
+  "decibelThresholdMaxNoise": "デシベルしきい値 (最大騒音)",
+  "highThresholdWarningText": "高いしきい値は重要な音を無視する可能性があります",
+  "decibelThresholdTooltip": "静かな場所: 30–40 dB 校正後 通常ハムがノイズなら上げる",
+  "sessionDuration": "セッション時間",
+  "upgradeForMinutes": "{minutes}分にアップグレード",
+  "freeUpToMinutes": "無料: 最大 {minutes} 分",
+  "durationLabel": "時間",
+  "noiseCalibration": "ノイズ較正",
+  "calibrateBaseline": "ベース較正",
+  "exportData": "データ書き出し",
+  "sessionHistory": "セッション履歴",
+  "notifications": "通知",
+  "remindersCelebrations": "リマインダーと祝福",
+  "accessibility": "アクセシビリティ",
+  "accessibilityFeatures": "アクセシビリティ機能",
+  "appInformation": "アプリ情報",
+  "version": "バージョン",
+  "bundleId": "バンドルID",
+  "environment": "環境",
+  "helpSupport": "ヘルプとサポート",
+  "support": "サポート",
+  "rateApp": "評価",
+  "errorLoadingSettings": "設定読み込みエラー: {error}",
+  "chooseExportFormat": "{sessions}件のセッション形式を選択:",
+  "csvSpreadsheet": "CSVスプレッドシート",
+  "rawDataForAnalysis": "分析用生データ",
+  "pdfReport": "PDFレポート",
+  "formattedReportWithCharts": "グラフ付き整形レポート",
+  "generatingExport": "{format} 書き出し生成中...",
+  "exportCompleted": "{format} 書き出し完了",
+  "exportFailed": "書き出し失敗: {error}",
+  "close": "閉じる",
+  "vibrationFeedback": "バイブレーション",
+  "vibrateOnSessionEvents": "イベント時に振動",
+  "voiceAnnouncements": "音声案内",
+  "announceSessionProgress": "進行を案内",
+  "highContrastMode": "ハイコントラスト",
+  "improveVisualAccessibility": "視認性向上",
+  "largeText": "大きな文字",
+  "increaseTextSize": "文字サイズ拡大",
+  "accessibilitySettings": "アクセシビリティ設定",
+  "measuringAmbientNoise": "環境ノイズ測定中 (≈5秒)",
+  "retry": "再試行",
+  "previousThreshold": "以前: {value} dB",
+  "newThreshold": "新しいしきい値: {value} dB",
+  "noSignificantChange": "大きな変化なし",
+  "highAmbientDetected": "高い環境ノイズ検出",
+  "adjustAnytimeSettings": "設定でいつでも調整可能",
+  "toggleThemeTooltip": "テーマ切替",
+  "audioChartRecovering": "オーディオチャート回復中...",
+  "themeChanged": "テーマ: {themeName}",
+  "privacyComingSoon": "Privacy policy coming soon.",
+  "ratingFeatureComingSoon": "Rating feature coming soon!",
+  "startSessionButton": "Start Session",
+  "stopSessionButton": "Stop",
+  "statusListening": "Listening...",
+  "statusSuccess": "Silence achieved! +1 point",
+  "statusFailure": "Too noisy! Try again",
+  "upgrade": "Upgrade",
+  "upgradeRequired": "アップグレードが必要です",
+  "exportCsvSpreadsheet": "CSV Spreadsheet",
+  "exportPdfReport": "PDF Report",
+  "formattedReportCharts": "Formatted report with charts",
+  "csv": "CSV",
+  "pdf": "PDF",
+  "theme": "Theme",
+  "open": "Open",
+  "microphone": "Microphone",
+  "premium": "Premium",
+  "sessions": "sessions",
+  "format": "format",
+  "successRate": "Success Rate",
+  "avgSession": "Avg Session",
+  "consistency": "Consistency",
+  "bestTime": "Best Time",
+  "weeklyTrends": "Weekly Trends",
+  "performanceMetrics": "Performance Metrics",
+  "advancedAnalytics": "Advanced Analytics",
+  "premiumBadge": "PREMIUM",
+  "bucket1to2": "1-2分",
+  "bucket3to5": "3-5分",
+  "bucket6to10": "6-10分",
+  "bucket11to20": "11-20分",
+  "bucket21to30": "21-30分",
+  "bucket30plus": "30分以上",
+  "sessionHistoryTitle": "Session History",
+  "recentSessionHistory": "Recent Session History",
+  "achievementFirstStepTitle": "First Step",
+  "achievementFirstStepDesc": "Completed your first session",
+  "achievementOnFireTitle": "On Fire",
+  "achievementOnFireDesc": "3-day streak achieved",
+  "achievementWeekWarriorTitle": "Week Warrior",
+  "achievementWeekWarriorDesc": "7-day streak achieved",
+  "achievementDecadeTitle": "Decade",
+  "achievementDecadeDesc": "10 points milestone",
+  "achievementHalfCenturyTitle": "Half Century",
+  "achievementHalfCenturyDesc": "50 points milestone",
+  "achievementLockedPrompt": "Complete sessions to unlock achievements",
+  "resetAllSettingsDescription": "すべての設定とデータを初期化します (元に戻せません)",
+  "cancel": "キャンセル",
+  "reset": "リセット",
+  "allSettingsReset": "全設定とデータをリセットしました",
+  "minutesShort": "分",
+  "unlockAdvancedCalibration": "高度な較正をアンロック",
+  "exportNoData": "書き出すデータがありません",
+  "supportTitle": "サポート",
+  "responseTimeLabel": "応答時間: {time}",
+  "docs": "ドキュメント",
+  "contactSupport": "サポートに連絡",
+  "emailOpenDescription": "システム情報付きでメールアプリを開く",
+  "subject": "件名",
+  "briefDescription": "概要",
+  "description": "説明",
+  "issueDescriptionHint": "問題の詳細を入力...",
+  "openingEmail": "メールを開いています...",
+  "openEmailApp": "メールアプリを開く",
+  "fillSubjectDescription": "件名と説明を入力してください",
+  "emailOpened": "メールアプリを開きました。準備ができたら送信",
+  "noEmailAppFound": "メールアプリが見つかりません 連絡先:",
+  "standardSubject": "件名: [STANDARD] {subject}",
+  "issueLine": "問題: {issue}",
+  "failedOpenFaq": "FAQ を開けません: {error}",
+  "failedOpenDocs": "ドキュメントを開けません: {error}",
+  "save": "保存",
+  "accessibilitySettingsSaved": "アクセシビリティ設定を保存",
+  "noiseFloorCalibration": "ノイズフロア較正",
+  "couldNotReadMic": "マイクを読み取れません",
+  "calibrationFailed": "較正失敗",
+  "notificationSettingsTitle": "通知設定",
+  "notificationPermissionRequired": "通知許可が必要です",
+  "notificationPermissionRationale": "そっと促し達成を祝う通知を受け取るには有効にしてください。",
+  "requesting": "リクエスト中...",
+  "enableNotificationsCta": "通知を有効にする",
+  "enableNotificationsTitle": "通知を有効にする",
+  "enableNotificationsSubtitle": "Focus Field の通知を許可",
+  "dailyReminderTitle": "スマートな毎日のリマインダー",
+  "dailyReminderSubtitle": "スマートまたは固定時間",
+  "dailyTimeLabel": "毎日の時間",
+  "dailyTimeHint": "固定時間を選ぶかパターン学習に任せましょう。",
+  "useSmartCta": "スマートを使う",
+  "sessionCompletedTitle": "セッション完了",
+  "sessionCompletedSubtitle": "完了したセッションを祝う",
+  "achievementUnlockedTitle": "実績解除",
+  "achievementUnlockedSubtitle": "節目の通知",
+  "weeklySummaryTitle": "週間サマリー",
+  "weeklySummarySubtitle": "週ごとの洞察 (曜日と時間)",
+  "weeklyTimeLabel": "週間時間",
+  "notificationPreview": "通知プレビュー",
+  "dailySilenceReminderTitle": "毎日の集中リマインダー",
+  "weeklyProgressReportTitle": "週間進捗レポート 📊",
+  "achievementUnlockedGenericTitle": "実績解除! 🏆",
+  "sessionCompleteSuccessTitle": "セッション達成! 🎉",
+  "sessionCompleteEndedTitle": "セッション終了",
+  "reminderStartJourney": "🎯 今日から集中力の旅を始めましょう！深い作業習慣を築きましょう。",
+  "reminderRestart": "🌱 再開しませんか？いつでも集中し直せます。",
+  "reminderDayTwo": "⭐ 集中連続2日目！継続は集中力を育てます。",
+  "reminderStreakShort": "🔥 {streak}日間の集中連続！強い習慣が育っています。",
+  "reminderStreakMedium": "🏆 {streak}日連続すごい！あなたの集中は刺激的です。",
+  "reminderStreakLong": "👑 {streak}日連続は驚異的！あなたは集中チャンピオンです！",
+  "achievementFirstSession": "🎉 初回セッション完了！Focus Fieldへようこそ！",
+  "achievementWeekStreak": "🌟 7日連続達成！継続こそ力。",
+  "achievementMonthStreak": "🏆 30日連続！止まりません。",
+  "achievementPerfectSession": "✨ 完璧なセッション！100%穏やかな環境を維持しました！",
+  "achievementLongSession": "⏰ 長時間セッション達成。集中が深まっています。",
+  "achievementGeneric": "🎊 実績解除！その調子！",
+  "weeklyProgressNone": "💭 今週の目標を始めましょう！集中セッションの準備はいいですか？",
+  "weeklyProgressFew": "🌿 今週 {count} 分の集中時間！すべてのセッションがカウントされます。",
+  "weeklyProgressSome": "🌊 今週 {count} 分の集中時間を獲得！リズムができています！",
+  "weeklyProgressPerfect": "🎯 今週は {count} セッションでパーフェクト！素晴らしい継続です。",
+  "@reminderStreakShort": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@reminderStreakMedium": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "ratingPromptTitle": "Focus Field を気に入っていますか?",
+  "ratingPromptBody": "5つ星の評価は他の人が静かな集中を見つける助けになります。",
+  "ratingPromptRateNow": "今すぐ評価",
+  "ratingPromptLater": "後で",
+  "ratingPromptNoThanks": "結構です",
+  "ratingThankYou": "ご支援ありがとうございます！",
+  "@reminderStreakLong": {
+    "placeholders": {
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressFew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressSome": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@weeklyProgressPerfect": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tipsHidden": "ヒントを非表示にしました",
+  "tipsShown": "ヒントを表示しました",
+  "showTips": "ヒントを表示",
+  "hideTips": "ヒントを非表示",
+  "tip01": "小さく始めよう—2分でも集中習慣を築けます。",
+  "tip02": "ストリークには猶予があります—2日ルールで1回のミスでは切れません。",
+  "tip03": "学習、読書、瞑想のアクティビティを試して、集中スタイルに合わせましょう。",
+  "tip04": "12週間のヒートマップをチェックして、小さな勝利がどう積み重なるか見てみましょう。",
+  "tip05": "セッション中のリアルタイム静寂%を見る—高いスコアはより良い集中を意味します！",
+  "tip06": "日々の目標（10〜60分）をリズムに合わせてカスタマイズしましょう。",
+  "tip07": "月1回のフリーズトークンを使って、厳しい日のストリークを守りましょう。",
+  "tip08": "3回勝利の後、より厳しいしきい値を提案します—レベルアップの準備はできていますか？",
+  "tip09": "周囲の騒音が高い？しきい値を上げてゾーンに留まりましょう。",
+  "tip10": "スマート毎日リマインダーはあなたの最適な時間を学習します—ガイドさせましょう。",
+  "tip11": "進捗リングはタップ可能—1タップで集中セッションを開始します。",
+  "tip12": "環境が変わったら再調整して精度を上げましょう。",
+  "tip13": "セッション通知は勝利を祝います—モチベーションのために有効にしましょう！",
+  "tip14": "一貫性は完璧さに勝ります—忙しい日でも現れましょう。",
+  "tip15": "一日の異なる時間を試して、静かなスイートスポットを発見しましょう。",
+  "tip16": "日々の進捗は常に表示されます—いつでもタップして開始できます。",
+  "tip17": "各アクティビティは個別に目標に向かって追跡されます—バラエティが新鮮さを保ちます。",
+  "tip18": "データをエクスポート（プレミアム）して完全な集中の旅を見ましょう。",
+  "tip19": "紙吹雪が全ての完了を祝います—小さな勝利は認識に値します！",
+  "tip20": "ベースラインが重要です—新しい空間に移動するときは調整しましょう。",
+  "tip21": "7日間のトレンドがパターンを明らかにします—洞察のために毎週チェックしましょう。",
+  "tip22": "セッション時間をアップグレード（プレミアム）してより長い集中ブロックを。",
+  "tip23": "集中は練習です—小さなセッションがあなたが望む習慣を築きます。",
+  "tip24": "週次サマリーがリズムを示します—スケジュールに合わせて調整しましょう。",
+  "tip25": "空間に合わせてしきい値を微調整—すべての部屋は異なります。",
+  "tip26": "アクセシビリティオプションは誰もが集中するのを助けます—高コントラスト、大きいテキスト、振動。",
+  "tip27": "今日のタイムラインは集中した時間を表示—生産的な時間を見つけましょう。",
+  "tip28": "始めたことを終わらせる—短いセッションはより多くの完了を意味します。",
+  "tip29": "静かな分が目標に向かって積み上がります—完璧さより進歩を。",
+  "tip30": "1タップの距離です—今すぐ小さなセッションを開始しましょう。",
+  "tipInstructionNotifications": "Settings → Advanced → Notifications to configure reminders and celebrations.",
+  "tipInstructionWeeklySummary": "Settings → Advanced → Notifications → Weekly Summary to pick weekday & time.",
+  "tipInstructionThreshold": "Settings → Basic → Decibel Threshold. Calibrate first, then fine‑tune.",
+  "tipsTitle": "Tips",
+  "tipInstructionSetTime": "Settings → Basic → Session duration",
+  "tipInstructionDailyReminders": "Settings → Advanced → Notifications → Smart Daily Reminders.",
+  "tipInstructionCalibrate": "Settings → Advanced → Noise Calibration.",
+  "tipInstructionOpenAnalytics": "Open Analytics to view trends and averages.",
+  "tipInstructionSessionComplete": "Settings → Advanced → Notifications → Session Completed.",
+  "tipInstructionTapRing": "On Home, tap the progress ring to start/stop.",
+  "tipInstructionExport": "Settings → Advanced → Export Data.",
+  "tipInstructionOpenNoiseChart": "Start a session to see the real‑time noise chart.",
+  "tipInstructionUpgradeDuration": "Settings → Basic → Session duration. Upgrade for longer blocks.",
+  "tipInstructionAccessibility": "Settings → Advanced → Accessibility.",
+  "tipInstructionStartNow": "Tap Start Session on the Home screen.",
+  "tipInstructionHeatmap": "概要タブ → 詳細を表示 → ヒートマップ",
+  "tipInstructionTodayTimeline": "概要タブ → 詳細を表示 → 今日のタイムライン",
+  "tipInstruction7DayTrends": "概要タブ → 詳細を表示 → 7日間のトレンド",
+  "tipInstructionEditActivities": "アクティビティタブ → 編集をタップしてアクティビティを表示/非表示",
+  "tipInstructionQuestGo": "アクティビティタブ → クエストカプセル → Goをタップ",
+  "tipInfoTooltip": "ヒントを表示",
+  "questCapsuleTitle": "アンビエントクエスト",
+  "questCapsuleLoading": "静かな時間を読み込み中…",
+  "questCapsuleProgress": "静寂 {progress}/{goal} 分 • ストリーク {streak}",
+  "@questCapsuleProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      },
+      "streak": {
+        "type": "int"
+      }
+    }
+  },
+  "questFreezeButton": "凍結",
+  "questFrozenToday": "今日は凍結されました — 保護されています。",
+  "questGoButton": "移動",
+  "calmPercent": "静寂 {percent}%",
+  "@calmPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "calmLabel": "静寂",
+  "day": "日",
+  "days": "日",
+  "freeze": "凍結",
+  "adaptiveThresholdSuggestion": "3勝！ {threshold} dBを試す？",
+  "@adaptiveThresholdSuggestion": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "adaptiveThresholdNotNow": "今はしない",
+  "adaptiveThresholdTryIt": "試す",
+  "adaptiveThresholdConfirm": "しきい値を{threshold} dBに設定",
+  "@adaptiveThresholdConfirm": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "編集",
+  "start": "開始",
+  "error": "エラー",
+  "errorWithMessage": "エラー：{message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "faqTitle": "よくある質問",
+  "faqSearchHint": "質問を検索...",
+  "faqNoResults": "結果が見つかりません",
+  "faqNoResultsSubtitle": "別の検索用語をお試しください",
+  "faqResultsCount": "{count, plural, one {1件の結果が見つかりました} other {{count}件の結果が見つかりました}}",
+  "@faqResultsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "faqQ01": "Focus Fieldとは何ですか？集中力を高めるにはどう役立ちますか？",
+  "faqA01": "Focus Fieldは、環境内の周囲ノイズを監視することで、より良い集中習慣の構築を支援します。セッション（学習、読書、瞑想、その他）を開始すると、アプリは環境の静かさを測定します。静かに保つほど、より多くの「集中分」を獲得できます。これにより、深い作業のための気を散らさない空間を見つけ、維持することが促されます。",
+  "faqQ02": "Focus Fieldはどのように集中力を測定しますか？",
+  "faqA02": "Focus Fieldは、セッション中の環境内の周囲ノイズレベルを監視します。選択したノイズ閾値を下回る秒数を追跡することで「アンビエントスコア」を計算します。セッションに少なくとも70%の静かな時間がある場合（アンビエントスコア≥70%）、これらの静かな分に対して完全なクレジットを獲得します。",
+  "faqQ03": "Focus Fieldは音声や会話を録音しますか？",
+  "faqA03": "いいえ、絶対にしません。Focus Fieldはデシベルレベル（音量）のみを測定します - 音声を録音、保存、送信することは一切ありません。プライバシーは完全に保護されています。アプリは単に環境が選択した閾値を上回っているか下回っているかをチェックするだけです。",
+  "faqQ04": "Focus Fieldではどのような活動を追跡できますか？",
+  "faqA04": "Focus Fieldには4つの活動タイプがあります：学習📚（学習と研究用）、読書📖（集中した読書用）、瞑想🧘（マインドフルネス実践用）、その他⭐（集中を必要とする活動用）。すべての活動は、静かで集中した環境を維持するのに役立つ周囲ノイズ監視を使用します。",
+  "faqQ05": "すべての活動にFocus Fieldを使用すべきですか？",
+  "faqA05": "Focus Fieldは、周囲ノイズが集中レベルを示す活動に最適です。学習、読書、瞑想などの活動は、静かな環境から最も恩恵を受けます。「その他」の活動を追跡することもできますが、主にノイズに敏感な集中作業にFocus Fieldを使用することをお勧めします。",
+  "faqQ06": "集中セッションを開始するには？",
+  "faqA06": "セッションタブに移動し、活動（学習、読書、瞑想、その他）を選択し、セッション期間（1、5、10、15、30分、またはプレミアムオプション）を選択し、進行リング上の開始ボタンをタップして、環境を静かに保ちます！",
+  "faqQ07": "利用可能なセッション期間は？",
+  "faqA07": "無料ユーザーは選択できます：1、5、10、15、または30分セッション。プレミアムユーザーは、より長い深い作業期間のための1時間、1.5時間、2時間の延長セッションも利用できます。",
+  "faqQ08": "セッションを一時停止または早期に停止できますか？",
+  "faqA08": "はい！セッション中、進行リングの上に一時停止と停止ボタンが表示されます。誤タップを防ぐため、これらのボタンを長押しする必要があります。早期に停止しても、蓄積した静かな分のポイントは獲得できます。",
+  "faqQ09": "Focus Fieldでポイントを獲得するには？",
+  "faqA09": "静かな分ごとに1ポイントを獲得します。セッション中、Focus Fieldは環境がノイズ閾値を下回る秒数を追跡します。最後に、これらの静かな秒が分に変換されます。例えば、8分間の静かな時間で10分セッションを完了すると、8ポイントを獲得します。",
+  "faqQ10": "70%閾値とは何ですか？なぜ重要ですか？",
+  "faqA10": "70%閾値は、セッションが毎日の目標にカウントされるかどうかを決定します。アンビエントスコア（静かな時間÷合計時間）が少なくとも70%の場合、セッションはクエストクレジットの資格があります。70%未満でも、毎分の静かな時間のポイントは獲得できます！",
+  "faqQ11": "アンビエントスコアとポイントの違いは何ですか？",
+  "faqA11": "アンビエントスコアは、70%閾値に達したかどうかを決定するセッションの品質のパーセンテージ（静かな秒÷合計秒）です。ポイントは獲得した実際の静かな分です（1ポイント＝1分）。アンビエントスコア＝品質、ポイント＝達成。",
+  "faqQ12": "Focus Fieldのストリークはどのように機能しますか？",
+  "faqA12": "ストリークは、毎日の目標を達成した連続した日数を追跡します。Focus Fieldは思いやりのある2日間ルールを使用：2日間連続して逃した場合にのみストリークが壊れます。これは、1日逃しても、翌日に目標を完了すればストリークが続くことを意味します。",
+  "faqQ13": "フリーズトークンとは何ですか？どのように使用しますか？",
+  "faqA13": "フリーズトークンは、目標を完了できないときにストリークを保護します。毎月1つの無料フリーズトークンを受け取ります。使用すると、全体的な進行状況は100%（目標保護）を示し、ストリークは安全で、個々の活動追跡は通常通り続きます。忙しい日のために賢く使用してください！",
+  "faqQ14": "毎日の集中目標をカスタマイズできますか？",
+  "faqA14": "はい！今日タブのセッションカードで編集をタップします。グローバル毎日目標を設定し（無料10-60分、プレミアム最大1080分）、個別ターゲットのためのアクティビティごとの目標を有効にし、特定のアクティビティを表示/非表示にできます。",
+  "faqQ15": "ノイズ閾値とは何ですか？どのように調整しますか？",
+  "faqA15": "閾値は「静か」とカウントされる最大ノイズレベル（デシベル）です。デフォルトは40 dB（図書館の静けさ）です。セッションタブで調整できます：30 dB（非常に静か）、40 dB（図書館の静けさ - 推奨）、50 dB（適度なオフィス）、60-80 dB（より騒がしい環境）。",
+  "faqQ16": "適応閾値とは何ですか？使用すべきですか？",
+  "faqA16": "現在の閾値で3回連続成功したセッションの後、Focus Fieldは挑戦するために2 dB増加することを提案します。これにより、徐々に改善するのに役立ちます。提案を受け入れるか却下できます - 7日ごとに1回だけ表示されます。",
+  "faqQ17": "フォーカスモードとは何ですか？",
+  "faqA17": "フォーカスモードは、セッション中の気を散らさないフルスクリーンオーバーレイです。カウントダウンタイマー、ライブの静かなパーセンテージ、最小限のコントロール（長押しで一時停止/停止）を表示します。完全に集中できるように他のすべてのUI要素を削除します。設定>基本>フォーカスモードで有効にします。",
+  "faqQ18": "Focus Fieldがマイク許可を必要とするのはなぜですか？",
+  "faqA18": "Focus Fieldは、セッション中に周囲ノイズレベル（デシベル）を測定するためにデバイスのマイクを使用します。これはアンビエントスコアを計算するために不可欠です。覚えておいてください：音声は決して録音されません - ノイズレベルのみがリアルタイムで測定されます。",
+  "faqQ19": "時間の経過とともに集中パターンを見ることができますか？",
+  "faqA19": "はい！今日タブには、毎日の進行状況、週次トレンド、12週間のアクティビティヒートマップ（GitHubコントリビューションのような）、セッションタイムラインが表示されます。プレミアムユーザーは、パフォーマンスメトリクス、移動平均、AI搭載のインサイトを備えた高度な分析を取得します。",
+  "faqQ20": "Focus Fieldで通知はどのように機能しますか？",
+  "faqA20": "Focus Fieldにはスマートリマインダーがあります：毎日のリマインダー（好みの集中時間を学習するか固定時間を使用）、結果付きのセッション完了通知、マイルストーンの達成通知、週次サマリー（プレミアム）。設定>詳細>通知で有効化/カスタマイズします。",
+  "microphoneSettingsTitle": "設定が必要です",
+  "microphoneSettingsMessage": "沈黙検出を有効にするには、マイクの許可を手動で付与してください:\n\n• iOS: 設定 > プライバシーとセキュリティ > マイク > Focus Field\n• Android: 設定 > アプリ > Focus Field > 権限 > マイク",
+  "buttonGrantPermission": "許可を与える",
+  "buttonOk": "OK",
+  "buttonOpenSettings": "設定を開く",
+  "onboardingBack": "戻る",
+  "onboardingSkip": "スキップ",
+  "onboardingNext": "次へ",
+  "onboardingGetStarted": "始める",
+  "onboardingWelcomeSnackbar": "ようこそ！最初のセッションを開始する準備はできていますか？ 🚀",
+  "onboardingWelcomeTitle": "Focus Fieldへ\nようこそ！ 🎯",
+  "onboardingWelcomeSubtitle": "より良い集中への旅がここから始まります！\n続く習慣を作りましょう 💪",
+  "onboardingFeatureTrackTitle": "フォーカスを追跡",
+  "onboardingFeatureTrackDesc": "集中力スーパーパワーを構築しながら、リアルタイムで進捗を確認しましょう！ 📊",
+  "onboardingFeatureRewardsTitle": "報酬を獲得",
+  "onboardingFeatureRewardsDesc": "静かな分ごとにカウントされます！ポイントを集めて勝利を祝いましょう 🏆",
+  "onboardingFeatureStreaksTitle": "ストリークを構築",
+  "onboardingFeatureStreaksDesc": "勢いを維持しましょう！私たちの思いやりのあるシステムがあなたをモチベートし続けます 🔥",
+  "onboardingEnvironmentTitle": "あなたのフォーカスゾーンはどこ？ 🎯",
+  "onboardingEnvironmentSubtitle": "あなたのスペースを最適化できるように、典型的な環境を選択してください！",
+  "onboardingEnvQuietHomeTitle": "静かな自宅",
+  "onboardingEnvQuietHomeDesc": "寝室、静かなホームオフィス",
+  "onboardingEnvQuietHomeDb": "30 dB - 非常に静か",
+  "onboardingEnvOfficeTitle": "典型的なオフィス",
+  "onboardingEnvOfficeDesc": "標準的なオフィス、図書館",
+  "onboardingEnvOfficeDb": "40 dB - 図書館の静けさ（推奨）",
+  "onboardingEnvBusyTitle": "忙しいスペース",
+  "onboardingEnvBusyDesc": "カフェ、共有ワークスペース",
+  "onboardingEnvBusyDb": "50 dB - 中程度のノイズ",
+  "onboardingEnvNoisyTitle": "騒がしい環境",
+  "onboardingEnvNoisyDesc": "オープンオフィス、公共スペース",
+  "onboardingEnvNoisyDb": "60 dB - より高いノイズ",
+  "onboardingEnvAdjustNote": "設定でいつでも調整できます",
+  "onboardingGoalTitle": "毎日の目標を設定しましょう！ 🎯",
+  "onboardingGoalSubtitle": "どのくらいの集中時間があなたに適していますか？\n（いつでも調整できます！）",
+  "onboardingGoalStartingTitle": "スタート",
+  "onboardingGoalStartingDuration": "10-15分",
+  "onboardingGoalHabitTitle": "習慣を作る",
+  "onboardingGoalHabitDuration": "20-30分",
+  "onboardingGoalPracticeTitle": "定期的な練習",
+  "onboardingGoalPracticeDuration": "40-60分",
+  "onboardingGoalDeepWorkTitle": "深い作業",
+  "onboardingGoalDeepWorkDuration": "60分以上",
+  "onboardingGoalAdvice1": "完璧なスタート！ 🌟 小さな一歩が大きな勝利につながります。あなたならできます！",
+  "onboardingGoalAdvice2": "素晴らしい選択！ 🎯 このスイートスポットが永続的な習慣を構築します！",
+  "onboardingGoalAdvice3": "野心的！ 💪 集中力ゲームをレベルアップする準備ができています！",
+  "onboardingGoalAdvice4": "すごい！ 🏆 深い作業モード起動！休憩を忘れずに！",
+  "onboardingActivitiesTitle": "アクティビティを選択しましょう！ ✨",
+  "onboardingActivitiesSubtitle": "あなたに共鳴するものをすべて選んでください！\n（後でいつでも追加できます）",
+  "onboardingActivityStudyTitle": "学習",
+  "onboardingActivityStudyDesc": "学習、コースワーク、研究",
+  "onboardingActivityReadingTitle": "読書",
+  "onboardingActivityReadingDesc": "深い読書、記事、本",
+  "onboardingActivityMeditationTitle": "瞑想",
+  "onboardingActivityMeditationDesc": "マインドフルネス、呼吸法",
+  "onboardingActivityOtherTitle": "その他",
+  "onboardingActivityOtherDesc": "集中を必要とする活動",
+  "onboardingActivitiesTip": "プロのヒント：Focus Fieldは静寂=集中のときに輝きます！ 🤫✨",
+  "onboardingPermissionTitle": "あなたのプライバシーは重要です！ 🔒",
+  "onboardingPermissionSubtitle": "周囲のノイズを測定し、より良い集中を支援するためにマイクアクセスが必要です",
+  "onboardingPrivacyNoRecordingTitle": "録音なし",
+  "onboardingPrivacyNoRecordingDesc": "ノイズレベルのみを測定し、音声を録音することはありません",
+  "onboardingPrivacyLocalTitle": "ローカルのみ",
+  "onboardingPrivacyLocalDesc": "すべてのデータはデバイスに保存されます",
+  "onboardingPrivacyFirstTitle": "プライバシー第一",
+  "onboardingPrivacyFirstDesc": "あなたの会話は完全にプライベートです",
+  "onboardingPermissionNote": "最初のセッションを開始するときに次の画面で許可を与えることができます",
+  "onboardingTipsTitle": "成功のためのプロのヒント！ 💡",
+  "onboardingTipsSubtitle": "これらはFocus Fieldを最大限に活用するのに役立ちます！",
+  "onboardingTip1Title": "小さく始めて、大きく勝つ！ 🌱",
+  "onboardingTip1Desc": "5-10分のセッションから始めましょう。一貫性が完璧さに勝ります！",
+  "onboardingTip2Title": "フォーカスモードを有効にする！ 🎯",
+  "onboardingTip2Desc": "没入型の気を散らさない体験のためにフォーカスモードをタップします。",
+  "onboardingTip3Title": "フリーズトークン = セーフティネット！ ❄️",
+  "onboardingTip3Desc": "忙しい日に月1回のトークンを使用してストリークを保護します。",
+  "onboardingTip4Title": "70%ルールが素晴らしい！ 📈",
+  "onboardingTip4Desc": "70%の静かな時間を目指しましょう - 完璧な静寂は必要ありません！",
+  "onboardingReadyTitle": "準備完了！ 🚀",
+  "onboardingReadyDesc": "最初のセッションを開始して、素晴らしい習慣を作りましょう！",
+  "questMotivation1": "成功は終わらず、失敗は決して最終的ではない",
+  "questMotivation2": "完璧よりも進歩 - 毎分が大切です",
+  "questMotivation3": "毎日の小さな一歩が大きな変化につながる",
+  "questMotivation4": "より良い習慣を築いています、一度に一つのセッション",
+  "questMotivation5": "一貫性は強度に勝る",
+  "questMotivation6": "どんなに短くても、すべてのセッションは勝利です",
+  "questMotivation7": "集中力は筋肉です - あなたは強くなっています",
+  "questMotivation8": "千里の道も一歩から",
+  "questGo": "行く",
+  "todayDashboardTitle": "あなたのフォーカスダッシュボード",
+  "todayFocusMinutes": "今日の集中分",
+  "todayGoalCalm": "目標: {goalMinutes}分 • 静か ≥{calmPercent}%",
+  "@todayGoalCalm": {
+    "placeholders": {
+      "goalMinutes": {
+        "type": "int"
+      },
+      "calmPercent": {
+        "type": "int"
+      }
+    }
+  },
+  "todayPickMode": "モードを選択",
+  "todayDefaultActivities": "学習 • 読書 • 瞑想",
+  "todayTooltipTips": "ヒント",
+  "todayTooltipTheme": "テーマ",
+  "todayTooltipSettings": "設定",
+  "todayThemeChanged": "テーマを{themeName}に変更しました",
+  "@todayThemeChanged": {
+    "placeholders": {
+      "themeName": {
+        "type": "String"
+      }
+    }
+  },
+  "todayTabToday": "今日",
+  "todayTabSessions": "セッション",
+  "todayHelperText": "期間を設定し、時間を追跡します。セッション履歴と分析は概要に表示されます。",
+  "statPoints": "ポイント",
+  "statStreak": "ストリーク",
+  "statSessions": "セッション",
+  "ringProgressTitle": "リングの進捗",
+  "ringOverall": "全体",
+  "ringOverallFrozen": "全体 ❄️",
+  "sessionCalm": "静か",
+  "sessionStart": "開始",
+  "sessionStop": "停止",
+  "buttonEdit": "編集",
+  "durationUpTo1Hour": "最大1時間のセッション",
+  "durationUpTo1_5Hours": "最大1.5時間のセッション",
+  "durationUpTo2Hours": "最大2時間のセッション",
+  "durationExtended": "延長セッション期間",
+  "durationExtendedAccess": "延長セッションへのアクセス",
+  "noiseRoomLoudness": "部屋の音量",
+  "noiseThresholdLabel": "しきい値: {threshold}dB",
+  "@noiseThresholdLabel": {
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseThresholdSet": "しきい値を{db} dBに設定しました",
+  "@noiseThresholdSet": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighDetected": "高い騒音が検出されました。より良い集中のために静かな部屋に移動してください",
+  "noiseThresholdExceededHint": "より静かな部屋を見つけるか、しきい値を上げる →",
+  "noiseExceededIncreasePrompt": "より静かな部屋を探すか、{db}dBに上げますか？",
+  "@noiseExceededIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseHighIncreasePrompt": "高いノイズが検出されました。{db}dBに上げますか？",
+  "@noiseHighIncreasePrompt": {
+    "placeholders": {
+      "db": {
+        "type": "int"
+      }
+    }
+  },
+  "noiseAtMaxThreshold": "すでに最大しきい値です。より静かな部屋を見つけてください。",
+  "noiseThresholdYes": "はい",
+  "noiseThresholdNo": "いいえ",
+  "trendsInsights": "洞察",
+  "trendsLast7Days": "過去7日間",
+  "trendsShareWeeklySummary": "週間サマリーを共有",
+  "trendsLoading": "読み込み中...",
+  "trendsLoadingMetrics": "メトリクスを読み込み中...",
+  "trendsNoData": "データなし",
+  "trendsWeeklyTotal": "週間合計",
+  "trendsBestDay": "最良の日",
+  "trendsActivityHeatmap": "アクティビティヒートマップ",
+  "trendsRecentActivity": "最近のアクティビティ",
+  "trendsHeatmapError": "ヒートマップを読み込めません",
+  "dayMon": "月",
+  "dayTue": "火",
+  "dayWed": "水",
+  "dayThu": "木",
+  "dayFri": "金",
+  "daySat": "土",
+  "daySun": "日",
+  "focusModeComplete": "セッション完了！",
+  "focusModeGreatSession": "素晴らしい集中セッション",
+  "focusModeResume": "再開",
+  "focusModePause": "一時停止",
+  "focusModeLongPressHint": "長押しして一時停止または停止",
+  "activityEditTitle": "アクティビティを編集",
+  "activityRecommendation": "推奨: 一貫した習慣形成のために1つのアクティビティあたり10分以上",
+  "activityDailyGoals": "毎日の目標",
+  "activityTotalHours": "合計: {hours}h / 18h",
+  "@activityTotalHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activityPerActivity": "アクティビティごと",
+  "activityExceedsLimit": "合計が1日の18時間制限を超えています。目標を減らしてください。",
+  "activityGoalLabel": "目標",
+  "activityGoalDescription": "毎日の集中目標を設定（1分〜18時間）",
+  "shareYourProgress": "進捗を共有",
+  "shareTimeRange": "時間範囲",
+  "shareCardSize": "カードサイズ",
+  "analyticsPerformanceMetrics": "パフォーマンス指標",
+  "analyticsPreferredDuration": "優先期間",
+  "analyticsUnavailable": "分析は利用できません",
+  "analyticsRestoreAttempt": "次のアプリ起動時にこのセクションを復元しようとします。",
+  "audioUnavailable": "オーディオは一時的に利用できません",
+  "audioRecovering": "オーディオ処理で問題が発生しました。自動的に回復しています...",
+  "shareQuietMinutes": "静かな分",
+  "shareTopActivity": "トップアクティビティ",
+  "appName": "Focus Field",
+  "sharePreview": "プレビュー",
+  "sharePinchToZoom": "ピンチしてズーム",
+  "shareGenerating": "生成中...",
+  "shareButton": "共有",
+  "shareTodayLabel": "今日",
+  "shareWeeklyLabel": "週間",
+  "shareTodayTitle": "今日のフォーカス",
+  "shareWeeklyTitle": "今週のフォーカス",
+  "shareSubject": "Focus Fieldの進捗",
+  "shareFormatSquare": "1:1比率 • 汎用互換性",
+  "shareFormatPost": "4:5比率 • Instagram/Twitter投稿",
+  "shareFormatStory": "9:16比率 • Instagramストーリー",
+  "recapWeeklyTitle": "週間まとめ",
+  "recapMinutes": "分",
+  "recapStreak": "連続記録: {start} → {end} 日",
+  "@recapStreak": {
+    "placeholders": {
+      "start": {
+        "type": "int"
+      },
+      "end": {
+        "type": "int"
+      }
+    }
+  },
+  "recapTopActivity": "トップアクティビティ: ",
+  "practiceOverviewTitle": "練習の概要",
+  "practiceLast7Days": "過去7日間",
+  "audioMultipleErrors": "複数のオーディオエラーが検出されました。コンポーネントを復旧しています...",
+  "activityCurrentGoal": "現在の目標: {goal}",
+  "activitySaveChanges": "変更を保存",
+  "insightsTitle": "インサイト",
+  "insightsTooltip": "詳細なインサイトを表示",
+  "statDays": "日",
+  "sessionsTotalToday": "今日の合計 {done}/{goal} 分、任意のアクティビティを選択",
+  "premiumFeature": "プレミアム機能",
+  "premiumFeatureAccess": "プレミアム機能アクセス",
+  "activityUnknown": "不明",
+  "insightsFirstSessionTitle": "最初のセッションを完了する",
+  "insightsFirstSessionSubtitle": "集中時間、セッションパターン、アンビエントスコアのトレンドを追跡し始めます",
+  "sessionAmbientLabel": "アンビエント：{percent}%",
+  "sessionSuccess": "成功",
+  "sessionFailed": "失敗",
+  "focusModeButton": "フォーカスモード",
+  "@sessionAmbientLabel": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsDailyGoalsTitle": "毎日の目標",
+  "settingsFocusModeDescription": "セッション中に集中オーバーレイで気を散らすものを最小限に抑えます",
+  "settingsDeepFocusTitle": "ディープフォーカス",
+  "settingsDeepFocusDescription": "アプリが離れるとセッションを終了",
+  "deepFocusDialogTitle": "ディープフォーカス",
+  "deepFocusEnableLabel": "ディープフォーカスを有効にする",
+  "deepFocusGracePeriodLabel": "猶予期間（秒）",
+  "deepFocusExplanation": "有効にすると、アプリを離れると猶予期間後にセッションが終了します。",
+  "notificationPermissionTitle": "通知を有効にする",
+  "notificationPermissionExplanation": "Focus Fieldは通知権限が必要です：",
+  "notificationBenefitReminders": "毎日の集中リマインダー",
+  "notificationBenefitCompletion": "セッション完了アラート",
+  "notificationBenefitAchievements": "達成の祝福",
+  "notificationHowToEnableIos": "iOSで有効にする方法：",
+  "notificationHowToEnableAndroid": "Androidで有効にする方法：",
+  "notificationStepsIos": "1. 下の「設定を開く」をタップ\n2. 「通知」をタップ\n3. 「通知を許可」を有効にする",
+  "notificationStepsAndroid": "1. 下の「設定を開く」をタップ\n2. 「通知」をタップ\n3. 「すべてのFocus Field通知」を有効にする",
+  "aboutShowTips": "ヒントを表示",
+  "aboutShowTipsDescription": "アプリ起動時と電球アイコンから役立つヒントを表示します。ヒントは2〜3日ごとに表示されます。",
+  "aboutReplayOnboarding": "オンボーディングを再生",
+  "aboutReplayOnboardingDescription": "アプリツアーを確認し、設定を再度セットアップします",
+  "buttonFaq": "よくある質問",
+  "onboardingWelcomeMessage": "ようこそ！最初のセッションを始める準備はできましたか？ 🚀",
+  "onboardingFeatureEarnTitle": "報酬を獲得",
+  "onboardingFeatureEarnDesc": "静かな1分1分が大切！ポイントを集めて勝利を祝いましょう 🏆",
+  "onboardingFeatureBuildTitle": "ストリークを構築",
+  "onboardingFeatureBuildDesc": "勢いを維持しましょう！思いやりのあるシステムがあなたをやる気にさせます 🔥",
+  "onboardingEnvironmentDescription": "あなたの典型的な環境を選択して、スペースを最適化しましょう！",
+  "onboardingEnvQuietHome": "静かな家",
+  "onboardingEnvQuietHomeLevel": "30 dB - とても静か",
+  "onboardingEnvOffice": "典型的なオフィス",
+  "onboardingEnvOfficeLevel": "40 dB - 図書館の静けさ（推奨）",
+  "onboardingEnvBusy": "忙しいスペース",
+  "onboardingEnvBusyLevel": "50 dB - 中程度の騒音",
+  "onboardingEnvNoisy": "騒がしい環境",
+  "onboardingEnvNoisyLevel": "60 dB - より高い騒音",
+  "onboardingAdjustAnytime": "これはいつでも設定で調整できます",
+  "buttonGetStarted": "始める",
+  "buttonNext": "次へ",
+  "errorActivityRequired": "⚠️ 少なくとも1つのアクティビティを有効にする必要があります",
+  "errorGoalExceeds": "合計目標が1日18時間の制限を超えています。目標を減らしてください。",
+  "messageSaved": "設定が保存されました",
+  "errorPermissionRequired": "権限が必要です",
+  "notificationEnableReason": "リマインダーを受け取り、達成を祝うために通知を有効にしてください。",
+  "buttonEnableNotifications": "通知を有効にする",
+  "buttonRequesting": "リクエスト中...",
+  "notificationDailyTime": "毎日の時間",
+  "notificationDailyReminderSet": "{time}に毎日のリマインダー",
+  "notificationLearning": "学習中",
+  "notificationSmart": "スマート（{time}）",
+  "buttonUseSmart": "スマートを使用",
+  "notificationSmartExplanation": "固定時間を選択するか、Focus Fieldにパターンを学習させてください。",
+  "notificationSessionComplete": "セッション完了",
+  "notificationSessionCompleteDesc": "完了したセッションを祝う",
+  "notificationAchievement": "達成アンロック",
+  "notificationAchievementDesc": "マイルストーン通知",
+  "notificationWeekly": "週次進捗サマリー",
+  "notificationWeeklyDesc": "週次インサイト（曜日と時間）",
+  "notificationWeeklyTime": "週次時間",
+  "@notificationDailyReminderSet": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationSmart": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationMilestone": "マイルストーン通知",
+  "notificationWeeklyInsights": "週次インサイト（曜日と時刻）",
+  "notificationDailyReminder": "毎日のリマインダー",
+  "notificationComplete": "セッション完了",
+  "settingsSnackbar": "デバイス設定で通知を有効にしてください",
+  "shareCardTitle": "カードを共有",
+  "shareYourWeek": "あなたの週を共有",
+  "shareStyleGradient": "グラデーションスタイル",
+  "shareStyleGradientDesc": "大きな数字の大胆なグラデーション",
+  "shareWeeklySummary": "週次サマリー",
+  "shareStyleAchievement": "達成スタイル",
+  "shareStyleAchievementDesc": "合計静寂分数に焦点を当てる",
+  "shareQuietMinutesWeek": "今週の静寂分数",
+  "shareAchievementMessage": "より深い集中を構築、\\n一度に一つのセッション",
+  "shareAchievementCard": "達成カード",
+  "shareTextOnly": "テキストのみ",
+  "shareTextOnlyDesc": "プレーンテキストとして共有（画像なし）",
+  "shareYourStreak": "あなたのストリークを共有",
+  "shareAsCard": "カードとして共有",
+  "shareAsCardDesc": "美しいビジュアルカード",
+  "shareStreakCard": "ストリークカード",
+  "shareAsText": "テキストとして共有",
+  "shareAsTextDesc": "シンプルなテキストメッセージ",
+  "shareErrorFailed": "共有に失敗しました。もう一度お試しください。",
+  "buttonShare": "共有",
+  "initializingApp": "アプリを初期化中...",
+  "initializationFailed": "初期化に失敗しました: {error}",
+  "loadingSettings": "設定を読み込み中...",
+  "settingsLoadingFailed": "設定の読み込みに失敗しました: {error}",
+  "loadingUserData": "ユーザーデータを読み込み中...",
+  "dataLoadingFailed": "データの読み込みに失敗しました: {error}",
+  "loading": "読み込み中...",
+  "taglineSilence": "🤫 沈黙の芸術をマスター",
+  "errorOops": "おっと！問題が発生しました",
+  "buttonRetry": "再試行",
+  "resetAppData": "アプリデータをリセット",
+  "resetAppDataMessage": "これにより、すべてのアプリデータと設定がデフォルトにリセットされます。この操作は元に戻せません。\\n\\n続行しますか？",
+  "buttonReset": "リセット",
+  "messageDataReset": "アプリデータがリセットされました",
+  "errorResetFailed": "データのリセットに失敗しました: {error}",
+  "@initializationFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@dataLoadingFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorResetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "analyticsTitle": "分析",
+  "analyticsOverview": "概要",
+  "analyticsPoints": "ポイント",
+  "analyticsStreak": "ストリーク",
+  "analyticsSessions": "セッション",
+  "analyticsLast7Days": "過去7日間",
+  "analyticsPerformanceHighlights": "パフォーマンスのハイライト",
+  "analyticsSuccessRate": "成功率",
+  "analyticsAvgSession": "平均セッション",
+  "analyticsBestStreak": "最高のストリーク",
+  "analyticsActivityProgress": "アクティビティの進捗",
+  "analyticsComingSoon": "詳細なアクティビティトラッキングは近日公開予定です。",
+  "analyticsAdvancedMetrics": "高度な指標",
+  "analyticsPremiumContent": "プレミアム高度分析コンテンツはこちら...",
+  "analytics30DayTrends": "30日間のトレンド",
+  "analyticsTrendsChart": "プレミアムトレンドチャートはこちら...",
+  "analyticsAIInsights": "AI インサイト",
+  "analyticsAIComingSoon": "AI駆動のインサイトは近日公開予定...",
+  "analyticsUnlock": "高度な分析をロック解除",
+  "errorTitle": "エラー",
+  "errorQuestUnavailable": "クエスト状態が利用できません",
+  "buttonOK": "OK",
+  "errorFreezeTokenFailed": "❌ フリーズトークンの使用に失敗しました",
+  "buttonUseFreeze": "フリーズを使用",
+  "onboardingDailyGoalTitle": "毎日の目標を設定しよう！🎯",
+  "onboardingDailyGoalSubtitle": "どれくらいの集中時間が適切ですか？\\n（いつでも調整できます！）",
+  "onboardingGoalGettingStarted": "はじめに",
+  "onboardingGoalBuildingHabit": "習慣を作る",
+  "onboardingGoalRegularPractice": "定期的な練習",
+  "onboardingGoalDeepWork": "ディープワーク",
+  "onboardingProTip": "プロのヒント: 静寂 = 集中のとき、Focus Fieldは輝きます！🤫✨",
+  "onboardingPrivacyTitle": "あなたのプライバシーは重要です！🔒",
+  "onboardingPrivacySubtitle": "周囲の騒音を測定し、より集中できるようにするためにマイクへのアクセスが必要です",
+  "onboardingPrivacyNoRecording": "録音なし",
+  "onboardingPrivacyLocalOnly": "ローカルのみ",
+  "onboardingPrivacyLocalOnlyDesc": "すべてのデータはデバイスに保存されます",
+  "onboardingPrivacyFirst": "プライバシー第一",
+  "onboardingPrivacyNote": "最初のセッションを開始するときに次の画面で許可を付与できます",
+  "insightsFocusTime": "集中時間",
+  "insightsSessions": "セッション",
+  "insightsAverage": "平均",
+  "insightsAmbientScore": "アンビエントスコア",
+  "themeSystem": "システム",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "themeOceanBlue": "オーシャンブルー",
+  "themeForestGreen": "フォレストグリーン",
+  "themePurpleNight": "パープルナイト",
+  "themeGoldLuxury": "ゴールドラグジュアリー",
+  "themeSolarSunrise": "ソーラーサンライズ",
+  "themeCyberNeon": "サイバーネオン",
+  "themeMidnightTeal": "ミッドナイトティール",
+  "settingsAppTheme": "アプリテーマ",
+  "freezeTokenNoTokensTitle": "フリーズトークンなし",
+  "freezeTokenNoTokensMessage": "利用可能なフリーズトークンがありません。週に1トークン獲得できます（最大4）。",
+  "freezeTokenGoalCompleteTitle": "目標はすでに達成されています",
+  "freezeTokenGoalCompleteMessage": "日次目標はすでに達成されています！フリーズトークンは目標をまだ達成していない場合にのみ使用できます。",
+  "freezeTokenUseTitle": "フリーズトークンを使用",
+  "freezeTokenUseMessage": "フリーズトークンは、1日逃した時にストリークを保護します。フリーズを使用すると、日次目標を達成したとカウントされます。",
+  "freezeTokenUsePrompt": "{count}個のトークンがあります。今すぐ1つ使用しますか？",
+  "freezeTokenUsedSuccess": "✅ フリーズトークンを使用しました！目標は達成済みとマークされました。",
+  "trendsErrorLoading": "データの読み込みエラー",
+  "trendsPoints": "ポイント",
+  "trendsStreak": "ストリーク",
+  "trendsSessions": "セッション",
+  "trendsTopActivity": "トップアクティビティ",
+  "sectionToday": "今日",
+  "sectionSessions": "セッション",
+  "sectionInsights": "インサイト",
+  "onboardingGoalAdviceGettingStarted": "完璧なスタート！🌟 小さな一歩が大きな勝利につながります。あなたならできる！",
+  "onboardingGoalAdviceBuildingHabit": "素晴らしい選択！🎯 このスイートスポットが持続的な習慣を作ります！",
+  "onboardingGoalAdviceRegularPractice": "野心的！💪 集中力を高める準備ができています！",
+  "onboardingGoalAdviceDeepWork": "わお！🏆 ディープワークモード起動！休憩を忘れずに！",
+  "onboardingDuration10to15": "10-15分",
+  "onboardingDuration20to30": "20-30分",
+  "onboardingDuration40to60": "40-60分",
+  "onboardingDuration60plus": "60分以上",
+  "activityStudy": "勉強",
+  "activityReading": "読書",
+  "activityMeditation": "瞑想",
+  "activityOther": "その他",
+  "onboardingTip1Description": "5-10分のセッションから始めましょう。一貫性は完璧さに勝ります！",
+  "onboardingTip2Description": "没入型で気が散らない体験のためにフォーカスモードをタップしてください。",
+  "onboardingTip3Description": "忙しい日に月次トークンを使用してストリークを保護しましょう。",
+  "onboardingTip4Description": "70%の静かな時間を目指しましょう - 完璧な静寂は不要です！",
+  "onboardingLaunchTitle": "準備完了！🚀",
+  "onboardingLaunchDescription": "最初のセッションを始めて、素晴らしい習慣を作りましょう！",
+  "insightsBestTimeByActivity": "アクティビティ別のベストタイム",
+  "insightHighSuccessRateTitle": "高い成功率",
+  "insightEnvironmentStabilityTitle": "環境の安定性",
+  "insightLowNoiseSuccessTitle": "低騒音化に成功",
+  "insightConsistentPracticeTitle": "一貫した実践",
+  "insightStreakProtectionTitle": "ストリーク保護が利用可能",
+  "insightRoomTooNoisyTitle": "部屋がうるさすぎる",
+  "insightIrregularScheduleTitle": "不定期スケジュール",
+  "insightLowAmbientScoreTitle": "低い周囲スコア",
+  "insightNoRecentSessionsTitle": "最近のセッションはありません",
+  "insightHighSuccessRateDesc": "強力なサイレント セッションを維持しています。",
+  "insightEnvironmentStabilityDesc": "周囲の騒音は適度で管理可能な範囲内にあります。",
+  "insightLowNoiseSuccessDesc": "セッション中の環境は非常に静かです。",
+  "insightConsistentPracticeDesc": "信頼できる毎日の練習習慣を構築しています。",
+  "insightStreakProtectionDesc": "ストリークを保護するためのフリーズ トークンが {count} 個あります。",
+  "insightRoomTooNoisyDesc": "より静かな場所を見つけるか、敷居を調整してみてください。",
+  "insightIrregularScheduleDesc": "セッション時間をより安定させると、連続記録が改善される可能性があります。",
+  "insightLowAmbientScoreDesc": "最近のセッションでは静かな時間が短くなりました。より静かな環境を試してください。",
+  "insightNoRecentSessionsDesc": "集中する習慣を身につけるために、今すぐセッションを始めてください。",
+  "sessionCompleteSuccess": "素晴らしい仕事だ！ {minutes} 分のセッションに集中してください。 ✨",
+  "sessionCompletePartial": "頑張れ！ {minutes} 分完了しました。",
+  "sessionCompleteFailed": "セッションが終了しました。準備ができたらもう一度試してください。",
+  "notificationSessionStarted": "セッションが始まりました - 集中してください!",
+  "notificationSessionPaused": "セッションが一時停止されました",
+  "notificationSessionResumed": "セッションが再開されました"
 }

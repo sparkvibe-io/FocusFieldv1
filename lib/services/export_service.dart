@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
-import 'package:silence_score/models/silence_data.dart';
+import 'package:focus_field/models/silence_data.dart';
 
 enum ExportFormat { csv, pdf }
 
@@ -69,7 +69,7 @@ class ExportService {
       // Get file path
       final directory = await getApplicationDocumentsDirectory();
       final String timestamp = DateTime.now().toIso8601String().split('T')[0];
-      final file = File('${directory.path}/SilenceScore_Export_$timestamp.csv');
+      final file = File('${directory.path}/FocusField_Export_$timestamp.csv');
 
       // Write to file
       await file.writeAsString(csvString);
@@ -112,7 +112,7 @@ class ExportService {
               pw.Header(
                 level: 0,
                 child: pw.Text(
-                  'SilenceScore Report',
+                  'Focus Field Report',
                   style: pw.TextStyle(
                     fontSize: 24,
                     fontWeight: pw.FontWeight.bold,
@@ -289,7 +289,7 @@ class ExportService {
       // Save PDF to file
       final directory = await getApplicationDocumentsDirectory();
       final String timestamp = DateTime.now().toIso8601String().split('T')[0];
-      final file = File('${directory.path}/SilenceScore_Report_$timestamp.pdf');
+      final file = File('${directory.path}/FocusField_Report_$timestamp.pdf');
       await file.writeAsBytes(await pdf.save());
 
       return file;
@@ -305,7 +305,7 @@ class ExportService {
       final params = ShareParams(
         files: [XFile(file.path)],
         text: title,
-        subject: 'SilenceScore Export',
+        subject: 'Focus Field Export',
       );
       await SharePlus.instance.share(params);
     } catch (e) {
@@ -316,12 +316,12 @@ class ExportService {
   /// Export and share CSV
   Future<void> exportAndShareCSV(SilenceData silenceData) async {
     final file = await exportToCSV(silenceData);
-    await shareFile(file, 'SilenceScore Session Data Export');
+    await shareFile(file, 'Focus Field Session Data Export');
   }
 
   /// Export and share PDF
   Future<void> exportAndSharePDF(SilenceData silenceData) async {
     final file = await exportToPDF(silenceData);
-    await shareFile(file, 'SilenceScore Performance Report');
+    await shareFile(file, 'Focus Field Performance Report');
   }
 }

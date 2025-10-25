@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silence_score/providers/theme_provider.dart';
-import 'package:silence_score/providers/subscription_provider.dart';
-import 'package:silence_score/widgets/feature_gate.dart';
+import 'package:focus_field/providers/theme_provider.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/widgets/feature_gate.dart';
+import 'package:focus_field/l10n/app_localizations.dart';
 
 class ThemeSelectorWidget extends ConsumerWidget {
   const ThemeSelectorWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentTheme = ref.watch(themeProvider);
     final themeNotifier = ref.read(themeProvider.notifier);
     final hasPremiumAccess = ref.watch(premiumAccessProvider);
@@ -17,7 +19,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'App Theme',
+          l10n.settingsAppTheme,
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -148,7 +150,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -166,7 +168,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     color: themeMode.primaryColor,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(themeMode.icon, color: Colors.white, size: 14),
+                  child: Icon(themeMode.icon, color: Theme.of(context).colorScheme.onPrimary, size: 14),
                 ),
                 // Premium lock overlay
                 if (isPremium && !hasPremiumAccess)
@@ -174,12 +176,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.lock,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 12,
                     ),
                   ),
@@ -189,12 +191,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.check,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 16,
                     ),
                   ),
@@ -204,7 +206,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             // Theme name - handle two words
             _buildThemeName(
               context,
-              themeMode.displayName,
+              _getLocalizedThemeName(context, themeMode),
               isSelected,
               isAccessible,
             ),
@@ -223,12 +225,12 @@ class ThemeSelectorWidget extends ConsumerWidget {
                 ? BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF00FFF0).withOpacity(0.55),
+                      color: const Color(0xFF00FFF0).withValues(alpha: 0.55),
                       blurRadius: 12,
                       spreadRadius: 1,
                     ),
                     BoxShadow(
-                      color: const Color(0xFFFF2EC4).withOpacity(0.35),
+                      color: const Color(0xFFFF2EC4).withValues(alpha: 0.35),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -257,7 +259,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
           color:
               isAccessible
                   ? Theme.of(context).colorScheme.onSurface
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
         ),
         textAlign: TextAlign.center,
         maxLines: 1,
@@ -274,7 +276,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isAccessible
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -287,7 +289,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             color:
                 isAccessible
                     ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             height: 1.0,
             fontSize: 11,
           ),
@@ -295,5 +297,31 @@ class ThemeSelectorWidget extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  String _getLocalizedThemeName(BuildContext context, AppThemeMode themeMode) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (themeMode) {
+      case AppThemeMode.system:
+        return l10n.themeSystem;
+      case AppThemeMode.light:
+        return l10n.themeLight;
+      case AppThemeMode.dark:
+        return l10n.themeDark;
+      case AppThemeMode.oceanBlue:
+        return l10n.themeOceanBlue;
+      case AppThemeMode.forestGreen:
+        return l10n.themeForestGreen;
+      case AppThemeMode.purpleNight:
+        return l10n.themePurpleNight;
+      case AppThemeMode.goldLuxury:
+        return l10n.themeGoldLuxury;
+      case AppThemeMode.solarSunrise:
+        return l10n.themeSolarSunrise;
+      case AppThemeMode.cyberNeon:
+        return l10n.themeCyberNeon;
+      case AppThemeMode.midnightTeal:
+        return l10n.themeMidnightTeal;
+    }
   }
 }
