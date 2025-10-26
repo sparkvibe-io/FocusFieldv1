@@ -1436,6 +1436,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get questGo => '去';
 
   @override
+  String get questTapStart => 'Tap Start →';
+
+  @override
   String get todayDashboardTitle => '您的焦点仪表板';
 
   @override

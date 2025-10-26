@@ -1436,6 +1436,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get questGo => 'Ir';
 
   @override
+  String get questTapStart => 'Toque em Iniciar →';
+
+  @override
   String get todayDashboardTitle => 'Seu Painel de Foco';
 
   @override
@@ -3883,6 +3886,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get questGo => 'Ir';
+
+  @override
+  String get questTapStart => 'Toque em Iniciar →';
 
   @override
   String get todayDashboardTitle => 'Seu Painel de Foco';

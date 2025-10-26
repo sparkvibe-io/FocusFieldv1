@@ -1436,6 +1436,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get questGo => '行く';
 
   @override
+  String get questTapStart => 'Tap Start →';
+
+  @override
   String get todayDashboardTitle => 'あなたのフォーカスダッシュボード';
 
   @override

@@ -1,8 +1,11 @@
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'dart:math' as math;
 import 'dart:async';
+import '../utils/debug_log.dart';
 import '../providers/silence_provider.dart';
 import '../providers/accessibility_provider.dart';
 import '../providers/notification_provider.dart';
@@ -53,7 +56,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   late TabController _tabController;
   int _currentTab = 0;
   late final ConfettiController _confetti;
-  bool _sessionListenerWired = false;
   bool _focusModeActive = false;
   // Debounce for theme toggle
   DateTime? _lastThemeToggleTime;
@@ -88,7 +90,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       initialIndex: widget.initialTab,
     );
     _currentTab = widget.initialTab;
-    _confetti = ConfettiController(duration: const Duration(seconds: 2));
+    _confetti = ConfettiController(duration: const Duration(seconds: 3));
     _tabController.addListener(() {
       setState(() {
         _currentTab = _tabController.index;
@@ -244,47 +246,41 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final size = MediaQuery.sizeOf(context);
     final orientation = MediaQuery.orientationOf(context);
 
-    // Detect tablet landscape: width >= 840 (large tablet) and landscape orientation
-    // Matches our orientation locking policy (landscape only allowed on ≥840dp devices)
+    // Detect tablet landscape: width >= 800 (large tablet) and landscape orientation
+    // Matches our orientation locking policy (landscape only allowed on ≥800dp devices)
     final isTabletLandscape =
-        size.width >= 840 && orientation == Orientation.landscape;
+        size.width >= ScreenBreakpoints.tablet && orientation == Orientation.landscape;
 
-    // Listen for session completion/failure to trigger confetti and a11y events
-    if (!_sessionListenerWired) {
-      _sessionListenerWired = true;
-      ref.listen<SilenceState>(silenceStateProvider, (previous, next) async {
-        // Live calm counters handled centrally; nothing to reset here.
-        if (next.success == true && previous?.success != true) {
-          // Respect reduce motion preference
-          final reduceMotion =
-              MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-          if (!reduceMotion) {
-            _confetti.play();
-          }
-          try {
-            ref
-                .read(accessibilityServiceProvider)
-                .vibrateOnEvent(AccessibilityEvent.sessionComplete);
-            ref
-                .read(accessibilityServiceProvider)
-                .announceSessionComplete(true);
-          } catch (_) {}
-          await Future.delayed(const Duration(seconds: 2));
-          if (mounted) {
-            ref.read(silenceStateProvider.notifier).setSuccess(null);
-          }
-        } else if (next.success == false && previous?.success != false) {
-          try {
-            ref
-                .read(accessibilityServiceProvider)
-                .vibrateOnEvent(AccessibilityEvent.sessionFailed);
-            ref
-                .read(accessibilityServiceProvider)
-                .announceSessionComplete(false);
-          } catch (_) {}
+    // Listen for session completion to trigger confetti celebration
+    // NOTE: Must be called directly in build() per Riverpod requirement
+    // Riverpod handles listener deduplication automatically
+    // Quest credit is applied separately in endSession flow
+    ref.listen<SilenceState>(silenceStateProvider, (previous, next) {
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '👂 [Confetti] silenceStateProvider listener: prev.success=${previous?.success}, next.success=${next.success}',
+        );
+      }
+
+      // Trigger confetti when success state transitions from false/null to true
+      if (next.success == true && previous?.success != true) {
+        final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+
+        if (!kReleaseMode) {
+          DebugLog.d('🎉 [Confetti] Triggering celebration! reduceMotion=$reduceMotion');
         }
-      });
-    }
+
+        if (!reduceMotion) {
+          _confetti.play();
+          if (!kReleaseMode) {
+            DebugLog.d('🎊 [Confetti] Confetti.play() called');
+          }
+        }
+
+        // Trigger haptic feedback for celebration
+        HapticFeedback.mediumImpact();
+      }
+    });
 
     final dramatic = theme.extension<DramaticThemeStyling>();
     return Scaffold(
@@ -295,20 +291,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               : theme.colorScheme.surface,
       body: Stack(
         children: [
-          // Confetti overlay
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confetti,
-              blastDirection: math.pi / 2,
-              maxBlastForce: 5,
-              minBlastForce: 2,
-              emissionFrequency: 0.05,
-              numberOfParticles: 50,
-              gravity: 0.1,
-            ),
-          ),
-
           // Main content
           SafeArea(
             bottom: false,
@@ -341,6 +323,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 if (!isTabletLandscape && !_focusModeActive)
                   _buildBottomNav(context),
               ],
+            ),
+          ),
+
+          // Confetti overlay - MUST be last to render on top
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confetti,
+              blastDirection: -math.pi / 2,  // Shoot upward (was downward!)
+              maxBlastForce: 10,  // Increased from 5 for more energy
+              minBlastForce: 5,   // Increased from 2
+              emissionFrequency: 0.02,  // Increased from 0.05 (more frequent)
+              numberOfParticles: 150,  // Increased from 50 for more celebration
+              gravity: 0.3,  // Increased from 0.1 for better fall
             ),
           ),
         ],
@@ -663,69 +659,86 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
+  /// with full-width ad anchored at the bottom (always visible)
   Widget _buildTabletLandscapeLayout(
     BuildContext context,
     AppLocalizations l10n,
   ) {
     final theme = Theme.of(context);
 
-    final tabletContent = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // Main content: Column with split-screen row + anchored ad at bottom
+    final tabletContent = Column(
       children: [
-        // Left panel: Today tab (no ad in landscape mode)
+        // Split-screen row: Today (left) | Sessions (right)
         Expanded(
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Today tab header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.sectionToday,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+              // Left panel: Today tab (no ad inside - ad is at bottom)
+              Expanded(
+                child: Column(
+                  children: [
+                    // Today tab header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.sectionToday,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    // Today tab content (no ad - moved to bottom)
+                    Expanded(child: _buildSummaryTab(context, l10n, showAd: false)),
+                  ],
                 ),
               ),
-              // Today tab content (with ad at bottom)
-              Expanded(child: _buildSummaryTab(context, l10n, showAd: true)),
+
+              // Vertical divider
+              Container(width: 1, color: theme.colorScheme.outlineVariant),
+
+              // Right panel: Sessions tab
+              Expanded(
+                child: Column(
+                  children: [
+                    // Sessions tab header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.sectionSessions,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Sessions tab content (no ad - shared ad at bottom)
+                    Expanded(
+                      child: _buildSessionsTab(
+                        context,
+                        l10n,
+                        showAd: false,
+                        applyFocusOverlay: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
 
-        // Vertical divider
-        Container(width: 1, color: theme.colorScheme.outlineVariant),
-
-        // Right panel: Sessions tab
-        Expanded(
-          child: Column(
-            children: [
-              // Sessions tab header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.sectionSessions,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              // Sessions tab content (no ad in landscape mode, no overlay - applied at layout level)
-              Expanded(
-                child: _buildSessionsTab(
-                  context,
-                  l10n,
-                  showAd: false,
-                  applyFocusOverlay: false,
-                ),
-              ),
-            ],
-          ),
+        // Full-width ad anchored at bottom (always visible, no scrolling required)
+        // This ensures AdMob compliance and maximum ad visibility
+        // Wrapped in SafeArea to respect system UI (Home Indicator on iOS)
+        SafeArea(
+          top: false,
+          child: const FooterBannerAd(),
         ),
       ],
     );
@@ -3061,8 +3074,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   // Ultra-minimal quest capsule: just progress bar, numbers, streak, and freeze token (if relevant)
   Widget _buildAmbientQuestCapsule(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+    final isTabletLandscape =
+        size.width >= ScreenBreakpoints.tablet && orientation == Orientation.landscape;
+
     return QuestCapsule(
       onNavigateToActivity: () => _tabController.animateTo(1),
+      isLandscapeLayout: isTabletLandscape,
     );
   }
 
@@ -3491,6 +3510,23 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       default:
         return l10n.activityUnknown;
     }
+  }
+
+  /// Build an informative failure message showing why the session failed
+  String _buildFailureMessage(double ambientScore, int quietSeconds, int totalSeconds) {
+    final achievedPercent = (ambientScore * 100).round();
+    final requiredPercent = 70; // 70% threshold
+
+    if (totalSeconds < 60) {
+      // Very short session
+      return 'Session too short: ${totalSeconds}s (need 60s minimum)';
+    }
+
+    final quietMinutes = (quietSeconds / 60).floor();
+    final totalMinutes = (totalSeconds / 60).floor();
+    final neededQuietMinutes = ((totalSeconds * 0.7) / 60).ceil() - quietMinutes;
+
+    return 'Session incomplete: $achievedPercent% quiet (need $requiredPercent%) • $neededQuietMinutes more quiet min needed';
   }
 
   Widget _buildSessionControlCard(BuildContext context) {
@@ -3989,6 +4025,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           final quietSeconds = ambientState.quietSeconds;
           final success = ambientScore >= 0.70; // 70% calm threshold
 
+          if (!kReleaseMode) {
+            DebugLog.d(
+              '🎊 [Confetti] Setting success=$success (score=$ambientScore, quietSec=$quietSeconds)',
+            );
+          }
           silenceStateNotifier.setSuccess(success);
 
           // NEW: Proportional points based on quiet minutes (compassionate credit)
@@ -4050,7 +4091,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             final l10n = AppLocalizations.of(context)!;
             final message = success
                 ? l10n.sessionCompleteSuccess(sessionMinutes)
-                : l10n.sessionCompleteFailed;
+                : _buildFailureMessage(ambientScore, quietSeconds, actualDuration);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

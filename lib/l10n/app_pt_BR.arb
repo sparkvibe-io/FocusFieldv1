@@ -540,6 +540,7 @@
   "questMotivation7": "Foco é um músculo - você está ficando mais forte",
   "questMotivation8": "A jornada de mil milhas começa com um único passo",
   "questGo": "Ir",
+  "questTapStart": "Toque em Iniciar →",
   "todayDashboardTitle": "Seu Painel de Foco",
   "todayFocusMinutes": "Minutos de foco hoje",
   "todayGoalCalm": "Meta: {goalMinutes} min • Calma ≥{calmPercent}%",

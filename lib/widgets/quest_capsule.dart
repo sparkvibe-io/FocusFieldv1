@@ -10,8 +10,13 @@ import 'package:focus_field/l10n/app_localizations.dart';
 /// Rotating inspirational messages to encourage users and build confidence
 class QuestCapsule extends ConsumerWidget {
   final VoidCallback? onNavigateToActivity;
+  final bool isLandscapeLayout;
 
-  const QuestCapsule({super.key, this.onNavigateToActivity});
+  const QuestCapsule({
+    super.key,
+    this.onNavigateToActivity,
+    this.isLandscapeLayout = false,
+  });
 
   /// Get list of motivational messages from localization
   List<String> _getMotivationalMessages(AppLocalizations l10n) {
@@ -109,28 +114,55 @@ class QuestCapsule extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // Prominent Go button matching sample design
-              Material(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(12),
-                elevation: 2,
-                shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.2),
-                child: InkWell(
-                  onTap: onNavigateToActivity,
+              // In landscape mode: show instructional text instead of button
+              // In portrait mode: show prominent Go button
+              if (isLandscapeLayout)
+                // Instructional text for landscape (both tabs visible)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.questTapStart,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                // Prominent Go button for portrait mode
+                Material(
+                  color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    child: Text(
-                      l10n.questGo,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onPrimary,
+                  elevation: 2,
+                  shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.2),
+                  child: InkWell(
+                    onTap: onNavigateToActivity,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Text(
+                        l10n.questGo,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onPrimary,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ],
