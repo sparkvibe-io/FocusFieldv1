@@ -21,6 +21,7 @@ plugins {
     id "com.android.application" version '8.12.2' apply false
     // Upgraded Kotlin plugin to 2.2.10 to align with kotlin-stdlib (2.2.x) pulled in by dependencies
     id "org.jetbrains.kotlin.android" version "2.2.10" apply false
+    id "com.google.gms.google-services" version "4.4.2" apply false
 }
 
 include ':app' 

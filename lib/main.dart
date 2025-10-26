@@ -13,9 +13,14 @@ import 'package:focus_field/widgets/dramatic_backdrop.dart';
 // RevenueCat (purchases_flutter) is configured inside SubscriptionService during provider initialization.
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase (required for AdMob integration)
+  await Firebase.initializeApp();
 
   // Optimize for performance
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
