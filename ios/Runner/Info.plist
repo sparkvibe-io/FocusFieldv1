@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>silence_score</string>
+	<string>focusfield</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,6 +24,10 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2086096819226646~9627636327</string>
+	<key>GADDelayAppMeasurementInit</key>
+	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -49,11 +53,5 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<!-- Google Mobile Ads (AdMob) App ID (iOS) -->
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-2086096819226646~9627636327</string>
-	<!-- (Optional) Delay app measurement if you want to perform initialization logic first -->
-	<key>GADDelayAppMeasurementInit</key>
-	<true/>
 </dict>
 </plist>
