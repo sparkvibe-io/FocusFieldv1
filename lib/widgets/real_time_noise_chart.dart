@@ -53,14 +53,6 @@ class RealTimeNoiseChart extends HookConsumerWidget {
 
     // Subscribe to real-time decibel readings with proper error handling
     useEffect(() {
-      // Skip all chart updates when Focus Mode is active (chart is hidden behind overlay)
-      if (isListening) {
-        if (!kReleaseMode) {
-          DebugLog.d('DEBUG: Chart - Skipping updates during Focus Mode (isListening: true)');
-        }
-        return null;
-      }
-
       // Common update logic used by aggregated controller and ambient fallback.
       bool isDisposed = false;
       Timer? ambientTimer;
