@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "205706341469",
+    "project_id": "focusfield-f2d39",
+    "storage_bucket": "focusfield-f2d39.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205706341469:android:6cc24f8724913bd5f131b4",
+        "android_client_info": {
+          "package_name": "io.sparkvibe.focusfield"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDa0xO2-GgJQiOKDd8Z4wn_eVrfRFwSQkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
