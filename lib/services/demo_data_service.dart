@@ -1,5 +1,4 @@
 import 'package:focus_field/models/silence_data.dart';
-import 'package:focus_field/models/ambient_models.dart';
 import 'package:focus_field/utils/debug_log.dart';
 
 /// Service for generating realistic demo data for App Store screenshots
@@ -18,21 +17,19 @@ class DemoDataService {
     final sessions = _generateDemoSessions(today);
 
     // Calculate realistic statistics
-    final totalMinutes = sessions.fold<int>(0, (sum, s) => sum + (s.duration ~/ 60));
-    final successfulSessions = sessions.where((s) => s.successful).length;
-    final avgAmbientScore = sessions.isEmpty
+    final totalPoints = sessions.fold<int>(0, (sum, s) => sum + s.pointsEarned);
+    final avgScore = sessions.isEmpty
         ? 0.0
-        : sessions.fold<double>(0, (sum, s) => sum + s.ambientScore) / sessions.length;
+        : sessions.fold<double>(0, (sum, s) => sum + (s.ambientScore ?? 0.85)) / sessions.length;
 
     return SilenceData(
+      totalPoints: totalPoints,
       totalSessions: sessions.length,
-      totalMinutes: totalMinutes,
-      averageAmbientScore: avgAmbientScore,
+      averageScore: avgScore,
       currentStreak: 12, // Impressive but realistic
-      longestStreak: 18, // Show historical achievement
+      bestStreak: 18, // Show historical achievement
       recentSessions: sessions,
-      successfulSessionsCount: successfulSessions,
-      lastSessionDate: sessions.isNotEmpty ? sessions.first.startTime : null,
+      lastPlayDate: sessions.isNotEmpty ? sessions.first.date : null,
     );
   }
 
@@ -56,8 +53,8 @@ class DemoDataService {
   }
 
   /// Generate realistic sessions with variety
-  static List<SilenceSession> _generateDemoSessions(DateTime today) {
-    final sessions = <SilenceSession>[];
+  static List<SessionRecord> _generateDemoSessions(DateTime today) {
+    final sessions = <SessionRecord>[];
 
     // Today's sessions (in progress day)
     sessions.addAll([
@@ -108,30 +105,29 @@ class DemoDataService {
     }
 
     // Sort by most recent first
-    sessions.sort((a, b) => b.startTime.compareTo(a.startTime));
+    sessions.sort((a, b) => b.date.compareTo(a.date));
     return sessions;
   }
 
   /// Create a single demo session
-  static SilenceSession _createSession(
-    DateTime startTime, {
+  static SessionRecord _createSession(
+    DateTime date, {
     required int duration,
     required double ambientScore,
     required String activity,
   }) {
-    final quietSeconds = (duration * ambientScore).round();
+    // Calculate points based on duration and ambient score
+    final minutes = duration ~/ 60;
+    final pointsEarned = (minutes * ambientScore).round();
 
-    return SilenceSession(
-      startTime: startTime,
-      endTime: startTime.add(Duration(seconds: duration)),
+    return SessionRecord(
+      date: date,
       duration: duration,
-      averageDecibels: 35.0 + ((1.0 - ambientScore) * 15), // 35-50 dB range
-      calmPercentage: ambientScore, // Legacy field
+      averageNoise: 35.0 + ((1.0 - ambientScore) * 15), // 35-50 dB range
       ambientScore: ambientScore,
-      quietSeconds: quietSeconds,
-      successful: ambientScore >= 0.70,
-      activityProfile: activity,
-      goalAchieved: ambientScore >= 0.70,
+      pointsEarned: pointsEarned,
+      completed: ambientScore >= 0.70,
+      activity: activity,
     );
   }
 
