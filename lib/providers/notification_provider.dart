@@ -7,6 +7,29 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService();
 });
 
+// Reactive permission status provider
+final notificationPermissionProvider = StateNotifierProvider<NotificationPermissionNotifier, bool>((ref) {
+  final service = ref.watch(notificationServiceProvider);
+  return NotificationPermissionNotifier(service);
+});
+
+class NotificationPermissionNotifier extends StateNotifier<bool> {
+  final NotificationService _service;
+
+  NotificationPermissionNotifier(this._service) : super(_service.hasNotificationPermission);
+
+  Future<void> checkPermission() async {
+    await _service.refreshPermissionStatus();
+    state = _service.hasNotificationPermission;
+  }
+
+  Future<bool> requestPermission() async {
+    final granted = await _service.requestNotificationPermission();
+    state = granted;
+    return granted;
+  }
+}
+
 // Individual notification setting providers
 final enableNotificationsProvider = Provider<bool>((ref) {
   final settings = ref.watch(settingsNotifierProvider);

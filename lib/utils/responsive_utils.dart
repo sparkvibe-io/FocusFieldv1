@@ -8,64 +8,143 @@ class ScreenBreakpoints {
   /// Phone screens (up to 600dp)
   static const double phone = 600;
 
-  /// Small tablets (600dp - 840dp)
-  static const double tablet = 840;
+  /// Small tablets (600dp - 720dp)
+  static const double tablet = 720;
 
-  /// Large tablets and desktops (840dp+)
+  /// Large tablets and desktops (720dp+)
   static const double desktop = 1024;
 }
 
-/// Typography scaling based on screen width
+/// Typography scaling based on screen width and orientation
 /// Returns a multiplier for text scaling
+///
+/// Portrait (more vertical space):
 /// - Phone (<600dp): 1.0x (baseline)
-/// - Small tablet (600-840dp): 1.15x
-/// - Large tablet (>840dp): 1.25x
+/// - Small tablet (600-720dp): 1.15x
+/// - Large tablet (>720dp): 1.25x
+///
+/// Landscape (limited vertical space):
+/// - All sizes: 1.1x (slightly larger for high-res displays)
 double getTextScale(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
+  final orientation = MediaQuery.of(context).orientation;
+
+  // In landscape, use more conservative scaling (less vertical space)
+  if (orientation == Orientation.landscape) {
+    if (width < ScreenBreakpoints.phone) return 1.0;
+    if (width < ScreenBreakpoints.tablet) return 1.05;
+    return 1.1;  // Slightly larger for high-res tablet displays
+  }
+
+  // Portrait: Standard scaling (more vertical space available)
   if (width < ScreenBreakpoints.phone) return 1.0;
   if (width < ScreenBreakpoints.tablet) return 1.15;
   return 1.25;
 }
 
-/// Progress ring size proportional to screen width
+/// Progress ring size proportional to screen width and orientation
+///
+/// Portrait:
 /// - Phone (<600dp): 206px (baseline)
-/// - Small tablet (600-840dp): 240px (+16%)
-/// - Large tablet (>840dp): 280px (+36%)
+/// - Small tablet (600-720dp): 240px (+16%)
+/// - Large tablet (>720dp): 280px (+36%)
+///
+/// Landscape (15% smaller to fit limited vertical space):
+/// - Phone (<600dp): 206px (baseline)
+/// - Small tablet (600-720dp): 204px (compact)
+/// - Large tablet (>720dp): 238px (15% reduction from 280px)
 double getProgressRingSize(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
+  final orientation = MediaQuery.of(context).orientation;
+
+  // In landscape, use smaller ring (limited vertical space)
+  if (orientation == Orientation.landscape) {
+    if (width < ScreenBreakpoints.phone) return 206;
+    if (width < ScreenBreakpoints.tablet) return 204;
+    return 238;  // 15% smaller than 280px
+  }
+
+  // Portrait: Standard sizing
   if (width < ScreenBreakpoints.phone) return 206;
   if (width < ScreenBreakpoints.tablet) return 240;
   return 280;
 }
 
-/// Chart height proportional to screen size
+/// Chart height proportional to screen size and orientation
+///
+/// Portrait:
 /// - Phone (<600dp): 110px (baseline)
-/// - Small tablet (600-840dp): 128px (+16%)
-/// - Large tablet (>840dp): 150px (+36%)
+/// - Small tablet (600-720dp): 128px (+16%)
+/// - Large tablet (>720dp): 150px (+36%)
+///
+/// Landscape (compact for limited vertical space):
+/// - Phone (<600dp): 100px (compact)
+/// - Small tablet (600-720dp): 110px (compact)
+/// - Large tablet (>720dp): 120px (compact, 20% reduction)
 double getChartHeight(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
+  final orientation = MediaQuery.of(context).orientation;
+
+  // In landscape, use compact chart heights
+  if (orientation == Orientation.landscape) {
+    if (width < ScreenBreakpoints.phone) return 100;
+    if (width < ScreenBreakpoints.tablet) return 110;
+    return 120;  // Reduced from 150px
+  }
+
+  // Portrait: Standard heights
   if (width < ScreenBreakpoints.phone) return 110;
   if (width < ScreenBreakpoints.tablet) return 128;
   return 150;
 }
 
-/// Card padding proportional to screen size
+/// Card padding proportional to screen size and orientation
+///
+/// Portrait:
 /// - Phone (<600dp): 12px (baseline)
-/// - Small tablet (600-840dp): 16px
-/// - Large tablet (>840dp): 20px
+/// - Small tablet (600-720dp): 16px
+/// - Large tablet (>720dp): 20px
+///
+/// Landscape (compact for limited vertical space):
+/// - All sizes: 12px (compact)
 double getCardPadding(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
+  final orientation = MediaQuery.of(context).orientation;
+
+  // In landscape, use compact padding across all sizes
+  if (orientation == Orientation.landscape) {
+    return 12;
+  }
+
+  // Portrait: Standard padding
   if (width < ScreenBreakpoints.phone) return 12;
   if (width < ScreenBreakpoints.tablet) return 16;
   return 20;
 }
 
-/// Spacing between widgets proportional to screen size
+/// Spacing between widgets proportional to screen size and orientation
+///
+/// Portrait:
 /// - Phone (<600dp): 12px (baseline)
-/// - Small tablet (600-840dp): 16px
-/// - Large tablet (>840dp): 20px
+/// - Small tablet (600-720dp): 16px
+/// - Large tablet (>720dp): 20px
+///
+/// Landscape (compact for limited vertical space):
+/// - Phone (<600dp): 8px (compact)
+/// - Small tablet (600-720dp): 10px (compact)
+/// - Large tablet (>720dp): 12px (compact)
 double getSpacing(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
+  final orientation = MediaQuery.of(context).orientation;
+
+  // In landscape, use compact spacing
+  if (orientation == Orientation.landscape) {
+    if (width < ScreenBreakpoints.phone) return 8;
+    if (width < ScreenBreakpoints.tablet) return 10;
+    return 12;  // Reduced from 20px
+  }
+
+  // Portrait: Standard spacing
   if (width < ScreenBreakpoints.phone) return 12;
   if (width < ScreenBreakpoints.tablet) return 16;
   return 20;

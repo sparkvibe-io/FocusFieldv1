@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/constants/app_constants.dart';
 import 'package:focus_field/models/silence_data.dart';
 import 'package:focus_field/models/user_preferences.dart';
+import 'package:focus_field/services/demo_data_service.dart';
 
 class StorageService {
   static const String _silenceDataKey = 'silence_data';
@@ -84,6 +85,19 @@ class StorageService {
 
       // Initialize empty silence data
       await saveSilenceData(const SilenceData());
+    }
+
+    // If demo mode is enabled, populate with realistic demo data for screenshots
+    if (DemoDataService.isDemoMode) {
+      final demoData = DemoDataService.generateDemoData();
+      final demoQuestState = DemoDataService.generateDemoQuestState();
+
+      // Write demo data to storage
+      await saveSilenceData(demoData);
+      await _prefs!.setString('ambient_quest_state', jsonEncode(demoQuestState));
+
+      // Mark onboarding as complete so we go straight to main screen
+      await _prefs!.setBool('onboardingCompleted', true);
     }
   }
 

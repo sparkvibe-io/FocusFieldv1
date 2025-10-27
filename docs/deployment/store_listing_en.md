@@ -175,7 +175,7 @@ Miss a day? No problem. Streaks reset only after 2 consecutive misses. Get a mon
 
 Start building your focus habit today—free to download!
 
-Questions? support@focusfield.io
+Questions? support@sparkvibe.io
 ```
 
 ---

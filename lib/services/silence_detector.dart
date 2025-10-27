@@ -636,7 +636,9 @@ class SilenceDetector {
 
       // Successfully started ambient monitoring
       // Log only important state changes, not routine starts
-      DebugLog.d('✓ Ambient monitoring active');
+      if (!kReleaseMode) {
+        DebugLog.d('✓ Ambient monitoring active');
+      }
     } catch (e) {
       if (!kReleaseMode) {
         DebugLog.d('DEBUG: Exception in startAmbientMonitoring: $e');
@@ -653,7 +655,9 @@ class SilenceDetector {
 
     try {
       if (_isAmbientMonitoring) {
-        DebugLog.d('⊗ Ambient monitoring stopped');
+        if (!kReleaseMode) {
+          DebugLog.d('⊗ Ambient monitoring stopped');
+        }
         _stopListening();
       }
     } catch (e) {

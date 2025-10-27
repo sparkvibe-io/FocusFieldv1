@@ -17,6 +17,15 @@ class _NotificationSettingsWidgetState
     extends ConsumerState<NotificationSettingsWidget> {
   bool _isRequestingPermission = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Refresh permission status when widget opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationPermissionProvider.notifier).checkPermission();
+    });
+  }
+
   String _formatTime(int hour, int minute) {
     final time = TimeOfDay(hour: hour, minute: minute);
     return time.format(context);
@@ -29,6 +38,7 @@ class _NotificationSettingsWidgetState
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final notificationService = ref.watch(notificationServiceProvider);
+    final hasNotificationPermission = ref.watch(notificationPermissionProvider);
     final settings = ref.watch(settingsNotifierProvider);
     final settingsNotifier = ref.read(settingsNotifierProvider.notifier);
 
@@ -90,7 +100,7 @@ class _NotificationSettingsWidgetState
                   ],
                 ),
               ),
-              if (!notificationService.hasNotificationPermission)
+              if (!hasNotificationPermission)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 24),
                   padding: const EdgeInsets.all(12),
@@ -163,7 +173,7 @@ class _NotificationSettingsWidgetState
                         icon: Icons.notifications_active,
                         value: enableNotifications,
                         onChanged:
-                            notificationService.hasNotificationPermission
+                            hasNotificationPermission
                                 ? (v) {
                                   settingsNotifier.updateSetting(
                                     'enableNotifications',
@@ -491,7 +501,7 @@ class _NotificationSettingsWidgetState
                       ),
                       const SizedBox(height: 16),
                       if (enableNotifications &&
-                          notificationService.hasNotificationPermission) ...[
+                          hasNotificationPermission) ...[
                         Divider(
                           color: theme.colorScheme.outline.withValues(alpha: 0.2),
                         ),
@@ -725,8 +735,8 @@ class _NotificationSettingsWidgetState
     });
 
     try {
-      final notificationService = ref.read(notificationServiceProvider);
-      final granted = await notificationService.requestNotificationPermission();
+      final permissionNotifier = ref.read(notificationPermissionProvider.notifier);
+      final granted = await permissionNotifier.requestPermission();
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
