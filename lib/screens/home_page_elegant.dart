@@ -133,18 +133,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   /// - Standard (70-84%): Basic confetti + medium haptic
   /// - Great (85-94%): Enhanced celebration + stronger haptic
   /// - Perfect (95-100%): Maximum celebration + heavy haptic
-  void _triggerCelebration(BuildContext context, WidgetRef ref, double ambientScore) {
+  ///
+  /// NOTE: This method does NOT access context to avoid disposal issues.
+  /// Accessibility checks are skipped; confetti preference is the only gate.
+  void _triggerCelebration(WidgetRef ref, double ambientScore) {
     // Check user preference for confetti
     final confettiEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
-
-    // Respect accessibility settings
-    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (disableAnimations) {
-      if (!kReleaseMode) {
-        DebugLog.d('🎉 [Celebration] Skipped due to reduce motion setting');
-      }
-      return;
-    }
 
     // Determine celebration tier based on ambient score
     String tier;
@@ -295,23 +289,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final isTabletLandscape =
         size.width >= ScreenBreakpoints.tablet && orientation == Orientation.landscape;
 
-    // Listen for session completion to trigger confetti celebration
-    // NOTE: Must be called directly in build() per Riverpod requirement
-    // Riverpod handles listener deduplication automatically
-    // Quest credit is applied separately in endSession flow
+    // Listen for session completion state changes (for debugging only)
+    // NOTE: Celebration is triggered ONLY in onComplete callback (single trigger point)
+    // This listener is kept for debugging purposes only
     ref.listen<SilenceState>(silenceStateProvider, (previous, next) {
       if (!kReleaseMode) {
         DebugLog.d(
-          '👂 [Confetti] silenceStateProvider listener: prev.success=${previous?.success}, next.success=${next.success}',
+          '👂 [SessionState] silenceStateProvider listener: '
+          'prev.success=${previous?.success}, next.success=${next.success}',
         );
-      }
-
-      // Trigger confetti when success state transitions from false/null to true
-      // NOTE: This is a backup trigger; primary trigger is in _endSilenceDetection
-      if (next.success == true && previous?.success != true) {
-        if (!kReleaseMode) {
-          DebugLog.d('🎉 [Confetti] Listener detected success transition (backup trigger)');
-        }
       }
     });
 
@@ -3281,7 +3267,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
         final now = DateTime.now();
         final sevenDaysAgo = now.subtract(const Duration(days: 7));
+        final fourteenDaysAgo = now.subtract(const Duration(days: 14));
 
+        // Current week (last 7 days)
         final sessionsLast7Days =
             data.recentSessions
                 .where((s) => s.date.isAfter(sevenDaysAgo))
@@ -3329,11 +3317,63 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     60
                 : 0;
 
-        // Dummy trend direction for now
-        final focusTimeTrendUp = avgDailyFocusTimeInMinutes > 15;
-        final sessionsTrendUp = sessionsPerWeek > 3;
-        final avgDurationTrendUp = avgSessionDurationInMinutes > 5;
-        final ambientScoreTrendUp = avgAmbientScore > 75;
+        // Previous week (days 8-14 ago) for trend comparison
+        final sessionsPrev7Days =
+            data.recentSessions
+                .where((s) =>
+                    s.date.isAfter(fourteenDaysAgo) &&
+                    s.date.isBefore(sevenDaysAgo))
+                .toList();
+
+        final quietSessionsPrev7Days =
+            sessionsPrev7Days.where((s) => s.ambientScore != null).toList();
+
+        final totalAmbientScorePrev = quietSessionsPrev7Days.fold<double>(
+          0,
+          (prev, s) => prev + s.ambientScore!,
+        );
+        final avgAmbientScorePrev =
+            quietSessionsPrev7Days.isNotEmpty
+                ? (totalAmbientScorePrev / quietSessionsPrev7Days.length) * 100
+                : 0;
+
+        final totalDurationPrev7DaysInSeconds = sessionsPrev7Days.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+
+        final activeDaysPrev =
+            sessionsPrev7Days
+                .map((s) => DateTime(s.date.year, s.date.month, s.date.day))
+                .toSet()
+                .length;
+
+        final daysToAveragePrev = activeDaysPrev > 0 ? activeDaysPrev : 1;
+        final avgDailyFocusTimeInMinutesPrev =
+            (totalDurationPrev7DaysInSeconds / daysToAveragePrev) / 60;
+
+        final sessionsPerWeekPrev = sessionsPrev7Days.length;
+
+        final totalRecentDurationInSecondsPrev = sessionsPrev7Days.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+        final avgSessionDurationInMinutesPrev =
+            sessionsPrev7Days.isNotEmpty
+                ? (totalRecentDurationInSecondsPrev / sessionsPrev7Days.length) /
+                    60
+                : 0;
+
+        // Week-over-week trend comparison (optimistic for new users)
+        // If previous = 0 and current > 0: upward trend (new user scenario)
+        // If current >= previous: upward trend
+        // Otherwise: downward trend
+        final focusTimeTrendUp =
+            avgDailyFocusTimeInMinutes >= avgDailyFocusTimeInMinutesPrev;
+        final sessionsTrendUp = sessionsPerWeek >= sessionsPerWeekPrev;
+        final avgDurationTrendUp =
+            avgSessionDurationInMinutes >= avgSessionDurationInMinutesPrev;
+        final ambientScoreTrendUp = avgAmbientScore >= avgAmbientScorePrev;
 
         // Insights card with neutral background
         final tintColor = theme.colorScheme.tertiary; // For icon colors
@@ -4097,9 +4137,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           }
           silenceStateNotifier.setSuccess(success);
 
-          // GUARANTEED confetti trigger for every successful session
+          // GUARANTEED confetti trigger for every successful session (SINGLE TRIGGER POINT)
           if (success) {
-            _triggerCelebration(context, ref, ambientScore);
+            _triggerCelebration(ref, ambientScore);
           }
 
           // NEW: Proportional points based on quiet minutes (compassionate credit)
