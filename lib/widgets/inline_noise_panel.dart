@@ -144,27 +144,20 @@ class InlineNoisePanel extends HookConsumerWidget {
             }
           }
 
-          // Cleanup: stop ambient monitoring ONLY if this detector is still current
-          // (if detector changed, we already stopped it manually above)
+          // Cleanup: stop ambient monitoring
+          // NOTE: We don't need to check if detector is still current because:
+          // 1. If detector changed during widget lifetime, we already stopped the old one (lines 108-118)
+          // 2. If widget is being disposed, we just need to stop this detector
+          // 3. Using ref.read() in cleanup causes crashes when widget is disposed
           return () {
-            // Check if this is still the current detector before stopping
-            final latestDetector = ref.read(silenceDetectorProvider);
-            if (latestDetector.hashCode == currentDetector.hashCode) {
-              if (!kReleaseMode) {
-                DebugLog.d(
-                  '🎤 [InlineNoisePanel] Cleanup: stopping ambient monitoring (detector: ${currentDetector.hashCode})',
-                );
-              }
-              try {
-                currentDetector.stopAmbientMonitoring();
-              } catch (_) {}
-            } else {
-              if (!kReleaseMode) {
-                DebugLog.d(
-                  '🎤 [InlineNoisePanel] Cleanup: skipping stop (detector ${currentDetector.hashCode} already replaced by ${latestDetector.hashCode})',
-                );
-              }
+            if (!kReleaseMode) {
+              DebugLog.d(
+                '🎤 [InlineNoisePanel] Cleanup: stopping ambient monitoring (detector: ${currentDetector.hashCode})',
+              );
             }
+            try {
+              currentDetector.stopAmbientMonitoring();
+            } catch (_) {}
           };
         }
 
