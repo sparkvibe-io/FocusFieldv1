@@ -579,8 +579,9 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
                     interval: 1,
                     getTitlesWidget: (v, meta) {
                       final i = v.toInt();
-                      if (i < 0 || i >= displayTrends.length)
+                      if (i < 0 || i >= displayTrends.length) {
                         return const SizedBox();
+                      }
 
                       // Show as W1, W2, W3, etc. (week number relative to display)
                       return Text(

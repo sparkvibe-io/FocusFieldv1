@@ -376,11 +376,17 @@ extension SemanticAndPaletteExtension on BuildContext {
   Color onColorFor(Color container, ColorScheme cs) {
     // Heuristic: check matches against scheme containers
     if (container.toARGB32() == cs.primary.toARGB32() ||
-        container.toARGB32() == cs.primaryContainer.toARGB32()) return cs.onPrimaryContainer;
+        container.toARGB32() == cs.primaryContainer.toARGB32()) {
+      return cs.onPrimaryContainer;
+    }
     if (container.toARGB32() == cs.secondary.toARGB32() ||
-        container.toARGB32() == cs.secondaryContainer.toARGB32()) return cs.onSecondaryContainer;
+        container.toARGB32() == cs.secondaryContainer.toARGB32()) {
+      return cs.onSecondaryContainer;
+    }
     if (container.toARGB32() == cs.tertiary.toARGB32() ||
-        container.toARGB32() == cs.tertiaryContainer.toARGB32()) return cs.onTertiaryContainer;
+        container.toARGB32() == cs.tertiaryContainer.toARGB32()) {
+      return cs.onTertiaryContainer;
+    }
     // Fallback using contrast check
     final luminance = container.computeLuminance();
     return luminance > 0.5 ? Colors.black : Colors.white;

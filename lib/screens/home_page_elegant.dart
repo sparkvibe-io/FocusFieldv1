@@ -762,9 +762,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Full-width ad anchored at bottom (always visible, no scrolling required)
         // This ensures AdMob compliance and maximum ad visibility
         // Wrapped in SafeArea to respect system UI (Home Indicator on iOS)
-        SafeArea(
+        const SafeArea(
           top: false,
-          child: const FooterBannerAd(),
+          child: FooterBannerAd(),
         ),
       ],
     );
@@ -3595,7 +3595,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   /// Build an informative failure message showing why the session failed
   String _buildFailureMessage(double ambientScore, int quietSeconds, int totalSeconds) {
     final achievedPercent = (ambientScore * 100).round();
-    final requiredPercent = 70; // 70% threshold
+    const requiredPercent = 70; // 70% threshold
 
     if (totalSeconds < 60) {
       // Very short session
@@ -4340,9 +4340,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: [
-            Tab(icon: Icon(Icons.today_rounded), text: l10n.todayTabToday),
+            Tab(icon: const Icon(Icons.today_rounded), text: l10n.todayTabToday),
             Tab(
-              icon: Icon(Icons.play_circle_outline_rounded),
+              icon: const Icon(Icons.play_circle_outline_rounded),
               text: l10n.todayTabSessions,
             ),
           ],

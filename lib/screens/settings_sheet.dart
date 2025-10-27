@@ -40,7 +40,7 @@ class SettingsSheet extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.vertical(
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(UIConstants.bottomSheetBorderRadius),
           ),
         ),
@@ -69,7 +69,7 @@ class SettingsSheet extends ConsumerWidget {
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(UIConstants.bottomSheetBorderRadius),
         ),
       ),
@@ -1135,7 +1135,7 @@ class SettingsSheet extends ConsumerWidget {
   void _replayOnboarding(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => OnboardingScreen(isReplay: true),
+        builder: (context) => const OnboardingScreen(isReplay: true),
         fullscreenDialog: true,
       ),
     );

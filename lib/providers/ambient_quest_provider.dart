@@ -198,8 +198,9 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
     String reason = 'completed',
     int plannedSeconds = 0,
   }) async {
-    if (!state.running || _start == null || state.sessionId == null)
+    if (!state.running || _start == null || state.sessionId == null) {
       return null;
+    }
     final ended = DateTime.now();
     final profile = _ref.read(activeProfileProvider);
     final session = AmbientSession(

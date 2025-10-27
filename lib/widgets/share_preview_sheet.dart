@@ -78,7 +78,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(UIConstants.bottomSheetBorderRadius),
         ),
       ),
@@ -328,10 +328,12 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
     });
 
     try {
+      // Capture l10n before async operations
+      final l10n = AppLocalizations.of(context)!;
+
       // Small delay to ensure card is fully rendered
       await Future.delayed(const Duration(milliseconds: 100));
 
-      final l10n = AppLocalizations.of(context)!;
       await ShareService.instance.shareWidget(
         key: _cardKey,
         filename: 'focus_field_${_selectedTimeRange.getLabel(l10n).toLowerCase()}',

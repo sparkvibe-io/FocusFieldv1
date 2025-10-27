@@ -376,7 +376,7 @@ class AchievementCard extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       l10n.appName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -533,7 +533,7 @@ class StreakCard extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           l10n.appName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -696,7 +696,7 @@ class ActivityRingsCard extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           l10n.appName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -805,7 +805,7 @@ class _ActivityRingsPainter extends CustomPainter {
             ..strokeCap = StrokeCap.round;
 
       final rect = Rect.fromCircle(center: center, radius: ringRadius);
-      final startAngle = -90 * (3.14159 / 180); // Start at top
+      const startAngle = -90 * (3.14159 / 180); // Start at top
       final sweepAngle = progress * 2 * 3.14159; // Full circle = 360°
 
       canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
@@ -955,7 +955,7 @@ class MinimalProgressCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       l10n.appName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF1A1A1A),
