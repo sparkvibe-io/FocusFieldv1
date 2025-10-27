@@ -1,8 +1,12 @@
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:math' as math;
 import 'dart:async';
+import '../utils/debug_log.dart';
 import '../providers/silence_provider.dart';
 import '../providers/accessibility_provider.dart';
 import '../providers/notification_provider.dart';
@@ -53,7 +57,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   late TabController _tabController;
   int _currentTab = 0;
   late final ConfettiController _confetti;
-  bool _sessionListenerWired = false;
   bool _focusModeActive = false;
   // Debounce for theme toggle
   DateTime? _lastThemeToggleTime;
@@ -88,7 +91,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       initialIndex: widget.initialTab,
     );
     _currentTab = widget.initialTab;
-    _confetti = ConfettiController(duration: const Duration(seconds: 2));
+    _confetti = ConfettiController(duration: const Duration(seconds: 3));
     _tabController.addListener(() {
       setState(() {
         _currentTab = _tabController.index;
@@ -124,6 +127,43 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     _tabController.dispose();
     _confetti.dispose();
     super.dispose();
+  }
+
+  /// Triggers celebration confetti with intensity based on performance.
+  /// - Standard (70-84%): Basic confetti + medium haptic
+  /// - Great (85-94%): Enhanced celebration + stronger haptic
+  /// - Perfect (95-100%): Maximum celebration + heavy haptic
+  ///
+  /// NOTE: This method does NOT access context to avoid disposal issues.
+  /// Accessibility checks are skipped; confetti preference is the only gate.
+  void _triggerCelebration(WidgetRef ref, double ambientScore) {
+    // Check user preference for confetti
+    final confettiEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
+
+    // Determine celebration tier based on ambient score
+    String tier;
+    if (ambientScore >= 0.95) {
+      tier = 'Perfect';
+      HapticFeedback.heavyImpact(); // Strongest feedback for perfect sessions
+    } else if (ambientScore >= 0.85) {
+      tier = 'Great';
+      HapticFeedback.mediumImpact(); // Enhanced feedback for great sessions
+    } else {
+      tier = 'Standard';
+      HapticFeedback.lightImpact(); // Basic feedback for standard success
+    }
+
+    // Trigger confetti animation only if enabled
+    if (confettiEnabled) {
+      _confetti.play();
+    }
+
+    if (!kReleaseMode) {
+      DebugLog.d(
+        '🎉 [Celebration] Triggered $tier celebration '
+        '(score: ${(ambientScore * 100).toStringAsFixed(1)}%, confetti: $confettiEnabled)',
+      );
+    }
   }
 
   /// Shows share options with preview bottom sheet.
@@ -244,47 +284,22 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final size = MediaQuery.sizeOf(context);
     final orientation = MediaQuery.orientationOf(context);
 
-    // Detect tablet landscape: width >= 840 (large tablet) and landscape orientation
-    // Matches our orientation locking policy (landscape only allowed on ≥840dp devices)
+    // Detect tablet landscape: width >= 800 (large tablet) and landscape orientation
+    // Matches our orientation locking policy (landscape only allowed on ≥800dp devices)
     final isTabletLandscape =
-        size.width >= 840 && orientation == Orientation.landscape;
+        size.width >= ScreenBreakpoints.tablet && orientation == Orientation.landscape;
 
-    // Listen for session completion/failure to trigger confetti and a11y events
-    if (!_sessionListenerWired) {
-      _sessionListenerWired = true;
-      ref.listen<SilenceState>(silenceStateProvider, (previous, next) async {
-        // Live calm counters handled centrally; nothing to reset here.
-        if (next.success == true && previous?.success != true) {
-          // Respect reduce motion preference
-          final reduceMotion =
-              MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-          if (!reduceMotion) {
-            _confetti.play();
-          }
-          try {
-            ref
-                .read(accessibilityServiceProvider)
-                .vibrateOnEvent(AccessibilityEvent.sessionComplete);
-            ref
-                .read(accessibilityServiceProvider)
-                .announceSessionComplete(true);
-          } catch (_) {}
-          await Future.delayed(const Duration(seconds: 2));
-          if (mounted) {
-            ref.read(silenceStateProvider.notifier).setSuccess(null);
-          }
-        } else if (next.success == false && previous?.success != false) {
-          try {
-            ref
-                .read(accessibilityServiceProvider)
-                .vibrateOnEvent(AccessibilityEvent.sessionFailed);
-            ref
-                .read(accessibilityServiceProvider)
-                .announceSessionComplete(false);
-          } catch (_) {}
-        }
-      });
-    }
+    // Listen for session completion state changes (for debugging only)
+    // NOTE: Celebration is triggered ONLY in onComplete callback (single trigger point)
+    // This listener is kept for debugging purposes only
+    ref.listen<SilenceState>(silenceStateProvider, (previous, next) {
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '👂 [SessionState] silenceStateProvider listener: '
+          'prev.success=${previous?.success}, next.success=${next.success}',
+        );
+      }
+    });
 
     final dramatic = theme.extension<DramaticThemeStyling>();
     return Scaffold(
@@ -295,20 +310,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               : theme.colorScheme.surface,
       body: Stack(
         children: [
-          // Confetti overlay
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confetti,
-              blastDirection: math.pi / 2,
-              maxBlastForce: 5,
-              minBlastForce: 2,
-              emissionFrequency: 0.05,
-              numberOfParticles: 50,
-              gravity: 0.1,
-            ),
-          ),
-
           // Main content
           SafeArea(
             bottom: false,
@@ -341,6 +342,20 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 if (!isTabletLandscape && !_focusModeActive)
                   _buildBottomNav(context),
               ],
+            ),
+          ),
+
+          // Confetti overlay - MUST be last to render on top
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confetti,
+              blastDirection: -math.pi / 2,  // Shoot upward (was downward!)
+              maxBlastForce: 10,  // Increased from 5 for more energy
+              minBlastForce: 5,   // Increased from 2
+              emissionFrequency: 0.02,  // Increased from 0.05 (more frequent)
+              numberOfParticles: 150,  // Increased from 50 for more celebration
+              gravity: 0.3,  // Increased from 0.1 for better fall
             ),
           ),
         ],
@@ -623,7 +638,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         SizedBox(height: spacing),
         _buildComplementaryPanel(context, l10n),
         SizedBox(height: spacing),
-        _buildSessionControlCard(context),
+        // Wrap in Consumer to rebuild when silence state changes
+        Consumer(
+          builder: (context, ref, _) {
+            // Watch silence state to trigger rebuilds
+            ref.watch(silenceStateProvider);
+            return _buildSessionControlCard(context);
+          },
+        ),
         SizedBox(height: spacing),
         if (showAd) _buildAdvertisementPlaceholder(context),
       ],
@@ -663,69 +685,86 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   /// Tablet landscape layout: shows Today tab on left + Sessions tab on right
+  /// with full-width ad anchored at the bottom (always visible)
   Widget _buildTabletLandscapeLayout(
     BuildContext context,
     AppLocalizations l10n,
   ) {
     final theme = Theme.of(context);
 
-    final tabletContent = Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // Main content: Column with split-screen row + anchored ad at bottom
+    final tabletContent = Column(
       children: [
-        // Left panel: Today tab (no ad in landscape mode)
+        // Split-screen row: Today (left) | Sessions (right)
         Expanded(
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Today tab header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.sectionToday,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+              // Left panel: Today tab (no ad inside - ad is at bottom)
+              Expanded(
+                child: Column(
+                  children: [
+                    // Today tab header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.sectionToday,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    // Today tab content (no ad - moved to bottom)
+                    Expanded(child: _buildSummaryTab(context, l10n, showAd: false)),
+                  ],
                 ),
               ),
-              // Today tab content (with ad at bottom)
-              Expanded(child: _buildSummaryTab(context, l10n, showAd: true)),
+
+              // Vertical divider
+              Container(width: 1, color: theme.colorScheme.outlineVariant),
+
+              // Right panel: Sessions tab
+              Expanded(
+                child: Column(
+                  children: [
+                    // Sessions tab header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.sectionSessions,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Sessions tab content (no ad - shared ad at bottom)
+                    Expanded(
+                      child: _buildSessionsTab(
+                        context,
+                        l10n,
+                        showAd: false,
+                        applyFocusOverlay: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
 
-        // Vertical divider
-        Container(width: 1, color: theme.colorScheme.outlineVariant),
-
-        // Right panel: Sessions tab
-        Expanded(
-          child: Column(
-            children: [
-              // Sessions tab header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.sectionSessions,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              // Sessions tab content (no ad in landscape mode, no overlay - applied at layout level)
-              Expanded(
-                child: _buildSessionsTab(
-                  context,
-                  l10n,
-                  showAd: false,
-                  applyFocusOverlay: false,
-                ),
-              ),
-            ],
-          ),
+        // Full-width ad anchored at bottom (always visible, no scrolling required)
+        // This ensures AdMob compliance and maximum ad visibility
+        // Wrapped in SafeArea to respect system UI (Home Indicator on iOS)
+        SafeArea(
+          top: false,
+          child: const FooterBannerAd(),
         ),
       ],
     );
@@ -3061,8 +3100,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   // Ultra-minimal quest capsule: just progress bar, numbers, streak, and freeze token (if relevant)
   Widget _buildAmbientQuestCapsule(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final orientation = MediaQuery.of(context).orientation;
+    final isTabletLandscape =
+        size.width >= ScreenBreakpoints.tablet && orientation == Orientation.landscape;
+
     return QuestCapsule(
       onNavigateToActivity: () => _tabController.animateTo(1),
+      isLandscapeLayout: isTabletLandscape,
     );
   }
 
@@ -3222,7 +3267,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
         final now = DateTime.now();
         final sevenDaysAgo = now.subtract(const Duration(days: 7));
+        final fourteenDaysAgo = now.subtract(const Duration(days: 14));
 
+        // Current week (last 7 days)
         final sessionsLast7Days =
             data.recentSessions
                 .where((s) => s.date.isAfter(sevenDaysAgo))
@@ -3270,11 +3317,63 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                     60
                 : 0;
 
-        // Dummy trend direction for now
-        final focusTimeTrendUp = avgDailyFocusTimeInMinutes > 15;
-        final sessionsTrendUp = sessionsPerWeek > 3;
-        final avgDurationTrendUp = avgSessionDurationInMinutes > 5;
-        final ambientScoreTrendUp = avgAmbientScore > 75;
+        // Previous week (days 8-14 ago) for trend comparison
+        final sessionsPrev7Days =
+            data.recentSessions
+                .where((s) =>
+                    s.date.isAfter(fourteenDaysAgo) &&
+                    s.date.isBefore(sevenDaysAgo))
+                .toList();
+
+        final quietSessionsPrev7Days =
+            sessionsPrev7Days.where((s) => s.ambientScore != null).toList();
+
+        final totalAmbientScorePrev = quietSessionsPrev7Days.fold<double>(
+          0,
+          (prev, s) => prev + s.ambientScore!,
+        );
+        final avgAmbientScorePrev =
+            quietSessionsPrev7Days.isNotEmpty
+                ? (totalAmbientScorePrev / quietSessionsPrev7Days.length) * 100
+                : 0;
+
+        final totalDurationPrev7DaysInSeconds = sessionsPrev7Days.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+
+        final activeDaysPrev =
+            sessionsPrev7Days
+                .map((s) => DateTime(s.date.year, s.date.month, s.date.day))
+                .toSet()
+                .length;
+
+        final daysToAveragePrev = activeDaysPrev > 0 ? activeDaysPrev : 1;
+        final avgDailyFocusTimeInMinutesPrev =
+            (totalDurationPrev7DaysInSeconds / daysToAveragePrev) / 60;
+
+        final sessionsPerWeekPrev = sessionsPrev7Days.length;
+
+        final totalRecentDurationInSecondsPrev = sessionsPrev7Days.fold<int>(
+          0,
+          (prev, s) => prev + s.duration,
+        );
+        final avgSessionDurationInMinutesPrev =
+            sessionsPrev7Days.isNotEmpty
+                ? (totalRecentDurationInSecondsPrev / sessionsPrev7Days.length) /
+                    60
+                : 0;
+
+        // Week-over-week trend comparison (optimistic for new users)
+        // If previous = 0 and current > 0: upward trend (new user scenario)
+        // If current >= previous: upward trend
+        // Otherwise: downward trend
+        final focusTimeTrendUp =
+            avgDailyFocusTimeInMinutes >= avgDailyFocusTimeInMinutesPrev;
+        final sessionsTrendUp = sessionsPerWeek >= sessionsPerWeekPrev;
+        final avgDurationTrendUp =
+            avgSessionDurationInMinutes >= avgSessionDurationInMinutesPrev;
+        final ambientScoreTrendUp = avgAmbientScore >= avgAmbientScorePrev;
 
         // Insights card with neutral background
         final tintColor = theme.colorScheme.tertiary; // For icon colors
@@ -3493,11 +3592,50 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
   }
 
+  /// Build an informative failure message showing why the session failed
+  String _buildFailureMessage(double ambientScore, int quietSeconds, int totalSeconds) {
+    final achievedPercent = (ambientScore * 100).round();
+    final requiredPercent = 70; // 70% threshold
+
+    if (totalSeconds < 60) {
+      // Very short session
+      return 'Session too short: ${totalSeconds}s (need 60s minimum)';
+    }
+
+    final quietMinutes = (quietSeconds / 60).floor();
+    final totalMinutes = (totalSeconds / 60).floor();
+    final neededQuietMinutes = ((totalSeconds * 0.7) / 60).ceil() - quietMinutes;
+
+    return 'Session incomplete: $achievedPercent% quiet (need $requiredPercent%) • $neededQuietMinutes more quiet min needed';
+  }
+
   Widget _buildSessionControlCard(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
+    final threshold = ref.watch(decibelThresholdProvider);
+
+    // Debug logging for state synchronization
+    if (!kReleaseMode) {
+      DebugLog.d(
+        '🎮 [SessionControl] Building: isListening=${silenceState.isListening}, '
+        'isPaused=${silenceState.isPaused}, progress=${silenceState.progress}, '
+        'duration=${durationSeconds}s, '
+        'tabIndex=$_currentTab',
+      );
+    }
+
+    // Additional debug: log button visibility decision
+    if (!kReleaseMode && silenceState.isListening) {
+      DebugLog.d(
+        '✅ [SessionControl] Should show control buttons (session active) in tab $_currentTab',
+      );
+    } else if (!kReleaseMode) {
+      DebugLog.d(
+        '❌ [SessionControl] Should show duration selector (no session) in tab $_currentTab',
+      );
+    }
     // Live ambient calm percent shown when applicable (quiet-required activities)
     double? calmPercent;
     if (AmbientFlags.ambientScore) {
@@ -3624,6 +3762,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             isListening: silenceState.isListening,
             timeLabel: _formatTimeForSeconds(durationSeconds),
             totalDurationSeconds: durationSeconds,
+            threshold: threshold,
             // Never show subtitle (user requested no "Calm" text)
             subtitleText: null,
             // Ambient % display (only for noise-requiring activities)
@@ -3833,7 +3972,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ),
     );
 
-    if (onLongPress != null) {
+    // Support both tap and long-press interactions
+    if (onTap != null && onLongPress != null) {
+      return GestureDetector(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: button,
+      );
+    } else if (onLongPress != null) {
       return GestureDetector(onLongPress: onLongPress, child: button);
     } else if (onTap != null) {
       return GestureDetector(onTap: onTap, child: button);
@@ -3857,35 +4003,26 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       );
     }
 
-    if (silenceState.success == true) {
-      return Text(
-        l10n.sessionSuccess,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
-    if (silenceState.success == false) {
-      return Text(
-        l10n.sessionFailed,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.error,
-        ),
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
+    // No persistent success/failure message below progress ring
+    // Success/failure feedback is already provided via popup dialogs
     return const SizedBox.shrink();
   }
 
   Future<void> _startSilenceDetection(BuildContext context) async {
+    // GUARD: Prevent starting multiple sessions simultaneously
+    // This can happen in split-view mode where both tabs try to start a session
+    final currentState = ref.read(silenceStateProvider);
+    if (currentState.isListening) {
+      if (!kReleaseMode) {
+        DebugLog.d('⚠️ [SessionStart] Blocked: session already running (tabIndex=$_currentTab)');
+      }
+      return;
+    }
+
+    if (!kReleaseMode) {
+      DebugLog.d('✅ [SessionStart] Starting session (tabIndex=$_currentTab)');
+    }
+
     final silenceStateNotifier = ref.read(silenceStateProvider.notifier);
     final silenceDataNotifier = ref.read(silenceDataNotifierProvider.notifier);
     final silenceDetector = ref.read(silenceDetectorProvider);
@@ -3956,9 +4093,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     await silenceDetector.startListening(
       onProgress: (progress) {
-        // Only update progress if not paused
+        // Only update progress if session is active and not paused
         final currentState = ref.read(silenceStateProvider);
-        if (!currentState.isPaused) {
+        if (currentState.isListening && !currentState.isPaused) {
           silenceStateNotifier.setProgress(progress);
           // Update ongoing notification progress (coarse)
           try {
@@ -3976,6 +4113,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       },
       onComplete: (legacySuccess) async {
         if (ref.read(silenceStateProvider).canStop) {
+          // CRITICAL: Stop detector and clear state before processing completion
+          silenceDetector.stopListening();
+          silenceDetector.clearReadings();
+
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
 
@@ -3989,7 +4130,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           final quietSeconds = ambientState.quietSeconds;
           final success = ambientScore >= 0.70; // 70% calm threshold
 
+          if (!kReleaseMode) {
+            DebugLog.d(
+              '🎊 [Confetti] Setting success=$success (score=$ambientScore, quietSec=$quietSeconds)',
+            );
+          }
           silenceStateNotifier.setSuccess(success);
+
+          // GUARANTEED confetti trigger for every successful session (SINGLE TRIGGER POINT)
+          if (success) {
+            _triggerCelebration(ref, ambientScore);
+          }
 
           // NEW: Proportional points based on quiet minutes (compassionate credit)
           final creditedMinutes = success ? (quietSeconds ~/ 60) : 0;
@@ -4050,7 +4201,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             final l10n = AppLocalizations.of(context)!;
             final message = success
                 ? l10n.sessionCompleteSuccess(sessionMinutes)
-                : l10n.sessionCompleteFailed;
+                : _buildFailureMessage(ambientScore, quietSeconds, actualDuration);
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -4068,6 +4219,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       },
       onError: (error) async {
         if (ref.read(silenceStateProvider).canStop) {
+          // CRITICAL: Stop detector and clear state before processing error
+          silenceDetector.stopListening();
+          silenceDetector.clearReadings();
+
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
           silenceStateNotifier.setError(error);
@@ -4245,11 +4400,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 }
 
-class _GlowingProgressRing extends StatelessWidget {
+class _GlowingProgressRing extends HookConsumerWidget {
   final double size;
   final double progress; // 0..1
   final String timeLabel; // e.g., 01:00 or 1:30:00 (used when NOT listening)
   final int? totalDurationSeconds; // Total session duration for countdown
+  final double threshold; // Noise threshold in dB
   final VoidCallback onStart;
   final bool isListening;
   final String? subtitleText;
@@ -4262,6 +4418,7 @@ class _GlowingProgressRing extends StatelessWidget {
     required this.progress,
     required this.timeLabel,
     this.totalDurationSeconds,
+    required this.threshold,
     required this.onStart,
     required this.isListening,
     this.subtitleText,
@@ -4270,7 +4427,25 @@ class _GlowingProgressRing extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Subscribe to noise stream for hybrid Start button logic (only when NOT listening)
+    final controller = ref.watch(realTimeNoiseControllerProvider);
+    final smoothed = useState<double>(0);
+
+    // Subscribe to noise updates when not in an active session
+    useEffect(() {
+      if (!isListening) {
+        final sub = controller.stream.listen((d) {
+          if (d.isNaN || d.isInfinite) return;
+          final clamped = d.clamp(0.0, 120.0);
+          final s = smoothed.value;
+          smoothed.value =
+              (s.isNaN || s.isInfinite) ? clamped : s * 0.7 + clamped * 0.3;
+        });
+        return sub.cancel;
+      }
+      return null;
+    }, [controller.hashCode, isListening]);
     final theme = Theme.of(context);
     final ringColor = theme.colorScheme.primary;
     final glowColor = ringColor.withValues(alpha: 0.35);
@@ -4363,19 +4538,8 @@ class _GlowingProgressRing extends StatelessWidget {
               // Show Start button only when NOT listening
               if (!isListening) ...[
                 const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: onStart,
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.all(18),
-                    elevation: 3,
-                  ),
-                  child: const Icon(Icons.play_arrow_rounded, size: 28),
-                ),
-                const SizedBox(height: 6),
-                Text('Start', style: theme.textTheme.titleMedium),
+                // Hybrid Start button logic
+                _buildHybridStartButton(context, theme, smoothed.value),
               ],
             ],
           ),
@@ -4394,6 +4558,69 @@ class _GlowingProgressRing extends StatelessWidget {
     final seconds = remainingSeconds % 60;
 
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  /// Build hybrid Start button with noise-aware logic
+  /// - Soft warning: noise > threshold (still allow start)
+  /// - Hard disable: noise > threshold + 20dB (extreme cases)
+  Widget _buildHybridStartButton(
+    BuildContext context,
+    ThemeData theme,
+    double currentNoise,
+  ) {
+    final isNoisy = currentNoise > threshold;
+    final isExtremelyNoisy = currentNoise > (threshold + 20);
+
+    // Determine button state
+    final bool isDisabled = isExtremelyNoisy;
+    final bool showWarning = isNoisy && !isExtremelyNoisy;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Start button
+        ElevatedButton(
+          onPressed: isDisabled ? null : onStart,
+          style: ElevatedButton.styleFrom(
+            shape: const CircleBorder(),
+            backgroundColor: isDisabled
+                ? theme.colorScheme.surfaceContainerHighest
+                : (showWarning
+                    ? theme.colorScheme.tertiary
+                    : theme.colorScheme.primary),
+            foregroundColor: isDisabled
+                ? theme.colorScheme.onSurfaceVariant
+                : (showWarning
+                    ? theme.colorScheme.onTertiary
+                    : theme.colorScheme.onPrimary),
+            padding: const EdgeInsets.all(18),
+            elevation: isDisabled ? 0 : 3,
+          ),
+          child: Icon(
+            showWarning ? Icons.warning_amber_rounded : Icons.play_arrow_rounded,
+            size: 28,
+          ),
+        ),
+        const SizedBox(height: 6),
+        // Status text
+        if (isDisabled)
+          Text(
+            'Too Loud',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.error,
+            ),
+          )
+        else if (showWarning)
+          Text(
+            'Noisy',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.tertiary,
+            ),
+          )
+        else
+          Text('Start', style: theme.textTheme.titleMedium),
+      ],
+    );
   }
 }
 

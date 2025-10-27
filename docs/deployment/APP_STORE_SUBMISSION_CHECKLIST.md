@@ -355,11 +355,12 @@ ENABLE_MOCK_SUBSCRIPTIONS=false
   • Smooth animations and visual feedback
 
   💎 PREMIUM FEATURES
-  • Extended sessions up to 120 minutes
+  • Extended sessions up to 4 hours
   • Advanced analytics and trend charts
   • Data export (CSV/PDF)
   • Premium themes
   • 90-day history
+  • Ad-free experience
 
   🔒 PRIVACY FIRST
   • No audio recording - only decibel measurements
@@ -446,12 +447,12 @@ ENABLE_MOCK_SUBSCRIPTIONS=false
 - [ ] **Description**:
   ```
   Unlock Premium features:
-  • Extended sessions (up to 120 minutes)
+  • Extended sessions (up to 4 hours)
   • Advanced analytics and trend charts
   • Data export (CSV/PDF)
   • Premium themes
   • 90-day history
-  • Priority support
+  • Ad-free experience
   ```
 
 ### Google Play Console Subscriptions
@@ -576,7 +577,7 @@ No audio recording - only decibel measurements. All data stored locally.
 No sign-in required.
 
 📊 PREMIUM
-Upgrade for extended sessions, advanced analytics, data export, and more.
+Upgrade for 4-hour sessions, advanced analytics, data export, ad-free experience, and more.
 
 Start your focus journey today!
 ```

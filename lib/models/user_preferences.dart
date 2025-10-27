@@ -16,6 +16,9 @@ class UserPreferences {
   // Focus Mode: minimal distraction during sessions
   final bool focusModeEnabled;
 
+  // Celebration Effects: show confetti on successful sessions
+  final bool enableCelebrationConfetti;
+
   const UserPreferences({
     required this.enabledProfiles,
     required this.globalDailyQuietGoalMinutes,
@@ -23,6 +26,7 @@ class UserPreferences {
     this.perActivityGoalsEnabled = false,
     this.perActivityGoals,
     this.focusModeEnabled = false,
+    this.enableCelebrationConfetti = true,
   });
   
   // Default preferences (core 3 activities enabled, 10 min goal per activity)
@@ -33,6 +37,7 @@ class UserPreferences {
     perActivityGoalsEnabled: false,
     perActivityGoals: null,
     focusModeEnabled: false,
+    enableCelebrationConfetti: true,
   );
   
   UserPreferences copyWith({
@@ -42,6 +47,7 @@ class UserPreferences {
     bool? perActivityGoalsEnabled,
     Map<String, int>? perActivityGoals,
     bool? focusModeEnabled,
+    bool? enableCelebrationConfetti,
   }) => UserPreferences(
     enabledProfiles: enabledProfiles ?? this.enabledProfiles,
     globalDailyQuietGoalMinutes: globalDailyQuietGoalMinutes ?? this.globalDailyQuietGoalMinutes,
@@ -49,6 +55,7 @@ class UserPreferences {
     perActivityGoalsEnabled: perActivityGoalsEnabled ?? this.perActivityGoalsEnabled,
     perActivityGoals: perActivityGoals ?? this.perActivityGoals,
     focusModeEnabled: focusModeEnabled ?? this.focusModeEnabled,
+    enableCelebrationConfetti: enableCelebrationConfetti ?? this.enableCelebrationConfetti,
   );
   
   Map<String, dynamic> toJson() => {
@@ -58,6 +65,7 @@ class UserPreferences {
     'perActivityGoalsEnabled': perActivityGoalsEnabled,
     'perActivityGoals': perActivityGoals,
     'focusModeEnabled': focusModeEnabled,
+    'enableCelebrationConfetti': enableCelebrationConfetti,
   };
   
   factory UserPreferences.fromJson(Map<String, dynamic> json) {
@@ -76,6 +84,7 @@ class UserPreferences {
               .map((k, v) => MapEntry(k, v as int))
           : null,
       focusModeEnabled: json['focusModeEnabled'] as bool? ?? false,
+      enableCelebrationConfetti: json['enableCelebrationConfetti'] as bool? ?? true,
     );
   }
 }

@@ -32,7 +32,7 @@ Extended sessions, advanced analytics, and more
 
 #### 1. Extended Sessions ⏱️
 **Title**: Extended Sessions
-**Description**: Focus for up to 120 minutes (vs 30 min free)
+**Description**: Focus for up to 4 hours (vs 30 min free)
 **Icon**: Clock/Timer icon
 
 #### 2. Advanced Analytics 📊
@@ -57,7 +57,7 @@ Extended sessions, advanced analytics, and more
 
 #### 6. Premium Durations ⭐
 **Title**: Premium Durations
-**Description**: Access 1h, 1.5h, and 2h session options
+**Description**: Access 1h, 1.5h, 2h, and 4h session options
 **Icon**: Star icon
 
 #### 7. Priority Support 💬

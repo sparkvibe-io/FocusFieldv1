@@ -156,7 +156,8 @@ class FocusFieldApp extends ConsumerWidget {
         Locale('de'),
         Locale('pt', 'BR'),
         Locale('ja'),
-        Locale('zh'),
+        Locale('zh', 'CN'),  // Simplified Chinese (China mainland)
+        Locale('zh'),        // Fallback for generic Chinese
       ],
       // Start with splash screen which transitions to AppInitializer
       home: const SplashScreen(),

@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../models/ambient_models.dart';
 import '../providers/silence_provider.dart';
+import '../utils/debug_log.dart';
 import 'package:focus_field/constants/ambient_flags.dart';
 import 'adaptive_tuning_provider.dart';
 import 'user_preferences_provider.dart';
@@ -308,7 +310,7 @@ class QuestStateController extends StateNotifier<QuestState?> {
         cycleId: '${now.year}-${now.month.toString().padLeft(2, '0')}',
         dayIndex: now.day,
         goalQuietMinutes: prefs.globalDailyQuietGoalMinutes,
-        requiredScore: 0.7,
+        requiredScore: 0.7,  // 70% quiet time required
         progressQuietMinutes: 0,
         streakCount: 0,
         freezeTokens: 1,
@@ -397,17 +399,31 @@ class QuestStateController extends StateNotifier<QuestState?> {
   }
 
   Future<void> applySession(AmbientSession session) async {
+    if (!kReleaseMode) {
+      DebugLog.d('🎯 [QuestState] applySession START: ${session.profileId}, quietSeconds=${session.quietSeconds}, score=${session.ambientScore}');
+    }
+
     await _rolloverIfNeeded();
     final qs = state;
-    if (qs == null) return;
+    if (qs == null) {
+      if (!kReleaseMode) {
+        DebugLog.d('❌ [QuestState] applySession ABORT: state is null');
+      }
+      return;
+    }
     final now = DateTime.now();
 
     // Calculate credited minutes if ambient score qualifies
+    // Use ceiling (round up) for compassionate credit: 48 seconds = 1 minute
     int credited = 0;
     bool qualifies = false;
     if (session.ambientScore != null) {
       qualifies = session.ambientScore! >= qs.requiredScore;
-      credited = qualifies ? (session.quietSeconds ~/ 60) : 0;
+      credited = qualifies ? (session.quietSeconds / 60).ceil() : 0;
+    }
+
+    if (!kReleaseMode) {
+      DebugLog.d('🎯 [QuestState] Credited minutes: $credited (qualifies: $qualifies)');
     }
 
     // Track per-activity minutes based on profileId
@@ -457,6 +473,10 @@ class QuestStateController extends StateNotifier<QuestState?> {
       lastUpdatedAt: now,
     );
     await save();
+
+    if (!kReleaseMode) {
+      DebugLog.d('✅ [QuestState] applySession COMPLETE: progress=$newProgress/${ qs.goalQuietMinutes}, streak=$newStreak, study=$newStudyMinutes, reading=$newReadingMinutes, meditation=$newMeditationMinutes');
+    }
   }
 
   /// Update the goal when user preferences change

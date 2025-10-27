@@ -540,6 +540,7 @@
   "questMotivation7": "El enfoque es un músculo - te estás volviendo más fuerte",
   "questMotivation8": "El viaje de mil millas comienza con un solo paso",
   "questGo": "Ir",
+  "questTapStart": "Toca Inicio →",
   "todayDashboardTitle": "Tu Panel de Enfoque",
   "todayFocusMinutes": "Minutos de enfoque hoy",
   "todayGoalCalm": "Objetivo: {goalMinutes} min • Calma ≥{calmPercent}%",

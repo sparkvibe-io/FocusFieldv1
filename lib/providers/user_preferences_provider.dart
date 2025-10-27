@@ -74,6 +74,11 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     await _persist(updated);
   }
 
+  Future<void> updateCelebrationConfettiEnabled(bool enabled) async {
+    final updated = state.copyWith(enableCelebrationConfetti: enabled);
+    await _persist(updated);
+  }
+
   Future<void> updateUserPreferences(UserPreferences newPrefs) async {
     await _persist(newPrefs);
   }

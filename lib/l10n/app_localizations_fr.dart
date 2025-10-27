@@ -1436,6 +1436,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get questGo => 'Aller';
 
   @override
+  String get questTapStart => 'Tap Start →';
+
+  @override
   String get todayDashboardTitle => 'Votre tableau de bord de concentration';
 
   @override

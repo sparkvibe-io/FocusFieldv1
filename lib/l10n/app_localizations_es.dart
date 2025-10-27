@@ -1436,6 +1436,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get questGo => 'Ir';
 
   @override
+  String get questTapStart => 'Toca Inicio →';
+
+  @override
   String get todayDashboardTitle => 'Tu Panel de Enfoque';
 
   @override

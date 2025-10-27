@@ -718,6 +718,7 @@
   "questMotivation7": "Focus is a muscle - you're getting stronger",
   "questMotivation8": "The journey of a thousand miles begins with a single step",
   "questGo": "Go",
+  "questTapStart": "Tap Start →",
   "todayDashboardTitle": "Your Focus Dashboard",
   "todayFocusMinutes": "Focus minutes today",
   "todayGoalCalm": "Goal: {goalMinutes} min • Calm ≥{calmPercent}%",

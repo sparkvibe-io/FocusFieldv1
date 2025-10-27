@@ -2812,6 +2812,12 @@ abstract class AppLocalizations {
   /// **'Go'**
   String get questGo;
 
+  /// No description provided for @questTapStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Start →'**
+  String get questTapStart;
+
   /// No description provided for @todayDashboardTitle.
   ///
   /// In en, this message translates to:
