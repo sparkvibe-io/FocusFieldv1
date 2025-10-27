@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import '../utils/debug_log.dart';
@@ -126,6 +127,49 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     _tabController.dispose();
     _confetti.dispose();
     super.dispose();
+  }
+
+  /// Triggers celebration confetti with intensity based on performance.
+  /// - Standard (70-84%): Basic confetti + medium haptic
+  /// - Great (85-94%): Enhanced celebration + stronger haptic
+  /// - Perfect (95-100%): Maximum celebration + heavy haptic
+  void _triggerCelebration(BuildContext context, WidgetRef ref, double ambientScore) {
+    // Check user preference for confetti
+    final confettiEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
+
+    // Respect accessibility settings
+    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (disableAnimations) {
+      if (!kReleaseMode) {
+        DebugLog.d('🎉 [Celebration] Skipped due to reduce motion setting');
+      }
+      return;
+    }
+
+    // Determine celebration tier based on ambient score
+    String tier;
+    if (ambientScore >= 0.95) {
+      tier = 'Perfect';
+      HapticFeedback.heavyImpact(); // Strongest feedback for perfect sessions
+    } else if (ambientScore >= 0.85) {
+      tier = 'Great';
+      HapticFeedback.mediumImpact(); // Enhanced feedback for great sessions
+    } else {
+      tier = 'Standard';
+      HapticFeedback.lightImpact(); // Basic feedback for standard success
+    }
+
+    // Trigger confetti animation only if enabled
+    if (confettiEnabled) {
+      _confetti.play();
+    }
+
+    if (!kReleaseMode) {
+      DebugLog.d(
+        '🎉 [Celebration] Triggered $tier celebration '
+        '(score: ${(ambientScore * 100).toStringAsFixed(1)}%, confetti: $confettiEnabled)',
+      );
+    }
   }
 
   /// Shows share options with preview bottom sheet.
@@ -263,22 +307,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       }
 
       // Trigger confetti when success state transitions from false/null to true
+      // NOTE: This is a backup trigger; primary trigger is in _endSilenceDetection
       if (next.success == true && previous?.success != true) {
-        final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-
         if (!kReleaseMode) {
-          DebugLog.d('🎉 [Confetti] Triggering celebration! reduceMotion=$reduceMotion');
+          DebugLog.d('🎉 [Confetti] Listener detected success transition (backup trigger)');
         }
-
-        if (!reduceMotion) {
-          _confetti.play();
-          if (!kReleaseMode) {
-            DebugLog.d('🎊 [Confetti] Confetti.play() called');
-          }
-        }
-
-        // Trigger haptic feedback for celebration
-        HapticFeedback.mediumImpact();
       }
     });
 
@@ -619,7 +652,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         SizedBox(height: spacing),
         _buildComplementaryPanel(context, l10n),
         SizedBox(height: spacing),
-        _buildSessionControlCard(context),
+        // Wrap in Consumer to rebuild when silence state changes
+        Consumer(
+          builder: (context, ref, _) {
+            // Watch silence state to trigger rebuilds
+            ref.watch(silenceStateProvider);
+            return _buildSessionControlCard(context);
+          },
+        ),
         SizedBox(height: spacing),
         if (showAd) _buildAdvertisementPlaceholder(context),
       ],
@@ -3534,6 +3574,28 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final l10n = AppLocalizations.of(context)!;
     final silenceState = ref.watch(silenceStateProvider);
     final durationSeconds = ref.watch(activeSessionDurationProvider);
+    final threshold = ref.watch(decibelThresholdProvider);
+
+    // Debug logging for state synchronization
+    if (!kReleaseMode) {
+      DebugLog.d(
+        '🎮 [SessionControl] Building: isListening=${silenceState.isListening}, '
+        'isPaused=${silenceState.isPaused}, progress=${silenceState.progress}, '
+        'duration=${durationSeconds}s, '
+        'tabIndex=$_currentTab',
+      );
+    }
+
+    // Additional debug: log button visibility decision
+    if (!kReleaseMode && silenceState.isListening) {
+      DebugLog.d(
+        '✅ [SessionControl] Should show control buttons (session active) in tab $_currentTab',
+      );
+    } else if (!kReleaseMode) {
+      DebugLog.d(
+        '❌ [SessionControl] Should show duration selector (no session) in tab $_currentTab',
+      );
+    }
     // Live ambient calm percent shown when applicable (quiet-required activities)
     double? calmPercent;
     if (AmbientFlags.ambientScore) {
@@ -3660,6 +3722,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             isListening: silenceState.isListening,
             timeLabel: _formatTimeForSeconds(durationSeconds),
             totalDurationSeconds: durationSeconds,
+            threshold: threshold,
             // Never show subtitle (user requested no "Calm" text)
             subtitleText: null,
             // Ambient % display (only for noise-requiring activities)
@@ -3869,7 +3932,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       ),
     );
 
-    if (onLongPress != null) {
+    // Support both tap and long-press interactions
+    if (onTap != null && onLongPress != null) {
+      return GestureDetector(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: button,
+      );
+    } else if (onLongPress != null) {
       return GestureDetector(onLongPress: onLongPress, child: button);
     } else if (onTap != null) {
       return GestureDetector(onTap: onTap, child: button);
@@ -3893,35 +3963,26 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       );
     }
 
-    if (silenceState.success == true) {
-      return Text(
-        l10n.sessionSuccess,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
-    if (silenceState.success == false) {
-      return Text(
-        l10n.sessionFailed,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.error,
-        ),
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
+    // No persistent success/failure message below progress ring
+    // Success/failure feedback is already provided via popup dialogs
     return const SizedBox.shrink();
   }
 
   Future<void> _startSilenceDetection(BuildContext context) async {
+    // GUARD: Prevent starting multiple sessions simultaneously
+    // This can happen in split-view mode where both tabs try to start a session
+    final currentState = ref.read(silenceStateProvider);
+    if (currentState.isListening) {
+      if (!kReleaseMode) {
+        DebugLog.d('⚠️ [SessionStart] Blocked: session already running (tabIndex=$_currentTab)');
+      }
+      return;
+    }
+
+    if (!kReleaseMode) {
+      DebugLog.d('✅ [SessionStart] Starting session (tabIndex=$_currentTab)');
+    }
+
     final silenceStateNotifier = ref.read(silenceStateProvider.notifier);
     final silenceDataNotifier = ref.read(silenceDataNotifierProvider.notifier);
     final silenceDetector = ref.read(silenceDetectorProvider);
@@ -3992,9 +4053,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
     await silenceDetector.startListening(
       onProgress: (progress) {
-        // Only update progress if not paused
+        // Only update progress if session is active and not paused
         final currentState = ref.read(silenceStateProvider);
-        if (!currentState.isPaused) {
+        if (currentState.isListening && !currentState.isPaused) {
           silenceStateNotifier.setProgress(progress);
           // Update ongoing notification progress (coarse)
           try {
@@ -4012,6 +4073,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       },
       onComplete: (legacySuccess) async {
         if (ref.read(silenceStateProvider).canStop) {
+          // CRITICAL: Stop detector and clear state before processing completion
+          silenceDetector.stopListening();
+          silenceDetector.clearReadings();
+
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
 
@@ -4031,6 +4096,11 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
             );
           }
           silenceStateNotifier.setSuccess(success);
+
+          // GUARANTEED confetti trigger for every successful session
+          if (success) {
+            _triggerCelebration(context, ref, ambientScore);
+          }
 
           // NEW: Proportional points based on quiet minutes (compassionate credit)
           final creditedMinutes = success ? (quietSeconds ~/ 60) : 0;
@@ -4109,6 +4179,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       },
       onError: (error) async {
         if (ref.read(silenceStateProvider).canStop) {
+          // CRITICAL: Stop detector and clear state before processing error
+          silenceDetector.stopListening();
+          silenceDetector.clearReadings();
+
           silenceStateNotifier.setListening(false);
           silenceStateNotifier.setCanStop(false);
           silenceStateNotifier.setError(error);
@@ -4286,11 +4360,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 }
 
-class _GlowingProgressRing extends StatelessWidget {
+class _GlowingProgressRing extends HookConsumerWidget {
   final double size;
   final double progress; // 0..1
   final String timeLabel; // e.g., 01:00 or 1:30:00 (used when NOT listening)
   final int? totalDurationSeconds; // Total session duration for countdown
+  final double threshold; // Noise threshold in dB
   final VoidCallback onStart;
   final bool isListening;
   final String? subtitleText;
@@ -4303,6 +4378,7 @@ class _GlowingProgressRing extends StatelessWidget {
     required this.progress,
     required this.timeLabel,
     this.totalDurationSeconds,
+    required this.threshold,
     required this.onStart,
     required this.isListening,
     this.subtitleText,
@@ -4311,7 +4387,25 @@ class _GlowingProgressRing extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Subscribe to noise stream for hybrid Start button logic (only when NOT listening)
+    final controller = ref.watch(realTimeNoiseControllerProvider);
+    final smoothed = useState<double>(0);
+
+    // Subscribe to noise updates when not in an active session
+    useEffect(() {
+      if (!isListening) {
+        final sub = controller.stream.listen((d) {
+          if (d.isNaN || d.isInfinite) return;
+          final clamped = d.clamp(0.0, 120.0);
+          final s = smoothed.value;
+          smoothed.value =
+              (s.isNaN || s.isInfinite) ? clamped : s * 0.7 + clamped * 0.3;
+        });
+        return sub.cancel;
+      }
+      return null;
+    }, [controller.hashCode, isListening]);
     final theme = Theme.of(context);
     final ringColor = theme.colorScheme.primary;
     final glowColor = ringColor.withValues(alpha: 0.35);
@@ -4404,19 +4498,8 @@ class _GlowingProgressRing extends StatelessWidget {
               // Show Start button only when NOT listening
               if (!isListening) ...[
                 const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: onStart,
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.all(18),
-                    elevation: 3,
-                  ),
-                  child: const Icon(Icons.play_arrow_rounded, size: 28),
-                ),
-                const SizedBox(height: 6),
-                Text('Start', style: theme.textTheme.titleMedium),
+                // Hybrid Start button logic
+                _buildHybridStartButton(context, theme, smoothed.value),
               ],
             ],
           ),
@@ -4435,6 +4518,69 @@ class _GlowingProgressRing extends StatelessWidget {
     final seconds = remainingSeconds % 60;
 
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  /// Build hybrid Start button with noise-aware logic
+  /// - Soft warning: noise > threshold (still allow start)
+  /// - Hard disable: noise > threshold + 20dB (extreme cases)
+  Widget _buildHybridStartButton(
+    BuildContext context,
+    ThemeData theme,
+    double currentNoise,
+  ) {
+    final isNoisy = currentNoise > threshold;
+    final isExtremelyNoisy = currentNoise > (threshold + 20);
+
+    // Determine button state
+    final bool isDisabled = isExtremelyNoisy;
+    final bool showWarning = isNoisy && !isExtremelyNoisy;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Start button
+        ElevatedButton(
+          onPressed: isDisabled ? null : onStart,
+          style: ElevatedButton.styleFrom(
+            shape: const CircleBorder(),
+            backgroundColor: isDisabled
+                ? theme.colorScheme.surfaceContainerHighest
+                : (showWarning
+                    ? theme.colorScheme.tertiary
+                    : theme.colorScheme.primary),
+            foregroundColor: isDisabled
+                ? theme.colorScheme.onSurfaceVariant
+                : (showWarning
+                    ? theme.colorScheme.onTertiary
+                    : theme.colorScheme.onPrimary),
+            padding: const EdgeInsets.all(18),
+            elevation: isDisabled ? 0 : 3,
+          ),
+          child: Icon(
+            showWarning ? Icons.warning_amber_rounded : Icons.play_arrow_rounded,
+            size: 28,
+          ),
+        ),
+        const SizedBox(height: 6),
+        // Status text
+        if (isDisabled)
+          Text(
+            'Too Loud',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.error,
+            ),
+          )
+        else if (showWarning)
+          Text(
+            'Noisy',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.tertiary,
+            ),
+          )
+        else
+          Text('Start', style: theme.textTheme.titleMedium),
+      ],
+    );
   }
 }
 

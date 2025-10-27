@@ -336,7 +336,7 @@ class SettingsSheet extends ConsumerWidget {
     final isSmallPhone = size.height < 760 || size.width < 380;
     final cols = size.width < 380 ? 1 : 2;
     final tileHeight =
-        size.width < 380 ? 220.0 : (isSmallPhone ? 260.0 : 240.0);
+        size.width < 380 ? 120.0 : (isSmallPhone ? 140.0 : 130.0);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: GridView(
@@ -391,6 +391,13 @@ class SettingsSheet extends ConsumerWidget {
             subtitle: AppLocalizations.of(context)!.accessibilityFeatures,
             icon: Icons.accessibility,
             onTap: () => _showAccessibilityDialog(context, notifier, settings),
+          ),
+          _advancedCard(
+            context,
+            title: 'Celebration Effects',
+            subtitle: 'Show confetti on successful sessions',
+            icon: Icons.celebration,
+            onTap: () => _showConfettiDialog(context, ref),
           ),
         ],
       ),
@@ -477,24 +484,16 @@ class SettingsSheet extends ConsumerWidget {
   }
 
   Future<void> _handleNotificationSettings(BuildContext context) async {
-    // Check notification permission status
-    final status = await Permission.notification.status;
-
-    if (status.isGranted) {
-      // Permission granted, show settings
-      if (context.mounted) {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (_) => const NotificationSettingsWidget(),
-        );
-      }
-    } else {
-      // Permission not granted, show guidance dialog
-      if (context.mounted) {
-        await _showNotificationPermissionDialog(context);
-      }
+    // Always show the notification settings widget
+    // The widget itself handles permission checks and displays appropriate UI
+    // (warning banner with "Enable Notifications" button if permission not granted)
+    if (context.mounted) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const NotificationSettingsWidget(),
+      );
     }
   }
 
@@ -1461,6 +1460,55 @@ class SettingsSheet extends ConsumerWidget {
                   ],
                 ),
           ),
+    );
+  }
+
+  Future<void> _showConfettiDialog(BuildContext context, WidgetRef ref) async {
+    bool localEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
+
+    await showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (c, setState) {
+          return AlertDialog(
+            title: const Text('Celebration Effects'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SwitchListTile(
+                  title: const Text('Show Confetti'),
+                  subtitle: const Text('Display confetti animation on successful sessions'),
+                  value: localEnabled,
+                  onChanged: (v) {
+                    setState(() => localEnabled = v);
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await ref.read(userPreferencesProvider.notifier)
+                      .updateCelebrationConfettiEnabled(localEnabled);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Celebration settings saved'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
