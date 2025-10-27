@@ -3603,7 +3603,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
 
     final quietMinutes = (quietSeconds / 60).floor();
-    final totalMinutes = (totalSeconds / 60).floor();
     final neededQuietMinutes = ((totalSeconds * 0.7) / 60).ceil() - quietMinutes;
 
     return 'Session incomplete: $achievedPercent% quiet (need $requiredPercent%) • $neededQuietMinutes more quiet min needed';
@@ -3989,7 +3988,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildStatusMessage(BuildContext context, SilenceState silenceState) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     if (silenceState.error != null) {
       return Text(
