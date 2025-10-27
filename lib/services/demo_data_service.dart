@@ -39,16 +39,24 @@ class DemoDataService {
     final today = DateTime(now.year, now.month, now.day);
 
     return {
-      'dailyGoalMinutes': 30, // Achievable goal
-      'todayQuietMinutes': 24, // 80% progress - perfect for screenshots
+      // Core quest fields
+      'cycleId': '${now.year}-${now.month.toString().padLeft(2, '0')}',
+      'dayIndex': now.day,
+      'goalQuietMinutes': 30, // Achievable goal
+      'requiredScore': 0.7,
+      'progressQuietMinutes': 24, // 80% progress - perfect for screenshots
       'currentStreak': 12,
       'longestStreak': 18,
-      'monthlyFreezeTokensUsed': 0, // Shows discipline
-      'lastCompletionDate': today.subtract(const Duration(days: 1)).toIso8601String(),
-      'lastFreezeDate': null,
-      'consecutiveMissedDays': 0,
-      'lifetimeQuietMinutes': 848, // Updated to match today's 24 min
-      'lifetimeSessionCount': 57, // Updated for 3 sessions today
+      'freezeTokens': 1, // Show available freeze token for discoverability
+      'lastUpdatedAt': now.millisecondsSinceEpoch,
+      'lastFreezeReplenishment': now.subtract(const Duration(days: 7)).millisecondsSinceEpoch,
+      'missedYesterday': false,
+      'freezeTokenUsedToday': false,
+      // Per-activity minutes for today (must match session data)
+      'studyMinutes': 8,      // 8 min study session at 11:30 AM
+      'readingMinutes': 6,    // 6 min reading session at 2:30 PM
+      'meditationMinutes': 10, // 10 min meditation session at 9:00 AM
+      'otherMinutes': 0,      // No "other" activity today
     };
   }
 
