@@ -40,15 +40,15 @@ class DemoDataService {
 
     return {
       'dailyGoalMinutes': 30, // Achievable goal
-      'todayQuietMinutes': 23, // Almost complete (76% progress - looks good)
+      'todayQuietMinutes': 24, // 80% progress - perfect for screenshots
       'currentStreak': 12,
       'longestStreak': 18,
       'monthlyFreezeTokensUsed': 0, // Shows discipline
       'lastCompletionDate': today.subtract(const Duration(days: 1)).toIso8601String(),
       'lastFreezeDate': null,
       'consecutiveMissedDays': 0,
-      'lifetimeQuietMinutes': 847, // ~14 hours total - realistic for 2 weeks
-      'lifetimeSessionCount': 56, // ~4 sessions per day average
+      'lifetimeQuietMinutes': 848, // Updated to match today's 24 min
+      'lifetimeSessionCount': 57, // Updated for 3 sessions today
     };
   }
 
@@ -56,20 +56,27 @@ class DemoDataService {
   static List<SessionRecord> _generateDemoSessions(DateTime today) {
     final sessions = <SessionRecord>[];
 
-    // Today's sessions (in progress day)
+    // Today's sessions - 80% of daily goal with multiple activities for social sharing
     sessions.addAll([
       _createSession(
-        today.add(const Duration(hours: 9, minutes: 15)),
-        duration: 15 * 60,
+        today.add(const Duration(hours: 9, minutes: 0)),
+        duration: 10 * 60, // 10 min meditation
+        ambientScore: 0.88,
+        activity: 'meditation',
+      ),
+      _createSession(
+        today.add(const Duration(hours: 11, minutes: 30)),
+        duration: 8 * 60, // 8 min study
         ambientScore: 0.85,
         activity: 'study',
       ),
       _createSession(
         today.add(const Duration(hours: 14, minutes: 30)),
-        duration: 8 * 60,
-        ambientScore: 0.92,
+        duration: 6 * 60, // 6 min reading
+        ambientScore: 0.90,
         activity: 'reading',
       ),
+      // Total: 24 min = 80% of 30 min goal
     ]);
 
     // Yesterday - completed goal
