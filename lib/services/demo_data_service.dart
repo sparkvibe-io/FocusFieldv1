@@ -44,7 +44,7 @@ class DemoDataService {
       'dayIndex': now.day,
       'goalQuietMinutes': 30, // Achievable goal
       'requiredScore': 0.7,
-      'progressQuietMinutes': 24, // 80% progress - perfect for screenshots
+      'progressQuietMinutes': 23, // 77% progress - shows incomplete for screenshots
       'currentStreak': 12,
       'longestStreak': 18,
       'freezeTokens': 1, // Show available freeze token for discoverability
@@ -53,10 +53,11 @@ class DemoDataService {
       'missedYesterday': false,
       'freezeTokenUsedToday': false,
       // Per-activity minutes for today (must match session data)
-      'studyMinutes': 8,      // 8 min study session at 11:30 AM
+      'studyMinutes': 7,      // 7 min study session at 11:30 AM
       'readingMinutes': 6,    // 6 min reading session at 2:30 PM
       'meditationMinutes': 10, // 10 min meditation session at 9:00 AM
       'otherMinutes': 0,      // No "other" activity today
+      // Total: 23 min = 77% of 30 min goal (shows as incomplete for screenshots)
     };
   }
 
@@ -78,7 +79,7 @@ class DemoDataService {
       ),
       _createSession(
         DateTime(now.year, now.month, now.day, 11, 30), // 11:30 AM today
-        duration: 8 * 60, // 8 min study
+        duration: 7 * 60, // 7 min study
         ambientScore: 0.85,
         activity: 'study',
       ),
@@ -88,7 +89,7 @@ class DemoDataService {
         ambientScore: 0.90,
         activity: 'reading',
       ),
-      // Total: 24 min = 80% of 30 min goal
+      // Total: 23 min = 77% of 30 min goal (incomplete for screenshots)
     ]);
 
     // Yesterday - completed goal
