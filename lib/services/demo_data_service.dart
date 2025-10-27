@@ -56,22 +56,26 @@ class DemoDataService {
   static List<SessionRecord> _generateDemoSessions(DateTime today) {
     final sessions = <SessionRecord>[];
 
+    // Use DateTime.now() to ensure sessions are definitely "today" for the app
+    final now = DateTime.now();
+
     // Today's sessions - 80% of daily goal with multiple activities for social sharing
+    // Using actual DateTime.now() timestamps to ensure they show as "today" in UI
     sessions.addAll([
       _createSession(
-        today.add(const Duration(hours: 9, minutes: 0)),
+        DateTime(now.year, now.month, now.day, 9, 0), // 9:00 AM today
         duration: 10 * 60, // 10 min meditation
         ambientScore: 0.88,
         activity: 'meditation',
       ),
       _createSession(
-        today.add(const Duration(hours: 11, minutes: 30)),
+        DateTime(now.year, now.month, now.day, 11, 30), // 11:30 AM today
         duration: 8 * 60, // 8 min study
         ambientScore: 0.85,
         activity: 'study',
       ),
       _createSession(
-        today.add(const Duration(hours: 14, minutes: 30)),
+        DateTime(now.year, now.month, now.day, 14, 30), // 2:30 PM today
         duration: 6 * 60, // 6 min reading
         ambientScore: 0.90,
         activity: 'reading',
