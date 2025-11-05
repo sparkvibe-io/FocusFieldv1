@@ -358,7 +358,7 @@ class InlineNoisePanel extends HookConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           // Single horizontal row: dB reading + (threshold selectors OR contextual message)
           Row(
             children: [

@@ -212,7 +212,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mockSubscriptionsBanner => 'Mock-Abos aktiv';
 
   @override
-  String get splashTagline => 'Finde deine Ruhe';
+  String get splashTagline => 'Stille messen, Fokus aufbauen';
 
   @override
   String get appIconSemantic => 'App-Symbol';

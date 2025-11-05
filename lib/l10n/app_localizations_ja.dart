@@ -212,7 +212,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mockSubscriptionsBanner => 'モック購読有効';
 
   @override
-  String get splashTagline => '静けさを見つけよう';
+  String get splashTagline => '静寂を測定、集中力を構築';
 
   @override
   String get appIconSemantic => 'アプリアイコン';

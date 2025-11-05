@@ -212,7 +212,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mockSubscriptionsBanner => 'Mock Subscriptions Enabled';
 
   @override
-  String get splashTagline => 'Find your quiet';
+  String get splashTagline => 'Measure Silence, Build Focus';
 
   @override
   String get appIconSemantic => 'App icon';

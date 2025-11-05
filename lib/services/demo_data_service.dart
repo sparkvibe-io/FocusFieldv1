@@ -13,7 +13,7 @@ class DemoDataService {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // Generate realistic sessions spanning 14 days
+    // Generate realistic sessions spanning 21 days (3 weeks)
     final sessions = _generateDemoSessions(today);
 
     // Calculate realistic statistics
@@ -33,10 +33,9 @@ class DemoDataService {
     );
   }
 
-  /// Generate demo quest state with realistic progress
+  /// Generate demo quest state with realistic progress showing improvement journey
   static Map<String, dynamic> generateDemoQuestState() {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
 
     return {
       // Core quest fields
@@ -45,8 +44,8 @@ class DemoDataService {
       'goalQuietMinutes': 30, // Achievable goal
       'requiredScore': 0.7,
       'progressQuietMinutes': 23, // 77% progress - shows incomplete for screenshots
-      'currentStreak': 12,
-      'longestStreak': 18,
+      'currentStreak': 12, // Strong streak showing consistency (after 2 missed days early on)
+      'longestStreak': 12, // Same as current - they're on their best streak!
       'freezeTokens': 1, // Show available freeze token for discoverability
       'lastUpdatedAt': now.millisecondsSinceEpoch,
       'lastFreezeReplenishment': now.subtract(const Duration(days: 7)).millisecondsSinceEpoch,
@@ -61,7 +60,7 @@ class DemoDataService {
     };
   }
 
-  /// Generate realistic sessions with variety
+  /// Generate realistic sessions with variety showing upward trending improvement
   static List<SessionRecord> _generateDemoSessions(DateTime today) {
     final sessions = <SessionRecord>[];
 
@@ -92,33 +91,73 @@ class DemoDataService {
       // Total: 23 min = 77% of 30 min goal (incomplete for screenshots)
     ]);
 
-    // Yesterday - completed goal
+    // Yesterday - completed goal comfortably
     final yesterday = today.subtract(const Duration(days: 1));
     sessions.addAll([
       _createSession(
         yesterday.add(const Duration(hours: 8, minutes: 0)),
-        duration: 20 * 60,
-        ambientScore: 0.88,
+        duration: 15 * 60,
+        ambientScore: 0.92,
         activity: 'meditation',
+      ),
+      _createSession(
+        yesterday.add(const Duration(hours: 11, minutes: 30)),
+        duration: 8 * 60,
+        ambientScore: 0.86,
+        activity: 'study',
       ),
       _createSession(
         yesterday.add(const Duration(hours: 15, minutes: 45)),
         duration: 12 * 60,
-        ambientScore: 0.78,
-        activity: 'study',
+        ambientScore: 0.88,
+        activity: 'reading',
       ),
     ]);
 
-    // Past 12 days - build streak
-    for (int i = 2; i <= 13; i++) {
+    // Past 21 days (3 weeks) - showing upward trending improvement
+    // Week 1 (21-15 days ago): Building phase - Lower performance, establishing consistency
+    for (int i = 21; i >= 15; i--) {
       final date = today.subtract(Duration(days: i));
-      final sessionCount = (i % 3) + 1; // 1-3 sessions per day
+      final missedDay = i == 20 || i == 17; // Missed 2 days early on (shows compassionate 2-day rule)
+
+      if (!missedDay) {
+        final sessionCount = 1 + (i % 2); // 1-2 sessions per day
+        for (int j = 0; j < sessionCount; j++) {
+          sessions.add(_createSession(
+            date.add(Duration(hours: 9 + (j * 5), minutes: (i * 11) % 60)),
+            duration: (8 + (i % 7)) * 60, // 8-14 min sessions (shorter, building)
+            ambientScore: 0.68 + ((i + j) * 0.01) % 0.10, // 68-78% (below 70% sometimes)
+            activity: _activityForIndex(i + j),
+          ));
+        }
+      }
+    }
+
+    // Week 2 (14-8 days ago): Improvement phase - Better consistency and scores
+    for (int i = 14; i >= 8; i--) {
+      final date = today.subtract(Duration(days: i));
+      final sessionCount = 2 + (i % 2); // 2-3 sessions per day
 
       for (int j = 0; j < sessionCount; j++) {
         sessions.add(_createSession(
-          date.add(Duration(hours: 8 + (j * 4), minutes: (i * 7) % 60)),
-          duration: (10 + (i * 3) % 20) * 60, // 10-30 min sessions
-          ambientScore: 0.70 + ((i * 0.02) % 0.25), // 70-95% range
+          date.add(Duration(hours: 8 + (j * 4), minutes: (i * 13) % 60)),
+          duration: (14 + (i % 8)) * 60, // 14-21 min sessions (approaching goal)
+          ambientScore: 0.75 + ((i + j) * 0.015) % 0.13, // 75-88% (consistently above 70%)
+          activity: _activityForIndex(i + j),
+        ));
+      }
+    }
+
+    // Week 3 (7-2 days ago): Peak performance - Excellent consistency and scores
+    for (int i = 7; i >= 2; i--) {
+      final date = today.subtract(Duration(days: i));
+      final sessionCount = 2 + (i % 2); // 2-3 sessions per day
+
+      for (int j = 0; j < sessionCount; j++) {
+        sessions.add(_createSession(
+          date.add(Duration(hours: 8 + (j * 4), minutes: (i * 17) % 60)),
+          duration: (18 + (i % 10)) * 60, // 18-27 min sessions (exceeding goal)
+          ambientScore: 0.84 + ((i + j) * 0.015) % 0.11, // 84-95% (excellent performance)
           activity: _activityForIndex(i + j),
         ));
       }
@@ -157,29 +196,55 @@ class DemoDataService {
     return activities[index % activities.length];
   }
 
-  /// Generate demo analytics data for charts
+  /// Generate demo analytics data showing upward trending improvement
   static Map<String, dynamic> generateDemoAnalytics() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // Generate daily totals for past 30 days
+    // Generate daily totals for past 30 days with upward trend
     final dailyMinutes = <DateTime, int>{};
     final dailySessions = <DateTime, int>{};
+    int totalMinutes = 0;
 
     for (int i = 0; i < 30; i++) {
       final date = today.subtract(Duration(days: i));
-      // Create realistic daily variation
-      dailyMinutes[date] = i < 14 ? (20 + (i * 2) % 15) : (10 + (i * 3) % 20);
-      dailySessions[date] = i < 14 ? ((i % 3) + 1) : ((i % 2) + 1);
+
+      // Create upward trending pattern
+      int minutes;
+      int sessions;
+
+      if (i < 10) {
+        // Recent 10 days: Peak performance (30-45 min/day)
+        minutes = 32 + (i % 13);
+        sessions = 2 + (i % 2);
+      } else if (i < 20) {
+        // Middle 10 days: Improvement phase (20-32 min/day)
+        minutes = 20 + (i % 12);
+        sessions = 2 + (i % 2);
+      } else {
+        // Oldest 10 days: Building phase (10-22 min/day, with 2 missed days)
+        if (i == 28 || i == 24) {
+          // Missed days
+          minutes = 0;
+          sessions = 0;
+        } else {
+          minutes = 10 + (i % 10);
+          sessions = 1 + (i % 2);
+        }
+      }
+
+      dailyMinutes[date] = minutes;
+      dailySessions[date] = sessions;
+      totalMinutes += minutes;
     }
 
     return {
       'dailyMinutes': dailyMinutes,
       'dailySessions': dailySessions,
-      'weeklyAverage': 28.5,
-      'monthlyTotal': 847,
-      'averageAmbientScore': 0.84,
-      'bestDay': today.subtract(const Duration(days: 5)),
+      'weeklyAverage': 38.2, // Recent week average (showing improvement)
+      'monthlyTotal': totalMinutes,
+      'averageAmbientScore': 0.84, // Overall average across all sessions
+      'bestDay': today.subtract(const Duration(days: 3)),
       'bestDayMinutes': 45,
     };
   }

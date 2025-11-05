@@ -125,47 +125,26 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     }
   }
 
-  /// 40/60 split: Performance Metrics (left) + Weekly Trends (right)
-  /// Wraps on small screens for better mobile experience
+  /// Performance Metrics and Weekly Trends in separate rows
+  /// Always use vertical layout for better readability and less text compression
   Widget _buildMetricsAndTrendsRow(
     BuildContext context,
     PerformanceMetrics metrics,
     List<WeeklyTrend> trends, {
     required bool compact,
   }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final shouldWrap = screenWidth < 600; // Wrap on phones
-
-    if (shouldWrap) {
-      // Vertical stack on small screens
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPerformanceMetricsVertical(context, metrics),
-          if (trends.isNotEmpty) ...[
-            const SizedBox(height: 10), // Reduced from 16
-            _buildWeeklyTrendsChart(context, trends, compact: compact),
-          ],
-        ],
-      );
-    }
-
-    // Horizontal 40/60 split on larger screens
-    return Row(
+    // Always use vertical stack to prevent text compression
+    // This gives Performance Metrics full width and moves Weekly Trends to its own row
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Left 40%: Performance Metrics (vertical list)
-        Expanded(
-          flex: 40,
-          child: _buildPerformanceMetricsVertical(context, metrics),
-        ),
-        const SizedBox(width: 16),
-        // Right 60%: Weekly Trends
-        if (trends.isNotEmpty)
-          Expanded(
-            flex: 60,
-            child: _buildWeeklyTrendsChart(context, trends, compact: compact),
-          ),
+        // Performance Metrics - full width
+        _buildPerformanceMetricsVertical(context, metrics),
+        // Weekly Trends - full width, separate row below
+        if (trends.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _buildWeeklyTrendsChart(context, trends, compact: compact),
+        ],
       ],
     );
   }
@@ -268,14 +247,8 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: theme.colorScheme.surfaceContainerHighest, // Match Today page widgets
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(
-            alpha: 0.5,
-          ), // Increased from 0.3 for better visibility
-          width: 1,
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +278,7 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
               value,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: _darkenColor(color), // Darken for better contrast on neutral background
               ),
             ),
           ),
@@ -364,14 +337,8 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: theme.colorScheme.surfaceContainerHighest, // Match Today page widgets
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(
-            alpha: 0.5,
-          ), // Increased from 0.3 for consistency
-          width: 1,
-        ),
       ),
       child: Row(
         children: [
@@ -733,7 +700,8 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final color = _insightColor(context, insight.type);
     final icon = _insightIcon(insight.type);
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     // Translate insight title and description using keys
     final title = _translateInsightKey(l10n, insight.titleKey, insight.params);
@@ -742,13 +710,8 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withValues(
-            alpha: 0.5,
-          ), // Increased from 0.3 for consistency
-        ),
+        color: scheme.surfaceContainerHighest, // Match Today page widgets
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -839,6 +802,14 @@ class AdvancedAnalyticsWidget extends ConsumerWidget {
           border: dashed ? Border.all(color: color, width: 1) : null,
         ),
       );
+
+  /// Darken a color by 30% for better contrast on neutral backgrounds
+  Color _darkenColor(Color color) {
+    final hsl = HSLColor.fromColor(color);
+    // Reduce lightness by 30% for better visibility
+    final darkened = hsl.withLightness((hsl.lightness * 0.7).clamp(0.0, 1.0));
+    return darkened.toColor();
+  }
 
   Color _successRateColor(BuildContext context, double v) {
     final sem = context.semanticColors;

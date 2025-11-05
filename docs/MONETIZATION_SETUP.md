@@ -51,11 +51,22 @@ Implemented:
   - Android: `io.sparkvibe.focusfield`
 
 #### Configure Products
-Create the following subscription product identifiers (must match exactly across App Store Connect, Google Play Console, and RevenueCat):
-```
-premium.tier.monthly  # Monthly
-premium.tier.yearly   # Yearly
-```
+
+**IMPORTANT: Platform-Specific Product ID Requirements**
+
+**iOS (App Store Connect):**
+- Product IDs can contain dots
+- Use: `premium.tier.monthly` and `premium.tier.yearly`
+
+**Android (Google Play Console):**
+- Product IDs CANNOT contain dots (platform restriction)
+- Use: `premium` as main product ID
+- Use Base Plans: `premium-tier-monthly` and `premium-tier-yearly`
+
+**RevenueCat Configuration:**
+- iOS: Add product `premium.tier.monthly` and `premium.tier.yearly`
+- Android: Add product `premium` with base plans `premium-tier-monthly` and `premium-tier-yearly`
+- See `docs/deployment/REVENUECAT_ANDROID_SETUP.md` for detailed Android setup
 
 #### Update API Key
 In `lib/constants/app_constants.dart`, replace:
@@ -91,14 +102,24 @@ static const String revenueCatApiKey = 'YOUR_REVENUECAT_API_KEY_HERE';
 
 #### Configure Subscriptions
 1. Go to **Monetize** → **Products** → **Subscriptions**
-2. Create subscriptions matching iOS products
-3. Set up pricing for different markets
-4. Configure base plans and offers
+2. Create subscription with Product ID: `premium` (NO DOTS - Google Play restriction)
+3. Add Base Plans under the `premium` product:
+   - Base Plan ID: `premium-tier-monthly` ($0.99/month recommended)
+   - Base Plan ID: `premium-tier-yearly` ($9.99/year recommended)
+4. Configure offers (e.g., 1-week free trial) for each base plan
+5. Set pricing for target markets
+6. Activate the subscription (set status to "Active")
+
+**CRITICAL:** Product ID must be `premium` (not `premium.tier.monthly`) because Google Play does not allow dots in subscription IDs.
 
 #### Test in Internal Testing
-1. Upload signed APK to internal testing
-2. Add test accounts
-3. Test purchase flows
+1. Build release APK/AAB with correct dart-defines (see android.sh script)
+2. Upload to Internal Testing track in Play Console
+3. Add test accounts to testers list
+4. Install app via Play Store link (NOT via `flutter run`)
+5. Test purchase flows - test purchases are automatically cancelled after 5 minutes
+
+**See detailed setup instructions:** `docs/deployment/REVENUECAT_ANDROID_SETUP.md`
 
 ### 4. Firebase Setup (Optional but Recommended)
 

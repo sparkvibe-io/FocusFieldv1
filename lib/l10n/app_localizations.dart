@@ -487,7 +487,7 @@ abstract class AppLocalizations {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'Find your quiet'**
+  /// **'Measure Silence, Build Focus'**
   String get splashTagline;
 
   /// No description provided for @appIconSemantic.

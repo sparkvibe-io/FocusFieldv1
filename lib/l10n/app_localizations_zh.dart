@@ -212,7 +212,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mockSubscriptionsBanner => '模拟订阅已启用';
 
   @override
-  String get splashTagline => '寻找属于你的安静';
+  String get splashTagline => '测量寂静，构建专注';
 
   @override
   String get appIconSemantic => '应用程序图标';

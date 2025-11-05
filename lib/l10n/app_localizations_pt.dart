@@ -212,7 +212,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get mockSubscriptionsBanner => 'Assinaturas simuladas ativas';
 
   @override
-  String get splashTagline => 'Encontre seu silêncio';
+  String get splashTagline => 'Meça o Silêncio, Construa Foco';
 
   @override
   String get appIconSemantic => 'Ícone do app';
@@ -2664,7 +2664,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get mockSubscriptionsBanner => 'Assinaturas simuladas ativas';
 
   @override
-  String get splashTagline => 'Encontre seu silêncio';
+  String get splashTagline => 'Meça o Silêncio, Construa Foco';
 
   @override
   String get appIconSemantic => 'Ícone do app';

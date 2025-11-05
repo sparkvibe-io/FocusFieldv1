@@ -24,16 +24,16 @@ class ScreenBreakpoints {
 /// - Large tablet (>720dp): 1.25x
 ///
 /// Landscape (limited vertical space):
-/// - All sizes: 1.1x (slightly larger for high-res displays)
+/// - All sizes: 0.95x - 1.0x (compact for tight vertical space)
 double getTextScale(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
   final orientation = MediaQuery.of(context).orientation;
 
-  // In landscape, use more conservative scaling (less vertical space)
+  // In landscape, use compact scaling to fit more content vertically
   if (orientation == Orientation.landscape) {
-    if (width < ScreenBreakpoints.phone) return 1.0;
-    if (width < ScreenBreakpoints.tablet) return 1.05;
-    return 1.1;  // Slightly larger for high-res tablet displays
+    if (width < ScreenBreakpoints.phone) return 0.95;
+    if (width < ScreenBreakpoints.tablet) return 0.95;
+    return 1.0;  // Reduced from 1.1x - baseline for tablets in landscape
   }
 
   // Portrait: Standard scaling (more vertical space available)
@@ -49,19 +49,19 @@ double getTextScale(BuildContext context) {
 /// - Small tablet (600-720dp): 240px (+16%)
 /// - Large tablet (>720dp): 280px (+36%)
 ///
-/// Landscape (15% smaller to fit limited vertical space):
-/// - Phone (<600dp): 206px (baseline)
-/// - Small tablet (600-720dp): 204px (compact)
-/// - Large tablet (>720dp): 238px (15% reduction from 280px)
+/// Landscape (30% smaller to fit limited vertical space):
+/// - Phone (<600dp): 180px (compact)
+/// - Small tablet (600-720dp): 180px (compact)
+/// - Large tablet (>720dp): 195px (30% reduction from 280px)
 double getProgressRingSize(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
   final orientation = MediaQuery.of(context).orientation;
 
-  // In landscape, use smaller ring (limited vertical space)
+  // In landscape, use much smaller ring (limited vertical space)
   if (orientation == Orientation.landscape) {
-    if (width < ScreenBreakpoints.phone) return 206;
-    if (width < ScreenBreakpoints.tablet) return 204;
-    return 238;  // 15% smaller than 280px
+    if (width < ScreenBreakpoints.phone) return 180;
+    if (width < ScreenBreakpoints.tablet) return 180;
+    return 195;  // 30% smaller than 280px for better fit
   }
 
   // Portrait: Standard sizing
@@ -106,14 +106,14 @@ double getChartHeight(BuildContext context) {
 /// - Large tablet (>720dp): 20px
 ///
 /// Landscape (compact for limited vertical space):
-/// - All sizes: 12px (compact)
+/// - All sizes: 8px (compact for vertical space)
 double getCardPadding(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
   final orientation = MediaQuery.of(context).orientation;
 
-  // In landscape, use compact padding across all sizes
+  // In landscape, use minimal padding to maximize content space
   if (orientation == Orientation.landscape) {
-    return 12;
+    return 8;  // Reduced from 12px for tighter layout
   }
 
   // Portrait: Standard padding
@@ -129,19 +129,19 @@ double getCardPadding(BuildContext context) {
 /// - Small tablet (600-720dp): 16px
 /// - Large tablet (>720dp): 20px
 ///
-/// Landscape (compact for limited vertical space):
-/// - Phone (<600dp): 8px (compact)
-/// - Small tablet (600-720dp): 10px (compact)
-/// - Large tablet (>720dp): 12px (compact)
+/// Landscape (very compact for limited vertical space):
+/// - Phone (<600dp): 6px (very compact)
+/// - Small tablet (600-720dp): 6px (very compact)
+/// - Large tablet (>720dp): 8px (very compact)
 double getSpacing(BuildContext context) {
   final width = MediaQuery.of(context).size.width;
   final orientation = MediaQuery.of(context).orientation;
 
-  // In landscape, use compact spacing
+  // In landscape, use very compact spacing to maximize vertical space
   if (orientation == Orientation.landscape) {
-    if (width < ScreenBreakpoints.phone) return 8;
-    if (width < ScreenBreakpoints.tablet) return 10;
-    return 12;  // Reduced from 20px
+    if (width < ScreenBreakpoints.phone) return 6;
+    if (width < ScreenBreakpoints.tablet) return 6;
+    return 8;  // Reduced from 12px - aggressive vertical compression
   }
 
   // Portrait: Standard spacing

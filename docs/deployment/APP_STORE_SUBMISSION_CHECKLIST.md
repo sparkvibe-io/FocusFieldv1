@@ -78,7 +78,7 @@ Let's get your app to users! 🚀
 
 ### Build Configuration
 - [x] Version in `pubspec.yaml`: `0.1.6+6` (ready to increment for release)
-- [ ] **TODO**: Bump to `1.0.0+1` for App Store submission
+- [x] Bump to `1.0.0+1` for App Store submission
 - [x] Package ID: `io.sparkvibe.focusfield` (iOS & Android)
 - [x] Minimum iOS version: 15.0
 - [x] Minimum Android API: 21 (Android 5.0)
@@ -272,16 +272,18 @@ ENABLE_MOCK_SUBSCRIPTIONS=false
 - [ ] **Content Rights**: Original content ownership confirmed
 
 ### App Privacy
-- [ ] **Privacy Policy URL**: https://focusfield.io/privacy (to be created)
+- [ ] **Privacy Policy URL**: https://sparkvibe.io/privacy ✅ (privacy.razor created - ready to deploy)
+- [ ] **Terms of Use**: Add to app description: https://sparkvibe.io/terms ✅ (terms.razor created - ready to deploy)
 - [ ] **Data Collection**:
-  - [ ] Microphone access (for decibel measurement only)
-  - [ ] No audio recording
-  - [ ] Local storage only (no cloud transmission in free tier)
-  - [ ] Optional analytics (anonymized)
+  - [ ] Microphone access (for decibel measurement only - EPHEMERAL processing, no audio recording)
+  - [ ] No audio recording or storage
+  - [ ] Local storage only (no cloud transmission)
+  - [ ] Device IDs shared with AdMob (free tier only)
+  - [ ] Firebase SDK present but NOT used for analytics (only for AdMob dependency)
 - [ ] **Privacy Nutrition Labels** configured:
   - Data Used to Track You: None
-  - Data Linked to You: None (unless user opts into analytics)
-  - Data Not Linked to You: Usage data (optional)
+  - Data Linked to You: None
+  - Data Not Linked to You: Device ID (for ads, free tier only)
 
 ### App Review Information
 - [ ] **First Name**: Krishna
@@ -413,7 +415,7 @@ ENABLE_MOCK_SUBSCRIPTIONS=false
   - [ ] Data encrypted in transit: Yes (HTTPS)
   - [ ] Data encrypted at rest: Yes (device encryption)
   - [ ] User can request data deletion: Yes
-- [ ] **Privacy Policy URL**: https://focusfield.io/privacy
+- [ ] **Privacy Policy URL**: https://sparkvibe.io/privacy ✅
 
 ---
 
@@ -628,9 +630,9 @@ Start your focus journey today!
 - **German/French**: Single variants work for all regions
 
 ### Support & Contact
-- [ ] **Support URL**: https://focusfield.io/support (to be created)
-- [ ] **Support Email**: support@focusfield.io (to be created)
-- [ ] **Marketing URL**: https://focusfield.io (to be created)
+- [ ] **Support URL**: https://sparkvibe.io/contact (or mailto:support@sparkvibe.io)
+- [ ] **Support Email**: support@sparkvibe.io ✅
+- [ ] **Marketing URL**: https://sparkvibe.io or https://focusfield.io
 - [ ] **Twitter**: @FocusFieldApp (optional)
 
 ---
@@ -638,73 +640,45 @@ Start your focus journey today!
 ## ⚖️ Legal & Compliance
 
 ### Privacy Policy (REQUIRED)
-- [ ] **Create Privacy Policy**: `https://focusfield.io/privacy`
+- [x] **Privacy Policy Created**: ✅ `docs/legal/privacy.razor`
+- [ ] **Deploy to Website**: `https://sparkvibe.io/privacy`
+- [ ] **Add to App Store Connect**: Privacy Policy URL field
+- [ ] **Add to Google Play Console**: Policy → App content → Privacy policy
 
-**Required Sections**:
-1. **Information We Collect**
-   - Microphone access (decibel levels only, no audio recording)
-   - Session data (duration, ambient score, timestamps)
-   - Device information (OS version, device model)
-   - Optional analytics (anonymized usage data)
+**Status**: ✅ Complete - Ready to deploy
 
-2. **How We Use Information**
-   - Provide core app functionality
-   - Calculate ambient scores and quest progress
-   - Improve app performance
-   - Optional analytics for product improvements
-
-3. **Data Storage**
-   - All data stored locally on device
-   - No cloud transmission (free tier)
-   - Premium: Optional cloud sync (if user enables)
-   - Data deleted when app is uninstalled
-
-4. **Third-Party Services**
-   - RevenueCat (subscription management)
-   - Google AdMob (advertising for free tier)
-   - Firebase Analytics (optional, anonymized)
-
-5. **User Rights**
-   - Access your data (export feature)
-   - Delete your data (reset feature)
-   - Opt out of analytics
-   - Contact support for questions
-
-6. **Children's Privacy**
-   - App suitable for ages 4+
-   - No intentional data collection from children under 13
-   - COPPA compliant
-
-7. **Changes to Policy**
-   - Notification of policy updates
-   - Effective date
-
-8. **Contact Information**
-   - Email: privacy@focusfield.io
-   - Address: [Your Business Address]
+**What's Included** (GDPR, CCPA, COPPA compliant):
+1. ✅ Information We Collect (microphone - ephemeral only, device IDs for ads)
+2. ✅ How We Use Information (app functionality, ad serving)
+3. ✅ Data Storage (local only, no cloud transmission)
+4. ✅ Third-Party Services (RevenueCat, AdMob with Firebase SDK - NOT for analytics)
+5. ✅ User Rights (access, delete, export)
+6. ✅ Children's Privacy (ages 4+, COPPA compliant)
+7. ✅ California Privacy Rights (CCPA)
+8. ✅ European Privacy Rights (GDPR)
+9. ✅ Focus Field-Specific Section (detailed microphone usage explanation)
+10. ✅ Contact Information (support@sparkvibe.io)
 
 ---
 
-### Terms of Service (REQUIRED)
-- [ ] **Create Terms of Service**: `https://focusfield.io/terms`
+### Terms of Service (REQUIRED for Apps with Subscriptions)
+- [x] **Terms of Use Created**: ✅ `docs/legal/terms.razor`
+- [x] **Standalone Markdown**: ✅ `docs/legal/TERMS_OF_USE.md`
+- [ ] **Deploy to Website**: `https://sparkvibe.io/terms`
+- [ ] **Add to App Store Connect**: Add link to end of app description
+- [ ] **Add to Google Play Console**: Add link to end of full description
 
-**Required Sections**:
-1. **Acceptance of Terms**
-2. **Description of Service**
-3. **User Responsibilities**
-   - Appropriate microphone usage
-   - No abuse of free tier limits
-4. **Subscription Terms**
-   - Auto-renewal
-   - Cancellation policy
-   - Refund policy (follows App Store/Play Store policies)
-5. **Intellectual Property**
-   - App owned by SparkVibe IO
-   - User owns their data
-6. **Limitation of Liability**
-7. **Termination**
-8. **Governing Law**
-9. **Contact Information**
+**Status**: ✅ Complete - Ready to deploy
+
+**What's Included**:
+1. ✅ Generic SparkVibe IO Terms (sections 1-14) - applies to all SparkVibe products
+2. ✅ Focus Field-Specific Section (section 15) - subscription details, microphone access, pricing
+3. ✅ Subscription Terms ($0.99/mo, $9.99/yr, auto-renewal, cancellation)
+4. ✅ Microphone Access Disclosure (decibel measurement only, no audio recording)
+5. ✅ Third-Party Services (RevenueCat, AdMob, Firebase SDK clarification)
+6. ✅ Apple App Store Additional Terms (section 15.7)
+7. ✅ Google Play Store Additional Terms (section 15.8)
+8. ✅ Contact Information (support@sparkvibe.io)
 
 ---
 
