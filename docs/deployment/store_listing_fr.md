@@ -282,10 +282,10 @@ Historique plus long
 <!-- WHERE TO USE: App Store Connect > App Information > Support URL -->
 <!-- WHERE TO USE: Google Play Console > Store Listing > Contact details -->
 
-**Privacy Policy URL**: https://focusfield.io/privacy
-**Terms of Service URL**: https://focusfield.io/terms
-**Support URL**: https://focusfield.io/support
-**Support Email**: support@focusfield.io
+**Privacy Policy URL**: https://sparkvibe.io/privacy
+**Terms of Service URL**: https://sparkvibe.io/terms
+**Support URL**: https://sparkvibe.io/contact
+**Support Email**: support@sparkvibe.io
 
 <!-- NOTE: These URLs should work for all languages. Consider adding /fr/ for French pages if you create localized legal docs -->
 

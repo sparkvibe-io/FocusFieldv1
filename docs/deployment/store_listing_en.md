@@ -122,6 +122,7 @@ Join the focus revolution. Download free today!
 
 Privacy Policy: https://sparkvibe.io/privacy
 Terms of Use: https://sparkvibe.io/terms
+Questions? support@sparkvibe.io
 ```
 
 **Character count**: ~2,900 (well under 4000 limit)
@@ -180,7 +181,6 @@ Start building your focus habit today—free to download!
 
 Privacy Policy: https://sparkvibe.io/privacy
 Terms of Use: https://sparkvibe.io/terms
-
 Questions? support@sparkvibe.io
 ```
 
