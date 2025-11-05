@@ -148,7 +148,7 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(UIConstants.bottomSheetBorderRadius),
         ),
       ),
@@ -705,15 +705,16 @@ class _SevenDayStackedBars extends ConsumerWidget {
         return cs.primary;
       case 'study':
       case 'studying':
-        return cs.primary;
+        return cs.primary; // Blue
       case 'reading':
-        return cs.secondary;
+        return cs.secondary; // Purple
       case 'meditation':
-        return cs.tertiary;
+        return cs.tertiary; // Green
+      case 'other':
+        return cs.error; // Orange/Amber - distinct 4th color
       case 'fitness':
         return cs.secondaryContainer;
       case 'family':
-      case 'other':
         return cs.tertiaryContainer;
       case 'noise':
       case 'focus':

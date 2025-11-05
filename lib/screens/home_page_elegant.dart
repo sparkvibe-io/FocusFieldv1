@@ -77,9 +77,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   // Note: _cardRadius was unused; card decoration now comes from context.cardDecoration
 
   // Responsive card padding based on screen size
+  // Optimized top padding to reduce wasted vertical space
   EdgeInsets _getCardPadding(BuildContext context) {
     final padding = context.cardPadding;
-    return EdgeInsets.fromLTRB(padding, padding - 2, padding, padding);
+    // Reduce top padding by 25% for better vertical space optimization
+    // Material 3: Title-to-content spacing should be 8-12dp (not 12-20dp)
+    final topPadding = padding * 0.75;
+    return EdgeInsets.fromLTRB(padding, topPadding, padding, padding);
   }
 
   @override
@@ -585,6 +589,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         else
           _buildTodaysMissionCard(context),
         SizedBox(height: spacing),
+        // Quick Stats: Points, Streak, Sessions (only show when user has data)
+        _buildCompactQuickStatsCard(context),
+        SizedBox(height: spacing),
         // 7-day stacked bars moved to Trends > Show More (Basic tab)
         _buildTrendsCard(context),
         SizedBox(height: spacing),
@@ -762,10 +769,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Full-width ad anchored at bottom (always visible, no scrolling required)
         // This ensures AdMob compliance and maximum ad visibility
         // Wrapped in SafeArea to respect system UI (Home Indicator on iOS)
-        SafeArea(
-          top: false,
-          child: const FooterBannerAd(),
-        ),
+        // Only show ads for free users (hide for premium subscribers)
+        if (!ref.watch(premiumAccessProvider))
+          const SafeArea(
+            top: false,
+            child: FooterBannerAd(),
+          ),
       ],
     );
 
@@ -3195,6 +3204,126 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     );
   }
 
+  /// Compact unified Quick Stats widget matching Sessions widget styling
+  /// Single card with 3 stats displayed horizontally
+  /// Hidden when user has no sessions (better first-time UX)
+  Widget _buildCompactQuickStatsCard(BuildContext context) {
+    final silenceDataAsync = ref.watch(silenceDataNotifierProvider);
+
+    return silenceDataAsync.when(
+      data: (data) {
+        // Hide widget when user has no sessions (first-time user experience)
+        if (data.totalSessions == 0) {
+          return const SizedBox.shrink();
+        }
+
+        final theme = Theme.of(context);
+        final l10n = AppLocalizations.of(context)!;
+        final isDark = theme.brightness == Brightness.dark;
+        final backgroundColor = theme.colorScheme.surfaceContainerHighest;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withValues(
+                  alpha: isDark ? 0.4 : 0.15,
+                ),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildQuickStatItem(
+                  context,
+                  Icons.star_rounded,
+                  data.totalPoints.toString(),
+                  l10n.statPoints,
+                  theme.colorScheme.primary,
+                ),
+              ),
+              Expanded(
+                child: _buildQuickStatItem(
+                  context,
+                  Icons.local_fire_department_rounded,
+                  '${data.currentStreak}',
+                  l10n.statStreak,
+                  theme.colorScheme.secondary,
+                ),
+              ),
+              Expanded(
+                child: _buildQuickStatItem(
+                  context,
+                  Icons.timelapse_rounded,
+                  '${data.totalSessions}',
+                  l10n.statSessions,
+                  theme.colorScheme.tertiary,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  /// Single stat item within unified card: Icon left, number + label right
+  /// Reduced spacing to ensure labels fit properly
+  Widget _buildQuickStatItem(
+    BuildContext context,
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Icon with reduced size for better fit
+        Icon(icon, color: color, size: 32),
+        const SizedBox(width: 8),
+        // Number and label stacked vertically
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                value,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                  height: 1.1,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.2,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTrendsCard(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
@@ -3595,7 +3724,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   /// Build an informative failure message showing why the session failed
   String _buildFailureMessage(double ambientScore, int quietSeconds, int totalSeconds) {
     final achievedPercent = (ambientScore * 100).round();
-    final requiredPercent = 70; // 70% threshold
+    const requiredPercent = 70; // 70% threshold
 
     if (totalSeconds < 60) {
       // Very short session
@@ -3603,7 +3732,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     }
 
     final quietMinutes = (quietSeconds / 60).floor();
-    final totalMinutes = (totalSeconds / 60).floor();
     final neededQuietMinutes = ((totalSeconds * 0.7) / 60).ceil() - quietMinutes;
 
     return 'Session incomplete: $achievedPercent% quiet (need $requiredPercent%) • $neededQuietMinutes more quiet min needed';
@@ -3989,7 +4117,6 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
 
   Widget _buildStatusMessage(BuildContext context, SilenceState silenceState) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     if (silenceState.error != null) {
       return Text(
@@ -4342,9 +4469,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: [
-            Tab(icon: Icon(Icons.today_rounded), text: l10n.todayTabToday),
+            Tab(icon: const Icon(Icons.today_rounded), text: l10n.todayTabToday),
             Tab(
-              icon: Icon(Icons.play_circle_outline_rounded),
+              icon: const Icon(Icons.play_circle_outline_rounded),
               text: l10n.todayTabSessions,
             ),
           ],

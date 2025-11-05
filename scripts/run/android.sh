@@ -46,6 +46,7 @@ EXTRA_DART_DEFINES=""
 # Args: --debug/--profile/--release, -d <device_id>, --prod (sets IS_DEVELOPMENT=false)
 #       --missions (enables FEATURE_MISSIONS_UI)
 #       --locale <code> to test specific language (en, es, de, fr, ja, pt, pt_BR)
+#       --demo to enable demo mode for App Store screenshots
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --debug) RUN_MODE="--debug"; shift ;;
@@ -55,6 +56,7 @@ while [[ $# -gt 0 ]]; do
     --missions) EXTRA_DART_DEFINES+=" --dart-define=FEATURE_MISSIONS_UI=true"; shift ;;
     -d) DEVICE_TARGET="$2"; shift 2 ;;
     --locale) TEST_LOCALE="$2"; shift 2 ;;
+    --demo) EXTRA_DART_DEFINES+=" --dart-define=DEMO_MODE=true"; shift ;;
     *) echo "Unknown arg: $1"; exit 2 ;;
   esac
 done
@@ -69,6 +71,9 @@ if [[ -n "${TEST_LOCALE}" ]]; then
 fi
 if [[ -n "${ANDROID_BANNER_AD_UNIT_ID:-}" ]]; then
   echo "   ANDROID_BANNER_AD_UNIT_ID: ${ANDROID_BANNER_AD_UNIT_ID}"
+fi
+if [[ "${EXTRA_DART_DEFINES}" == *"DEMO_MODE=true"* ]]; then
+  echo "   📸 Demo Mode: ENABLED (screenshot-ready data)"
 fi
 
 if [[ "${ANDROID_API_KEY}" == "goog_YOUR_ANDROID_PUBLIC_KEY_HERE" ]]; then

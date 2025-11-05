@@ -66,7 +66,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: context.elevatedCardDecoration.copyWith(
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(UIConstants.bottomSheetBorderRadius),
         ),
       ),
@@ -346,7 +346,7 @@ class _ActivityEditSheetState extends ConsumerState<ActivityEditSheet> {
             child: FilledButton(
               onPressed: _save,
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(l10n.activitySaveChanges),
               ),
             ),

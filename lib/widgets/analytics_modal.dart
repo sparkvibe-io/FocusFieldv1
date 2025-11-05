@@ -40,7 +40,7 @@ class AnalyticsModal extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.vertical(
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(UIConstants.bottomSheetBorderRadius),
             ),
           ),

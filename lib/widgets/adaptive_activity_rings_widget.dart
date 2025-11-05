@@ -83,7 +83,7 @@ class AdaptiveActivityRingsWidget extends ConsumerWidget {
     final backgroundColor = theme.colorScheme.surfaceContainerHighest;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),

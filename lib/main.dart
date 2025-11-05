@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
@@ -14,7 +15,6 @@ import 'package:focus_field/widgets/dramatic_backdrop.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
 import 'package:focus_field/utils/responsive_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +30,8 @@ void main() async {
 }
 
 /// Widget that locks device orientation based on screen size
-/// - Phones/Small Tablets (<840dp): Portrait only (protects ad visibility)
-/// - Large Tablets (>=840dp): All orientations allowed
+/// - Phones/Small Tablets (<720dp): Portrait only (protects ad visibility)
+/// - Large Tablets (>=720dp): All orientations allowed
 class OrientationLocker extends StatefulWidget {
   final Widget child;
 
@@ -42,12 +42,15 @@ class OrientationLocker extends StatefulWidget {
 }
 
 class _OrientationLockerState extends State<OrientationLocker> with WidgetsBindingObserver {
-  double? _lastWidth;
+  double? _lastShortestSide;
+  Orientation? _lastOrientation;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Force initial update
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateOrientation());
   }
 
   @override
@@ -66,30 +69,55 @@ class _OrientationLockerState extends State<OrientationLocker> with WidgetsBindi
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      final width = MediaQuery.of(context).size.width;
+      final size = MediaQuery.of(context).size;
+      final width = size.width;
+      final height = size.height;
+      final shortestSide = size.shortestSide;
+      final orientation = MediaQuery.of(context).orientation;
 
-      // Only update if width changed significantly (to avoid unnecessary calls)
-      if (_lastWidth != null && (width - _lastWidth!).abs() < 50) {
-        return;
+      if (kDebugMode) {
+        print('📐 OrientationLocker: width=$width, height=$height, shortestSide=$shortestSide, orientation=$orientation, breakpoint=${ScreenBreakpoints.tablet}');
       }
 
-      _lastWidth = width;
+      // Check if orientation changed (reliable trigger for rotation)
+      final orientationChanged = _lastOrientation != null && _lastOrientation != orientation;
 
-      // Lock orientation based on screen width
-      if (width < ScreenBreakpoints.tablet) {
-        // Phones and small tablets: Portrait only (protects ad visibility)
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-        ]);
+      // Check if shortest side changed significantly (device rotation or resize)
+      final sideChanged = _lastShortestSide != null &&
+                         (shortestSide - _lastShortestSide!).abs() > 10;
+
+      // Update if this is first run, orientation changed, or size changed
+      if (_lastShortestSide == null || orientationChanged || sideChanged) {
+        _lastShortestSide = shortestSide;
+        _lastOrientation = orientation;
+
+        // Use shortest side for consistent breakpoint check (works in both orientations)
+        // shortestSide = min(width, height) = always the portrait width
+        if (shortestSide < ScreenBreakpoints.tablet) {
+          // Phones and small tablets: Portrait only (protects ad visibility)
+          if (kDebugMode) {
+            print('📐 OrientationLocker: Locking to PORTRAIT (shortestSide $shortestSide < ${ScreenBreakpoints.tablet})');
+          }
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+          ]);
+        } else {
+          // Large tablets: Allow all orientations
+          if (kDebugMode) {
+            print('📐 OrientationLocker: Allowing ALL ORIENTATIONS (shortestSide $shortestSide >= ${ScreenBreakpoints.tablet})');
+          }
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ]);
+        }
       } else {
-        // Large tablets: Allow all orientations
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
+        if (kDebugMode) {
+          print('📐 OrientationLocker: Skipping update - no significant change');
+        }
       }
     });
   }

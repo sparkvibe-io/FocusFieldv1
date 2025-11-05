@@ -23,7 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // User selections
   int _selectedEnvironment = 1; // Default: Typical Office (40dB)
   int _selectedGoal = 1; // Default: Building Habit (20 min)
-  Set<String> _selectedActivities = {'study', 'reading', 'meditation'};
+  final Set<String> _selectedActivities = {'study', 'reading', 'meditation'};
 
   @override
   void dispose() {

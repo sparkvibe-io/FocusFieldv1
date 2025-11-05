@@ -212,7 +212,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mockSubscriptionsBanner => 'Suscripciones simuladas activas';
 
   @override
-  String get splashTagline => 'Encuentra tu quietud';
+  String get splashTagline => 'Mide el Silencio, Construye Enfoque';
 
   @override
   String get appIconSemantic => 'Icono de la app';

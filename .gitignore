@@ -63,3 +63,11 @@ lib/config/secrets.dart
 android/app/src/main/res/values/secrets.xml
 ios/Runner/Secrets.plist
 android/key.properties
+
+# Android signing keystores (NEVER COMMIT THESE!)
+*.jks
+*.keystore
+android/*.jks
+android/*.keystore
+android/app/*.jks
+android/app/*.keystore

@@ -22,8 +22,6 @@ import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/providers/user_preferences_provider.dart';
 import 'package:focus_field/widgets/activity_edit_sheet.dart';
 import 'package:focus_field/screens/onboarding_screen.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:io' show Platform;
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -42,7 +40,7 @@ class SettingsSheet extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.vertical(
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(UIConstants.bottomSheetBorderRadius),
           ),
         ),
@@ -71,7 +69,7 @@ class SettingsSheet extends ConsumerWidget {
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(UIConstants.bottomSheetBorderRadius),
         ),
       ),
@@ -495,144 +493,6 @@ class SettingsSheet extends ConsumerWidget {
         builder: (_) => const NotificationSettingsWidget(),
       );
     }
-  }
-
-  Future<void> _showNotificationPermissionDialog(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final isIOS = Platform.isIOS;
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(
-                Icons.notifications_active,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 12),
-              Expanded(child: Text(l10n.notificationPermissionTitle)),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.notificationPermissionExplanation,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildPermissionBenefit(
-                theme,
-                Icons.alarm,
-                l10n.notificationBenefitReminders,
-              ),
-              _buildPermissionBenefit(
-                theme,
-                Icons.celebration,
-                l10n.notificationBenefitCompletion,
-              ),
-              _buildPermissionBenefit(
-                theme,
-                Icons.emoji_events,
-                l10n.notificationBenefitAchievements,
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer.withValues(
-                    alpha: 0.3,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          size: 16,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          isIOS
-                              ? l10n.notificationHowToEnableIos
-                              : l10n.notificationHowToEnableAndroid,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    if (isIOS) ...[
-                      Text(
-                        l10n.notificationStepsIos,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ] else ...[
-                      Text(
-                        l10n.notificationStepsAndroid,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l10n.cancel),
-            ),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              icon: const Icon(Icons.settings),
-              label: Text(l10n.buttonOpenSettings),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (result == true && context.mounted) {
-      // User chose to open settings
-      await openAppSettings();
-    }
-  }
-
-  Widget _buildPermissionBenefit(ThemeData theme, IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: theme.colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(child: Text(text, style: theme.textTheme.bodySmall)),
-        ],
-      ),
-    );
   }
 
   Widget _aboutTab(BuildContext context, WidgetRef ref) {
@@ -1275,7 +1135,7 @@ class SettingsSheet extends ConsumerWidget {
   void _replayOnboarding(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => OnboardingScreen(isReplay: true),
+        builder: (context) => const OnboardingScreen(isReplay: true),
         fullscreenDialog: true,
       ),
     );

@@ -73,7 +73,7 @@ Material 3 design with smooth animations. Choose from 10 themes including exclus
 
 Responsive for phones and tablets. Landscape split-screen on tablets ≥840dp.
 
-PREMIUM ($1.99/mo or $19.99/yr)
+PREMIUM ($0.99/mo or $9.99/yr)
 • Remove all ads
 • 4-hour sessions (vs 30 min)
 • Reach 18-hour goals faster
@@ -119,9 +119,12 @@ FIRST-TO-MARKET
 Focus Field creates a new category: ambient silence measurement. While other apps track time or block distractions, we measure your environment. Perfect for open offices, shared spaces, or home setups.
 
 Join the focus revolution. Download free today!
+
+Privacy Policy: https://sparkvibe.io/privacy
+Terms of Use: https://sparkvibe.io/terms
 ```
 
-**Character count**: ~2,850 (well under 4000 limit)
+**Character count**: ~2,900 (well under 4000 limit)
 
 ---
 
@@ -175,7 +178,10 @@ Miss a day? No problem. Streaks reset only after 2 consecutive misses. Get a mon
 
 Start building your focus habit today—free to download!
 
-Questions? support@focusfield.io
+Privacy Policy: https://sparkvibe.io/privacy
+Terms of Use: https://sparkvibe.io/terms
+
+Questions? support@sparkvibe.io
 ```
 
 ---
@@ -237,7 +243,7 @@ Unlock Premium Features
 <!-- WHERE TO USE: App Store Connect > In-App Purchases > Subscriptions > Localized Description -->
 <!-- WHERE TO USE: Google Play Console > Products > Subscriptions > Description -->
 
-#### Premium Monthly ($1.99/month)
+#### Premium Monthly ($0.99/month)
 ```
 Focus Field Premium - Monthly
 
@@ -253,11 +259,11 @@ Unlock all Premium features:
 Cancel anytime. No commitment required.
 ```
 
-#### Premium Yearly ($19.99/year - 16% savings)
+#### Premium Yearly ($9.99/year - 17% savings)
 ```
 Focus Field Premium - Yearly
 
-Unlock all Premium features and save $4/year!
+Unlock all Premium features and save $2/year!
 
 • Remove all ads for distraction-free focus
 • 4-hour deep work sessions (vs 30 min free)
@@ -267,7 +273,7 @@ Unlock all Premium features and save $4/year!
 • Export session data as CSV/PDF
 • 7 exclusive premium themes (including animated Cyber Neon!)
 
-Just $1.67/month when billed annually.
+Just $0.83/month when billed annually.
 Cancel anytime. No commitment required.
 ```
 
@@ -296,7 +302,7 @@ KEY FEATURES
 • 12-week activity heatmap
 • 10 beautiful themes (7 premium exclusives)
 
-PREMIUM ($1.99/mo)
+PREMIUM ($0.99/mo)
 • Remove all ads
 • 4-hour sessions vs 30 min free
 • Advanced analytics with 90-day history
@@ -328,7 +334,7 @@ Features:
 • Track Study, Reading, Meditation
 • 12-week activity heatmap
 
-Premium ($1.99/mo): Ad-free, 4-hour sessions, advanced analytics, data export, exclusive themes.
+Premium ($0.99/mo): Ad-free, 4-hour sessions, advanced analytics, data export, exclusive themes.
 
 Privacy: No audio recording. No sign-in. Data stays on device.
 

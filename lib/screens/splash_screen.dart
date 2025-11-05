@@ -110,7 +110,7 @@ class SplashScreen extends HookWidget {
                         ],
                       ),
                       child: Icon(
-                        Icons.volume_off_rounded,
+                        Icons.graphic_eq_rounded,
                         size: 54,
                         color: theme.colorScheme.primary.withValues(
                           alpha: 0.95,

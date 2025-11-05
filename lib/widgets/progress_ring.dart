@@ -175,7 +175,7 @@ class ProgressRing extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                       ],
 
                       // Icon with responsive size

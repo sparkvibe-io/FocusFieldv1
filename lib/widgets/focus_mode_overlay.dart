@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/widgets/banner_ad_footer.dart';
+import 'package:focus_field/providers/subscription_provider.dart';
 import 'dart:math' as math;
 import 'package:focus_field/l10n/app_localizations.dart';
 
@@ -95,6 +96,10 @@ class FocusModeOverlay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+
+    // Check subscription status to conditionally show ads (consistent with Today/Sessions tabs)
+    final hasPremiumAccess = ref.watch(premiumAccessProvider);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value:
           SystemUiOverlayStyle.light, // Light status bar icons on dark surface
@@ -261,13 +266,14 @@ class FocusModeOverlay extends ConsumerWidget {
               ),
             ),
 
-            // Banner ad - bottom center
-            Positioned(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: 0,
-              right: 0,
-              child: const Center(child: FooterBannerAd()),
-            ),
+            // Banner ad - bottom center (only for free users)
+            if (!hasPremiumAccess)
+              Positioned(
+                bottom: MediaQuery.of(context).padding.bottom,
+                left: 0,
+                right: 0,
+                child: const Center(child: FooterBannerAd()),
+              ),
           ],
         ),
       ),

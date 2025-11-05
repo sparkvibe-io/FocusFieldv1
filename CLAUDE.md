@@ -173,17 +173,18 @@ FF_CALENDAR_EXPORT = false
 ```dart
 class ScreenBreakpoints {
   static const double phone = 600;      // < 600dp
-  static const double tablet = 840;     // 600-840dp
-  static const double desktop = 1024;   // > 840dp
+  static const double tablet = 720;     // 600-720dp
+  static const double desktop = 1024;   // > 720dp
 }
 ```
 
 ### Tablet Layout Strategy
 - **Portrait**: Phone layout with proportional scaling (+15-25% fonts, +20-35% widgets)
-- **Landscape (≥840dp)**: Split-screen 50/50
-  - Left: Today tab + ad footer
-  - Right: Sessions tab (no ad)
-- **Orientation Lock**: Portrait-only for <840dp (protects ad visibility)
+- **Landscape (≥720dp)**: Split-screen 50/50
+  - Left: Today tab (no ad inside)
+  - Right: Sessions tab (no ad inside)
+  - Bottom: Full-width ad banner (anchored, always visible)
+- **Orientation Lock**: Portrait-only for <720dp (protects ad visibility)
 
 ---
 
@@ -343,7 +344,7 @@ Banner: ca-app-pub-2086096819226646/9050063581
 - [ ] Ambient score calculation accuracy (±1% tolerance)
 - [ ] Quest rollover (daily/monthly reset logic)
 - [ ] Premium feature gating (paywall triggers)
-- [ ] Tablet responsiveness (600dp, 840dp, 1024dp breakpoints)
+- [ ] Tablet responsiveness (600dp, 720dp, 1024dp breakpoints)
 - [ ] Ad visibility (never obscured by overlays)
 - [ ] Localization (all 7 languages render correctly)
 
@@ -424,7 +425,7 @@ Banner: ca-app-pub-2086096819226646/9050063581
 3. **Feature flags**: Check `lib/constants/ambient_flags.dart` before implementing features
 4. **Localization**: Update all 7 `.arb` files, run `flutter gen-l10n`
 5. **Premium features**: Always wrap in `FeatureGate` widget
-6. **Tablet support**: Test responsive breakpoints (600dp, 840dp, 1024dp)
+6. **Tablet support**: Test responsive breakpoints (600dp, 720dp, 1024dp)
 7. **Performance**: Wrap debug logs in `kDebugMode`, dispose streams/controllers
 8. **Business logic**: Ambient score is **primary success metric** (not legacy average-based)
 

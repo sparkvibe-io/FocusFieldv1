@@ -56,6 +56,8 @@ fi
 #   --debug / --profile / --release to set run mode
 #   -d <device_id> to target a specific device
 #   --locale <code> to test specific language (en, es, de, fr, ja, pt, pt_BR)
+#   --demo to enable demo mode for App Store screenshots
+DEMO_MODE=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --debug)
@@ -68,6 +70,8 @@ while [[ $# -gt 0 ]]; do
       DEVICE_TARGET="$2"; shift 2 ;;
     --locale)
       TEST_LOCALE="$2"; shift 2 ;;
+    --demo)
+      DEMO_MODE="--dart-define=DEMO_MODE=true"; shift ;;
     *)
       echo "Unknown arg: $1"; exit 2 ;;
   esac
@@ -82,6 +86,9 @@ if [[ -n "${TEST_LOCALE}" ]]; then
 fi
 if [[ -n "${APPLE_PRODUCT_IDS:-}" ]]; then
   echo "   Apple Product IDs: ${APPLE_PRODUCT_IDS}"
+fi
+if [[ -n "${DEMO_MODE}" ]]; then
+  echo "   📸 Demo Mode: ENABLED (screenshot-ready data)"
 fi
 
 if [[ "$IOS_API_KEY" == "appl_YOUR_IOS_PUBLIC_KEY_HERE" ]]; then
@@ -108,6 +115,7 @@ flutter run \
   ${DART_DEFINE_ADS_FALLBACK} \
   ${DART_DEFINE_ENTITLEMENT_KEY} \
   ${DART_DEFINE_LOCALE} \
+  ${DEMO_MODE} \
   -d "${DEVICE_TARGET}"
 
 echo ""
