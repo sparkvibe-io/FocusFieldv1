@@ -673,7 +673,18 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 (silenceState.progress * durationSeconds).toInt(),
             isPaused: silenceState.isPaused,
             onPause: () {
-              // Toggle pause state
+              // Get detector and current state
+              final silenceDetector = ref.read(silenceDetectorProvider);
+              final currentState = ref.read(silenceStateProvider);
+
+              // Toggle pause in detector
+              if (currentState.isPaused) {
+                silenceDetector.resumeSession();
+              } else {
+                silenceDetector.pauseSession();
+              }
+
+              // Toggle pause state in UI
               ref.read(silenceStateProvider.notifier).togglePause();
             },
             onStop: () {
@@ -793,6 +804,18 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 (silenceState.progress * durationSeconds).toInt(),
             isPaused: silenceState.isPaused,
             onPause: () {
+              // Get detector and current state
+              final silenceDetector = ref.read(silenceDetectorProvider);
+              final currentState = ref.read(silenceStateProvider);
+
+              // Toggle pause in detector
+              if (currentState.isPaused) {
+                silenceDetector.resumeSession();
+              } else {
+                silenceDetector.pauseSession();
+              }
+
+              // Toggle pause state in UI
               ref.read(silenceStateProvider.notifier).togglePause();
             },
             onStop: () {
