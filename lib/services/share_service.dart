@@ -44,14 +44,15 @@ class ShareService {
       await imageFile.writeAsBytes(imageBytes);
 
       // Share using native platform dialog
-      final params = ShareParams(
-        files: [XFile(imagePath)],
-        text: text,
-        subject: subject,
+      final result = await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath)],
+          text: text ?? '',
+          subject: subject,
+        ),
       );
-      await SharePlus.instance.share(params);
 
-      DebugLog.d('✅ ShareService: Share initiated successfully');
+      DebugLog.d('✅ ShareService: Share initiated successfully - $result');
       return true;
 
     } catch (e, st) {
@@ -97,11 +98,12 @@ class ShareService {
     String? subject,
   }) async {
     try {
-      final params = ShareParams(
-        text: text,
-        subject: subject,
+      await SharePlus.instance.share(
+        ShareParams(
+          text: text,
+          subject: subject,
+        ),
       );
-      await SharePlus.instance.share(params);
       return true;
     } catch (e) {
       DebugLog.d('❌ ShareService: Error sharing text: $e');

@@ -39,7 +39,7 @@ Stille messen, Fokus stärken
 <!-- WHERE TO USE: Google Play Console > Store Listing > Short description -->
 <!-- CHARACTER LIMIT: 80 characters -->
 ```
-Umgebungslärm messen und Fokusgewohnheiten mit mitfühlendem Quest-System aufbauen
+Umgebungslärm messen und Fokusgewohnheiten mit Quest-System aufbauen
 ```
 <!-- TRANSLATION: "Measure ambient noise and build focus habits with compassionate quest system" -->
 
@@ -55,14 +55,14 @@ Umgebungslärm messen und Fokusgewohnheiten mit mitfühlendem Quest-System aufba
 ```
 Focus Field ist Ihr persönlicher Tracker für Umgebungsstille, der Ihnen hilft, tiefe Fokusgewohnheiten durch mitfühlende, Quest-basierte Progression aufzubauen.
 
-🎯 SO FUNKTIONIERT ES
-• Starten Sie eine Fokussitzung (1-120 Minuten)
+SO FUNKTIONIERT ES
+• Starten Sie eine Fokussitzung (1-4 Stunden)
 • Die App misst Umgebungsgeräuschpegel in Echtzeit
 • Verdienen Sie Punkte durch ruhige Umgebungen (≥70% Ruhe)
 • Bauen Sie Serien mit unserer flexiblen 2-Tage-Regel auf
 • Verfolgen Sie Fortschritte bei Lernen, Lesen und Meditation
 
-🌟 HAUPTFUNKTIONEN
+HAUPTFUNKTIONEN
 • Echtzeit-Umgebungsüberwachung (keine Audioaufnahme!)
 • Interaktiver Fortschrittsring mit Countdown-Timer
 • Fokusmodus für ablenkungsfreie Sitzungen
@@ -73,18 +73,19 @@ Focus Field ist Ihr persönlicher Tracker für Umgebungsstille, der Ihnen hilft,
 • Tablet-Unterstützung mit horizontaler Bildschirmaufteilung
 • 7 unterstützte Sprachen
 
-🎨 SCHÖNES DESIGN
+SCHÖNES DESIGN
 • Material 3 Designsystem
 • Kontrastreiche Hell- & Dunkelthemen
 • Responsives Design (Telefone & Tablets)
 • Flüssige Animationen und visuelles Feedback
 
-💎 PREMIUM-FUNKTIONEN
-• Verlängerte Sitzungen bis zu 120 Minuten
+PREMIUM-FUNKTIONEN (0,99€/Monat oder 9,99€/Jahr)
+• Verlängerte Sitzungen bis zu 4 Stunden (vs. 30 Min kostenlos)
 • Erweiterte Analysen und Trenddiagramme
 • Datenexport (CSV/PDF)
 • Premium-Designs
-• 90-Tage-Verlauf
+• 90-Tage-Verlauf (vs. 7 Tage kostenlos)
+• Werbefreies Erlebnis
 
 🔒 DATENSCHUTZ ZUERST
 • Keine Audioaufnahme - nur Dezibelmessungen
@@ -92,17 +93,17 @@ Focus Field ist Ihr persönlicher Tracker für Umgebungsstille, der Ihnen hilft,
 • Keine Anmeldung erforderlich
 • Optionale Analysen (anonymisiert)
 
-🌍 UNTERSTÜTZTE SPRACHEN
+UNTERSTÜTZTE SPRACHEN
 Englisch, Spanisch, Französisch, Deutsch, Japanisch, Portugiesisch, Brasilianisches Portugiesisch
 
-📊 PERFEKT FÜR
+PERFEKT FÜR
 • Studenten (Lernsitzungen)
 • Remote-Arbeiter (Deep Work)
 • Leser (ununterbrochene Lesezeit)
 • Meditierende (Tracking stiller Praxis)
 • Alle, die Fokusgewohnheiten aufbauen möchten
 
-⚡ ERSTE SCHRITTE
+ERSTE SCHRITTE
 1. Mikrofon-Berechtigung erteilen
 2. Umgebungsschwelle wählen
 3. Tägliches Ziel festlegen (10-60 Minuten)
@@ -205,11 +206,11 @@ Erster Umgebungsstille-Tracker auf dem Markt! Bauen Sie Fokusgewohnheiten mit un
 ### Version 1.0.0
 
 ```
-🎉 Willkommen bei Focus Field 1.0!
+Willkommen bei Focus Field 1.0!
 
 Focus Field ist die erste App, die Umgebungsstille misst und Ihnen hilft, Fokusgewohnheiten durch mitfühlende, Quest-basierte Progression aufzubauen.
 
-✨ HAUPTFUNKTIONEN
+HAUPTFUNKTIONEN
 • Echtzeit-Umgebungsüberwachung (keine Audioaufnahme!)
 • Quest-basierte Progression mit täglichen Zielen
 • Mitfühlende Serien (2-Tage-Regel + Freeze-Tokens)
@@ -219,17 +220,17 @@ Focus Field ist die erste App, die Umgebungsstille misst und Ihnen hilft, Fokusg
 • Schönes Material 3 Design
 • 7 unterstützte Sprachen
 
-🎯 ERSTE SCHRITTE
+ERSTE SCHRITTE
 1. 6-Screen-Onboarding abschließen
 2. Tägliches Ziel festlegen (10-60 Minuten)
 3. Umgebungsschwelle wählen
 4. Erste Fokussitzung starten
 5. Serie aufbauen!
 
-🔒 DATENSCHUTZ ZUERST
+DATENSCHUTZ ZUERST
 Keine Audioaufnahme - nur Dezibelmessungen. Alle Daten werden lokal gespeichert. Keine Anmeldung erforderlich.
 
-📊 PREMIUM
+PREMIUM (0,99€/Monat oder 9,99€/Jahr)
 Upgraden für verlängerte Sitzungen, erweiterte Analysen, Datenexport und mehr.
 
 Starten Sie heute Ihre Fokusreise!
@@ -254,12 +255,13 @@ Premium
 <!-- FIELD: Subscription Description -->
 <!-- CHARACTER LIMIT: iOS 45 chars, Google Play 80 chars for title + unlimited for description -->
 ```
-Premium-Funktionen freischalten:
-• Verlängerte Sitzungen (bis zu 120 Minuten)
+Premium-Funktionen freischalten (0,99€/Monat oder 9,99€/Jahr):
+• Verlängerte Sitzungen (bis zu 4 Stunden vs. 30 Min kostenlos)
 • Erweiterte Analysen und Trenddiagramme
 • Datenexport (CSV/PDF)
 • Premium-Designs
-• 90-Tage-Verlauf
+• 90-Tage-Verlauf (vs. 7 Tage kostenlos)
+• Werbefreies Erlebnis
 • Priority-Support
 ```
 <!-- ENGLISH: "Unlock Premium features: Extended sessions (up to 120 minutes), Advanced analytics and trend charts, Data export (CSV/PDF), Premium themes, 90-day history, Priority support" -->

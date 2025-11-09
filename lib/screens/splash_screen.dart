@@ -54,20 +54,11 @@ class SplashScreen extends HookWidget {
       };
     }, []);
 
-    final bgGradient = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
-        theme.colorScheme.surface,
-      ],
-    );
-
+    // Pure black background to match icon's black background
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: DecoratedBox(
-        decoration: BoxDecoration(gradient: bgGradient),
+      backgroundColor: Colors.black,
+      body: Container(
+        color: Colors.black,
         child: SafeArea(
           child: Center(
             child: AnimatedOpacity(
@@ -76,80 +67,57 @@ class SplashScreen extends HookWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Icon with soft glass effect
+                  // App icon with breathing animation (no shadow - blends with black background)
                   Transform.scale(
                     scale: breathe,
-                    child: Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.18),
-                            theme.colorScheme.primary.withValues(alpha: 0.05),
-                          ],
-                        ),
-                        border: Border.all(
-                          color: theme.colorScheme.primary.withValues(
-                            alpha: 0.25,
-                          ),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.20,
-                            ),
-                            blurRadius: 22,
-                            spreadRadius: 1,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.graphic_eq_rounded,
-                        size: 54,
-                        color: theme.colorScheme.primary.withValues(
-                          alpha: 0.95,
-                        ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: Image.asset(
+                        'assets/icon/app_icon.png',
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
                         semanticLabel:
                             AppLocalizations.of(context)!.appIconSemantic,
                       ),
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // Wordmark
+                  // App name with luxury gold styling
                   Text(
                     AppLocalizations.of(context)!.appTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.95,
-                      ),
+                      letterSpacing: 1.2,
+                      color: const Color(0xFFFFD700), // Bright gold to match icon
+                      shadows: [
+                        Shadow(
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                          blurRadius: 12,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
+                  // Tagline with subtle teal to match icon gradient
                   Text(
                     AppLocalizations.of(context)!.splashTagline,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w400,
-                      color: theme.colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.75,
-                      ),
+                      letterSpacing: 0.5,
+                      color: const Color(0xFF00BFA5).withValues(alpha: 0.85), // Teal from icon
                     ),
                   ),
                   const SizedBox(height: 48),
-                  SizedBox(
+                  // Loading indicator with gold color
+                  const SizedBox(
                     width: 28,
                     height: 28,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.4,
                       valueColor: AlwaysStoppedAnimation(
-                        theme.colorScheme.primary.withValues(alpha: 0.65),
+                        Color(0xFFD4AF37), // Rich gold to match icon
                       ),
                     ),
                   ),

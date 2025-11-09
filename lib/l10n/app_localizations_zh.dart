@@ -1914,6 +1914,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingAdjustAnytime => '您可以随时在“设置”中进行调整';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 从$starterMinutes分钟的练习开始，帮助您适应。当您准备好时，完整的$goalMinutes分钟目标等着您！';
+  }
+
+  @override
+  String get buttonGotIt => '知道了';
+
+  @override
   String get buttonGetStarted => '开始使用';
 
   @override
@@ -2256,7 +2264,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themePurpleNight => '紫夜';
 
   @override
-  String get themeGoldLuxury => '黄金奢华';
+  String get themeGold => 'Gold';
 
   @override
   String get themeSolarSunrise => '太阳能日出';
@@ -2265,7 +2273,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeCyberNeon => '网络霓虹灯';
 
   @override
-  String get themeMidnightTeal => '午夜青色';
+  String get themeLuxury => 'Luxury';
 
   @override
   String get settingsAppTheme => '应用主题';

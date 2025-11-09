@@ -3724,6 +3724,18 @@ abstract class AppLocalizations {
   /// **'You can adjust this anytime in Settings'**
   String get onboardingAdjustAnytime;
 
+  /// No description provided for @starterSessionTip.
+  ///
+  /// In en, this message translates to:
+  /// **'👋 Starting with a {starterMinutes}-minute session to help you get comfortable. Your full {goalMinutes}-minute goal is ready when you are!'**
+  String starterSessionTip(int starterMinutes, int goalMinutes);
+
+  /// No description provided for @buttonGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get buttonGotIt;
+
   /// No description provided for @buttonGetStarted.
   ///
   /// In en, this message translates to:
@@ -4384,11 +4396,11 @@ abstract class AppLocalizations {
   /// **'Purple Night'**
   String get themePurpleNight;
 
-  /// No description provided for @themeGoldLuxury.
+  /// No description provided for @themeGold.
   ///
   /// In en, this message translates to:
-  /// **'Gold Luxury'**
-  String get themeGoldLuxury;
+  /// **'Gold'**
+  String get themeGold;
 
   /// No description provided for @themeSolarSunrise.
   ///
@@ -4402,11 +4414,11 @@ abstract class AppLocalizations {
   /// **'Cyber Neon'**
   String get themeCyberNeon;
 
-  /// No description provided for @themeMidnightTeal.
+  /// No description provided for @themeLuxury.
   ///
   /// In en, this message translates to:
-  /// **'Midnight Teal'**
-  String get themeMidnightTeal;
+  /// **'Luxury'**
+  String get themeLuxury;
 
   /// No description provided for @settingsAppTheme.
   ///

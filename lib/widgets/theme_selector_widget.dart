@@ -83,7 +83,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             ),
             _buildCompactThemeOption(
               context,
-              AppThemeMode.goldLuxury,
+              AppThemeMode.gold,
               currentTheme,
               themeNotifier,
               isPremium: true,
@@ -107,7 +107,7 @@ class ThemeSelectorWidget extends ConsumerWidget {
             ),
             _buildCompactThemeOption(
               context,
-              AppThemeMode.midnightTeal,
+              AppThemeMode.luxury,
               currentTheme,
               themeNotifier,
               isPremium: true,
@@ -314,14 +314,14 @@ class ThemeSelectorWidget extends ConsumerWidget {
         return l10n.themeForestGreen;
       case AppThemeMode.purpleNight:
         return l10n.themePurpleNight;
-      case AppThemeMode.goldLuxury:
-        return l10n.themeGoldLuxury;
+      case AppThemeMode.gold:
+        return l10n.themeGold;
       case AppThemeMode.solarSunrise:
         return l10n.themeSolarSunrise;
       case AppThemeMode.cyberNeon:
         return l10n.themeCyberNeon;
-      case AppThemeMode.midnightTeal:
-        return l10n.themeMidnightTeal;
+      case AppThemeMode.luxury:
+        return l10n.themeLuxury;
     }
   }
 }

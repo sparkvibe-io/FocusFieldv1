@@ -57,14 +57,14 @@ Meça o silêncio ambiente e crie hábitos de foco com o nosso sistema compassiv
 ```
 O Focus Field é o seu rastreador pessoal de silêncio ambiente que o ajuda a desenvolver hábitos de foco profundo através de uma progressão compassiva baseada em missões.
 
-🎯 COMO FUNCIONA
-• Inicie uma sessão de foco (1-120 minutos)
+COMO FUNCIONA
+• Inicie uma sessão de foco (1-4 horas)
 • A aplicação mede os níveis de ruído ambiente em tempo real
 • Ganhe pontos mantendo ambientes tranquilos (≥70% de calma)
 • Construa sequências com a nossa regra flexível de 2 dias
 • Acompanhe o progresso nas atividades de Estudo, Leitura e Meditação
 
-🌟 FUNCIONALIDADES PRINCIPAIS
+FUNCIONALIDADES PRINCIPAIS
 • Monitorização ambiente em tempo real (sem gravação de áudio!)
 • Anel de progresso interativo com temporizador
 • Modo Foco para sessões sem distrações
@@ -75,36 +75,37 @@ O Focus Field é o seu rastreador pessoal de silêncio ambiente que o ajuda a de
 • Suporte para tablets com ecrã dividido horizontal
 • 7 idiomas suportados
 
-🎨 DESIGN BONITO
+DESIGN BONITO
 • Sistema de design Material 3
 • Temas claro e escuro de alto contraste
 • Design responsivo (telemóveis e tablets)
 • Animações suaves e feedback visual
 
-💎 FUNCIONALIDADES PREMIUM
-• Sessões prolongadas até 120 minutos
+FUNCIONALIDADES PREMIUM (0,99€/mês ou 9,99€/ano)
+• Sessões prolongadas até 4 horas (vs. 30 min grátis)
 • Análises avançadas e gráficos de tendências
 • Exportação de dados (CSV/PDF)
 • Temas premium
-• Histórico de 90 dias
+• Histórico de 90 dias (vs. 7 dias grátis)
+• Experiência sem anúncios
 
-🔒 PRIVACIDADE EM PRIMEIRO LUGAR
+PRIVACIDADE EM PRIMEIRO LUGAR
 • Sem gravação de áudio - apenas medições de decibéis
 • Apenas armazenamento local (sem transmissão para a nuvem)
 • Não é necessário início de sessão
 • Análises opcionais (anonimizadas)
 
-🌍 IDIOMAS SUPORTADOS
-Inglês, Espanhol, Francês, Alemão, Japonês, Português, Português Brasileiro
+IDIOMAS SUPORTADOS
+Inglês, Espanhol, Francês, Alemão, Japonês, Português, Português Brasileiro, Chinês (Simplificado)
 
-📊 PERFEITO PARA
+PERFEITO PARA
 • Estudantes (sessões de estudo)
 • Trabalhadores remotos (trabalho profundo)
 • Leitores (tempo de leitura ininterrupto)
 • Praticantes de meditação (acompanhamento de prática silenciosa)
 • Qualquer pessoa que queira desenvolver hábitos de foco
 
-⚡ PRIMEIROS PASSOS
+PRIMEIROS PASSOS
 1. Conceda permissão do microfone
 2. Escolha o limiar do seu ambiente
 3. Defina o seu objetivo diário (10-60 minutos)
@@ -192,7 +193,7 @@ foco,produtividade,silêncio,ambiente,ruído,meditação,estudo,trabalho profund
 <!-- NOTE: This text can be updated anytime without submitting a new version -->
 
 ```
-Primeiro rastreador de silêncio ambiente no mercado! Construa hábitos de foco com o nosso sistema de missões. Sem gravação - apenas medições. Design focado na privacidade.
+Primeiro rastreador de silêncio ambiente! Construa hábitos de foco com o nosso sistema de missões. Sem gravação - apenas medições. Design focado na privacidade.
 ```
 <!-- ENGLISH: "First-to-market ambient silence tracker! Build focus habits with our quest system. No recording - just measurements. Privacy-first design." -->
 
@@ -207,11 +208,11 @@ Primeiro rastreador de silêncio ambiente no mercado! Construa hábitos de foco 
 ### Version 1.0.0
 
 ```
-🎉 Bem-vindo ao Focus Field 1.0!
+Bem-vindo ao Focus Field 1.0!
 
 O Focus Field é a primeira aplicação que mede o silêncio ambiente e o ajuda a construir hábitos de foco através de uma progressão compassiva baseada em missões.
 
-✨ FUNCIONALIDADES PRINCIPAIS
+FUNCIONALIDADES PRINCIPAIS
 • Monitorização ambiente em tempo real (sem gravação de áudio!)
 • Progressão baseada em missões com objetivos diários
 • Sequências compassivas (regra de 2 dias + fichas de congelamento)
@@ -221,17 +222,17 @@ O Focus Field é a primeira aplicação que mede o silêncio ambiente e o ajuda 
 • Design bonito Material 3
 • 7 idiomas suportados
 
-🎯 PRIMEIROS PASSOS
+PRIMEIROS PASSOS
 1. Complete a integração de 6 ecrãs
 2. Defina o seu objetivo diário (10-60 minutos)
 3. Escolha o limiar do seu ambiente
 4. Inicie a sua primeira sessão de foco
 5. Construa a sua sequência!
 
-🔒 PRIVACIDADE EM PRIMEIRO LUGAR
+PRIVACIDADE EM PRIMEIRO LUGAR
 Sem gravação de áudio - apenas medições de decibéis. Todos os dados são armazenados localmente. Não é necessário início de sessão.
 
-📊 PREMIUM
+PREMIUM (0,99€/mês ou 9,99€/ano)
 Atualize para sessões prolongadas, análises avançadas, exportação de dados e muito mais.
 
 Comece a sua jornada de foco hoje!
@@ -256,12 +257,13 @@ Premium
 <!-- FIELD: Subscription Description -->
 <!-- CHARACTER LIMIT: iOS 45 chars, Google Play 80 chars for title + unlimited for description -->
 ```
-Desbloqueie funcionalidades Premium:
-• Sessões prolongadas (até 120 minutos)
+Desbloqueie funcionalidades Premium (0,99€/mês ou 9,99€/ano):
+• Sessões prolongadas (até 4 horas vs. 30 min grátis)
 • Análises avançadas e gráficos de tendências
 • Exportação de dados (CSV/PDF)
 • Temas premium
-• Histórico de 90 dias
+• Histórico de 90 dias (vs. 7 dias grátis)
+• Experiência sem anúncios
 • Suporte prioritário
 ```
 <!-- ENGLISH: "Unlock Premium features: Extended sessions (up to 120 minutes), Advanced analytics and trend charts, Data export (CSV/PDF), Premium themes, 90-day history, Priority support" -->

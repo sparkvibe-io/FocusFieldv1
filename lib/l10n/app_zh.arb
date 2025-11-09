@@ -955,6 +955,18 @@
   "onboardingEnvNoisy": "嘈杂的环境",
   "onboardingEnvNoisyLevel": "60 dB - 更高噪音",
   "onboardingAdjustAnytime": "您可以随时在“设置”中进行调整",
+  "starterSessionTip": "👋 从{starterMinutes}分钟的练习开始，帮助您适应。当您准备好时，完整的{goalMinutes}分钟目标等着您！",
+  "@starterSessionTip": {
+    "placeholders": {
+      "starterMinutes": {
+        "type": "int"
+      },
+      "goalMinutes": {
+        "type": "int"
+      }
+    }
+  },
+  "buttonGotIt": "知道了",
   "buttonGetStarted": "开始使用",
   "buttonNext": "下一个",
   "errorActivityRequired": "⚠️ 必须至少启用一项活动",

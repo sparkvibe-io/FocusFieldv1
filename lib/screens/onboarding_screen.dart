@@ -63,12 +63,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final goals = [10, 20, 40, 60];
     final goal = goals[_selectedGoal];
 
+    // Set starter session duration based on goal (graduated complexity)
+    // Beginners get shorter sessions, experienced users get longer ones
+    final starterDurations = {
+      10: 1,   // Getting Started → 1 min (quick win)
+      20: 5,   // Building Habit → 5 min (taste test)
+      40: 10,  // Regular Practice → 10 min (reasonable challenge)
+      60: 15,  // Deep Work → 15 min (respects ambition)
+    };
+    final starterDuration = starterDurations[goal]!;
+
     // Update preferences
     await ref
         .read(userPreferencesProvider.notifier)
         .updateUserPreferences(
           prefs.copyWith(
             globalDailyQuietGoalMinutes: goal,
+            starterSessionMinutes: starterDuration,
             enabledProfiles: _selectedActivities.toList(),
           ),
         );

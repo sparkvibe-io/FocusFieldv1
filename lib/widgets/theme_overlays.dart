@@ -100,7 +100,7 @@ class _ScanPainter extends CustomPainter {
   bool shouldRepaint(_ScanPainter old) => false;
 }
 
-/// Vertical drifting mist for Midnight Teal.
+/// Vertical drifting mist for Luxury.
 class MistOverlay extends StatefulWidget {
   final Color baseColor;
   final Color highlightColor;
@@ -172,7 +172,7 @@ class _MistPainter extends CustomPainter {
   bool shouldRepaint(covariant _MistPainter old) => old.t != t;
 }
 
-/// Floating particles for Midnight Teal.
+/// Floating particles for Luxury.
 class ParticleDriftOverlay extends StatefulWidget {
   final Color color;
   const ParticleDriftOverlay({super.key, required this.color});

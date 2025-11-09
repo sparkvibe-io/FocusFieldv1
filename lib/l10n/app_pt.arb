@@ -761,6 +761,8 @@
   "onboardingEnvNoisy": "Ambiente Ruidoso",
   "onboardingEnvNoisyLevel": "60 dB - Ruído mais alto",
   "onboardingAdjustAnytime": "Pode ajustar isto a qualquer momento nas Definições",
+  "starterSessionTip": "👋 Começando com uma sessão de {starterMinutes} minutos para ajudá-lo a se adaptar. Sua meta completa de {goalMinutes} minutos está pronta quando você estiver!",
+  "buttonGotIt": "Entendi",
   "buttonGetStarted": "Começar",
   "buttonNext": "Seguinte",
   "errorActivityRequired": "⚠️ Pelo menos uma atividade deve estar ativada",

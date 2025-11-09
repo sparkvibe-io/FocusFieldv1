@@ -1,0 +1,13 @@
+# app-ads.txt for Focus Field
+# Publisher: SparkVibe
+# Domain: sparkvibe.io
+# App Store URLs:
+iOS: https://apps.apple.com/app/focus-field/id6752792597 (update after app approval)
+#   Android: https://play.google.com/store/apps/details?id=io.sparkvibe.focusfield
+
+# Google AdMob - Direct relationship
+# Format: google.com, pub-XXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-2086096819226646, DIRECT, f08c47fec0942fa0
+
+# Additional ad networks can be added below if needed
+# Format: <SSP/Exchange Domain>, <SellerAccountID>, <RELATIONSHIP>, <CERTIFICATION_AUTHORITY_ID>

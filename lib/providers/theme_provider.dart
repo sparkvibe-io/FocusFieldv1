@@ -10,9 +10,9 @@ enum AppThemeMode {
   oceanBlue,
   forestGreen,
   purpleNight,
-  goldLuxury,
+  gold,
   solarSunrise, // Warm energizing palette
-  midnightTeal, // Deep modern teal with cyan & lime accents
+  luxury, // Rich gold metallic with gradient backgrounds
   cyberNeon, // Vibrant futuristic neon
 }
 
@@ -31,14 +31,14 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Forest Green';
       case AppThemeMode.purpleNight:
         return 'Purple Night';
-      case AppThemeMode.goldLuxury:
-        return 'Gold Luxury';
+      case AppThemeMode.gold:
+        return 'Gold';
       case AppThemeMode.solarSunrise:
         return 'Solar Sunrise';
       case AppThemeMode.cyberNeon:
         return 'Cyber Neon';
-      case AppThemeMode.midnightTeal:
-        return 'Midnight Teal';
+      case AppThemeMode.luxury:
+        return 'Luxury';
     }
   }
 
@@ -51,9 +51,9 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.oceanBlue:
       case AppThemeMode.forestGreen:
       case AppThemeMode.purpleNight:
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
       case AppThemeMode.solarSunrise:
-      case AppThemeMode.midnightTeal:
+      case AppThemeMode.luxury:
       case AppThemeMode.cyberNeon:
         return true;
     }
@@ -66,12 +66,12 @@ extension AppThemeModeExtension on AppThemeMode {
       case AppThemeMode.light:
       case AppThemeMode.oceanBlue:
       case AppThemeMode.forestGreen:
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
       case AppThemeMode.solarSunrise:
         return ThemeMode.light;
       case AppThemeMode.dark:
       case AppThemeMode.purpleNight:
-      case AppThemeMode.midnightTeal:
+      case AppThemeMode.luxury:
       case AppThemeMode.cyberNeon:
         return ThemeMode.dark;
     }
@@ -91,14 +91,14 @@ extension AppThemeModeExtension on AppThemeMode {
         return Icons.forest;
       case AppThemeMode.purpleNight:
         return Icons.auto_awesome; // Sparkle/nightlife icon for mystical purple
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
         return Icons.diamond;
       case AppThemeMode.solarSunrise:
         return Icons.wb_sunny;
       case AppThemeMode.cyberNeon:
         return Icons.flash_on; // Electric bolt for futuristic neon
-      case AppThemeMode.midnightTeal:
-        return Icons.waves; // Wave icon for deep teal ocean theme
+      case AppThemeMode.luxury:
+        return Icons.star; // Star icon for luxury premium theme
     }
   }
 
@@ -114,14 +114,14 @@ extension AppThemeModeExtension on AppThemeMode {
         return const Color(0xFF2E7D32);
       case AppThemeMode.purpleNight:
         return const Color(0xFF673AB7);
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
         return const Color(0xFFFFB300);
       case AppThemeMode.solarSunrise:
         return const Color(0xFFFF7043); // Deep orange
       case AppThemeMode.cyberNeon:
         return const Color(0xFF00E5FF); // Neon cyan
-      case AppThemeMode.midnightTeal:
-        return const Color(0xFF009688); // Teal accent
+      case AppThemeMode.luxury:
+        return const Color(0xFFD4AF37); // Rich gold metallic
     }
   }
 
@@ -139,14 +139,14 @@ extension AppThemeModeExtension on AppThemeMode {
         return 'Natural forest greens';
       case AppThemeMode.purpleNight:
         return 'Mystical purple night';
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
         return 'Elegant gold accents';
       case AppThemeMode.solarSunrise:
         return 'Warm sunrise energy';
       case AppThemeMode.cyberNeon:
         return 'Futuristic neon glow';
-      case AppThemeMode.midnightTeal:
-        return 'Deep teal focus';
+      case AppThemeMode.luxury:
+        return 'Exquisite gold & rich gradients';
     }
   }
 }

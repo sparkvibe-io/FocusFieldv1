@@ -61,7 +61,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   // Debounce for theme toggle
   DateTime? _lastThemeToggleTime;
   // Sessions tab: selected session duration in minutes
-  int _selectedDurationMinutes = 1;
+  // Initialize to -1 to indicate it hasn't been set yet from user preferences
+  int _selectedDurationMinutes = -1;
   // Live calm tracking handled by liveCalmPercentProvider
   StreamSubscription<double>? _noiseSub;
   // Ambient Quests: 1Hz tick subscription for AmbientSessionEngine
@@ -287,6 +288,57 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final l10n = AppLocalizations.of(context)!;
     final size = MediaQuery.sizeOf(context);
     final orientation = MediaQuery.orientationOf(context);
+
+    // Initialize session duration from user preferences on first build
+    if (_selectedDurationMinutes == -1) {
+      final userPrefs = ref.read(userPreferencesProvider);
+
+      // Use starter duration if available (until user manually changes it)
+      // Otherwise use the daily goal
+      if (userPrefs.starterSessionMinutes != null) {
+        _selectedDurationMinutes = userPrefs.starterSessionMinutes!;
+
+        // Show helpful tip about starter duration
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.info_outline, color: Colors.white, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.starterSessionTip(
+                          userPrefs.starterSessionMinutes!,
+                          userPrefs.globalDailyQuietGoalMinutes,
+                        ),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: theme.colorScheme.primary,
+                duration: const Duration(seconds: 6),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                action: SnackBarAction(
+                  label: l10n.buttonGotIt,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
+              ),
+            );
+          }
+        });
+      } else {
+        _selectedDurationMinutes = userPrefs.globalDailyQuietGoalMinutes;
+      }
+    }
 
     // Detect tablet landscape: width >= 800 (large tablet) and landscape orientation
     // Matches our orientation locking policy (landscape only allowed on ≥800dp devices)
@@ -3986,6 +4038,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         setState(() => _selectedDurationMinutes = minutes);
         // propagate to active session duration provider (in seconds)
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
+
+        // Clear starter duration when user manually changes duration
+        final userPrefs = ref.read(userPreferencesProvider);
+        if (userPrefs.starterSessionMinutes != null) {
+          ref.read(userPreferencesProvider.notifier).updateUserPreferences(
+            userPrefs.copyWith(starterSessionMinutes: null),
+          );
+        }
       },
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -4044,6 +4104,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Premium user can select duration
         setState(() => _selectedDurationMinutes = minutes);
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
+
+        // Clear starter duration when user manually changes duration
+        final userPrefs = ref.read(userPreferencesProvider);
+        if (userPrefs.starterSessionMinutes != null) {
+          ref.read(userPreferencesProvider.notifier).updateUserPreferences(
+            userPrefs.copyWith(starterSessionMinutes: null),
+          );
+        }
       },
       icon: Icon(
         hasPremium ? Icons.star : Icons.star_outline,

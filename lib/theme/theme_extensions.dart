@@ -152,7 +152,119 @@ class AppDecorations extends ThemeExtension<AppDecorations> {
     },
   );
 
-  /// Premium theme decorations (CyberNeon, MidnightTeal) with intense glowing borders
+  /// Luxury theme decorations with golden glow (no borders)
+  factory AppDecorations.luxury() => AppDecorations(
+    cardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+      const goldGlow = Color(0xFFD4AF37); // Rich gold
+
+      return BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          // Golden glow - soft and luxurious
+          BoxShadow(
+            color: goldGlow.withValues(alpha: 0.15),
+            blurRadius: 12,
+            spreadRadius: 1,
+          ),
+          // Standard depth shadow
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.4 : 0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      );
+    },
+    elevatedCardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+      const goldGlow = Color(0xFFD4AF37);
+
+      return BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          // Stronger golden glow for elevated cards
+          BoxShadow(
+            color: goldGlow.withValues(alpha: 0.20),
+            blurRadius: 16,
+            spreadRadius: 2,
+          ),
+          // Depth shadow
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.5 : 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      );
+    },
+    subtleCardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+      const goldGlow = Color(0xFFD4AF37);
+
+      return BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          // Subtle golden glow
+          BoxShadow(
+            color: goldGlow.withValues(alpha: 0.10),
+            blurRadius: 10,
+            spreadRadius: 0.5,
+          ),
+          // Light depth shadow
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.3 : 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      );
+    },
+    ctaCardDecoration: (scheme) {
+      final isDark = scheme.brightness == Brightness.dark;
+      const goldGlow = Color(0xFFD4AF37);
+      final backgroundColor = scheme.surfaceContainerHighest;
+      final Color adjusted = isDark
+          ? Color.alphaBlend(Colors.white.withValues(alpha: 0.16), backgroundColor)
+          : Color.alphaBlend(
+              scheme.onSurface.withValues(alpha: 0.28),
+              Color.alphaBlend(
+                scheme.primary.withValues(alpha: 0.10),
+                backgroundColor,
+              ),
+            );
+
+      return BoxDecoration(
+        color: adjusted,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: (isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : scheme.outlineVariant.withValues(alpha: 0.45)),
+          width: 1.0,
+        ),
+        boxShadow: [
+          // Golden glow for CTA prominence
+          BoxShadow(
+            color: goldGlow.withValues(alpha: 0.25),
+            blurRadius: 20,
+            spreadRadius: 1,
+          ),
+          // Standard depth
+          BoxShadow(
+            color: scheme.shadow.withValues(alpha: isDark ? 0.36 : 0.24),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      );
+    },
+  );
+
+  /// Premium theme decorations (CyberNeon) with intense glowing borders
   factory AppDecorations.premium({required Color accentColor, double glowStrength = 1.0}) => AppDecorations(
     cardDecoration: (scheme) => BoxDecoration(
       color: scheme.surfaceContainer.withValues(alpha: 0.85),

@@ -1914,6 +1914,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get onboardingAdjustAnytime => 'Pode ajustar isto a qualquer momento nas Definições';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 Começando com uma sessão de $starterMinutes minutos para ajudá-lo a se adaptar. Sua meta completa de $goalMinutes minutos está pronta quando você estiver!';
+  }
+
+  @override
+  String get buttonGotIt => 'Entendi';
+
+  @override
   String get buttonGetStarted => 'Começar';
 
   @override
@@ -2256,7 +2264,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themePurpleNight => 'Noite roxa';
 
   @override
-  String get themeGoldLuxury => 'Luxo dourado';
+  String get themeGold => 'Gold';
 
   @override
   String get themeSolarSunrise => 'Nascer do sol solar';
@@ -2265,7 +2273,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themeCyberNeon => 'Neon cibernético';
 
   @override
-  String get themeMidnightTeal => 'Azul-petróleo meia-noite';
+  String get themeLuxury => 'Luxury';
 
   @override
   String get settingsAppTheme => 'Tema do aplicativo';
@@ -4366,6 +4374,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get onboardingAdjustAnytime => 'Pode ajustar isto a qualquer momento nas Definições';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 Começando com uma sessão de $starterMinutes minutos para ajudá-lo a se adaptar. Sua meta completa de $goalMinutes minutos está pronta quando você estiver!';
+  }
+
+  @override
+  String get buttonGotIt => 'Entendi';
+
+  @override
   String get buttonGetStarted => 'Começar';
 
   @override
@@ -4708,16 +4724,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get themePurpleNight => 'Noite roxa';
 
   @override
-  String get themeGoldLuxury => 'Luxo dourado';
-
-  @override
   String get themeSolarSunrise => 'Nascer do sol solar';
 
   @override
   String get themeCyberNeon => 'Neon cibernético';
-
-  @override
-  String get themeMidnightTeal => 'Azul-petróleo meia-noite';
 
   @override
   String get settingsAppTheme => 'Tema do aplicativo';

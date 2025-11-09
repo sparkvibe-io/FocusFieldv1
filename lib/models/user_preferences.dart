@@ -19,6 +19,11 @@ class UserPreferences {
   // Celebration Effects: show confetti on successful sessions
   final bool enableCelebrationConfetti;
 
+  // Starter session duration in minutes (for first-time users)
+  // null = user has manually changed duration, use globalDailyQuietGoalMinutes
+  // non-null = use this duration until user manually changes it
+  final int? starterSessionMinutes;
+
   const UserPreferences({
     required this.enabledProfiles,
     required this.globalDailyQuietGoalMinutes,
@@ -27,6 +32,7 @@ class UserPreferences {
     this.perActivityGoals,
     this.focusModeEnabled = false,
     this.enableCelebrationConfetti = true,
+    this.starterSessionMinutes,
   });
   
   // Default preferences (core 3 activities enabled, 10 min goal per activity)
@@ -38,6 +44,7 @@ class UserPreferences {
     perActivityGoals: null,
     focusModeEnabled: false,
     enableCelebrationConfetti: true,
+    starterSessionMinutes: null,
   );
   
   UserPreferences copyWith({
@@ -48,6 +55,7 @@ class UserPreferences {
     Map<String, int>? perActivityGoals,
     bool? focusModeEnabled,
     bool? enableCelebrationConfetti,
+    int? starterSessionMinutes,
   }) => UserPreferences(
     enabledProfiles: enabledProfiles ?? this.enabledProfiles,
     globalDailyQuietGoalMinutes: globalDailyQuietGoalMinutes ?? this.globalDailyQuietGoalMinutes,
@@ -56,6 +64,7 @@ class UserPreferences {
     perActivityGoals: perActivityGoals ?? this.perActivityGoals,
     focusModeEnabled: focusModeEnabled ?? this.focusModeEnabled,
     enableCelebrationConfetti: enableCelebrationConfetti ?? this.enableCelebrationConfetti,
+    starterSessionMinutes: starterSessionMinutes ?? this.starterSessionMinutes,
   );
   
   Map<String, dynamic> toJson() => {
@@ -66,6 +75,7 @@ class UserPreferences {
     'perActivityGoals': perActivityGoals,
     'focusModeEnabled': focusModeEnabled,
     'enableCelebrationConfetti': enableCelebrationConfetti,
+    'starterSessionMinutes': starterSessionMinutes,
   };
   
   factory UserPreferences.fromJson(Map<String, dynamic> json) {
@@ -85,6 +95,7 @@ class UserPreferences {
           : null,
       focusModeEnabled: json['focusModeEnabled'] as bool? ?? false,
       enableCelebrationConfetti: json['enableCelebrationConfetti'] as bool? ?? true,
+      starterSessionMinutes: json['starterSessionMinutes'] as int?,
     );
   }
 }

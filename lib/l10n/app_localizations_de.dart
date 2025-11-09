@@ -1914,6 +1914,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingAdjustAnytime => 'Sie können dies jederzeit in den Einstellungen anpassen';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 Beginne mit einer $starterMinutes-minütigen Sitzung, um dir den Einstieg zu erleichtern. Dein vollständiges $goalMinutes-Minuten-Ziel ist bereit, wenn du es bist!';
+  }
+
+  @override
+  String get buttonGotIt => 'Verstanden';
+
+  @override
   String get buttonGetStarted => 'Loslegen';
 
   @override
@@ -2256,7 +2264,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get themePurpleNight => 'Lila Nacht';
 
   @override
-  String get themeGoldLuxury => 'Gold-Luxus';
+  String get themeGold => 'Gold';
 
   @override
   String get themeSolarSunrise => 'Solar-Sonnenaufgang';
@@ -2265,7 +2273,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get themeCyberNeon => 'Cyber-Neon';
 
   @override
-  String get themeMidnightTeal => 'Mitternachts-Türkis';
+  String get themeLuxury => 'Luxury';
 
   @override
   String get settingsAppTheme => 'App-Theme';

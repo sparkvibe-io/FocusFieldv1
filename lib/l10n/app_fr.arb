@@ -760,6 +760,18 @@
   "onboardingEnvNoisy": "Environnement bruyant",
   "onboardingEnvNoisyLevel": "60 dB - Bruit plus élevé",
   "onboardingAdjustAnytime": "Vous pouvez ajuster cela à tout moment dans les paramètres",
+  "starterSessionTip": "👋 Commençons par une session de {starterMinutes} minutes pour vous familiariser. Votre objectif complet de {goalMinutes} minutes vous attend!",
+  "@starterSessionTip": {
+    "placeholders": {
+      "starterMinutes": {
+        "type": "int"
+      },
+      "goalMinutes": {
+        "type": "int"
+      }
+    }
+  },
+  "buttonGotIt": "Compris",
   "buttonGetStarted": "Commencer",
   "buttonNext": "Suivant",
   "errorActivityRequired": "⚠️ Au moins une activité doit être activée",

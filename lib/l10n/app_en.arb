@@ -956,6 +956,18 @@
   "onboardingEnvNoisy": "Noisy Environment",
   "onboardingEnvNoisyLevel": "60 dB - Higher noise",
   "onboardingAdjustAnytime": "You can adjust this anytime in Settings",
+  "starterSessionTip": "👋 Starting with a {starterMinutes}-minute session to help you get comfortable. Your full {goalMinutes}-minute goal is ready when you are!",
+  "@starterSessionTip": {
+    "placeholders": {
+      "starterMinutes": {
+        "type": "int"
+      },
+      "goalMinutes": {
+        "type": "int"
+      }
+    }
+  },
+  "buttonGotIt": "Got it",
   "buttonGetStarted": "Get Started",
   "buttonNext": "Next",
   "errorActivityRequired": "⚠️ At least one activity must be enabled",
@@ -1108,10 +1120,10 @@
   "themeOceanBlue": "Ocean Blue",
   "themeForestGreen": "Forest Green",
   "themePurpleNight": "Purple Night",
-  "themeGoldLuxury": "Gold Luxury",
+  "themeGold": "Gold",
   "themeSolarSunrise": "Solar Sunrise",
   "themeCyberNeon": "Cyber Neon",
-  "themeMidnightTeal": "Midnight Teal",
+  "themeLuxury": "Luxury",
   "settingsAppTheme": "App Theme",
   "freezeTokenNoTokensTitle": "No Freeze Tokens",
   "freezeTokenNoTokensMessage": "You don't have any freeze tokens available. You earn 1 freeze token per week (max 4).",

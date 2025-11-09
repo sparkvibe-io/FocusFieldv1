@@ -42,11 +42,31 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
   riverpod: ^2.6.1
 
 flutter:
-  uses-material-design: true 
+  uses-material-design: true
   generate: true
+
+  # Assets
+  assets:
+    - assets/icon/app_icon.png
+
+# App Icon Configuration
+flutter_launcher_icons:
+  android: true
+  ios: false  # iOS icons managed in Xcode
+  image_path_android: "assets/icon/app_icon.png"
+
+  # Adaptive icon configuration:
+  # Our icon is 1024x1024 with circular logo centered on black background
+  # Use black background and the full icon as foreground WITHOUT inset
+  # since our icon already has proper padding built-in (black corners)
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
+
+  remove_alpha_ios: false  # Keep iOS unchanged
