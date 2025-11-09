@@ -83,20 +83,13 @@ class SplashScreen extends HookWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // App name with luxury gold styling
+                  // App name with clean white styling
                   Text(
                     AppLocalizations.of(context)!.appTitle,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.2,
-                      color: const Color(0xFFFFD700), // Bright gold to match icon
-                      shadows: [
-                        Shadow(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
-                          blurRadius: 12,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 12),

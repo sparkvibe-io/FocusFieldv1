@@ -190,13 +190,9 @@ class SilenceDetector {
     if (!_isPaused || _pauseStartTime == null) return;
     final pauseDuration = DateTime.now().difference(_pauseStartTime!);
     _totalPausedDuration += pauseDuration;
+
     _isPaused = false;
     _pauseStartTime = null;
-    if (!kReleaseMode) {
-      DebugLog.d(
-        '▶️ [SilenceDetector] Session resumed. Pause duration: ${pauseDuration.inSeconds}s, Total paused: ${_totalPausedDuration.inSeconds}s',
-      );
-    }
   }
 
   /// Get whether the session is currently paused
@@ -357,6 +353,11 @@ class SilenceDetector {
           }
           // Don't fail the entire reading processing for stream errors
         }
+      }
+
+      // Skip progress updates when paused to prevent timer jumps
+      if (_isPaused) {
+        return;
       }
 
       // Calculate progress based on actual elapsed time for accuracy

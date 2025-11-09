@@ -729,14 +729,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               final silenceDetector = ref.read(silenceDetectorProvider);
               final currentState = ref.read(silenceStateProvider);
 
-              // Toggle pause in detector
+              // Toggle pause in detector FIRST
               if (currentState.isPaused) {
                 silenceDetector.resumeSession();
               } else {
                 silenceDetector.pauseSession();
               }
 
-              // Toggle pause state in UI
+              // Toggle pause state in UI SECOND
               ref.read(silenceStateProvider.notifier).togglePause();
             },
             onStop: () {
@@ -860,14 +860,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               final silenceDetector = ref.read(silenceDetectorProvider);
               final currentState = ref.read(silenceStateProvider);
 
-              // Toggle pause in detector
+              // Toggle pause in detector FIRST
               if (currentState.isPaused) {
                 silenceDetector.resumeSession();
               } else {
                 silenceDetector.pauseSession();
               }
 
-              // Toggle pause state in UI
+              // Toggle pause state in UI SECOND
               ref.read(silenceStateProvider.notifier).togglePause();
             },
             onStop: () {
@@ -3933,11 +3933,21 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                           silenceState.isPaused
                               ? Icons.play_arrow
                               : Icons.pause,
-                      onLongPress:
-                          () =>
-                              ref
-                                  .read(silenceStateProvider.notifier)
-                                  .togglePause(),
+                      onLongPress: () {
+                        // Get detector and current state
+                        final silenceDetector = ref.read(silenceDetectorProvider);
+                        final currentState = ref.read(silenceStateProvider);
+
+                        // Toggle pause in detector FIRST
+                        if (currentState.isPaused) {
+                          silenceDetector.resumeSession();
+                        } else {
+                          silenceDetector.pauseSession();
+                        }
+
+                        // Toggle pause state in UI SECOND
+                        ref.read(silenceStateProvider.notifier).togglePause();
+                      },
                       backgroundColor: theme.colorScheme.secondaryContainer,
                       textColor: theme.colorScheme.onSecondaryContainer,
                     ),
@@ -4313,8 +4323,17 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       onProgress: (progress) {
         // Only update progress if session is active and not paused
         final currentState = ref.read(silenceStateProvider);
+        if (!kReleaseMode) {
+          DebugLog.d(
+            '📊 [UI] onProgress callback: progress=${(progress * 100).toStringAsFixed(1)}%, '
+            'listening=${currentState.isListening}, paused=${currentState.isPaused}',
+          );
+        }
         if (currentState.isListening && !currentState.isPaused) {
           silenceStateNotifier.setProgress(progress);
+          if (!kReleaseMode) {
+            DebugLog.d('✅ [UI] Progress updated in state: ${(progress * 100).toStringAsFixed(1)}%');
+          }
           // Update ongoing notification progress (coarse)
           try {
             final pct = (progress * 100).clamp(0, 100).round();
@@ -4326,6 +4345,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                   progress: pct,
                 );
           } catch (_) {}
+        } else {
+          if (!kReleaseMode) {
+            DebugLog.d('❌ [UI] Progress update SKIPPED (paused or not listening)');
+          }
         }
         // Avoid voice during session to keep focus
       },
