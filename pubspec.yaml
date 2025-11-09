@@ -63,10 +63,9 @@ flutter_launcher_icons:
   image_path_android: "assets/icon/app_icon.png"
 
   # Adaptive icon configuration:
-  # Our icon is 1024x1024 with circular logo centered on black background
-  # Use black background and the full icon as foreground WITHOUT inset
-  # since our icon already has proper padding built-in (black corners)
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/icon/app_icon.png"
+  # Using a scaled-down version (66%) with extra padding to fit Android's safe zone
+  # Android adaptive icons crop ~33% from edges, so we need padding
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app_icon_adaptive_fg.png"
 
   remove_alpha_ios: false  # Keep iOS unchanged

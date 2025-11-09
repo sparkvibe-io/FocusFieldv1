@@ -274,7 +274,7 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
       final updatedData = await storageService.updateStreak(currentData);
       final recentSessions =
           [...updatedData.recentSessions, session]
-              .take(10) // Keep only last 10 sessions
+              .take(100) // Keep last 100 sessions for heatmap (12+ weeks of data)
               .toList();
 
       final newData = updatedData.copyWith(
@@ -283,12 +283,17 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
         recentSessions: recentSessions,
       );
 
+      // Debug logging
+      debugPrint('💾 Saving session - Date: ${session.date}, Duration: ${session.duration}s, Minutes: ${session.duration ~/ 60}');
+      debugPrint('💾 Total sessions in storage: ${recentSessions.length}');
+
       // Save data
       await storageService.saveSilenceData(newData);
       await storageService.saveLastSessionDate(session.date);
 
       if (mounted) {
         state = AsyncValue.data(newData);
+        debugPrint('💾 Session saved and state updated');
       }
     } catch (error, stackTrace) {
       if (mounted) {

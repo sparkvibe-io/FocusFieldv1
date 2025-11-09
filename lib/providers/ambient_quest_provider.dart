@@ -215,7 +215,7 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
       ambientScore: state.sessionUsesNoise ? state.ambientScore : null,
     );
 
-    // Persist minimal history
+    // Persist session history for analytics and heatmap (12+ weeks of data)
     final storage = await _ref.read(storageServiceProvider.future);
     final jsonString = await storage.getString('ambient_sessions_list');
     List<dynamic> raw = [];
@@ -226,7 +226,7 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
         raw = [];
       }
     }
-    final items = [...raw, session.toJson()].take(30).toList();
+    final items = [...raw, session.toJson()].take(100).toList();
     await storage.setString('ambient_sessions_list', jsonEncode(items));
 
     // Apply session effects to Quest state centrally (moved from UI)
