@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Portuguese)
 <!-- LANGUAGE: Portuguese (PT) -->
 <!-- MARKETS: Portugal, Brazil -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 <!-- NOTE: This version uses European Portuguese. For Brazilian Portuguese, see store_listing_pt_BR.md -->
 
 ---
@@ -111,6 +112,13 @@ PRIMEIROS PASSOS
 3. Defina o seu objetivo diário (10-60 minutos)
 4. Inicie a sua primeira sessão
 5. Construa a sua sequência!
+
+---
+
+SUPORTE E LEGAL
+Política de Privacidade: https://sparkvibe.io/privacy
+Termos de Uso: https://sparkvibe.io/terms
+Suporte: support@sparkvibe.io
 
 Primeira aplicação no mercado de medição de silêncio ambiente. Junte-se à revolução do foco!
 ```

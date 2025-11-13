@@ -207,7 +207,7 @@ class _SharePreviewSheetState extends State<SharePreviewSheet> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: ChoiceChip(
-                      label: Text(format.label),
+                      label: Text(format.getLabel(l10n)),
                       selected: isSelected,
                       onSelected: (selected) {
                         if (selected) {

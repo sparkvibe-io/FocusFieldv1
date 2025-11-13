@@ -1,7 +1,7 @@
 name: focus_field
 description: A Flutter app that measures silence and awards points for maintaining quiet environments.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.1.2+5
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
@@ -40,6 +40,8 @@ dependencies:
   in_app_review: ^2.0.9
   uuid: ^4.5.1
   smooth_page_indicator: ^1.2.0+3
+  audioplayers: ^5.2.1
+  wakelock_plus: ^1.2.8
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
@@ -55,6 +57,7 @@ flutter:
   # Assets
   assets:
     - assets/icon/app_icon.png
+    - assets/sounds/
 
 # App Icon Configuration
 flutter_launcher_icons:

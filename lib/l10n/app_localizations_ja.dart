@@ -270,6 +270,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get minutesShort => '分';
 
   @override
+  String get perDay => '/日';
+
+  @override
+  String get perWeek => '/週';
+
+  @override
+  String get percentPerWeek => '%/週';
+
+  @override
   String get noiseCalibration => 'ノイズ較正';
 
   @override
@@ -797,10 +806,10 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get tipsHidden => 'ヒントを非表示にしました';
+  String get tipsHidden => 'ヒント非表示 - 自動ヒントは表示されなくなります。電球アイコンをタップするといつでもヒントを見ることができます。';
 
   @override
-  String get tipsShown => 'ヒントを表示しました';
+  String get tipsShown => 'ヒント有効 - アプリ使用中に役立つヒントが表示されます。';
 
   @override
   String get showTips => 'ヒントを表示';
@@ -842,7 +851,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tip11 => '進捗リングはタップ可能—1タップで集中セッションを開始します。';
 
   @override
-  String get tip12 => '環境が変わったら再調整して精度を上げましょう。';
+  String get tip12 => '画面を常時オンを有効にして、フォーカスセッション中の画面ロックを防ぎます。';
 
   @override
   String get tip13 => 'セッション通知は勝利を祝います—モチベーションのために有効にしましょう！';
@@ -866,7 +875,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tip19 => '紙吹雪が全ての完了を祝います—小さな勝利は認識に値します！';
 
   @override
-  String get tip20 => 'ベースラインが重要です—新しい空間に移動するときは調整しましょう。';
+  String get tip20 => 'フォーカスモードを使用して、コントロールを非表示にした邪魔のないセッションを実現します。';
 
   @override
   String get tip21 => '7日間のトレンドがパターンを明らかにします—洞察のために毎週チェックしましょう。';
@@ -917,7 +926,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionKeepScreenOn => '設定 → 基本 → 画面を常時オン トグル';
+
+  @override
+  String get tipInstructionFocusMode => 'アクティブなセッション中にフォーカスモードボタンをタップ';
 
   @override
   String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
@@ -1486,6 +1498,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get statSessions => 'セッション';
+
+  @override
+  String get statSuccess => '成功';
 
   @override
   String get ringProgressTitle => 'リングの進捗';
@@ -2462,4 +2477,64 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get notificationSessionResumed => 'セッションが再開されました';
+
+  @override
+  String get celebrationEffects => 'お祝いエフェクト';
+
+  @override
+  String get celebrationEffectsSubtitle => '紙吹雪 • 1.5秒 • チャイム';
+
+  @override
+  String get celebrationEffectsDescription => 'セッションが正常に完了したときに表示するお祝いエフェクトを選択';
+
+  @override
+  String get confetti => '紙吹雪';
+
+  @override
+  String get sound => 'サウンド';
+
+  @override
+  String get activity => 'アクティビティ';
+
+  @override
+  String get activities => 'アクティビティ';
+
+  @override
+  String get shareCardSquare => '正方形';
+
+  @override
+  String get shareCardPost => '投稿';
+
+  @override
+  String get shareCardStory => 'ストーリー';
+
+  @override
+  String get featureExtendedSessions => '最大120分のセッション';
+
+  @override
+  String get featureAdvancedAnalytics => '詳細なトレンドと洞察';
+
+  @override
+  String get featureCloudSync => 'デバイス間でデータを同期';
+
+  @override
+  String get featureDataExport => 'CSV/PDFでデータをエクスポート';
+
+  @override
+  String get featurePremiumThemes => '限定テーマオプション';
+
+  @override
+  String get featureMultiEnvironments => 'カスタム環境プロファイル';
+
+  @override
+  String get featureAiInsights => 'AI搭載の推奨事項';
+
+  @override
+  String get featureSocialFeatures => 'チャレンジと競争';
+
+  @override
+  String get settingKeepScreenOn => '画面をオンに保つ';
+
+  @override
+  String get settingKeepScreenOnDescription => 'セッション中に画面がロックされるのを防ぐ';
 }

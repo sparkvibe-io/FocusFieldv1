@@ -1,6 +1,7 @@
 # Store Listing - English
 
-**Last Updated**: October 26, 2025
+**Last Updated**: November 11, 2025
+**Version**: 1.1.2
 **Subtitle**: Measure Silence, Build Focus
 **Activities**: Study, Reading, Meditation (No Work activity)
 
@@ -40,7 +41,7 @@ Track ambient silence. Build focus habits. Deep work in 4-hour sessions.
 <!-- CHARACTER LIMIT: 170 characters -->
 <!-- NOTE: You can update this anytime without app review -->
 ```
-First-to-market ambient silence tracker! Focus for up to 4 hours. No audio recording—just smart decibel measurement. Privacy-first. Build streaks your way.
+Track ambient noise to build better focus habits. No audio recording—just decibel levels. Set goals, maintain streaks, find your perfect quiet space for deep work.
 ```
 
 ---
@@ -120,9 +121,12 @@ Focus Field creates a new category: ambient silence measurement. While other app
 
 Join the focus revolution. Download free today!
 
+---
+
+SUPPORT & LEGAL
 Privacy Policy: https://sparkvibe.io/privacy
 Terms of Use: https://sparkvibe.io/terms
-Questions? support@sparkvibe.io
+Support: support@sparkvibe.io
 ```
 
 **Character count**: ~2,900 (well under 4000 limit)
@@ -133,7 +137,7 @@ Questions? support@sparkvibe.io
 <!-- WHERE TO USE: App Store Connect > App Information > Keywords (100 chars max) -->
 <!-- WHERE TO USE: Google Play Console > Store Settings > Keywords (comma-separated) -->
 ```
-focus,productivity,silence,ambient,noise,meditation,study,deep work,concentration,mindfulness,timer
+focus,silence,productivity,meditation,study,concentration,ambient,noise,quiet,habit,environment
 ```
 
 ---
@@ -142,6 +146,56 @@ focus,productivity,silence,ambient,noise,meditation,study,deep work,concentratio
 <!-- WHERE TO USE: App Store Connect > Version Information > What's New -->
 <!-- WHERE TO USE: Google Play Console > Release > Release notes -->
 <!-- CHARACTER LIMIT: 4000 characters -->
+
+#### Version 1.1.2 (Current Release)
+```
+What's New in 1.1.2:
+
+• Improved Focus Mode with enhanced performance
+• Better button layout for international languages
+• Smoother animations and lower battery usage
+• Fully localized activity names in all 7 languages
+• Cleaner interface with refined noise threshold controls
+• Performance optimizations for lower-end devices
+
+Bug fixes and stability improvements for a better experience.
+
+---
+
+Privacy Policy: https://sparkvibe.io/privacy
+Terms of Use: https://sparkvibe.io/terms
+Support: support@sparkvibe.io
+```
+
+#### Version 1.1.0
+```
+Version 1.1.0 - Quality & Polish Update
+
+NEW FEATURES
+• Keep Screen On: Prevent screen lock during focus sessions (configurable in settings)
+• Improved session controls with better alignment and spacing
+• Enhanced settings layout for better visibility of all options
+
+IMPROVEMENTS
+• All debug logging now properly disabled in production builds for better performance
+• Optimized battery usage during sessions
+• Fixed UI layout issues in settings sheet
+• Better visual hierarchy in Focus Mode controls
+
+POLISH
+• Smoother animations and transitions
+• Improved button spacing and touch targets
+• More consistent padding throughout the app
+• Better handling of wake lock across different devices
+
+Continue building your focus habits with these quality-of-life improvements!
+
+---
+
+Privacy Policy: https://sparkvibe.io/privacy
+Terms of Use: https://sparkvibe.io/terms
+Support: support@sparkvibe.io
+```
 
 #### Version 1.0.0 (Launch)
 ```

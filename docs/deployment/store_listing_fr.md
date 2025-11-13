@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (French)
 <!-- LANGUAGE: French (FR) -->
 <!-- MARKETS: France, Belgium, Switzerland, Canada (Quebec) -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 
 ---
 
@@ -108,6 +109,13 @@ PREMIERS PAS
 3. Définissez votre objectif quotidien (10-60 minutes)
 4. Démarrez votre première session
 5. Construisez votre série!
+
+---
+
+SUPPORT ET LÉGAL
+Politique de Confidentialité: https://sparkvibe.io/privacy
+Conditions d'Utilisation: https://sparkvibe.io/terms
+Support: support@sparkvibe.io
 
 Première appli sur le marché de mesure du silence ambiant. Rejoignez la révolution de la concentration!
 ```

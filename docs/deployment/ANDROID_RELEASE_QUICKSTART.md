@@ -224,24 +224,30 @@ open build/app/outputs/bundle/release
 
 5. **Fill Release Details:**
 
-   **Release name:** `1.0.0 (1)`
+   **Release name:** `1.1.0 (3)`
 
    **Release notes (English - United States):**
    ```
-   Initial internal testing release
+   Version 1.1.0 - Quality & Polish Update
 
-   ✨ Features:
-   - Focus sessions with real-time ambient noise monitoring
-   - Ambient Quest system with daily goals and streaks
-   - Premium subscriptions via RevenueCat
-   - AdMob integration for free tier
-   - Material 3 design with dark/light themes
-   - 7 languages: EN, ES, DE, FR, JA, PT, ZH
+   NEW FEATURES:
+   • Keep Screen On: Prevent screen lock during focus sessions (configurable in settings)
+   • Improved session controls with better alignment and spacing
+   • Enhanced settings layout for better visibility of all options
 
-   🎯 Test Focus:
-   - Premium subscription purchase flow
-   - Ad display for free users
-   - Focus Mode and session tracking
+   IMPROVEMENTS:
+   • All debug logging properly disabled in production builds for better performance
+   • Optimized battery usage during sessions
+   • Fixed UI layout issues in settings sheet
+   • Better visual hierarchy in Focus Mode controls
+
+   POLISH:
+   • Smoother animations and transitions
+   • Improved button spacing and touch targets
+   • More consistent padding throughout the app
+   • Better wake lock handling across different devices
+
+   Continue building your focus habits with these quality-of-life improvements!
    ```
 
 6. Click **"Save"**

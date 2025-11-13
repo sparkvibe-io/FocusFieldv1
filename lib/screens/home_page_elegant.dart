@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import '../utils/debug_log.dart';
@@ -37,6 +38,7 @@ import 'package:confetti/confetti.dart';
 import 'package:focus_field/constants/ambient_flags.dart';
 import 'package:focus_field/models/ambient_models.dart';
 import '../services/tip_service.dart';
+import '../services/celebration_service.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/banner_ad_footer.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
@@ -56,7 +58,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _currentTab = 0;
-  late final ConfettiController _confetti;
+  CelebrationService? _celebrationService;
   bool _focusModeActive = false;
   // Debounce for theme toggle
   DateTime? _lastThemeToggleTime;
@@ -65,6 +67,9 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   int _selectedDurationMinutes = -1;
   // Live calm tracking handled by liveCalmPercentProvider
   StreamSubscription<double>? _noiseSub;
+  // Persistent ad widget keys to preserve state across rebuilds
+  final GlobalKey _phoneAdKey = GlobalKey();
+  final GlobalKey _tabletAdKey = GlobalKey();
   // Ambient Quests: 1Hz tick subscription for AmbientSessionEngine
   StreamSubscription<double>? _ambientTickSub;
   // Activity list scroll state for the Summary card
@@ -96,7 +101,10 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       initialIndex: widget.initialTab,
     );
     _currentTab = widget.initialTab;
-    _confetti = ConfettiController(duration: const Duration(seconds: 3));
+
+    // Initialize celebration service with ticker provider
+    _celebrationService = CelebrationService();
+    _celebrationService!.initialize(this);
     _tabController.addListener(() {
       setState(() {
         _currentTab = _tabController.index;
@@ -130,7 +138,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     } catch (_) {}
     _activityScrollController.dispose();
     _tabController.dispose();
-    _confetti.dispose();
+    _celebrationService?.dispose();
     super.dispose();
   }
 
@@ -140,12 +148,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   /// - Perfect (95-100%): Maximum celebration + heavy haptic
   ///
   /// NOTE: This method does NOT access context to avoid disposal issues.
-  /// Accessibility checks are skipped; confetti preference is the only gate.
+  /// Accessibility checks are skipped; celebration preference is the only gate.
   void _triggerCelebration(WidgetRef ref, double ambientScore) {
-    // Check user preference for confetti
-    final confettiEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
+    // Get user preferences for celebration
+    final prefs = ref.read(userPreferencesProvider);
 
-    // Determine celebration tier based on ambient score
+    // Determine celebration tier based on ambient score for haptic feedback
     String tier;
     if (ambientScore >= 0.95) {
       tier = 'Perfect';
@@ -158,15 +166,16 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       HapticFeedback.lightImpact(); // Basic feedback for standard success
     }
 
-    // Trigger confetti animation only if enabled
-    if (confettiEnabled) {
-      _confetti.play();
-    }
+    // Trigger celebration using celebration service
+    _celebrationService?.celebrate(prefs);
 
     if (!kReleaseMode) {
       DebugLog.d(
         '🎉 [Celebration] Triggered $tier celebration '
-        '(score: ${(ambientScore * 100).toStringAsFixed(1)}%, confetti: $confettiEnabled)',
+        '(score: ${(ambientScore * 100).toStringAsFixed(1)}%, '
+        'enabled: ${prefs.enableCelebrationEffects}, '
+        'type: ${prefs.celebrationType.displayName}, '
+        'duration: ${prefs.celebrationDuration}s)',
       );
     }
   }
@@ -230,10 +239,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     final dailySuccessRate =
         dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
 
-    final formatter = DateFormat('MMM d');
+    // Get locale for date formatting
+    final locale = Localizations.localeOf(context).toString();
+    final formatter = DateFormat('MMM d', locale);
     final weekRange =
         '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
-    final dateFormatter = DateFormat('MMMM d, y');
+    final dateFormatter = DateFormat('MMMM d, y', locale);
     final todayRange = dateFormatter.format(now);
 
     // Determine initial time range based on available data
@@ -282,6 +293,15 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     return basePadding * scale;
   }
 
+  // Helper to get bottom padding that accounts for both screen size AND text scale
+  // Used for ListView bottom padding to ensure ad + bottom nav are always visible
+  double _getBottomPadding(BuildContext context, double basePadding) {
+    final responsiveScale = _getScaleFactor(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    // Apply both scales to ensure enough space when text is large
+    return basePadding * responsiveScale * textScale;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -292,10 +312,12 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     // Initialize session duration from user preferences on first build
     if (_selectedDurationMinutes == -1) {
       final userPrefs = ref.read(userPreferencesProvider);
+      final activeProfile = ref.read(activeProfileProvider);
 
-      // Use starter duration if available (until user manually changes it)
-      // Otherwise use the daily goal
-      if (userPrefs.starterSessionMinutes != null) {
+      // Priority: 1. Last duration for this profile, 2. Starter duration, 3. Daily goal
+      if (userPrefs.lastDurationByProfile.containsKey(activeProfile.id)) {
+        _selectedDurationMinutes = (userPrefs.lastDurationByProfile[activeProfile.id]! / 60).round();
+      } else if (userPrefs.starterSessionMinutes != null) {
         _selectedDurationMinutes = userPrefs.starterSessionMinutes!;
 
         // Show helpful tip about starter duration
@@ -338,6 +360,14 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
       } else {
         _selectedDurationMinutes = userPrefs.globalDailyQuietGoalMinutes;
       }
+
+      // Update the active session duration provider with the loaded duration
+      // Must be done after build completes to avoid modifying provider during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(activeSessionDurationProvider.notifier).state = _selectedDurationMinutes * 60;
+        }
+      });
     }
 
     // Detect tablet landscape: width >= 800 (large tablet) and landscape orientation
@@ -388,11 +418,21 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                             controller: _tabController,
                             physics: const BouncingScrollPhysics(),
                             children: [
-                              _buildSummaryTab(context, l10n),
-                              _buildSessionsTab(context, l10n),
+                              _buildSummaryTab(context, l10n, showAd: false),
+                              _buildSessionsTab(context, l10n, showAd: false),
                             ],
                           ),
                 ),
+
+                // Ad banner - floating above bottom nav (phone/portrait only)
+                // Conditionally render to avoid conflicts with Focus Mode
+                // Ad is completely removed during Focus Mode, recreated after
+                if (!isTabletLandscape && !_focusModeActive && !ref.watch(premiumAccessProvider))
+                  FooterBannerAd(key: _phoneAdKey),
+
+                // Spacing between ad and bottom nav to prevent touch overlap
+                if (!isTabletLandscape && !_focusModeActive && !ref.watch(premiumAccessProvider))
+                  const SizedBox(height: 12),
 
                 // Bottom navigation bar - hide in tablet landscape and Focus Mode
                 if (!isTabletLandscape && !_focusModeActive)
@@ -402,18 +442,28 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           ),
 
           // Confetti overlay - MUST be last to render on top
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confetti,
-              blastDirection: -math.pi / 2,  // Shoot upward (was downward!)
-              maxBlastForce: 10,  // Increased from 5 for more energy
-              minBlastForce: 5,   // Increased from 2
-              emissionFrequency: 0.02,  // Increased from 0.05 (more frequent)
-              numberOfParticles: 150,  // Increased from 50 for more celebration
-              gravity: 0.3,  // Increased from 0.1 for better fall
+          if (_celebrationService?.confettiController != null)
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConfettiWidget(
+                confettiController: _celebrationService!.confettiController!,
+                blastDirection: -math.pi / 2, // Upward
+                maxBlastForce: 10,
+                minBlastForce: 5,
+                emissionFrequency: 0.02,
+                numberOfParticles: 150,
+                gravity: 0.3,
+                colors: const [
+                  Colors.red,
+                  Colors.blue,
+                  Colors.green,
+                  Colors.yellow,
+                  Colors.purple,
+                  Colors.orange,
+                ],
+              ),
             ),
-          ),
+
         ],
       ),
     );
@@ -624,7 +674,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
     bool showAd = true,
   }) {
     final horizontalPad = _getResponsivePadding(context, 12);
-    final bottomPad = _getResponsivePadding(context, 100);
+    final bottomPad = _getBottomPadding(context, 100);  // Use text-scale-aware padding
     final spacing = _getResponsivePadding(context, 8);
 
     return ListView(
@@ -660,7 +710,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }) {
     final horizontalPad = _getResponsivePadding(context, 12);
     final verticalPad = _getResponsivePadding(context, 8);
-    final bottomPad = _getResponsivePadding(context, 100);
+    final bottomPad = _getBottomPadding(context, 100);  // Use text-scale-aware padding
     final spacing = _getResponsivePadding(context, 8);
 
     final sessionContent = ListView(
@@ -832,11 +882,21 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // Full-width ad anchored at bottom (always visible, no scrolling required)
         // This ensures AdMob compliance and maximum ad visibility
         // Wrapped in SafeArea to respect system UI (Home Indicator on iOS)
-        // Only show ads for free users (hide for premium subscribers)
+        // Keep in tree with Offstage to preserve ad state when switching to Focus Mode
+        // IgnorePointer prevents hidden ad from capturing touch events
         if (!ref.watch(premiumAccessProvider))
-          const SafeArea(
-            top: false,
-            child: FooterBannerAd(),
+          IgnorePointer(
+            ignoring: _focusModeActive,
+            child: Offstage(
+              offstage: _focusModeActive,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: SafeArea(
+                  top: false,
+                  child: FooterBannerAd(key: _tabletAdKey),
+                ),
+              ),
+            ),
           ),
       ],
     );
@@ -2832,63 +2892,37 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
   }
 
   List<Map<String, dynamic>> _getActivitiesData() {
-    final cs = Theme.of(context).colorScheme;
+    // Use consistent, theme-independent colors so users can learn to associate
+    // specific colors with specific activities across all themes
+    // Only 4 activities are supported: Study, Reading, Meditation, Other
     return [
       {
         'icon': Icons.school_outlined,
         'label': 'Study',
         'completed': 30,
         'target': 60,
-        'color': cs.primary,
+        'color': const Color(0xFF8B9DC3), // Soft blue
       },
       {
         'icon': Icons.menu_book_outlined,
         'label': 'Reading',
         'completed': 45,
         'target': 60,
-        'color': cs.secondary,
+        'color': const Color(0xFF7BA7BC), // Teal blue
       },
       {
         'icon': Icons.self_improvement_outlined,
         'label': 'Meditation',
         'completed': 20,
         'target': 20,
-        'color': cs.tertiary,
+        'color': const Color(0xFF86B489), // Soft green
       },
       {
-        'icon': Icons.fitness_center_outlined,
-        'label': 'Gym',
+        'icon': Icons.category_outlined,
+        'label': 'Other',
         'completed': 15,
         'target': 30,
-        'color': cs.secondaryContainer,
-      },
-      {
-        'icon': Icons.work_outline,
-        'label': 'Work',
-        'completed': 120,
-        'target': 180,
-        'color': cs.primaryContainer,
-      },
-      {
-        'icon': Icons.directions_run,
-        'label': 'Running',
-        'completed': 0,
-        'target': 30,
-        'color': cs.inversePrimary,
-      },
-      {
-        'icon': Icons.people_outline,
-        'label': 'Family',
-        'completed': 60,
-        'target': 60,
-        'color': cs.tertiaryContainer,
-      },
-      {
-        'icon': Icons.volume_off_outlined,
-        'label': 'Focus',
-        'completed': 10,
-        'target': 30,
-        'color': cs.primaryFixedDim,
+        'color': const Color(0xFFC4A57B), // Tan/beige
       },
     ];
   }
@@ -3638,7 +3672,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 context,
                 l10n.insightsFocusTime,
                 // Show at least 1 min if there's any activity (be encouraging!)
-                '${avgDailyFocusTimeInMinutes >= 0.5 ? avgDailyFocusTimeInMinutes.round() : (sessionsLast7Days.isNotEmpty ? 1 : 0)} min/day',
+                '${avgDailyFocusTimeInMinutes >= 0.5 ? avgDailyFocusTimeInMinutes.round() : (sessionsLast7Days.isNotEmpty ? 1 : 0)} ${l10n.minutesShort}${l10n.perDay}',
                 focusTimeTrendUp,
                 const Color(0xFFB0FC38),
               ),
@@ -3646,7 +3680,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
               _buildTrendItem(
                 context,
                 l10n.insightsSessions,
-                '$sessionsPerWeek/week',
+                '$sessionsPerWeek${l10n.perWeek}',
                 sessionsTrendUp,
                 const Color(0xFF00D9FF),
               ),
@@ -3655,7 +3689,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 context,
                 l10n.insightsAverage,
                 // Show at least 1 min if there are any sessions (be encouraging!)
-                '${avgSessionDurationInMinutes >= 0.5 ? avgSessionDurationInMinutes.round() : (data.recentSessions.isNotEmpty ? 1 : 0)} min',
+                '${avgSessionDurationInMinutes >= 0.5 ? avgSessionDurationInMinutes.round() : (data.recentSessions.isNotEmpty ? 1 : 0)} ${l10n.minutesShort}',
                 avgDurationTrendUp,
                 const Color(0xFFFA114F),
               ),
@@ -3664,7 +3698,7 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
                 context,
                 l10n.insightsAmbientScore,
                 // Show at least 1% if there's any quiet session data (be encouraging!)
-                '${avgAmbientScore >= 0.5 ? avgAmbientScore.round() : (quietSessionsLast7Days.isNotEmpty ? 1 : 0)}%/week',
+                '${avgAmbientScore >= 0.5 ? avgAmbientScore.round() : (quietSessionsLast7Days.isNotEmpty ? 1 : 0)}${l10n.percentPerWeek}',
                 ambientScoreTrendUp,
                 Colors.purple.shade300,
               ),
@@ -4049,6 +4083,13 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
         // propagate to active session duration provider (in seconds)
         ref.read(activeSessionDurationProvider.notifier).state = minutes * 60;
 
+        // Save selected duration for current profile
+        final activeProfile = ref.read(activeProfileProvider);
+        ref.read(userPreferencesProvider.notifier).setLastDurationForProfile(
+          activeProfile.id,
+          minutes * 60, // Store in seconds
+        );
+
         // Clear starter duration when user manually changes duration
         final userPrefs = ref.read(userPreferencesProvider);
         if (userPrefs.starterSessionMinutes != null) {
@@ -4384,7 +4425,8 @@ class _HomePageElegantState extends ConsumerState<HomePageElegant>
           }
 
           // NEW: Proportional points based on quiet minutes (compassionate credit)
-          final creditedMinutes = success ? (quietSeconds ~/ 60) : 0;
+          // Use ceiling to match Quest system: 48 seconds = 1 minute
+          final creditedMinutes = success ? (quietSeconds / 60).ceil() : 0;
           final pointsEarned = creditedMinutes * AppConstants.pointsPerMinute;
 
           final sessionRecord = SessionRecord(
@@ -4669,6 +4711,7 @@ class _GlowingProgressRing extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     // Subscribe to noise stream for hybrid Start button logic (only when NOT listening)
     final controller = ref.watch(realTimeNoiseControllerProvider);
     final smoothed = useState<double>(0);
@@ -4780,7 +4823,7 @@ class _GlowingProgressRing extends HookConsumerWidget {
               if (!isListening) ...[
                 const SizedBox(height: 8),
                 // Hybrid Start button logic
-                _buildHybridStartButton(context, theme, smoothed.value),
+                _buildHybridStartButton(context, theme, smoothed.value, l10n),
               ],
             ],
           ),
@@ -4808,6 +4851,7 @@ class _GlowingProgressRing extends HookConsumerWidget {
     BuildContext context,
     ThemeData theme,
     double currentNoise,
+    AppLocalizations l10n,
   ) {
     final isNoisy = currentNoise > threshold;
     final isExtremelyNoisy = currentNoise > (threshold + 20);
@@ -4859,7 +4903,7 @@ class _GlowingProgressRing extends HookConsumerWidget {
             ),
           )
         else
-          Text('Start', style: theme.textTheme.titleMedium),
+          Text(l10n.start, style: theme.textTheme.titleMedium),
       ],
     );
   }

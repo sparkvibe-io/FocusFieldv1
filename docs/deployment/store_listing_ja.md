@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Japanese)
 <!-- LANGUAGE: Japanese (JA) -->
 <!-- MARKET: Japan -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 
 ---
 
@@ -110,6 +111,13 @@ Focus Fieldは、思いやりのあるクエストベースの進行を通じて
 3. 毎日の目標を設定（10〜60分）
 4. 最初のセッションを開始
 5. 継続記録を構築！
+
+---
+
+サポートと法的事項
+プライバシーポリシー: https://sparkvibe.io/privacy
+利用規約: https://sparkvibe.io/terms
+サポート: support@sparkvibe.io
 
 環境静寂測定で市場初。集中革命に参加しましょう！
 ```

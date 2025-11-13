@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/silence_data.dart';
@@ -15,7 +16,9 @@ class SessionHeatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('📊 Heatmap: Widget rebuilding with ${sessions.length} sessions');
+    if (kDebugMode) {
+      debugPrint('📊 Heatmap: Widget rebuilding with ${sessions.length} sessions');
+    }
 
     final theme = Theme.of(context);
     final now = DateTime.now();
@@ -45,12 +48,16 @@ class SessionHeatmap extends StatelessWidget {
       dailyMinutes[date] = (dailyMinutes[date] ?? 0) + minutes;
 
       // Debug logging
-      debugPrint('📊 Heatmap: Adding session - Date: $date, Duration: ${session.duration}s, Minutes: $minutes');
+      if (kDebugMode) {
+        debugPrint('📊 Heatmap: Adding session - Date: $date, Duration: ${session.duration}s, Minutes: $minutes');
+      }
     }
 
-    debugPrint('📊 Heatmap: Total sessions processed: ${sessions.length}, Days with data: ${dailyMinutes.length}');
-    debugPrint('📊 Heatmap: Date range: $startDate to $today (${weeksToShow} weeks)');
-    debugPrint('📊 Heatmap: Map contents: ${dailyMinutes.entries.map((e) => '${e.key}: ${e.value}min').join(', ')}');
+    if (kDebugMode) {
+      debugPrint('📊 Heatmap: Total sessions processed: ${sessions.length}, Days with data: ${dailyMinutes.length}');
+      debugPrint('📊 Heatmap: Date range: $startDate to $today (${weeksToShow} weeks)');
+      debugPrint('📊 Heatmap: Map contents: ${dailyMinutes.entries.map((e) => '${e.key}: ${e.value}min').join(', ')}');
+    }
 
     // Find max minutes for color scaling
     final maxMinutes = dailyMinutes.values.isEmpty
@@ -61,7 +68,7 @@ class SessionHeatmap extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Month labels
-        _buildMonthLabels(startDate, weeksToShow, theme),
+        _buildMonthLabels(startDate, weeksToShow, theme, context),
         const SizedBox(height: 8),
 
         // Heatmap grid - centered
@@ -107,9 +114,10 @@ class SessionHeatmap extends StatelessWidget {
     );
   }
 
-  Widget _buildMonthLabels(DateTime startDate, int weeks, ThemeData theme) {
+  Widget _buildMonthLabels(DateTime startDate, int weeks, ThemeData theme, BuildContext context) {
     final labels = <String>[];
     String? lastMonth;
+    final locale = Localizations.localeOf(context).toString();
 
     for (var i = 0; i < weeks; i++) {
       // Use integer arithmetic to avoid DST issues
@@ -118,7 +126,7 @@ class SessionHeatmap extends StatelessWidget {
         startDate.month,
         startDate.day + (i * 7),
       );
-      final month = DateFormat('MMM').format(weekStart);
+      final month = DateFormat('MMM', locale).format(weekStart);
       if (month != lastMonth) {
         labels.add(month);
         lastMonth = month;
@@ -196,8 +204,6 @@ class SessionHeatmap extends StatelessWidget {
           );
           final minutes = dailyMinutes[normalizedDate] ?? 0;
 
-          debugPrint('🔍 Week column: weekStart=$weekStart, dayIndex=$dayIndex, normalized=$normalizedDate, minutes=$minutes');
-
           return _buildDaySquare(context, normalizedDate, minutes, maxMinutes, theme);
         }),
       ),
@@ -211,7 +217,8 @@ class SessionHeatmap extends StatelessWidget {
     int maxMinutes,
     ThemeData theme,
   ) {
-    final dateFormat = DateFormat('MMM d, yyyy');
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat('MMM d, yyyy', locale);
 
     // Create vibrant color - ensure even 1 minute shows clearly
     final Color squareColor;
@@ -229,8 +236,6 @@ class SessionHeatmap extends StatelessWidget {
         theme.colorScheme.primary,
         intensity,
       )!;
-
-      debugPrint('🎨 Square color for $date: $minutes min, intensity: $intensity, color: $squareColor');
     }
 
     return Tooltip(

@@ -35,14 +35,16 @@ class SplashScreen extends HookWidget {
     );
 
     useEffect(() {
-      Future.delayed(const Duration(milliseconds: 1800), () {
+      // Reduced delay to 800ms for faster transition to initialization
+      // The breathing animation continues seamlessly in AppInitializer's loading screen
+      Future.delayed(const Duration(milliseconds: 800), () {
         if (context.mounted) {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (_, a, __) => const AppInitializer(),
               transitionsBuilder:
                   (_, a, __, child) => FadeTransition(opacity: a, child: child),
-              transitionDuration: const Duration(milliseconds: 600),
+              transitionDuration: const Duration(milliseconds: 400),
             ),
           );
         }

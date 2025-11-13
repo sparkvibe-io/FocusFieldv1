@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (German)
 <!-- LANGUAGE: German (DE) -->
 <!-- MARKETS: Germany, Austria, Switzerland -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 
 ---
 
@@ -109,6 +110,13 @@ ERSTE SCHRITTE
 3. Tägliches Ziel festlegen (10-60 Minuten)
 4. Erste Sitzung starten
 5. Serie aufbauen!
+
+---
+
+SUPPORT UND RECHTLICHES
+Datenschutzrichtlinie: https://sparkvibe.io/privacy
+Nutzungsbedingungen: https://sparkvibe.io/terms
+Support: support@sparkvibe.io
 
 Erste App auf dem Markt für Umgebungsstille-Messung. Treten Sie der Fokus-Revolution bei!
 ```

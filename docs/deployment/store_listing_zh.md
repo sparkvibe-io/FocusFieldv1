@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Chinese)
 <!-- LANGUAGE: Chinese (ZH) -->
 <!-- MARKETS: China, Taiwan, Hong Kong, Singapore -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 <!-- NOTE: This version uses Simplified Chinese. For Traditional Chinese, see notes at bottom -->
 
 ---
@@ -111,6 +112,13 @@ Focus Field 是您的个人环境静音追踪器，通过富有同理心的任�
 3. 设定每日目标（10-60 分钟）
 4. 开始您的第一次会话
 5. 建立连续记录！
+
+---
+
+支持与法律
+隐私政策: https://sparkvibe.io/privacy
+使用条款: https://sparkvibe.io/terms
+支持: support@sparkvibe.io
 
 市场首个环境静音测量应用。加入专注革命！
 ```

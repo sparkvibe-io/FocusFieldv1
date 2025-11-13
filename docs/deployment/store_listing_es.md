@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Spanish)
 <!-- LANGUAGE: Spanish (ES) -->
 <!-- MARKETS: Spain, Mexico, Latin America -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 
 ---
 
@@ -110,6 +111,13 @@ PRIMEROS PASOS
 5. ¡Construye tu racha!
 
 Primera app en el mercado de medición de silencio ambiental. ¡Únete a la revolución de la concentración!
+
+---
+
+SOPORTE Y LEGAL
+Política de Privacidad: https://sparkvibe.io/privacy
+Términos de Uso: https://sparkvibe.io/terms
+Soporte: support@sparkvibe.io
 ```
 
 ---

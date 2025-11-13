@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:focus_field/l10n/app_localizations.dart';
 import '../providers/user_preferences_provider.dart';
+import '../providers/silence_provider.dart';
 import 'home_page_elegant.dart';
 
 /// Onboarding screen shown on first app launch or when replayed from settings
@@ -73,6 +75,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     };
     final starterDuration = starterDurations[goal]!;
 
+    // Debug: Log selected activities
+    if (kDebugMode) {
+      debugPrint('🎓 Onboarding: Selected activities: $_selectedActivities');
+      debugPrint('🎓 Onboarding: Saving activities: ${_selectedActivities.toList()}');
+    }
+
     // Update preferences
     await ref
         .read(userPreferencesProvider.notifier)
@@ -84,9 +92,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         );
 
-    // Save default threshold and onboarding status to SharedPreferences
+    // Debug: Verify preferences were saved
+    if (kDebugMode) {
+      final savedPrefs = ref.read(userPreferencesProvider);
+      debugPrint('🎓 Onboarding: Saved preferences activities: ${savedPrefs.enabledProfiles}');
+    }
+
+    // Save decibel threshold using StorageService (proper key)
+    final storageService = await ref.read(storageServiceProvider.future);
+    await storageService.saveDecibelThreshold(threshold.toDouble());
+
+    // Immediately update the provider state so it takes effect without restart
+    ref.read(activeDecibelThresholdProvider.notifier).state = threshold.toDouble();
+
+    // Save onboarding status to SharedPreferences
     final sharedPrefs = await SharedPreferences.getInstance();
-    await sharedPrefs.setInt('defaultThreshold', threshold);
     await sharedPrefs.setBool('onboardingCompleted', true);
 
     if (mounted) {

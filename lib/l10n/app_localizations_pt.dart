@@ -270,6 +270,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get minutesShort => 'min';
 
   @override
+  String get perDay => '/dia';
+
+  @override
+  String get perWeek => '/semana';
+
+  @override
+  String get percentPerWeek => '%/semana';
+
+  @override
   String get noiseCalibration => 'Calibração de ruído';
 
   @override
@@ -797,10 +806,10 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get tipsHidden => 'Dicas ocultas';
+  String get tipsHidden => 'Dicas ocultas - Você não verá mais dicas automáticas. Toque no ícone de lâmpada para ver dicas quando quiser.';
 
   @override
-  String get tipsShown => 'Dicas mostradas';
+  String get tipsShown => 'Dicas ativadas - Você verá dicas úteis ao usar o aplicativo.';
 
   @override
   String get showTips => 'Mostrar dicas';
@@ -842,7 +851,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tip11 => 'O anel de progresso é tocável—um toque inicia sua sessão de foco.';
 
   @override
-  String get tip12 => 'Recalibre quando seu ambiente mudar para melhor precisão.';
+  String get tip12 => 'Ative Manter Ecrã Ligado para evitar o bloqueio do ecrã durante sessões de foco.';
 
   @override
   String get tip13 => 'Notificações de sessão celebram suas vitórias—ative-as para motivação!';
@@ -866,7 +875,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tip19 => 'Confete celebra cada conclusão—pequenas vitórias merecem reconhecimento!';
 
   @override
-  String get tip20 => 'Sua linha de base importa—calibre ao mudar para novos espaços.';
+  String get tip20 => 'Use o Modo de Foco para sessões sem distrações com controlos ocultos.';
 
   @override
   String get tip21 => 'Suas Tendências de 7 Dias revelam padrões—confira-as semanalmente para insights.';
@@ -917,7 +926,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionKeepScreenOn => 'Definições → Básico → Alternador Manter Ecrã Ligado';
+
+  @override
+  String get tipInstructionFocusMode => 'Toque no botão Modo de Foco durante uma sessão ativa';
 
   @override
   String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
@@ -1486,6 +1498,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get statSessions => 'Sessões';
+
+  @override
+  String get statSuccess => 'Sucesso';
 
   @override
   String get ringProgressTitle => 'Progresso do Anel';
@@ -2462,6 +2477,66 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get notificationSessionResumed => 'Sessão retomada';
+
+  @override
+  String get celebrationEffects => 'Efeitos de celebração';
+
+  @override
+  String get celebrationEffectsSubtitle => 'Confete • 1,5 s • Carrilhão';
+
+  @override
+  String get celebrationEffectsDescription => 'Escolha quais efeitos de celebração mostrar quando as sessões forem concluídas com sucesso';
+
+  @override
+  String get confetti => 'Confete';
+
+  @override
+  String get sound => 'Som';
+
+  @override
+  String get activity => 'atividade';
+
+  @override
+  String get activities => 'atividades';
+
+  @override
+  String get shareCardSquare => 'Quadrado';
+
+  @override
+  String get shareCardPost => 'Publicação';
+
+  @override
+  String get shareCardStory => 'Story';
+
+  @override
+  String get featureExtendedSessions => 'Sessões de até 120 minutos';
+
+  @override
+  String get featureAdvancedAnalytics => 'Tendências e insights detalhados';
+
+  @override
+  String get featureCloudSync => 'Sincronizar dados entre dispositivos';
+
+  @override
+  String get featureDataExport => 'Exportar dados como CSV/PDF';
+
+  @override
+  String get featurePremiumThemes => 'Opções de temas exclusivos';
+
+  @override
+  String get featureMultiEnvironments => 'Perfis de ambiente personalizados';
+
+  @override
+  String get featureAiInsights => 'Recomendações baseadas em IA';
+
+  @override
+  String get featureSocialFeatures => 'Desafios e competições';
+
+  @override
+  String get settingKeepScreenOn => 'Manter tela ligada';
+
+  @override
+  String get settingKeepScreenOnDescription => 'Impedir que a tela bloqueie durante as sessões';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2728,6 +2803,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get minutesShort => 'min';
+
+  @override
+  String get perDay => '/dia';
+
+  @override
+  String get perWeek => '/semana';
+
+  @override
+  String get percentPerWeek => '%/semana';
 
   @override
   String get noiseCalibration => 'Calibração de ruído';
@@ -3257,10 +3341,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
-  String get tipsHidden => 'Dicas ocultas';
+  String get tipsHidden => 'Dicas ocultas - Você não verá mais dicas automáticas. Toque no ícone de lâmpada para ver dicas quando quiser.';
 
   @override
-  String get tipsShown => 'Dicas mostradas';
+  String get tipsShown => 'Dicas ativadas - Você verá dicas úteis ao usar o app.';
 
   @override
   String get showTips => 'Mostrar dicas';
@@ -3302,7 +3386,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get tip11 => 'O anel de progresso é tocável—um toque inicia sua sessão de foco.';
 
   @override
-  String get tip12 => 'Recalibre quando seu ambiente mudar para melhor precisão.';
+  String get tip12 => 'Ative Manter Tela Ligada para evitar o bloqueio da tela durante sessões de foco.';
 
   @override
   String get tip13 => 'Notificações de sessão celebram suas vitórias—ative-as para motivação!';
@@ -3326,7 +3410,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get tip19 => 'Confete celebra cada conclusão—pequenas vitórias merecem reconhecimento!';
 
   @override
-  String get tip20 => 'Sua linha de base importa—calibre ao mudar para novos espaços.';
+  String get tip20 => 'Use o Modo de Foco para sessões sem distrações com controles ocultos.';
 
   @override
   String get tip21 => 'Suas Tendências de 7 Dias revelam padrões—confira-as semanalmente para insights.';
@@ -3377,7 +3461,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionKeepScreenOn => 'Configurações → Básico → Alternador Manter Tela Ligada';
+
+  @override
+  String get tipInstructionFocusMode => 'Toque no botão Modo de Foco durante uma sessão ativa';
 
   @override
   String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
@@ -3946,6 +4033,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get statSessions => 'Sessões';
+
+  @override
+  String get statSuccess => 'Sucesso';
 
   @override
   String get ringProgressTitle => 'Progresso do Anel';
@@ -4916,4 +5006,64 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get notificationSessionResumed => 'Sessão retomada';
+
+  @override
+  String get celebrationEffects => 'Efeitos de comemoração';
+
+  @override
+  String get celebrationEffectsSubtitle => 'Confete • 1,5 s • Sininho';
+
+  @override
+  String get celebrationEffectsDescription => 'Escolha quais efeitos de comemoração mostrar quando as sessões forem concluídas com sucesso';
+
+  @override
+  String get confetti => 'Confete';
+
+  @override
+  String get sound => 'Som';
+
+  @override
+  String get activity => 'atividade';
+
+  @override
+  String get activities => 'atividades';
+
+  @override
+  String get shareCardSquare => 'Quadrado';
+
+  @override
+  String get shareCardPost => 'Publicação';
+
+  @override
+  String get shareCardStory => 'Story';
+
+  @override
+  String get featureExtendedSessions => 'Sessões de até 120 minutos';
+
+  @override
+  String get featureAdvancedAnalytics => 'Tendências e insights detalhados';
+
+  @override
+  String get featureCloudSync => 'Sincronizar dados entre dispositivos';
+
+  @override
+  String get featureDataExport => 'Exportar dados como CSV/PDF';
+
+  @override
+  String get featurePremiumThemes => 'Opções de temas exclusivos';
+
+  @override
+  String get featureMultiEnvironments => 'Perfis de ambiente personalizados';
+
+  @override
+  String get featureAiInsights => 'Recomendações baseadas em IA';
+
+  @override
+  String get featureSocialFeatures => 'Desafios e competições';
+
+  @override
+  String get settingKeepScreenOn => 'Manter tela ligada';
+
+  @override
+  String get settingKeepScreenOnDescription => 'Impedir que a tela bloqueie durante as sessões';
 }

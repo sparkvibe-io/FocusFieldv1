@@ -592,6 +592,24 @@ abstract class AppLocalizations {
   /// **'min'**
   String get minutesShort;
 
+  /// No description provided for @perDay.
+  ///
+  /// In en, this message translates to:
+  /// **'/day'**
+  String get perDay;
+
+  /// No description provided for @perWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'/week'**
+  String get perWeek;
+
+  /// No description provided for @percentPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'%/week'**
+  String get percentPerWeek;
+
   /// No description provided for @noiseCalibration.
   ///
   /// In en, this message translates to:
@@ -1573,13 +1591,13 @@ abstract class AppLocalizations {
   /// No description provided for @tipsHidden.
   ///
   /// In en, this message translates to:
-  /// **'Tips hidden'**
+  /// **'Tips hidden - You won\'t see automatic tips anymore. Tap the lightbulb icon anytime to view tips.'**
   String get tipsHidden;
 
   /// No description provided for @tipsShown.
   ///
   /// In en, this message translates to:
-  /// **'Tips shown'**
+  /// **'Tips enabled - You\'ll see helpful tips as you use the app.'**
   String get tipsShown;
 
   /// No description provided for @showTips.
@@ -1663,7 +1681,7 @@ abstract class AppLocalizations {
   /// No description provided for @tip12.
   ///
   /// In en, this message translates to:
-  /// **'Recalibrate when your environment changes for better accuracy.'**
+  /// **'Enable Keep Screen On to prevent screen lock during focus sessions.'**
   String get tip12;
 
   /// No description provided for @tip13.
@@ -1711,7 +1729,7 @@ abstract class AppLocalizations {
   /// No description provided for @tip20.
   ///
   /// In en, this message translates to:
-  /// **'Your baseline matters—calibrate when moving to new spaces.'**
+  /// **'Use Focus Mode for distraction-free sessions with hidden controls.'**
   String get tip20;
 
   /// No description provided for @tip21.
@@ -1810,11 +1828,17 @@ abstract class AppLocalizations {
   /// **'Settings → Advanced → Notifications → Smart Daily Reminders.'**
   String get tipInstructionDailyReminders;
 
-  /// No description provided for @tipInstructionCalibrate.
+  /// No description provided for @tipInstructionKeepScreenOn.
   ///
   /// In en, this message translates to:
-  /// **'Settings → Advanced → Noise Calibration.'**
-  String get tipInstructionCalibrate;
+  /// **'Settings → Basic → Keep Screen On toggle.'**
+  String get tipInstructionKeepScreenOn;
+
+  /// No description provided for @tipInstructionFocusMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Focus Mode button during an active session.'**
+  String get tipInstructionFocusMode;
 
   /// No description provided for @tipInstructionOpenAnalytics.
   ///
@@ -2907,6 +2931,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sessions'**
   String get statSessions;
+
+  /// No description provided for @statSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get statSuccess;
 
   /// No description provided for @ringProgressTitle.
   ///
@@ -4779,6 +4809,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session resumed'**
   String get notificationSessionResumed;
+
+  /// No description provided for @celebrationEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Celebration Effects'**
+  String get celebrationEffects;
+
+  /// No description provided for @celebrationEffectsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confetti • 1.5s • Chime'**
+  String get celebrationEffectsSubtitle;
+
+  /// No description provided for @celebrationEffectsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which celebration effects to show when sessions complete successfully'**
+  String get celebrationEffectsDescription;
+
+  /// No description provided for @confetti.
+  ///
+  /// In en, this message translates to:
+  /// **'Confetti'**
+  String get confetti;
+
+  /// No description provided for @sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get sound;
+
+  /// No description provided for @activity.
+  ///
+  /// In en, this message translates to:
+  /// **'activity'**
+  String get activity;
+
+  /// No description provided for @activities.
+  ///
+  /// In en, this message translates to:
+  /// **'activities'**
+  String get activities;
+
+  /// No description provided for @shareCardSquare.
+  ///
+  /// In en, this message translates to:
+  /// **'Square'**
+  String get shareCardSquare;
+
+  /// No description provided for @shareCardPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get shareCardPost;
+
+  /// No description provided for @shareCardStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story'**
+  String get shareCardStory;
+
+  /// No description provided for @featureExtendedSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions up to 120 minutes'**
+  String get featureExtendedSessions;
+
+  /// No description provided for @featureAdvancedAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed trends and insights'**
+  String get featureAdvancedAnalytics;
+
+  /// No description provided for @featureCloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync data across devices'**
+  String get featureCloudSync;
+
+  /// No description provided for @featureDataExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export data as CSV/PDF'**
+  String get featureDataExport;
+
+  /// No description provided for @featurePremiumThemes.
+  ///
+  /// In en, this message translates to:
+  /// **'Exclusive theme options'**
+  String get featurePremiumThemes;
+
+  /// No description provided for @featureMultiEnvironments.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom environment profiles'**
+  String get featureMultiEnvironments;
+
+  /// No description provided for @featureAiInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered recommendations'**
+  String get featureAiInsights;
+
+  /// No description provided for @featureSocialFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges and competitions'**
+  String get featureSocialFeatures;
+
+  /// No description provided for @settingKeepScreenOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Screen On'**
+  String get settingKeepScreenOn;
+
+  /// No description provided for @settingKeepScreenOnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevent screen from locking during sessions'**
+  String get settingKeepScreenOnDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

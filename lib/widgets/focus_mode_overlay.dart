@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:focus_field/widgets/banner_ad_footer.dart';
 import 'package:focus_field/providers/subscription_provider.dart';
+import 'package:focus_field/utils/debug_log.dart';
 import 'dart:math' as math;
 import 'package:focus_field/l10n/app_localizations.dart';
 
@@ -99,6 +101,11 @@ class FocusModeOverlay extends ConsumerWidget {
 
     // Check subscription status to conditionally show ads (consistent with Today/Sessions tabs)
     final hasPremiumAccess = ref.watch(premiumAccessProvider);
+
+    // Debug logging for ad display (development only)
+    if (kDebugMode && !hasPremiumAccess) {
+      DebugLog.d('[Focus Mode] Rendering ad banner for free user');
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value:
@@ -267,12 +274,19 @@ class FocusModeOverlay extends ConsumerWidget {
             ),
 
             // Banner ad - bottom center (only for free users)
+            // Main scaffold ad is disposed when Focus Mode activates (conditional rendering)
+            // This ensures only ONE ad instance exists at any time
+            // UniqueKey ensures Flutter treats this as a separate widget from main page ad
             if (!hasPremiumAccess)
               Positioned(
-                bottom: MediaQuery.of(context).padding.bottom,
+                bottom: MediaQuery.of(context).padding.bottom + 8,
                 left: 0,
                 right: 0,
-                child: const Center(child: FooterBannerAd()),
+                child: Center(
+                  child: FooterBannerAd(
+                    key: const ValueKey('focus_mode_ad'),
+                  ),
+                ),
               ),
           ],
         ),
