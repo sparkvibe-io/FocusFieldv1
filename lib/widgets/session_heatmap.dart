@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/silence_data.dart';
@@ -15,6 +16,10 @@ class SessionHeatmap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kDebugMode) {
+      debugPrint('📊 Heatmap: Widget rebuilding with ${sessions.length} sessions');
+    }
+
     final theme = Theme.of(context);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -23,8 +28,11 @@ class SessionHeatmap extends StatelessWidget {
     final weeksToShow = weeks ?? _determineWeeksToShow(today);
 
     // Calculate start date (weeks ago, starting from Monday)
-    // Subtract (weeksToShow - 1) weeks to include the current week
-    final startDate = _getMondayOfWeek(today.subtract(Duration(days: (weeksToShow - 1) * 7)));
+    // Important: Calculate days as integers first, then construct the date
+    // This avoids DST issues from Duration arithmetic
+    final daysToSubtract = (weeksToShow - 1) * 7;
+    final targetDate = DateTime(today.year, today.month, today.day - daysToSubtract);
+    final startDate = _getMondayOfWeek(targetDate);
 
     // Build a map of date -> total minutes
     final Map<DateTime, int> dailyMinutes = {};
@@ -36,7 +44,19 @@ class SessionHeatmap extends StatelessWidget {
       );
       if (date.isBefore(startDate) || date.isAfter(today)) continue;
 
-      dailyMinutes[date] = (dailyMinutes[date] ?? 0) + (session.duration ~/ 60);
+      final minutes = session.duration ~/ 60;
+      dailyMinutes[date] = (dailyMinutes[date] ?? 0) + minutes;
+
+      // Debug logging
+      if (kDebugMode) {
+        debugPrint('📊 Heatmap: Adding session - Date: $date, Duration: ${session.duration}s, Minutes: $minutes');
+      }
+    }
+
+    if (kDebugMode) {
+      debugPrint('📊 Heatmap: Total sessions processed: ${sessions.length}, Days with data: ${dailyMinutes.length}');
+      debugPrint('📊 Heatmap: Date range: $startDate to $today (${weeksToShow} weeks)');
+      debugPrint('📊 Heatmap: Map contents: ${dailyMinutes.entries.map((e) => '${e.key}: ${e.value}min').join(', ')}');
     }
 
     // Find max minutes for color scaling
@@ -48,7 +68,7 @@ class SessionHeatmap extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Month labels
-        _buildMonthLabels(startDate, weeksToShow, theme),
+        _buildMonthLabels(startDate, weeksToShow, theme, context),
         const SizedBox(height: 8),
 
         // Heatmap grid - centered
@@ -67,7 +87,12 @@ class SessionHeatmap extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(weeksToShow, (weekIndex) {
-                    final weekStart = startDate.add(Duration(days: weekIndex * 7));
+                    // Use integer arithmetic to avoid DST issues
+                    final weekStart = DateTime(
+                      startDate.year,
+                      startDate.month,
+                      startDate.day + (weekIndex * 7),
+                    );
                     return _buildWeekColumn(
                       context,
                       weekStart,
@@ -89,13 +114,19 @@ class SessionHeatmap extends StatelessWidget {
     );
   }
 
-  Widget _buildMonthLabels(DateTime startDate, int weeks, ThemeData theme) {
+  Widget _buildMonthLabels(DateTime startDate, int weeks, ThemeData theme, BuildContext context) {
     final labels = <String>[];
     String? lastMonth;
+    final locale = Localizations.localeOf(context).toString();
 
     for (var i = 0; i < weeks; i++) {
-      final weekStart = startDate.add(Duration(days: i * 7));
-      final month = DateFormat('MMM').format(weekStart);
+      // Use integer arithmetic to avoid DST issues
+      final weekStart = DateTime(
+        startDate.year,
+        startDate.month,
+        startDate.day + (i * 7),
+      );
+      final month = DateFormat('MMM', locale).format(weekStart);
       if (month != lastMonth) {
         labels.add(month);
         lastMonth = month;
@@ -165,9 +196,15 @@ class SessionHeatmap extends StatelessWidget {
       padding: const EdgeInsets.only(right: 2),
       child: Column(
         children: List.generate(7, (dayIndex) {
-          final date = weekStart.add(Duration(days: dayIndex));
-          final minutes = dailyMinutes[date] ?? 0;
-          return _buildDaySquare(context, date, minutes, maxMinutes, theme);
+          // Use integer arithmetic instead of Duration.add to avoid DST issues
+          final normalizedDate = DateTime(
+            weekStart.year,
+            weekStart.month,
+            weekStart.day + dayIndex,
+          );
+          final minutes = dailyMinutes[normalizedDate] ?? 0;
+
+          return _buildDaySquare(context, normalizedDate, minutes, maxMinutes, theme);
         }),
       ),
     );
@@ -180,19 +217,22 @@ class SessionHeatmap extends StatelessWidget {
     int maxMinutes,
     ThemeData theme,
   ) {
-    // More vibrant colors: higher minimum intensity and blended colors
-    final intensity = minutes == 0 ? 0.0 : (minutes / maxMinutes).clamp(0.5, 1.0);
-    final dateFormat = DateFormat('MMM d, yyyy');
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat('MMM d, yyyy', locale);
 
-    // Create vibrant color by blending primary with surface
+    // Create vibrant color - ensure even 1 minute shows clearly
     final Color squareColor;
     if (minutes == 0) {
       // Empty state: subtle but visible outline style (GitHub-like)
       squareColor = theme.colorScheme.surfaceContainerHighest;
     } else {
-      // Blend primary color with surface for vibrant look
+      // Any activity >= 1 minute gets visible color
+      // Scale intensity from 0.6 (1 min) to 1.0 (max)
+      final intensity = maxMinutes == 1 ? 1.0 : (minutes / maxMinutes).clamp(0.6, 1.0);
+
+      // Use primary color with strong visibility
       squareColor = Color.lerp(
-        theme.colorScheme.primary.withValues(alpha: 0.5),
+        theme.colorScheme.primary.withValues(alpha: 0.6),
         theme.colorScheme.primary,
         intensity,
       )!;
@@ -252,10 +292,12 @@ class SessionHeatmap extends StatelessWidget {
     if (intensity == 0) {
       squareColor = theme.colorScheme.surfaceContainerHighest;
     } else {
+      // Match the day square logic: minimum 0.6 alpha for visibility
+      final adjustedIntensity = intensity.clamp(0.6, 1.0);
       squareColor = Color.lerp(
-        theme.colorScheme.primary.withValues(alpha: 0.5),
+        theme.colorScheme.primary.withValues(alpha: 0.6),
         theme.colorScheme.primary,
-        intensity,
+        adjustedIntensity,
       )!;
     }
 
@@ -288,7 +330,7 @@ class SessionHeatmap extends StatelessWidget {
 
   DateTime _getMondayOfWeek(DateTime date) {
     final weekday = date.weekday;
-    final monday = date.subtract(Duration(days: weekday - 1));
-    return DateTime(monday.year, monday.month, monday.day);
+    // Use integer arithmetic instead of Duration.subtract to avoid DST issues
+    return DateTime(date.year, date.month, date.day - (weekday - 1));
   }
 }

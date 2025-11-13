@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/user_preferences.dart';
 import '../providers/silence_provider.dart';
@@ -10,6 +11,7 @@ final userPreferencesProvider =
 
 class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
   final Ref _ref;
+  bool _hasBeenExplicitlySet = false;  // Track if state was manually updated
 
   UserPreferencesNotifier(this._ref) : super(UserPreferences.defaults()) {
     _loadPreferences();
@@ -19,18 +21,46 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     try {
       final storageService = await _ref.read(storageServiceProvider.future);
       final prefs = await storageService.loadUserPreferences();
-      state = prefs;
-    } catch (_) {
-      state = UserPreferences.defaults();
+
+      // Only update state if it hasn't been explicitly set (avoid race condition)
+      if (!_hasBeenExplicitlySet) {
+        state = prefs;
+        if (kDebugMode) {
+          debugPrint('🎓 UserPrefs: Loaded from storage: ${prefs.enabledProfiles}');
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('🎓 UserPrefs: Skipping load (state already set): ${state.enabledProfiles}');
+        }
+      }
+    } catch (e) {
+      if (!_hasBeenExplicitlySet) {
+        state = UserPreferences.defaults();
+      }
+      if (kDebugMode) {
+        debugPrint('🎓 UserPrefs: Load failed, using ${_hasBeenExplicitlySet ? 'current state' : 'defaults'}: ${state.enabledProfiles}');
+        debugPrint('🎓 UserPrefs: Load error: $e');
+      }
     }
   }
 
   Future<void> _persist(UserPreferences updated) async {
+    _hasBeenExplicitlySet = true;  // Mark that state has been explicitly updated
     state = updated;
+    if (kDebugMode) {
+      debugPrint('🎓 UserPrefs: State updated to: ${updated.enabledProfiles}');
+    }
     try {
       final storageService = await _ref.read(storageServiceProvider.future);
       await storageService.saveUserPreferences(updated);
-    } catch (_) {}
+      if (kDebugMode) {
+        debugPrint('🎓 UserPrefs: Saved to storage: ${updated.enabledProfiles}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('🎓 UserPrefs: Save failed: $e');
+      }
+    }
   }
 
   Future<void> setEnabledProfiles(List<String> enabledProfiles) async {
@@ -74,8 +104,39 @@ class UserPreferencesNotifier extends StateNotifier<UserPreferences> {
     await _persist(updated);
   }
 
+  Future<void> updateKeepScreenOn(bool enabled) async {
+    final updated = state.copyWith(keepScreenOn: enabled);
+    await _persist(updated);
+  }
+
   Future<void> updateCelebrationConfettiEnabled(bool enabled) async {
     final updated = state.copyWith(enableCelebrationConfetti: enabled);
+    await _persist(updated);
+  }
+
+  // New celebration settings methods
+  Future<void> updateCelebrationEffectsEnabled(bool enabled) async {
+    final updated = state.copyWith(enableCelebrationEffects: enabled);
+    await _persist(updated);
+  }
+
+  Future<void> updateCelebrationDuration(double duration) async {
+    final updated = state.copyWith(celebrationDuration: duration);
+    await _persist(updated);
+  }
+
+  Future<void> updateCelebrationType(CelebrationType type) async {
+    final updated = state.copyWith(celebrationType: type);
+    await _persist(updated);
+  }
+
+  Future<void> updateCelebrationSound(bool enabled) async {
+    final updated = state.copyWith(celebrationSound: enabled);
+    await _persist(updated);
+  }
+
+  Future<void> updateCelebrationSoundType(CelebrationSoundType type) async {
+    final updated = state.copyWith(celebrationSoundType: type);
     await _persist(updated);
   }
 

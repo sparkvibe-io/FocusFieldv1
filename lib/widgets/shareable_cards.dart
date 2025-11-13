@@ -4,14 +4,24 @@ import 'package:focus_field/providers/ambient_quest_provider.dart';
 
 /// Card format options for sharing
 enum ShareCardFormat {
-  square(1080, 1080, 'Square'), // 1:1 - Universal
-  post(1080, 1350, 'Post'), // 4:5 - Instagram/Twitter posts
-  story(1080, 1920, 'Story'); // 9:16 - Instagram Stories
+  square(1080, 1080), // 1:1 - Universal
+  post(1080, 1350), // 4:5 - Instagram/Twitter posts
+  story(1080, 1920); // 9:16 - Instagram Stories
 
-  const ShareCardFormat(this.width, this.height, this.label);
+  const ShareCardFormat(this.width, this.height);
   final double width;
   final double height;
-  final String label;
+
+  String getLabel(AppLocalizations l10n) {
+    switch (this) {
+      case ShareCardFormat.square:
+        return l10n.shareCardSquare;
+      case ShareCardFormat.post:
+        return l10n.shareCardPost;
+      case ShareCardFormat.story:
+        return l10n.shareCardStory;
+    }
+  }
 }
 
 /// Collection of beautifully designed shareable cards for social media.
@@ -899,7 +909,7 @@ class MinimalProgressCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'minutes',
+                      l10n.minutes,
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w500,
@@ -977,11 +987,13 @@ class MinimalProgressCard extends StatelessWidget {
   Widget _buildStatsGrid(BuildContext context) {
     final stats = <Widget>[];
 
+    final l10n = AppLocalizations.of(context)!;
+
     if (sessionCount > 0) {
       stats.add(
         _StatItem(
           icon: Icons.format_list_numbered_outlined,
-          label: 'Sessions',
+          label: l10n.statSessions,
           value: sessionCount.toString(),
         ),
       );
@@ -991,7 +1003,7 @@ class MinimalProgressCard extends StatelessWidget {
       stats.add(
         _StatItem(
           icon: Icons.check_circle_outline,
-          label: 'Success',
+          label: l10n.statSuccess,
           value: '${successRate.toStringAsFixed(0)}%',
         ),
       );

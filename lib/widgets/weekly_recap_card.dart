@@ -19,7 +19,8 @@ class WeeklyRecapCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat('MMM d');
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat('MMM d', locale);
 
     return Card(
       elevation: 2,

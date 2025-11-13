@@ -270,6 +270,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get minutesShort => '分钟';
 
   @override
+  String get perDay => '/天';
+
+  @override
+  String get perWeek => '/周';
+
+  @override
+  String get percentPerWeek => '%/周';
+
+  @override
   String get noiseCalibration => '噪声校准';
 
   @override
@@ -797,10 +806,10 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get tipsHidden => '隐藏提示';
+  String get tipsHidden => '提示已隐藏 - 您将不再看到自动提示。随时点击灯泡图标查看提示。';
 
   @override
-  String get tipsShown => '显示提示';
+  String get tipsShown => '提示已启用 - 您将在使用应用时看到有用的提示。';
 
   @override
   String get showTips => '显示提示';
@@ -842,7 +851,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tip11 => '进度环是可点击的——点击一下即可启动您的专注会话。';
 
   @override
-  String get tip12 => '当环境发生变化时重新校准以获得更高的准确性。';
+  String get tip12 => '启用保持屏幕常亮以防止在专注会话期间屏幕锁定。';
 
   @override
   String get tip13 => '会议通知庆祝您的胜利——激发他们的动力！';
@@ -866,7 +875,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tip19 => '五彩纸屑庆祝每一次完成——小小的胜利值得认可！';
 
   @override
-  String get tip20 => '您的基线很重要——在搬到新空间时进行校准。';
+  String get tip20 => '使用专注模式进行无干扰会话，隐藏控件。';
 
   @override
   String get tip21 => '您的 7 天趋势揭示了模式 - 每周检查一次以获取见解。';
@@ -917,7 +926,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tipInstructionDailyReminders => '设置→高级→通知→智能每日提醒。';
 
   @override
-  String get tipInstructionCalibrate => '设置 → 高级 → 噪声校准。';
+  String get tipInstructionKeepScreenOn => '设置 → 基本 → 保持屏幕常亮切换';
+
+  @override
+  String get tipInstructionFocusMode => '在活动会话期间点击专注模式按钮';
 
   @override
   String get tipInstructionOpenAnalytics => '打开 Analytics 查看趋势和平均值。';
@@ -1488,6 +1500,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get statSessions => '会议';
 
   @override
+  String get statSuccess => '成功';
+
+  @override
   String get ringProgressTitle => '戒指进度';
 
   @override
@@ -1914,6 +1929,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingAdjustAnytime => '您可以随时在“设置”中进行调整';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 从$starterMinutes分钟的练习开始，帮助您适应。当您准备好时，完整的$goalMinutes分钟目标等着您！';
+  }
+
+  @override
+  String get buttonGotIt => '知道了';
+
+  @override
   String get buttonGetStarted => '开始使用';
 
   @override
@@ -2256,7 +2279,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themePurpleNight => '紫夜';
 
   @override
-  String get themeGoldLuxury => '黄金奢华';
+  String get themeGold => '金色';
 
   @override
   String get themeSolarSunrise => '太阳能日出';
@@ -2265,7 +2288,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeCyberNeon => '网络霓虹灯';
 
   @override
-  String get themeMidnightTeal => '午夜青色';
+  String get themeLuxury => '奢华';
 
   @override
   String get settingsAppTheme => '应用主题';
@@ -2454,4 +2477,64 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationSessionResumed => '练习已恢复';
+
+  @override
+  String get celebrationEffects => '庆祝效果';
+
+  @override
+  String get celebrationEffectsSubtitle => '彩纸 • 1.5秒 • 铃声';
+
+  @override
+  String get celebrationEffectsDescription => '选择练习成功完成时显示的庆祝效果';
+
+  @override
+  String get confetti => '彩纸';
+
+  @override
+  String get sound => '声音';
+
+  @override
+  String get activity => '活动';
+
+  @override
+  String get activities => '活动';
+
+  @override
+  String get shareCardSquare => '正方形';
+
+  @override
+  String get shareCardPost => '帖子';
+
+  @override
+  String get shareCardStory => '故事';
+
+  @override
+  String get featureExtendedSessions => '最长120分钟的练习';
+
+  @override
+  String get featureAdvancedAnalytics => '详细趋势和见解';
+
+  @override
+  String get featureCloudSync => '跨设备同步数据';
+
+  @override
+  String get featureDataExport => '导出CSV/PDF数据';
+
+  @override
+  String get featurePremiumThemes => '专属主题选项';
+
+  @override
+  String get featureMultiEnvironments => '自定义环境配置';
+
+  @override
+  String get featureAiInsights => 'AI智能推荐';
+
+  @override
+  String get featureSocialFeatures => '挑战和竞赛';
+
+  @override
+  String get settingKeepScreenOn => '保持屏幕常亮';
+
+  @override
+  String get settingKeepScreenOnDescription => '防止练习期间屏幕锁定';
 }

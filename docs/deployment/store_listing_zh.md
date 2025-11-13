@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Chinese)
 <!-- LANGUAGE: Chinese (ZH) -->
 <!-- MARKETS: China, Taiwan, Hong Kong, Singapore -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 <!-- NOTE: This version uses Simplified Chinese. For Traditional Chinese, see notes at bottom -->
 
 ---
@@ -57,14 +58,14 @@ Focus Field
 ```
 Focus Field 是您的个人环境静音追踪器，通过富有同理心的任务式进度系统帮助您培养深度专注习惯。
 
-🎯 工作原理
-• 开始专注会话（1-120 分钟）
+工作原理
+• 开始专注会话（1-4 小时）
 • 应用实时测量环境噪音水平
 • 通过保持安静环境获得积分（≥70% 静音）
 • 使用我们灵活的 2 天规则建立连续记录
 • 跟踪学习、阅读和冥想活动的进度
 
-🌟 主要功能
+主要功能
 • 实时环境监测（无音频录制！）
 • 带倒计时的互动进度环
 • 专注模式让会话不受干扰
@@ -75,41 +76,49 @@ Focus Field 是您的个人环境静音追踪器，通过富有同理心的任�
 • 支持平板电脑横屏分屏显示
 • 支持 7 种语言
 
-🎨 精美设计
+精美设计
 • Material 3 设计系统
 • 高对比度浅色和深色主题
 • 响应式设计（手机和平板电脑）
 • 流畅动画和视觉反馈
 
-💎 高级功能
-• 延长会话至 120 分钟
+高级功能（每月$0.99或每年$9.99）
+• 延长会话至 4 小时（vs. 免费版30分钟）
 • 高级分析和趋势图表
 • 数据导出（CSV/PDF）
 • 高级主题
-• 90 天历史记录
+• 90 天历史记录（vs. 免费版7天）
+• 无广告体验
 
-🔒 隐私优先
+隐私优先
 • 无音频录制 - 仅测量分贝
 • 仅本地存储（无云传输）
 • 无需登录
 • 可选分析（匿名化）
 
-🌍 支持语言
+支持语言
 英语、西班牙语、法语、德语、日语、葡萄牙语、巴西葡萄牙语、中文
 
-📊 适用于
+适用于
 • 学生（学习会话）
 • 远程工作者（深度工作）
 • 读者（不间断阅读时间）
 • 冥想者（安静练习追踪）
 • 任何想培养专注习惯的人
 
-⚡ 入门步骤
+入门步骤
 1. 授予麦克风权限
 2. 选择您的环境阈值
 3. 设定每日目标（10-60 分钟）
 4. 开始您的第一次会话
 5. 建立连续记录！
+
+---
+
+支持与法律
+隐私政策: https://sparkvibe.io/privacy
+使用条款: https://sparkvibe.io/terms
+支持: support@sparkvibe.io
 
 市场首个环境静音测量应用。加入专注革命！
 ```
@@ -207,11 +216,11 @@ Focus Field 是您的个人环境静音追踪器，通过富有同理心的任�
 ### Version 1.0.0
 
 ```
-🎉 欢迎使用 Focus Field 1.0！
+欢迎使用 Focus Field 1.0！
 
 Focus Field 是首个测量环境静音并通过富有同理心的任务式进度帮助您培养专注习惯的应用。
 
-✨ 主要功能
+主要功能
 • 实时环境监测（无音频录制！）
 • 基于任务的进度系统，设定每日目标
 • 富有同理心的连续记录（2 天规则 + 冻结令牌）
@@ -221,17 +230,17 @@ Focus Field 是首个测量环境静音并通过富有同理心的任务式进�
 • 精美的 Material 3 设计
 • 支持 7 种语言
 
-🎯 入门步骤
+入门步骤
 1. 完成 6 屏引导流程
 2. 设定每日目标（10-60 分钟）
 3. 选择环境阈值
 4. 开始您的第一次专注会话
 5. 建立连续记录！
 
-🔒 隐私优先
+隐私优先
 无音频录制 - 仅测量分贝。所有数据本地存储。无需登录。
 
-📊 高级版
+高级版（每月$0.99或每年$9.99）
 升级以获得延长会话、高级分析、数据导出等功能。
 
 立即开始您的专注之旅！
@@ -257,12 +266,13 @@ Focus Field 是首个测量环境静音并通过富有同理心的任务式进�
 <!-- FIELD: Subscription Description -->
 <!-- CHARACTER LIMIT: iOS 45 chars, Google Play 80 chars for title + unlimited for description -->
 ```
-解锁高级功能：
-• 延长会话（最长 120 分钟）
+解锁高级功能（每月$0.99或每年$9.99）：
+• 延长会话（最长 4 小时 vs. 免费版30分钟）
 • 高级分析和趋势图表
 • 数据导出（CSV/PDF）
 • 高级主题
-• 90 天历史记录
+• 90 天历史记录（vs. 免费版7天）
+• 无广告体验
 • 优先支持
 ```
 <!-- ENGLISH: "Unlock Premium features: Extended sessions (up to 120 minutes), Advanced analytics and trend charts, Data export (CSV/PDF), Premium themes, 90-day history, Priority support" -->

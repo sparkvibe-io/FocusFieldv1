@@ -128,7 +128,21 @@ class AppInitializer extends ConsumerWidget {
       );
       await dfm.init();
     });
-    
+
+    // Initialize tip service (non-blocking)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final tipService = ref.read(tipServiceProvider);
+        await tipService.initializeOnAppStart();
+        // Show tips after initialization if appropriate
+        if (context.mounted) {
+          await tipService.maybeShowOnAppStart(context);
+        }
+      } catch (_) {
+        /* ignore tip initialization errors */
+      }
+    });
+
     // Trigger rating prompt logic (non-blocking)
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
@@ -143,10 +157,6 @@ class AppInitializer extends ConsumerWidget {
                   ? silenceData.recentSessions.first.duration
                   : null,
         );
-        // Reset tip session state on app start
-        try {
-          await ref.read(tipServiceProvider).resetSessionState();
-        } catch (_) {}
       } catch (_) {
         /* ignore rating errors */
       }
@@ -161,65 +171,65 @@ class AppInitializer extends ConsumerWidget {
 
   Widget _buildLoadingScreen(BuildContext context, String message) {
     final theme = Theme.of(context);
+    // Match the splash screen's black background and styling for seamless transition
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.primary.withValues(alpha: 0.1),
-              theme.colorScheme.surface,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // App icon placeholder
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(20),
+        color: Colors.black,
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // App icon with rounded corners (matches splash screen)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: Image.asset(
+                    'assets/icon/app_icon.png',
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
+                    semanticLabel: AppLocalizations.of(context)!.appIconSemantic,
+                  ),
                 ),
-                child: Icon(
-                  Icons.volume_off,
-                  size: 40,
-                  color: theme.colorScheme.onPrimary,
-                ),
-              ),
-              const SizedBox(height: 32),
+                const SizedBox(height: 40),
 
-              // Loading indicator
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.colorScheme.primary,
+                // App name with clean white styling
+                Text(
+                  AppLocalizations.of(context)!.appTitle,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 12),
 
-              // Loading message
-              Text(
-                message,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
+                // Loading message with teal accent
+                Text(
+                  message,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.5,
+                    color: const Color(0xFF00BFA5).withValues(alpha: 0.85), // Teal from icon
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
+                const SizedBox(height: 48),
 
-              Text(
-                AppLocalizations.of(context)!.taglineSilence,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
+                // Loading indicator with gold color (matches splash screen)
+                const SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.4,
+                    valueColor: AlwaysStoppedAnimation(
+                      Color(0xFFD4AF37), // Rich gold to match icon
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:focus_field/theme/theme_extensions.dart';
 
-/// Fullscreen animated backdrop for premium themes (cyberNeon, midnightTeal).
+/// Fullscreen animated backdrop for premium themes (cyberNeon, luxury).
 ///
 /// - Uses DramaticThemeStyling.appBackgroundGradient as the base layer.
 /// - If neonAnimated is true, gently animates the gradient direction and

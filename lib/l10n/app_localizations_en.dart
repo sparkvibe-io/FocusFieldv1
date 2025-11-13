@@ -270,6 +270,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minutesShort => 'min';
 
   @override
+  String get perDay => '/day';
+
+  @override
+  String get perWeek => '/week';
+
+  @override
+  String get percentPerWeek => '%/week';
+
+  @override
   String get noiseCalibration => 'Noise Calibration';
 
   @override
@@ -797,10 +806,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tipsHidden => 'Tips hidden';
+  String get tipsHidden => 'Tips hidden - You won\'t see automatic tips anymore. Tap the lightbulb icon anytime to view tips.';
 
   @override
-  String get tipsShown => 'Tips shown';
+  String get tipsShown => 'Tips enabled - You\'ll see helpful tips as you use the app.';
 
   @override
   String get showTips => 'Show Tips';
@@ -842,7 +851,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip11 => 'The progress ring is tappable—one tap starts your focus session.';
 
   @override
-  String get tip12 => 'Recalibrate when your environment changes for better accuracy.';
+  String get tip12 => 'Enable Keep Screen On to prevent screen lock during focus sessions.';
 
   @override
   String get tip13 => 'Session notifications celebrate your wins—enable them for motivation!';
@@ -866,7 +875,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip19 => 'Confetti celebrates every completion—small wins deserve recognition!';
 
   @override
-  String get tip20 => 'Your baseline matters—calibrate when moving to new spaces.';
+  String get tip20 => 'Use Focus Mode for distraction-free sessions with hidden controls.';
 
   @override
   String get tip21 => 'Your 7-Day Trends reveal patterns—check them weekly for insights.';
@@ -917,7 +926,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionKeepScreenOn => 'Settings → Basic → Keep Screen On toggle.';
+
+  @override
+  String get tipInstructionFocusMode => 'Tap Focus Mode button during an active session.';
 
   @override
   String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
@@ -1488,6 +1500,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statSessions => 'Sessions';
 
   @override
+  String get statSuccess => 'Success';
+
+  @override
   String get ringProgressTitle => 'Ring Progress';
 
   @override
@@ -1914,6 +1929,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingAdjustAnytime => 'You can adjust this anytime in Settings';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 Starting with a $starterMinutes-minute session to help you get comfortable. Your full $goalMinutes-minute goal is ready when you are!';
+  }
+
+  @override
+  String get buttonGotIt => 'Got it';
+
+  @override
   String get buttonGetStarted => 'Get Started';
 
   @override
@@ -2256,7 +2279,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themePurpleNight => 'Purple Night';
 
   @override
-  String get themeGoldLuxury => 'Gold Luxury';
+  String get themeGold => 'Gold';
 
   @override
   String get themeSolarSunrise => 'Solar Sunrise';
@@ -2265,7 +2288,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeCyberNeon => 'Cyber Neon';
 
   @override
-  String get themeMidnightTeal => 'Midnight Teal';
+  String get themeLuxury => 'Luxury';
 
   @override
   String get settingsAppTheme => 'App Theme';
@@ -2454,4 +2477,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationSessionResumed => 'Session resumed';
+
+  @override
+  String get celebrationEffects => 'Celebration Effects';
+
+  @override
+  String get celebrationEffectsSubtitle => 'Confetti • 1.5s • Chime';
+
+  @override
+  String get celebrationEffectsDescription => 'Choose which celebration effects to show when sessions complete successfully';
+
+  @override
+  String get confetti => 'Confetti';
+
+  @override
+  String get sound => 'Sound';
+
+  @override
+  String get activity => 'activity';
+
+  @override
+  String get activities => 'activities';
+
+  @override
+  String get shareCardSquare => 'Square';
+
+  @override
+  String get shareCardPost => 'Post';
+
+  @override
+  String get shareCardStory => 'Story';
+
+  @override
+  String get featureExtendedSessions => 'Sessions up to 120 minutes';
+
+  @override
+  String get featureAdvancedAnalytics => 'Detailed trends and insights';
+
+  @override
+  String get featureCloudSync => 'Sync data across devices';
+
+  @override
+  String get featureDataExport => 'Export data as CSV/PDF';
+
+  @override
+  String get featurePremiumThemes => 'Exclusive theme options';
+
+  @override
+  String get featureMultiEnvironments => 'Custom environment profiles';
+
+  @override
+  String get featureAiInsights => 'AI-powered recommendations';
+
+  @override
+  String get featureSocialFeatures => 'Challenges and competitions';
+
+  @override
+  String get settingKeepScreenOn => 'Keep Screen On';
+
+  @override
+  String get settingKeepScreenOnDescription => 'Prevent screen from locking during sessions';
 }

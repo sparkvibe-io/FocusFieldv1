@@ -95,6 +95,18 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
       final currentSettings = state.value!;
       final updatedSettings = {...currentSettings, key: value};
 
+      // CRITICAL: Preserve current UI values before invalidating appSettingsProvider
+      // When appSettingsProvider is invalidated, StateProviders that depend on it will reset
+      // to their initial values. We need to preserve the current UI-selected values.
+      final currentDuration = _ref.read(activeSessionDurationProvider);
+      final currentThreshold = _ref.read(activeDecibelThresholdProvider);
+
+      if (!kReleaseMode) {
+        DebugLog.d(
+          '⚙️ [SettingsNotifier] Preserving current UI values - duration: ${currentDuration}s, threshold: ${currentThreshold}dB',
+        );
+      }
+
       // Save individual setting
       await storageService.saveAllSettings({key: value});
 
@@ -112,8 +124,15 @@ class SettingsNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
       // Invalidate the app settings provider to refresh dependent providers
       _ref.invalidate(appSettingsProvider);
 
+      // Restore the preserved UI values AFTER invalidation
+      // This ensures the user's current selection is maintained
+      _ref.read(activeSessionDurationProvider.notifier).state = currentDuration;
+      _ref.read(activeDecibelThresholdProvider.notifier).state = currentThreshold;
+
       if (!kReleaseMode) {
-        DebugLog.d('⚙️ [SettingsNotifier] appSettingsProvider invalidated');
+        DebugLog.d(
+          '⚙️ [SettingsNotifier] appSettingsProvider invalidated, UI values restored',
+        );
       }
     } catch (error, stackTrace) {
       if (mounted) {
@@ -274,7 +293,7 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
       final updatedData = await storageService.updateStreak(currentData);
       final recentSessions =
           [...updatedData.recentSessions, session]
-              .take(10) // Keep only last 10 sessions
+              .take(100) // Keep last 100 sessions for heatmap (12+ weeks of data)
               .toList();
 
       final newData = updatedData.copyWith(
@@ -283,12 +302,21 @@ class SilenceDataNotifier extends StateNotifier<AsyncValue<SilenceData>> {
         recentSessions: recentSessions,
       );
 
+      // Debug logging
+      if (kDebugMode) {
+        debugPrint('💾 Saving session - Date: ${session.date}, Duration: ${session.duration}s, Minutes: ${session.duration ~/ 60}');
+        debugPrint('💾 Total sessions in storage: ${recentSessions.length}');
+      }
+
       // Save data
       await storageService.saveSilenceData(newData);
       await storageService.saveLastSessionDate(session.date);
 
       if (mounted) {
         state = AsyncValue.data(newData);
+        if (kDebugMode) {
+          debugPrint('💾 Session saved and state updated');
+        }
       }
     } catch (error, stackTrace) {
       if (mounted) {

@@ -101,10 +101,11 @@ class _TrendsSheetState extends ConsumerState<TrendsSheet>
     final dailySuccessRate =
         dailySessions > 0 ? (dailySuccessCount / dailySessions * 100) : 0.0;
 
-    final formatter = DateFormat('MMM d');
+    final locale = Localizations.localeOf(context).toString();
+    final formatter = DateFormat('MMM d', locale);
     final weekRange =
         '${formatter.format(startOfWeek)} - ${formatter.format(endOfWeek)}, ${now.year}';
-    final dateFormatter = DateFormat('MMMM d, y');
+    final dateFormatter = DateFormat('MMMM d, y', locale);
     final todayRange = dateFormatter.format(now);
 
     // Determine initial time range based on available data
@@ -376,7 +377,8 @@ class _TrendsBasicTab extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     // Format date range (e.g., "Oct 13 - Oct 20")
-    final formatter = DateFormat('MMM d');
+    final locale = Localizations.localeOf(context).toString();
+    final formatter = DateFormat('MMM d', locale);
     final dateRange =
         '${formatter.format(recap.weekStartDate)} - ${formatter.format(recap.weekEndDate)}';
 
@@ -690,37 +692,34 @@ class _SevenDayStackedBars extends ConsumerWidget {
     return Stack(children: children);
   }
 
+  /// Returns the activity color using the same fixed Material colors
+  /// as the activity chips for perfect visual consistency.
   Color? _activityColor(
     BuildContext context,
     WidgetRef ref,
     String activityId,
   ) {
-    final cs = Theme.of(context).colorScheme;
-    return _builtInColor(cs, activityId);
-  }
-
-  Color _builtInColor(ColorScheme cs, String key) {
-    switch (key.toLowerCase()) {
+    switch (activityId.toLowerCase()) {
       case 'work':
-        return cs.primary;
+        return const Color(0xFFEF5350); // Material Red 400 - Bright, bold
       case 'study':
       case 'studying':
-        return cs.primary; // Blue
+        return const Color(0xFF2196F3); // Material Blue 500 - Bright, energetic
       case 'reading':
-        return cs.secondary; // Purple
+        return const Color(0xFF9C27B0); // Material Purple 500 - Rich, deep
       case 'meditation':
-        return cs.tertiary; // Green
+        return const Color(0xFF4CAF50); // Material Green 500 - Fresh, vibrant
       case 'other':
-        return cs.error; // Orange/Amber - distinct 4th color
+        return const Color(0xFFFF9800); // Material Orange 500 - Warm, bold
       case 'fitness':
-        return cs.secondaryContainer;
+        return const Color(0xFFFA114F); // Material Pink-Red - Energetic
       case 'family':
-        return cs.tertiaryContainer;
+        return const Color(0xFF9B59B6); // Material Purple - Warm, inviting
       case 'noise':
       case 'focus':
-        return cs.primaryContainer;
+        return const Color(0xFF00BCD4); // Material Cyan 500 - Bright, clear
       default:
-        return cs.primary;
+        return const Color(0xFF2196F3); // Default to blue
     }
   }
 

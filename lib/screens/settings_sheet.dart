@@ -22,6 +22,7 @@ import 'package:focus_field/services/tip_service.dart';
 import 'package:focus_field/providers/user_preferences_provider.dart';
 import 'package:focus_field/widgets/activity_edit_sheet.dart';
 import 'package:focus_field/screens/onboarding_screen.dart';
+import 'package:focus_field/widgets/celebration_settings_sheet.dart';
 
 class SettingsSheet extends ConsumerWidget {
   const SettingsSheet({super.key});
@@ -132,13 +133,13 @@ class SettingsSheet extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const ThemeSelectorWidget(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           _decibelSection(context, notifier, settings),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           _dailyGoalsButton(context, ref),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           _focusModeSection(context, ref),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -153,6 +154,7 @@ class SettingsSheet extends ConsumerWidget {
               onPressed: () => _showResetDialog(context, notifier, ref),
             ),
           ),
+          const SizedBox(height: 32), // Bottom padding for reset button
         ],
       ),
     );
@@ -265,7 +267,7 @@ class SettingsSheet extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$displayValue • $enabledCount ${enabledCount == 1 ? 'activity' : 'activities'}',
+                      '$displayValue • $enabledCount ${enabledCount == 1 ? l10n.activity : l10n.activities}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -294,31 +296,65 @@ class SettingsSheet extends ConsumerWidget {
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: SwitchListTile(
-        title: Row(
-          children: [
-            Icon(
-              Icons.bedtime_outlined,
-              size: 20,
-              color: theme.colorScheme.primary,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.bedtime_outlined,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(l10n.focusModeButton),
+              ],
             ),
-            const SizedBox(width: 8),
-            Text(l10n.focusModeButton),
-          ],
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(left: 28),
-          child: Text(
-            l10n.settingsFocusModeDescription,
-            style: const TextStyle(fontSize: 12),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(left: 32, top: 4),
+              child: Text(
+                l10n.settingsFocusModeDescription,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            value: userPrefs.focusModeEnabled,
+            onChanged: (value) {
+              ref
+                  .read(userPreferencesProvider.notifier)
+                  .updateFocusModeEnabled(value);
+            },
           ),
-        ),
-        value: userPrefs.focusModeEnabled,
-        onChanged: (value) {
-          ref
-              .read(userPreferencesProvider.notifier)
-              .updateFocusModeEnabled(value);
-        },
+          // Keep Screen On setting
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.screen_lock_portrait,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(l10n.settingKeepScreenOn),
+              ],
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(left: 32, top: 4),
+              child: Text(
+                l10n.settingKeepScreenOnDescription,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+            value: userPrefs.keepScreenOn,
+            onChanged: (value) {
+              ref
+                  .read(userPreferencesProvider.notifier)
+                  .updateKeepScreenOn(value);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -383,20 +419,16 @@ class SettingsSheet extends ConsumerWidget {
             icon: Icons.notifications,
             onTap: () => _handleNotificationSettings(context),
           ),
-          _advancedCard(
-            context,
-            title: AppLocalizations.of(context)!.accessibility,
-            subtitle: AppLocalizations.of(context)!.accessibilityFeatures,
-            icon: Icons.accessibility,
-            onTap: () => _showAccessibilityDialog(context, notifier, settings),
-          ),
-          _advancedCard(
-            context,
-            title: 'Celebration Effects',
-            subtitle: 'Show confetti on successful sessions',
-            icon: Icons.celebration,
-            onTap: () => _showConfettiDialog(context, ref),
-          ),
+          // TODO: Re-enable Accessibility for post-MVP release
+          // Temporarily disabled for MVP Android launch due to potential issues
+          // _advancedCard(
+          //   context,
+          //   title: AppLocalizations.of(context)!.accessibility,
+          //   subtitle: AppLocalizations.of(context)!.accessibilityFeatures,
+          //   icon: Icons.accessibility,
+          //   onTap: () => _showAccessibilityDialog(context, notifier, settings),
+          // ),
+          _buildCelebrationCard(context, ref),
         ],
       ),
     );
@@ -1323,52 +1355,38 @@ class SettingsSheet extends ConsumerWidget {
     );
   }
 
-  Future<void> _showConfettiDialog(BuildContext context, WidgetRef ref) async {
-    bool localEnabled = ref.read(userPreferencesProvider).enableCelebrationConfetti;
+  Widget _buildCelebrationCard(BuildContext context, WidgetRef ref) {
+    final prefs = ref.watch(userPreferencesProvider);
 
-    await showDialog(
-      context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (c, setState) {
-          return AlertDialog(
-            title: const Text('Celebration Effects'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SwitchListTile(
-                  title: const Text('Show Confetti'),
-                  subtitle: const Text('Display confetti animation on successful sessions'),
-                  value: localEnabled,
-                  onChanged: (v) {
-                    setState(() => localEnabled = v);
-                  },
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await ref.read(userPreferencesProvider.notifier)
-                      .updateCelebrationConfettiEnabled(localEnabled);
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Celebration settings saved'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          );
-        },
-      ),
+    // Build dynamic subtitle showing current settings
+    final String subtitle;
+    if (!prefs.enableCelebrationEffects) {
+      subtitle = 'Disabled';
+    } else {
+      final parts = <String>[
+        prefs.celebrationType.displayName,
+        '${prefs.celebrationDuration.toStringAsFixed(1)}s',
+      ];
+      if (prefs.celebrationSound) {
+        parts.add(prefs.celebrationSoundType.displayName);
+      }
+      subtitle = parts.join(' • ');
+    }
+
+    final l10n = AppLocalizations.of(context)!;
+    return _advancedCard(
+      context,
+      title: l10n.celebrationEffects,
+      subtitle: subtitle,
+      icon: Icons.celebration,
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => const CelebrationSettingsSheet(),
+        );
+      },
     );
   }
 }

@@ -36,6 +36,7 @@ class TipService {
   static const _productionTipFrequencyHours = 48; // Show tips every 2 days max
 
   OverlayEntry? _current;
+  Timer? _autoDismissTimer;
 
   // Session guard to prevent tips on theme-change-induced app rebuilds
 
@@ -101,6 +102,9 @@ class TipService {
 
     // In development mode, show tips frequently for testing
     if (AppConstants.isDevelopmentMode) {
+      // Respect user preference even in development mode
+      if (!(await getEnabled())) return;
+
       // Ensure we have a current tip
       final currentTip = await _getCurrentTip();
       if (currentTip == null) {
@@ -159,7 +163,7 @@ class TipService {
               await setEnabled(!isEnabled);
               _dismiss();
               if (!context.mounted) return;
-              _showMutedToast(context, !isEnabled);
+              _showMutedToast(context, isEnabled); // isEnabled was true → now hidden, was false → now shown
               // Mark tip as seen when user toggles mute
               markCurrentTipAsSeen();
             },
@@ -170,8 +174,11 @@ class TipService {
     Overlay.of(context, rootOverlay: true).insert(overlay);
     _current = overlay;
 
+    // Cancel any existing auto-dismiss timer
+    _autoDismissTimer?.cancel();
+
     // Auto-dismiss after 10s and mark as seen
-    Future.delayed(const Duration(seconds: 10), () {
+    _autoDismissTimer = Timer(const Duration(seconds: 10), () {
       _dismiss();
       markCurrentTipAsSeen();
     });
@@ -180,6 +187,8 @@ class TipService {
   void _dismiss() {
     _current?.remove();
     _current = null;
+    _autoDismissTimer?.cancel();
+    _autoDismissTimer = null;
   }
 
   void _showMutedToast(BuildContext context, bool isNowHidden) {
@@ -340,9 +349,9 @@ class TipService {
       // 10 Tap ring to start
       case 10:
         return l10n?.tipInstructionTapRing;
-      // 11 Recalibrate baseline
+      // 11 Keep Screen On
       case 11:
-        return l10n?.tipInstructionCalibrate;
+        return l10n?.tipInstructionKeepScreenOn;
       // 12 Session notifications
       case 12:
         return l10n?.tipInstructionSessionComplete;
@@ -364,9 +373,9 @@ class TipService {
       // 18 Confetti celebrates wins
       case 18:
         return l10n?.tipInstructionStartNow;
-      // 19 Ambient baseline → calibrate
+      // 19 Focus Mode
       case 19:
-        return l10n?.tipInstructionCalibrate;
+        return l10n?.tipInstructionFocusMode;
       // 20 7-Day Trends → Summary
       case 20:
         return l10n?.tipInstruction7DayTrends;
@@ -415,7 +424,7 @@ class TipService {
     'High ambient noise? Raise your threshold to stay in the zone.',
     'Smart Daily Reminders learn your best time—let them guide you.',
     'The progress ring is tappable—one tap starts your focus session.',
-    'Recalibrate when your environment changes for better accuracy.',
+    'Enable Keep Screen On to prevent screen lock during focus sessions.',
     'Session notifications celebrate your wins—enable them for motivation!',
     'Consistency beats perfection—show up, even on busy days.',
     'Try different times of day to discover your quiet sweet spot.',
@@ -423,7 +432,7 @@ class TipService {
     'Each activity tracks separately toward your goal—variety keeps it fresh.',
     'Export your data (Premium) to see your complete focus journey.',
     'Confetti celebrates every completion—small wins deserve recognition!',
-    'Your baseline matters—calibrate when moving to new spaces.',
+    'Use Focus Mode for distraction-free sessions with hidden controls.',
     'Your 7-Day Trends reveal patterns—check them weekly for insights.',
     'Upgrade session duration (Premium) for longer deep focus blocks.',
     'Focus is a practice—small sessions build the habit you want.',
@@ -672,5 +681,7 @@ class TipService {
   /// Dispose method to clean up resources
   void dispose() {
     _stopDevModeTimer();
+    _autoDismissTimer?.cancel();
+    _autoDismissTimer = null;
   }
 }

@@ -31,10 +31,36 @@ class AppTheme {
       );
     }
 
-    // Neutral dramatic extension and standard decorations for all themes
+    // Dramatic extension and decorations based on theme mode
     DramaticThemeStyling dramatic = DramaticThemeStyling.neutral();
     AppDecorations decorations = AppDecorations.standard();
-    // All themes now use neutral backgrounds with standard decorations (no gradients, no glowing borders)
+
+    // Luxury theme: rich gradients and golden glow
+    if (mode == AppThemeMode.luxury) {
+      dramatic = const DramaticThemeStyling(
+        appBackgroundGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF1A1E24), // Deep blue-black (from color scheme)
+            Color(0xFF1B2838), // Slightly warmer blue
+            Color(0xFF1E2333), // Rich depth
+            Color(0xFF22263A), // Deeper purple hint
+          ],
+        ),
+        cardBackgroundGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2D3440), // Elevated surface
+            Color(0xFF323948), // Teal hint
+            Color(0xFF2F3442), // Rich depth
+          ],
+        ),
+      );
+      decorations = AppDecorations.luxury();
+    }
+    // All other themes use neutral backgrounds with standard decorations (no gradients, no glowing borders)
 
     final highContrast = enableHighContrast;
     return ThemeData(
@@ -231,7 +257,7 @@ class AppTheme {
           tertiary: const Color(0xFFE1BEE7), // Soft purple highlight
           outline: basePurple.outline, // Standard outline
         );
-      case AppThemeMode.goldLuxury:
+      case AppThemeMode.gold:
         final baseGold = ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF8F00),
           brightness: brightness,
@@ -332,27 +358,27 @@ class AppTheme {
           tertiary: const Color(0xFF9D00FF), // Electric purple
           outline: baseNeon.outline, // Standard outline (no neon glow)
         );
-      case AppThemeMode.midnightTeal:
-        final baseTeal = ColorScheme.fromSeed(
-          seedColor: const Color(0xFF009688),
+      case AppThemeMode.luxury:
+        final baseLuxury = ColorScheme.fromSeed(
+          seedColor: const Color(0xFFD4AF37), // Rich gold
           brightness: Brightness.dark,
         );
-        return baseTeal.copyWith(
-          // Subtle teal tint (3% shift) for ocean depth atmosphere
-          surface: const Color(0xFF1A1E1E), // +3% teal tint
-          surfaceContainer: const Color(0xFF252B2B), // Subtle teal
+        return baseLuxury.copyWith(
+          // Rich dark backgrounds with subtle warm tint (inspired by icon gradient)
+          surface: const Color(0xFF1A1E24), // Deep blue-black base
+          surfaceContainer: const Color(0xFF222833), // Slightly lighter with blue hint
           surfaceContainerHighest: const Color(
-            0xFF2F3538,
-          ), // Elevated cards with teal hint
-          onSurface: const Color(0xFFFFFFFF), // Standard white text
-          // Keep teal accents for theme identity
-          primary: const Color(0xFF00E5B8), // Vivid bioluminescent teal
-          onPrimary: const Color(0xFF000000),
-          primaryContainer: const Color(0xFF004D3D),
-          onPrimaryContainer: const Color(0xFF7FFFD4), // Aquamarine glow
-          secondary: const Color(0xFF00C9A0), // Bright jade
-          tertiary: const Color(0xFF52FFAA), // Electric mint
-          outline: baseTeal.outline, // Standard outline (no glow)
+            0xFF2D3440,
+          ), // Elevated cards with rich depth
+          onSurface: const Color(0xFFFFF8E1), // Warm off-white text (cream tone)
+          // Luxurious gold metallic accents
+          primary: const Color(0xFFD4AF37), // Classic rich gold
+          onPrimary: const Color(0xFF1A1410), // Very dark brown for contrast
+          primaryContainer: const Color(0xFF3D2F1F), // Deep brown-gold
+          onPrimaryContainer: const Color(0xFFFFE082), // Light gold glow
+          secondary: const Color(0xFFFFD700), // Bright metallic gold
+          tertiary: const Color(0xFF00BFA5), // Teal accent from icon gradient
+          outline: const Color(0xFFD4AF37), // Gold borders for luxury feel
         );
     }
   }
@@ -392,7 +418,22 @@ class AppTheme {
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
-    // All themes use standard button styling (no glowing borders)
+
+    // Luxury theme: enhanced golden glow on buttons
+    if (mode == AppThemeMode.luxury) {
+      return ElevatedButtonThemeData(
+        style: base.merge(
+          ElevatedButton.styleFrom(
+            backgroundColor: scheme.primary,
+            foregroundColor: scheme.onPrimary,
+            elevation: 6, // Slightly higher elevation for luxury
+            shadowColor: scheme.primary.withValues(alpha: 0.5), // Stronger gold glow
+          ),
+        ),
+      );
+    }
+
+    // All other themes use standard button styling
     return ElevatedButtonThemeData(
       style: base.merge(
         ElevatedButton.styleFrom(
@@ -413,7 +454,24 @@ class AppTheme {
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
-    // All themes use standard button styling (no glowing borders)
+
+    // Luxury theme: golden outline with subtle glow
+    if (mode == AppThemeMode.luxury) {
+      return OutlinedButtonThemeData(
+        style: base.merge(
+          OutlinedButton.styleFrom(
+            side: BorderSide(
+              color: scheme.primary, // Gold outline
+              width: 1.5, // Slightly thicker for luxury
+            ),
+            foregroundColor: scheme.primary,
+            shadowColor: scheme.primary.withValues(alpha: 0.3), // Golden glow
+          ),
+        ),
+      );
+    }
+
+    // All other themes use standard button styling
     return OutlinedButtonThemeData(
       style: base.merge(
         OutlinedButton.styleFrom(

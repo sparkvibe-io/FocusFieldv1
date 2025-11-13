@@ -15,6 +15,11 @@ class SilenceDetector {
   final int _durationSeconds;
   DateTime? _sessionStartTime; // To track the actual start time
 
+  // Pause tracking
+  bool _isPaused = false;
+  DateTime? _pauseStartTime;
+  Duration _totalPausedDuration = Duration.zero;
+
   // Shared permission request future to prevent concurrent OS dialog / status churn
   Future<bool>? _permissionRequestFuture;
   PermissionStatus? _cachedPermissionStatus;
@@ -170,6 +175,29 @@ class SilenceDetector {
     return status;
   }
 
+  /// Pause the session timer (does not stop microphone)
+  void pauseSession() {
+    if (_isPaused || _sessionStartTime == null) return;
+    _isPaused = true;
+    _pauseStartTime = DateTime.now();
+    if (!kReleaseMode) {
+      DebugLog.d('🔵 [SilenceDetector] Session paused at $_pauseStartTime');
+    }
+  }
+
+  /// Resume the session timer
+  void resumeSession() {
+    if (!_isPaused || _pauseStartTime == null) return;
+    final pauseDuration = DateTime.now().difference(_pauseStartTime!);
+    _totalPausedDuration += pauseDuration;
+
+    _isPaused = false;
+    _pauseStartTime = null;
+  }
+
+  /// Get whether the session is currently paused
+  bool get isPaused => _isPaused;
+
   /// Start listening for silence
   Future<void> startListening({
     required Function(double progress) onProgress,
@@ -261,6 +289,10 @@ class SilenceDetector {
       _noiseMeter = NoiseMeter();
       _readings.clear();
       _sessionStartTime = DateTime.now(); // Record the session start time
+      // Reset pause tracking
+      _isPaused = false;
+      _pauseStartTime = null;
+      _totalPausedDuration = Duration.zero;
 
       if (!kReleaseMode) {
         DebugLog.d('DEBUG: Starting noise meter...');
@@ -323,10 +355,28 @@ class SilenceDetector {
         }
       }
 
+      // Skip progress updates when paused to prevent timer jumps
+      if (_isPaused) {
+        return;
+      }
+
       // Calculate progress based on actual elapsed time for accuracy
+      // Exclude paused time from elapsed calculation
       if (_sessionStartTime == null) return; // Should not happen
-      final elapsed = DateTime.now().difference(_sessionStartTime!);
-      final progress = elapsed.inMilliseconds / (_durationSeconds * 1000);
+
+      // Calculate total elapsed time
+      final totalElapsed = DateTime.now().difference(_sessionStartTime!);
+
+      // Subtract paused duration (including current pause if active)
+      Duration pausedTime = _totalPausedDuration;
+      if (_isPaused && _pauseStartTime != null) {
+        pausedTime += DateTime.now().difference(_pauseStartTime!);
+      }
+
+      // Actual active session time = total elapsed - paused time
+      final activeElapsed = totalElapsed - pausedTime;
+      final progress = activeElapsed.inMilliseconds / (_durationSeconds * 1000);
+
       onProgress(progress.clamp(0.0, 1.0));
 
       // Check if we've reached the duration

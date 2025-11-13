@@ -23,6 +23,9 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
   @override
   void initState() {
     super.initState();
+    if (kDebugMode) {
+      DebugLog.d('[Ads] FooterBannerAd initState (key: ${widget.key})');
+    }
     // Skip initializing ads during widget tests to avoid platform views
     const inTest = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
     if (!inTest) {
@@ -115,6 +118,9 @@ class _FooterBannerAdState extends State<FooterBannerAd> {
 
   @override
   void dispose() {
+    if (kDebugMode) {
+      DebugLog.d('[Ads] FooterBannerAd dispose (key: ${widget.key})');
+    }
     _banner?.dispose();
     super.dispose();
   }

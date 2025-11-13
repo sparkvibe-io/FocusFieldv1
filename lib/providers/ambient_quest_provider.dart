@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../models/ambient_models.dart';
 import '../providers/silence_provider.dart';
 import '../utils/debug_log.dart';
@@ -35,35 +36,39 @@ String getLocalizedActivityName(BuildContext context, String activityId) {
 // Default quiet-first profiles (now includes "other" for 4 activities)
 // NOTE: The 'name' field contains the English fallback. Use getLocalizedActivityName()
 // in UI code to display the localized name.
+// Profiles now use the user's selected threshold from onboarding/settings
 final defaultProfilesProvider = Provider<List<ActivityProfile>>((ref) {
-  return const [
+  // Get the user's selected threshold from storage (set during onboarding)
+  final userThreshold = ref.watch(decibelThresholdProvider);
+
+  return [
     ActivityProfile(
       id: 'study',
       name: 'Study',
       icon: '🎓',
       usesNoise: true,
-      thresholdDb: 38,
+      thresholdDb: userThreshold.round(),
     ),
     ActivityProfile(
       id: 'reading',
       name: 'Reading',
       icon: '📖',
       usesNoise: true,
-      thresholdDb: 38,
+      thresholdDb: userThreshold.round(),
     ),
     ActivityProfile(
       id: 'meditation',
       name: 'Meditation',
       icon: '🧘',
       usesNoise: true,
-      thresholdDb: 38,
+      thresholdDb: userThreshold.round(),
     ),
     ActivityProfile(
       id: 'other',
       name: 'Other',
       icon: '⭐',
       usesNoise: true,
-      thresholdDb: 38,
+      thresholdDb: userThreshold.round(),
     ),
   ];
 });
@@ -166,6 +171,18 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
       ambientScore: 0.0,
       sessionUsesNoise: usesNoise,
     );
+
+    // Enable wake lock if user preference is enabled
+    try {
+      final prefs = _ref.read(userPreferencesProvider);
+      if (prefs.keepScreenOn) {
+        await WakelockPlus.enable();
+        DebugLog.d('🔓 Wake lock enabled for session');
+      }
+    } catch (e) {
+      DebugLog.d('⚠️  Failed to enable wake lock: $e');
+    }
+
     return id;
   }
 
@@ -215,7 +232,7 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
       ambientScore: state.sessionUsesNoise ? state.ambientScore : null,
     );
 
-    // Persist minimal history
+    // Persist session history for analytics and heatmap (12+ weeks of data)
     final storage = await _ref.read(storageServiceProvider.future);
     final jsonString = await storage.getString('ambient_sessions_list');
     List<dynamic> raw = [];
@@ -226,7 +243,7 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
         raw = [];
       }
     }
-    final items = [...raw, session.toJson()].take(30).toList();
+    final items = [...raw, session.toJson()].take(100).toList();
     await storage.setString('ambient_sessions_list', jsonEncode(items));
 
     // Apply session effects to Quest state centrally (moved from UI)
@@ -234,6 +251,14 @@ class AmbientSessionEngine extends StateNotifier<AmbientSessionState> {
       await _ref.read(questStateProvider.notifier).applySession(session);
     } catch (_) {
       // Swallow to avoid breaking end flow; UI remains responsive even if quest update fails
+    }
+
+    // Disable wake lock when session ends
+    try {
+      await WakelockPlus.disable();
+      DebugLog.d('🔒 Wake lock disabled - session ended');
+    } catch (e) {
+      DebugLog.d('⚠️  Failed to disable wake lock: $e');
     }
 
     state = const AmbientSessionState();

@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (Brazilian Portuguese)
 <!-- LANGUAGE: Brazilian Portuguese (PT-BR) -->
 <!-- MARKET: Brazil -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 <!-- NOTE: This version uses Brazilian Portuguese. For European Portuguese, see store_listing_pt.md -->
 
 ---
@@ -57,14 +58,14 @@ Meça o silêncio ambiente e crie hábitos de foco com nosso sistema compassivo
 ```
 Focus Field é seu rastreador pessoal de silêncio ambiente que ajuda você a desenvolver hábitos de foco profundo através de uma progressão compassiva baseada em missões.
 
-🎯 COMO FUNCIONA
-• Inicie uma sessão de foco (1-120 minutos)
+COMO FUNCIONA
+• Inicie uma sessão de foco (1-4 horas)
 • O app mede os níveis de ruído ambiente em tempo real
 • Ganhe pontos mantendo ambientes tranquilos (≥70% de calma)
 • Construa sequências com nossa regra flexível de 2 dias
 • Acompanhe o progresso nas atividades de Estudo, Leitura e Meditação
 
-🌟 RECURSOS PRINCIPAIS
+RECURSOS PRINCIPAIS
 • Monitoramento ambiente em tempo real (sem gravação de áudio!)
 • Anel de progresso interativo com cronômetro
 • Modo Foco para sessões sem distrações
@@ -75,41 +76,49 @@ Focus Field é seu rastreador pessoal de silêncio ambiente que ajuda você a de
 • Suporte para tablets com tela dividida horizontal
 • 7 idiomas suportados
 
-🎨 DESIGN BONITO
+DESIGN BONITO
 • Sistema de design Material 3
 • Temas claro e escuro de alto contraste
 • Design responsivo (celulares e tablets)
 • Animações suaves e feedback visual
 
-💎 RECURSOS PREMIUM
-• Sessões prolongadas até 120 minutos
+RECURSOS PREMIUM (R$4,90/mês ou R$49,90/ano)
+• Sessões prolongadas até 4 horas (vs. 30 min grátis)
 • Análises avançadas e gráficos de tendências
 • Exportação de dados (CSV/PDF)
 • Temas premium
-• Histórico de 90 dias
+• Histórico de 90 dias (vs. 7 dias grátis)
+• Experiência sem anúncios
 
-🔒 PRIVACIDADE EM PRIMEIRO LUGAR
+PRIVACIDADE EM PRIMEIRO LUGAR
 • Sem gravação de áudio - apenas medições de decibéis
 • Apenas armazenamento local (sem transmissão para a nuvem)
 • Não é necessário fazer login
 • Análises opcionais (anonimizadas)
 
-🌍 IDIOMAS SUPORTADOS
+IDIOMAS SUPORTADOS
 Inglês, Espanhol, Francês, Alemão, Japonês, Português, Português Brasileiro, Chinês
 
-📊 PERFEITO PARA
+PERFEITO PARA
 • Estudantes (sessões de estudo)
 • Trabalhadores remotos (trabalho profundo)
 • Leitores (tempo de leitura ininterrupto)
 • Praticantes de meditação (acompanhamento de prática silenciosa)
 • Qualquer pessoa que queira desenvolver hábitos de foco
 
-⚡ PRIMEIROS PASSOS
+PRIMEIROS PASSOS
 1. Conceda permissão do microfone
 2. Escolha o limite do seu ambiente
 3. Defina sua meta diária (10-60 minutos)
 4. Inicie sua primeira sessão
 5. Construa sua sequência!
+
+---
+
+SUPORTE E LEGAL
+Política de Privacidade: https://sparkvibe.io/privacy
+Termos de Uso: https://sparkvibe.io/terms
+Suporte: support@sparkvibe.io
 
 Primeiro app no mercado de medição de silêncio ambiente. Junte-se à revolução do foco!
 ```
@@ -192,7 +201,7 @@ foco,produtividade,silêncio,ambiente,ruído,meditação,estudo,trabalho profund
 <!-- NOTE: This text can be updated anytime without submitting a new version -->
 
 ```
-Primeiro rastreador de silêncio ambiente no mercado! Construa hábitos de foco com nosso sistema de missões. Sem gravação - apenas medições. Design focado na privacidade.
+Primeiro rastreador de silêncio ambiente! Construa hábitos de foco com nosso sistema de missões. Sem gravação - apenas medições. Design focado na privacidade.
 ```
 <!-- ENGLISH: "First-to-market ambient silence tracker! Build focus habits with our quest system. No recording - just measurements. Privacy-first design." -->
 
@@ -207,11 +216,11 @@ Primeiro rastreador de silêncio ambiente no mercado! Construa hábitos de foco 
 ### Version 1.0.0
 
 ```
-🎉 Bem-vindo ao Focus Field 1.0!
+Bem-vindo ao Focus Field 1.0!
 
 Focus Field é o primeiro app que mede o silêncio ambiente e ajuda você a construir hábitos de foco através de uma progressão compassiva baseada em missões.
 
-✨ RECURSOS PRINCIPAIS
+RECURSOS PRINCIPAIS
 • Monitoramento ambiente em tempo real (sem gravação de áudio!)
 • Progressão baseada em missões com objetivos diários
 • Sequências compassivas (regra de 2 dias + tokens de congelamento)
@@ -221,17 +230,17 @@ Focus Field é o primeiro app que mede o silêncio ambiente e ajuda você a cons
 • Design bonito Material 3
 • 7 idiomas suportados
 
-🎯 PRIMEIROS PASSOS
+PRIMEIROS PASSOS
 1. Complete a integração de 6 telas
 2. Defina sua meta diária (10-60 minutos)
 3. Escolha o limite do seu ambiente
 4. Inicie sua primeira sessão de foco
 5. Construa sua sequência!
 
-🔒 PRIVACIDADE EM PRIMEIRO LUGAR
+PRIVACIDADE EM PRIMEIRO LUGAR
 Sem gravação de áudio - apenas medições de decibéis. Todos os dados são armazenados localmente. Não é necessário fazer login.
 
-📊 PREMIUM
+PREMIUM (R$4,90/mês ou R$49,90/ano)
 Atualize para sessões prolongadas, análises avançadas, exportação de dados e muito mais.
 
 Comece sua jornada de foco hoje!
@@ -256,12 +265,13 @@ Premium
 <!-- FIELD: Subscription Description -->
 <!-- CHARACTER LIMIT: iOS 45 chars, Google Play 80 chars for title + unlimited for description -->
 ```
-Desbloqueie recursos Premium:
-• Sessões prolongadas (até 120 minutos)
+Desbloqueie recursos Premium (R$4,90/mês ou R$49,90/ano):
+• Sessões prolongadas (até 4 horas vs. 30 min grátis)
 • Análises avançadas e gráficos de tendências
 • Exportação de dados (CSV/PDF)
 • Temas premium
-• Histórico de 90 dias
+• Histórico de 90 dias (vs. 7 dias grátis)
+• Experiência sem anúncios
 • Suporte prioritário
 ```
 <!-- ENGLISH: "Unlock Premium features: Extended sessions (up to 120 minutes), Advanced analytics and trend charts, Data export (CSV/PDF), Premium themes, 90-day history, Priority support" -->

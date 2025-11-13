@@ -111,7 +111,7 @@ class FeatureGate extends ConsumerWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  'Upgrade',
+                  l10n.upgrade,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.w600,
@@ -126,25 +126,25 @@ class FeatureGate extends ConsumerWidget {
   }
 
   String _getFeatureDescription(String featureId, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (featureId) {
       case 'extended_sessions':
-        return 'Sessions up to 120 minutes';
+        return l10n.featureExtendedSessions;
       case 'advanced_analytics':
-        return 'Detailed trends and insights';
+        return l10n.featureAdvancedAnalytics;
       case 'cloud_sync':
-        return 'Sync data across devices';
+        return l10n.featureCloudSync;
       case 'data_export':
-        return 'Export data as CSV/PDF';
+        return l10n.featureDataExport;
       case 'premium_themes':
-        return 'Exclusive theme options';
+        return l10n.featurePremiumThemes;
       case 'multi_environments':
-        return 'Custom environment profiles';
+        return l10n.featureMultiEnvironments;
       case 'ai_insights':
-        return 'AI-powered recommendations';
+        return l10n.featureAiInsights;
       case 'social_features':
-        return 'Challenges and competitions';
+        return l10n.featureSocialFeatures;
       default:
-        final l10n = AppLocalizations.of(context)!;
         return l10n.premiumFeatureAccess;
     }
   }

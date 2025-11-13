@@ -270,6 +270,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get minutesShort => 'min';
 
   @override
+  String get perDay => '/jour';
+
+  @override
+  String get perWeek => '/semaine';
+
+  @override
+  String get percentPerWeek => '%/semaine';
+
+  @override
   String get noiseCalibration => 'Calibration du bruit';
 
   @override
@@ -797,10 +806,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get tipsHidden => 'Astuces masquées';
+  String get tipsHidden => 'Astuces masquées - Vous ne verrez plus d\'astuces automatiques. Appuyez sur l\'icône d\'ampoule pour voir les astuces quand vous voulez.';
 
   @override
-  String get tipsShown => 'Astuces affichées';
+  String get tipsShown => 'Astuces activées - Vous verrez des astuces utiles lors de l\'utilisation de l\'application.';
 
   @override
   String get showTips => 'Afficher les astuces';
@@ -842,7 +851,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tip11 => 'L\'anneau de progression est cliquable—un clic démarre votre session de concentration.';
 
   @override
-  String get tip12 => 'Recalibrez lorsque votre environnement change pour une meilleure précision.';
+  String get tip12 => 'Activez Garder l\'écran allumé pour éviter le verrouillage de l\'écran pendant les sessions de focus.';
 
   @override
   String get tip13 => 'Les notifications de session célèbrent vos victoires—activez-les pour la motivation!';
@@ -866,7 +875,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tip19 => 'Les confettis célèbrent chaque achèvement—les petites victoires méritent d\'être reconnues!';
 
   @override
-  String get tip20 => 'Votre ligne de base compte—calibrez lors du déplacement vers de nouveaux espaces.';
+  String get tip20 => 'Utilisez le Mode Focus pour des sessions sans distraction avec des contrôles cachés.';
 
   @override
   String get tip21 => 'Vos Tendances sur 7 Jours révèlent des modèles—consultez-les chaque semaine pour des insights.';
@@ -917,7 +926,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tipInstructionDailyReminders => 'Settings → Advanced → Notifications → Smart Daily Reminders.';
 
   @override
-  String get tipInstructionCalibrate => 'Settings → Advanced → Noise Calibration.';
+  String get tipInstructionKeepScreenOn => 'Paramètres → Basique → Interrupteur Garder l\'écran allumé';
+
+  @override
+  String get tipInstructionFocusMode => 'Appuyez sur le bouton Mode Focus pendant une session active';
 
   @override
   String get tipInstructionOpenAnalytics => 'Open Analytics to view trends and averages.';
@@ -1488,6 +1500,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get statSessions => 'Sessions';
 
   @override
+  String get statSuccess => 'Succès';
+
+  @override
   String get ringProgressTitle => 'Progrès de l\'anneau';
 
   @override
@@ -1914,6 +1929,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboardingAdjustAnytime => 'Vous pouvez ajuster cela à tout moment dans les paramètres';
 
   @override
+  String starterSessionTip(int starterMinutes, int goalMinutes) {
+    return '👋 Commençons par une session de $starterMinutes minutes pour vous familiariser. Votre objectif complet de $goalMinutes minutes vous attend!';
+  }
+
+  @override
+  String get buttonGotIt => 'Compris';
+
+  @override
   String get buttonGetStarted => 'Commencer';
 
   @override
@@ -2256,7 +2279,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themePurpleNight => 'Nuit violette';
 
   @override
-  String get themeGoldLuxury => 'Luxe doré';
+  String get themeGold => 'Gold';
 
   @override
   String get themeSolarSunrise => 'Lever de soleil solaire';
@@ -2265,7 +2288,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeCyberNeon => 'Néon cybernétique';
 
   @override
-  String get themeMidnightTeal => 'Sarcelle de minuit';
+  String get themeLuxury => 'Luxury';
 
   @override
   String get settingsAppTheme => 'Thème de l\'application';
@@ -2454,4 +2477,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get notificationSessionResumed => 'Reprise de la séance';
+
+  @override
+  String get celebrationEffects => 'Effets de célébration';
+
+  @override
+  String get celebrationEffectsSubtitle => 'Confettis • 1,5 s • Carillon';
+
+  @override
+  String get celebrationEffectsDescription => 'Choisissez les effets de célébration à afficher lorsque les séances se terminent avec succès';
+
+  @override
+  String get confetti => 'Confettis';
+
+  @override
+  String get sound => 'Son';
+
+  @override
+  String get activity => 'activité';
+
+  @override
+  String get activities => 'activités';
+
+  @override
+  String get shareCardSquare => 'Carré';
+
+  @override
+  String get shareCardPost => 'Publication';
+
+  @override
+  String get shareCardStory => 'Story';
+
+  @override
+  String get featureExtendedSessions => 'Séances jusqu\'à 120 minutes';
+
+  @override
+  String get featureAdvancedAnalytics => 'Tendances et informations détaillées';
+
+  @override
+  String get featureCloudSync => 'Synchroniser les données entre appareils';
+
+  @override
+  String get featureDataExport => 'Exporter les données en CSV/PDF';
+
+  @override
+  String get featurePremiumThemes => 'Options de thèmes exclusives';
+
+  @override
+  String get featureMultiEnvironments => 'Profils d\'environnement personnalisés';
+
+  @override
+  String get featureAiInsights => 'Recommandations basées sur l\'IA';
+
+  @override
+  String get featureSocialFeatures => 'Défis et compétitions';
+
+  @override
+  String get settingKeepScreenOn => 'Garder l\'écran allumé';
+
+  @override
+  String get settingKeepScreenOnDescription => 'Empêcher le verrouillage de l\'écran pendant les sessions';
 }

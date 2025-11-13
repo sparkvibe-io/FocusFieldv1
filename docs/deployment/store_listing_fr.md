@@ -1,7 +1,8 @@
 # Store Listing - Focus Field (French)
 <!-- LANGUAGE: French (FR) -->
 <!-- MARKETS: France, Belgium, Switzerland, Canada (Quebec) -->
-<!-- LAST UPDATED: October 25, 2025 -->
+<!-- LAST UPDATED: November 11, 2025 -->
+<!-- VERSION: 1.1.0 -->
 
 ---
 
@@ -31,7 +32,7 @@ Focus Field
 <!-- WHERE TO USE: App Store Connect > App Information > Subtitle -->
 <!-- CHARACTER LIMIT: 30 characters -->
 ```
-Mesurer le Silence, Se Concentrer
+Mesurer le Silence, Focus
 ```
 <!-- TRANSLATION: "Measure Silence, Focus" -->
 
@@ -39,9 +40,9 @@ Mesurer le Silence, Se Concentrer
 <!-- WHERE TO USE: Google Play Console > Store Listing > Short description -->
 <!-- CHARACTER LIMIT: 80 characters -->
 ```
-Mesurez le silence ambiant et créez des habitudes de concentration avec notre système
+Mesurez le silence ambiant et créez des habitudes de concentration
 ```
-<!-- TRANSLATION: "Measure ambient silence and build focus habits with our system" -->
+<!-- TRANSLATION: "Measure ambient silence and build focus habits" -->
 
 ---
 
@@ -55,14 +56,14 @@ Mesurez le silence ambiant et créez des habitudes de concentration avec notre s
 ```
 Focus Field est votre tracker personnel de silence ambiant qui vous aide à développer des habitudes de concentration profonde grâce à une progression bienveillante basée sur des quêtes.
 
-🎯 COMMENT ÇA FONCTIONNE
-• Démarrez une session de concentration (1-120 minutes)
+COMMENT ÇA FONCTIONNE
+• Démarrez une session de concentration (1 minute à 4 heures)
 • L'appli mesure les niveaux de bruit ambiant en temps réel
 • Gagnez des points en maintenant des environnements calmes (≥70% de calme)
 • Construisez des séries avec notre règle flexible des 2 jours
 • Suivez vos progrès dans les activités d'Étude, Lecture et Méditation
 
-🌟 FONCTIONNALITÉS PRINCIPALES
+FONCTIONNALITÉS PRINCIPALES
 • Surveillance ambiante en temps réel (sans enregistrement audio!)
 • Anneau de progression interactif avec minuteur
 • Mode Focus pour des sessions sans distraction
@@ -73,41 +74,48 @@ Focus Field est votre tracker personnel de silence ambiant qui vous aide à dév
 • Support tablette avec écran divisé horizontal
 • 7 langues prises en charge
 
-🎨 DESIGN MAGNIFIQUE
+DESIGN MAGNIFIQUE
 • Système de design Material 3
 • Thèmes clair et sombre à haut contraste
 • Design responsive (téléphones et tablettes)
 • Animations fluides et retour visuel
 
-💎 FONCTIONNALITÉS PREMIUM
-• Sessions prolongées jusqu'à 120 minutes
+FONCTIONNALITÉS PREMIUM (0,99€/mois ou 9,99€/an)
+• Sessions prolongées jusqu'à 4 heures (vs 30 min gratuit)
 • Analyses avancées et graphiques de tendances
 • Export de données (CSV/PDF)
-• Thèmes premium
-• Historique de 90 jours
+• Thèmes premium exclusifs
+• Historique de 90 jours (vs 7 jours gratuit)
 
-🔒 CONFIDENTIALITÉ D'ABORD
+CONFIDENTIALITÉ D'ABORD
 • Aucun enregistrement audio - seulement des mesures de décibels
 • Stockage local uniquement (aucune transmission cloud)
 • Aucune connexion requise
 • Analyses optionnelles (anonymisées)
 
-🌍 LANGUES PRISES EN CHARGE
-Anglais, Espagnol, Français, Allemand, Japonais, Portugais, Portugais Brésilien
+LANGUES PRISES EN CHARGE
+Anglais, Espagnol, Français, Allemand, Japonais, Portugais, Portugais Brésilien, Chinois (Simplifié)
 
-📊 PARFAIT POUR
+PARFAIT POUR
 • Étudiants (sessions d'étude)
 • Télétravailleurs (travail profond)
 • Lecteurs (temps de lecture ininterrompu)
 • Méditants (suivi de pratique silencieuse)
 • Tous ceux qui construisent des habitudes de concentration
 
-⚡ PREMIERS PAS
+PREMIERS PAS
 1. Accordez l'autorisation du microphone
 2. Choisissez le seuil de votre environnement
 3. Définissez votre objectif quotidien (10-60 minutes)
 4. Démarrez votre première session
 5. Construisez votre série!
+
+---
+
+SUPPORT ET LÉGAL
+Politique de Confidentialité: https://sparkvibe.io/privacy
+Conditions d'Utilisation: https://sparkvibe.io/terms
+Support: support@sparkvibe.io
 
 Première appli sur le marché de mesure du silence ambiant. Rejoignez la révolution de la concentration!
 ```
@@ -190,7 +198,7 @@ concentration,productivité,silence,ambiant,bruit,méditation,étude,travail pro
 <!-- NOTE: This text can be updated anytime without submitting a new version -->
 
 ```
-Premier tracker de silence ambiant sur le marché! Construisez des habitudes de concentration avec notre système de quêtes. Pas d'enregistrement - seulement des mesures. Design axé sur la confidentialité.
+1er tracker de silence ambiant! Système de quêtes. Mesures uniquement. Confidentialité d'abord.
 ```
 <!-- ENGLISH: "First-to-market ambient silence tracker! Build focus habits with our quest system. No recording - just measurements. Privacy-first design." -->
 
@@ -205,11 +213,11 @@ Premier tracker de silence ambiant sur le marché! Construisez des habitudes de 
 ### Version 1.0.0
 
 ```
-🎉 Bienvenue dans Focus Field 1.0!
+Bienvenue dans Focus Field 1.0!
 
 Focus Field est la première appli qui mesure le silence ambiant et vous aide à construire des habitudes de concentration grâce à une progression bienveillante basée sur des quêtes.
 
-✨ FONCTIONNALITÉS PRINCIPALES
+FONCTIONNALITÉS PRINCIPALES
 • Surveillance ambiante en temps réel (sans enregistrement audio!)
 • Progression basée sur des quêtes avec objectifs quotidiens
 • Séries bienveillantes (règle des 2 jours + jetons de gel)
@@ -219,18 +227,18 @@ Focus Field est la première appli qui mesure le silence ambiant et vous aide à
 • Magnifique design Material 3
 • 7 langues prises en charge
 
-🎯 PREMIERS PAS
+PREMIERS PAS
 1. Complétez l'intégration en 6 écrans
 2. Définissez votre objectif quotidien (10-60 minutes)
 3. Choisissez le seuil de votre environnement
 4. Démarrez votre première session de concentration
 5. Construisez votre série!
 
-🔒 CONFIDENTIALITÉ D'ABORD
+CONFIDENTIALITÉ D'ABORD
 Aucun enregistrement audio - seulement des mesures de décibels. Toutes les données sont stockées localement. Aucune connexion requise.
 
-📊 PREMIUM
-Passez au niveau supérieur pour des sessions prolongées, analyses avancées, export de données et plus encore.
+PREMIUM (0,99€/mois ou 9,99€/an)
+Passez au niveau supérieur pour des sessions jusqu'à 4 heures, analyses avancées, export de données et thèmes exclusifs.
 
 Commencez votre voyage de concentration aujourd'hui!
 ```
@@ -254,13 +262,13 @@ Premium
 <!-- FIELD: Subscription Description -->
 <!-- CHARACTER LIMIT: iOS 45 chars, Google Play 80 chars for title + unlimited for description -->
 ```
-Débloquez les fonctionnalités Premium:
-• Sessions prolongées (jusqu'à 120 minutes)
+Débloquez les fonctionnalités Premium (0,99€/mois ou 9,99€/an):
+• Sessions prolongées (jusqu'à 4 heures vs 30 min gratuit)
 • Analyses avancées et graphiques de tendances
 • Export de données (CSV/PDF)
-• Thèmes premium
-• Historique de 90 jours
-• Support prioritaire
+• Thèmes premium exclusifs
+• Historique de 90 jours (vs 7 jours gratuit)
+• Expérience sans publicité
 ```
 <!-- ENGLISH: "Unlock Premium features: Extended sessions (up to 120 minutes), Advanced analytics and trend charts, Data export (CSV/PDF), Premium themes, 90-day history, Priority support" -->
 
